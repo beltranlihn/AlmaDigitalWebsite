@@ -84,3 +84,6 @@ Disallow: /
 
 User-agent: PetalBot
 Disallow: /
+
+# ── Mapa del sitio (lo genera src/build.mjs) ──────────────────────────────────
+Sitemap: https://almadigitalstudio.com/sitemap.xml

@@ -84,6 +84,47 @@ def soul_charger():
     return out
 
 
+def cover_to_og(src_path, out):
+    """Portada 16:9 → 1200×630 con recorte centrado."""
+    src = Image.open(src_path).convert('RGB')
+    sw, sh = src.size
+    target = W / H
+    if sw / sh > target:
+        nw = round(sh * target)
+        box = ((sw - nw) // 2, 0, (sw - nw) // 2 + nw, sh)
+    else:
+        nh = round(sw / target)
+        box = (0, (sh - nh) // 2, sw, (sh - nh) // 2 + nh)
+    src.crop(box).resize((W, H), Image.LANCZOS).save(out, 'JPEG', quality=84, optimize=True, progressive=True)
+    return out
+
+
+def projects():
+    """Una imagen para compartir por obra: Asset/og/<slug>.jpg, desde su portada."""
+    import json
+    with open('src/projects.json', encoding='utf-8') as f:
+        data = json.load(f)
+    os.makedirs('Asset/og', exist_ok=True)
+    return [cover_to_og(p['cover'], f"Asset/og/{p['slug']}.jpg") for p in data['projects']]
+
+
+def icon_mask():
+    """Icono solo (blanco con alfa) recortado a su contorno, para el header en móvil.
+    El sitio lo usa como máscara CSS, así toma el color del tema."""
+    src = Image.open('Asset/Logo Studio/AD_W_3.webp').convert('RGBA')
+    box = src.getchannel('A').point(lambda v: 255 if v > 8 else 0).getbbox()
+    icon = src.crop(box)
+    side = max(icon.size)
+    canvas = Image.new('RGBA', (side, side), (255, 255, 255, 0))
+    canvas.paste(icon, ((side - icon.width) // 2, (side - icon.height) // 2), icon)
+    out = 'Asset/Web Icons/icon-alma.png'
+    canvas.resize((192, 192), Image.LANCZOS).save(out, 'PNG', optimize=True)
+    return out
+
+
 if __name__ == '__main__':
-    for path in (home(), soul_charger()):
+    made = [home(), soul_charger(), icon_mask()] + projects()
+    for path in made[:3]:
         print(f'{path}: {os.path.getsize(path) // 1024} KB')
+    total = sum(os.path.getsize(p) for p in made[3:])
+    print(f'Asset/og/: {len(made) - 3} imágenes de obra, {total // 1024} KB en total')

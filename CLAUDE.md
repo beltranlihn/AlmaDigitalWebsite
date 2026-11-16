@@ -1,160 +1,163 @@
-# Alma Digital Studio — Portfolio
+# Alma Digital Studio — sitio web
 
 ## Objetivo
-Portfolio web inmersivo para Alma Digital Studio, estudio creativo de arte multimedia. Presenta el estudio, sus proyectos y equipo con una estética audiovisual interactiva.
+Portfolio web inmersivo para Alma Digital Studio, estudio creativo de arte multimedia. Presenta el
+estudio, sus proyectos y equipo con una estética audiovisual interactiva, en inglés y español.
 
 ## Stack tecnológico
-- HTML/CSS/JS puro (self-contained, un solo `index.html`)
-- WebGL Fluid Simulation (fork de PavelDoGreat, modificado y embebido)
-- GSAP (local, `gsap.min.js`)
-- Google Fonts: Raleway (200, 300, 400, 500)
-- Sin framework, sin bundler
+- HTML/CSS/JS puros, sin framework ni bundler.
+- Las páginas se **generan** con `node src/build.mjs` (Node, sin dependencias) a partir de archivos
+  de datos, y se commitean ya generadas. Netlify no corre el generador: publica el HTML tal cual.
+- WebGL Fluid Simulation (fork de PavelDoGreat) en `js/fluid.js`.
+- Ameba del hero: shader propio en `js/ameba.js` (WebGL 1, sin librerías, ~6 KB).
+- Google Fonts: Raleway (200, 300, 400, 500). GSAP (`gsap.min.js`) sólo lo usa `soul-charger.html`.
 
 ## Estructura de carpetas
 ```
-Alma Digital Portfolio/
-├── index.html          # ~4690 líneas — toda la app
-├── soul-charger.html   # ~3400 líneas — página dedicada Soul Charger
-├── gsap.min.js         # GSAP local
-├── robots.txt          # bots fuera de los videos + bloqueo de scrapers de IA/SEO
-├── tools/deploy_copy.py # arma dist/ con sólo lo que la web usa (lo corre Netlify)
-├── tools/make_share_images.py # genera las imágenes 1200×630 para compartir (og:image)
-├── netlify.toml        # build: python3 tools/deploy_copy.py dist → publica dist/
-├── _masters/           # originales de los archivos recomprimidos (NO se publica)
-├── prototype/          # rediseño descartado; projects.json reutilizable (NO se publica)
-├── README.md           # guía corta para personas
-├── CLAUDE.md           # este archivo
-├── .claude/launch.json # preview local (python -m http.server 5599)
-└── Asset/
-    ├── Logo.png
-    ├── Asset 34.png        # logo pequeño para headers
-    ├── Logo Studio/Version 2/  # Logo.webp, Texto Logo 1.webp, Texto Logo 2.webp
-    ├── Soul Charger/       # assets del proyecto
-    ├── Studio Projects/    # una carpeta por proyecto: 1/2/3 (uno "N Portada") + Reel
-    ├── Commisions/         # misma convención que Studio Projects
-    ├── Registro/           # 20 WebP (Portada + 1–19) para carrusel sc-4
-    └── Web Icons/
+├── src/                       # FUENTE del sitio (no se publica)
+│   ├── build.mjs              # generador: plantillas de todas las páginas
+│   ├── site.json              # textos de interfaz EN/ES, hero, clientes, destacados, ajustes
+│   ├── projects.json          # las 19 obras (inglés): textos, créditos, sedes, tecnología
+│   └── i18n/
+│       ├── projects.es.json   # las obras en español
+│       └── studio.json        # about, equipo y spin-offs en los dos idiomas
+├── css/site.css               # estilos (dos temas por tokens: aura y night)
+├── js/
+│   ├── fluid.js               # MÓDULO CERRADO: simulación de fluido
+│   ├── cursor.js              # MÓDULO CERRADO: cursor propio
+│   ├── ameba.js               # la ameba viva del hero
+│   └── app.js                 # header, contacto, reel, filtros, lightbox
+├── index.html, studio.html    # GENERADOS (inglés). No editar a mano
+├── work/index.html            # GENERADO: índice de obras con filtros
+├── work/<obra>.html           # GENERADO: una ficha por obra (19)
+├── es/…                       # GENERADO: lo mismo en español
+├── sitemap.xml                # GENERADO
+├── soul-charger.html          # página dedicada a Soul Charger (a mano, ~3400 líneas, sólo inglés)
+├── robots.txt                 # bots fuera de los videos + bloqueo de scrapers de IA/SEO
+├── tools/deploy_copy.py       # arma dist/ con sólo lo que la web usa (lo corre Netlify)
+├── tools/make_share_images.py # imágenes 1200×630 para compartir y el icono del header
+├── netlify.toml               # build: python3 tools/deploy_copy.py dist → publica dist/
+├── _masters/                  # originales de los archivos recomprimidos (NO se publica)
+├── prototype/                 # prototipo de Beltrán del que salió esta estructura (NO se publica)
+├── .claude/launch.json        # preview local (python -m http.server 5599)
+└── Asset/                     # imágenes, videos, fuentes. Asset/og/ = imágenes para compartir
 ```
 
-## Estado actual
-El portfolio está **sustancialmente construido**. Tiene todas las secciones principales:
+## Cómo se cambia algo
+1. Editar la **fuente**, nunca el HTML generado:
+   - Un texto de interfaz, el titular del hero, la lista de clientes o las obras destacadas → `src/site.json`
+   - Una obra → `src/projects.json` y su traducción en `src/i18n/projects.es.json`
+   - Equipo, spin-offs o el texto "about" → `src/i18n/studio.json`
+   - El armado de una página → `src/build.mjs`. El aspecto → `css/site.css`. El comportamiento → `js/app.js`
+2. `node src/build.mjs` (rehace `index.html`, `studio.html`, `work/`, `es/` y `sitemap.xml`).
+3. Probar en local y commitear **fuente y HTML generado juntos**.
 
-1. **Hero** — logo en 3 capas (blob + texto) con parallax hover, breathing animation, glow
-2. **About Text** — tipografía editorial animada al scroll, columna con logo animado
-3. **Video Section** — reel con overlay a pantalla completa
-4. **Projects** — dos filas de carrusel (Studio Work), tarjetas 390×390
-5. **About Us** — row 1: founders (landscape), row 2: team (portrait)
-6. **Spin Off** — sección dedicada al spin-off
-7. **Contact** — botón + modal de contacto
-8. **Footer** — footer del sitio
+**Agregar una obra:** sumar la entrada en `src/projects.json` (mismo formato que las demás; `formatKey`
+tiene que existir en `site.json → formats`), su traducción en `projects.es.json`, los assets en
+`Asset/Studio Projects/` o `Asset/Commisions/`, correr `python3 tools/make_share_images.py` (imagen para
+compartir) y `node src/build.mjs`. Si falta la traducción, la ficha en español sale en inglés y el
+generador lo avisa.
 
-### UI adicional
-- Header fijo con nav + logo
-- Redes sociales fijas (lateral)
-- Scroll nav indicator (puntos)
-- Cursor personalizado (ring + 6 partículas en cadena con lerp)
-- Fondo WebGL interactivo con 12 emisores automáticos
+## Páginas
+- **Landing** (`index.html`), cinco bloques: hero (ameba viva + titular + credenciales + dos botones),
+  reel, seis obras destacadas (`site.json → featured`), "con quién trabajamos" y contacto.
+- **Índice de obras** (`work/`): lista filtrable por línea (obra propia / encargos) y formato, con
+  vista previa al pasar el mouse.
+- **Ficha de obra** (`work/<slug>.html`): portada, ficha técnica, concepto, galería con lightbox, reel,
+  créditos, historial de exhibición, botón de consulta y obra siguiente.
+- **Studio** (`studio.html`): about, equipo y spin-offs.
+- **Español**: las mismas páginas bajo `/es/`, con los mismos slugs. Cada página enlaza a su par
+  (`hreflang`) y el header tiene el cambio de idioma.
 
-## Decisiones de arquitectura tomadas (no reabrir)
-- **Self-contained**: todo en un solo `index.html`. No dividir en archivos.
-- **WebGL fluid**: fondo fijo con `z-index: 0`, recibe mousemove de `window`
-- **Paleta oficial index.html**:
-  - Fondo WebGL: `#adc8ed` → `BACK_COLOR: {r:173, g:200, b:237}`
-  - Colores simulación: `#3530a0` (×3), `#de79ff`, `#8282ff` (×2), `#fbc2ff`, `#9a3ec7` (×2)
-  - Multiplicador generateColor: `0.119`; splatPointer: `×0.162`; emisores: `×0.097`
-- **Paleta oficial soul-charger.html**:
-  - Fondo WebGL: `BACK_COLOR: {r:132, g:95, b:221}`
-  - Colores simulación: `#3530a0` (×3), `#de79ff` (×2), `#8282ff` (×2), `#fbc2ff`, `#9a3ec7` (×2) — sin crema
-  - Multiplicador generateColor: `0.108`; splatPointer: `×0.162`; emisores: `×0.097`
-  - Crema `#f4f1e9` eliminada para evitar quemado blanco
-- **Cursor**: `cursor: none` global, ring blanco 36px + partículas
-- **Tipografía**: Raleway weight 200–500, sin serifa
+## Temas
+`css/site.css` define todo el color con tokens en `:root`. Hay dos temas:
+- **aura** (por defecto): velo claro sobre el fluido y texto en tinta `#211f6b`. Sigue el sistema de marca.
+- **night**: velo oscuro y texto blanco, como el prototipo.
 
-## Convenciones de código
-- Variables CSS en `:root` para spacing, colores, animaciones
-- Prefijos de ID por sección: `#hero`, `#about-text`, `#video-section`, `#projects`, `#about`, `#spinoff`, `#contact`
-- Clases BEM-ish: `.proj-card`, `.site-logo`, `.social-link`, etc.
-- Secciones `min-height: 100vh`, flex column centered, `padding-top: 88px` (header height)
-- JS en bloques `<script>` inline al final del `<body>`
+Para comparar: `?theme=night` o `?theme=aura` en cualquier URL. En localhost y en las vistas previas de
+Netlify aparece además una barra "Tema" abajo a la izquierda; en el dominio publicado no.
+El velo existe porque el texto directo sobre el fluido daba un contraste de 1,7:1.
+
+## Decisiones vigentes
+- **Fluido de fondo**: canvas fijo `#fluid`, `z-index: 0`, recibe mousemove de `window`. Tiene que ser
+  el **primer `<canvas>`** del documento (así lo busca `fluid.js`).
+- **Paleta oficial del fluido**: fondo `#adc8ed` → `BACK_COLOR: {r:173, g:200, b:237}`; colores
+  `#3530a0` (×3), `#de79ff`, `#8282ff` (×2), `#fbc2ff`, `#9a3ec7` (×2); multiplicador generateColor
+  `0.119`; splatPointer `×0.162`; emisores `×0.097`.
+- **Paleta de soul-charger.html**: fondo `{r:132, g:95, b:221}`, mismos colores sin crema, multiplicador `0.108`.
+- **Tipografía**: Raleway 200–500. Se decidió **no** adoptar Poiret One / DM Sans en la web (nov. 2026).
+- **Scroll normal**: sin salto por secciones ni puntos de navegación. Zoom y selección de texto habilitados.
+- **Sin animaciones de entrada sobre el texto**: todo lo que se lee tiene que estar visible en el primer
+  cuadro (pestañas en segundo plano, vistas previas de enlaces).
+- **Dominio principal sin `www`**: canonical, Open Graph y sitemap apuntan a `https://almadigitalstudio.com/`.
+
+## Módulos cerrados (no tocar sin preguntar)
+- **`js/fluid.js`** — motor de física, paleta y parámetros. Es el del sitio anterior, extraído tal cual.
+  Trae `AlmaFluid.setPalette()` (del prototipo) para teñir el fondo por obra, pero está **apagado**
+  (`site.json → perProjectPalette: false`): la paleta sigue siendo la oficial en todas las páginas.
+- **`js/cursor.js`** — anillo + 6 partículas con lerp, copiado tal cual. Tamaños, opacidades y lerp
+  están calibrados. El color cambia por tema **desde el CSS** (`--cursor` y un filtro SVG), sin tocar el JS.
+- **Reabiertos el 2026-11-16** con el acuerdo de Vicente (a confirmar con Beltrán):
+  - el **logo del hero** en tres capas pasó a ser la ameba viva (`js/ameba.js`); la imagen de siempre
+    (`Logo.webp`) queda de respaldo si WebGL no arranca;
+  - la **navegación por secciones** pasó a scroll normal.
+
+## Reel y videos: cuidado con los créditos
+El ancho de banda es lo que agotó los créditos en octubre de 2026 (20 créditos por GB).
+- **Reel del estudio** (21 MB; 7,5 MB la versión vertical): en modo **clic** (`site.json →
+  reelAutoplayOnView: false`). Se ve el póster y el video se descarga recién al reproducir. En escritorio
+  abre a pantalla completa con sonido; en el teléfono se reproduce en su lugar y nunca pide la versión
+  de escritorio. Antes arrancaba solo al acercarse, pero estaba dos pantallas más abajo; ahora es el
+  segundo bloque y con ese criterio lo bajaría casi toda visita (~0,4 créditos cada una).
+- **Reels de las fichas** (0,6–4 MB): `preload="none"`, se piden cuando un cuarto del video ya está en
+  pantalla y se pausan al salir.
+- **Vista previa del índice**: carga el reel de la obra al pasar el mouse (sólo escritorio).
+- `#sc-trailer` en soul-charger.html: carga diferida como antes.
+- **No poner `autoplay`** en videos de más de un par de MB.
+- Compresión de videos de sección: H.264 `-crf 27 -preset slow`, AAC 128k si tienen audio, `+faststart`.
 
 ## Convención de assets de proyecto (Studio Projects / Commisions)
 Una carpeta por proyecto dentro de `Asset/Studio Projects/` o `Asset/Commisions/`:
-- **3 fotos WebP a 1920×1080**, `quality 85`. Una de ellas lleva sufijo ` Portada` y es la
-  que va en `data-cover` + `<img class="proj-card__cover">`.
+- **Fotos WebP a 1920×1080**, `quality 85`. Hoy hay 3 por obra; la galería de la ficha admite las que
+  se quieran (lista `photos` en `projects.json`). Una lleva sufijo ` Portada` y va en `cover`.
   Fuentes con otro aspecto → recortar centrado a 16:9 antes de escalar:
   `crop='min(iw,ih*16/9)':'min(ih,iw*9/16)',scale=1920:1080:flags=lanczos`
 - **1 reel MP4 vertical 406×720** (9:16), H.264, **sin audio**, `-crf 30 -preset slow`,
-  `-movflags +faststart`. Peso objetivo 0.5–2 MB.
+  `-movflags +faststart`. Peso objetivo 0,5–2 MB. En la ficha se ven algo blandos: conviene
+  reexportarlos más grandes desde los másters cuando se pueda.
   Si el material original es apaisado (16:9), se compone sobre lienzo 406×720 con relleno
-  desenfocado del propio plano (`gblur=sigma=26` + `eq=brightness=-0.14:saturation=0.85`)
-  en vez de recortar — así no se pierde encuadre en la columna 9:16 del modal.
-
-### Límite de texto del modal desktop (`.po-left`)
-El panel izquierdo es 30 % de un card 16:9 con `overflow: hidden` — **no scrollea**.
-`data-desc` debe quedar en **≈320–360 caracteres** con `Presented at` + `Credits`
-(menos si además lleva `Commissioned by`). Verificar midiendo el hueco libre de `.po-left`
-antes de dar por bueno un texto largo. (`Fashion Show Micsur` y `Adidas Terrex` ya se
-recortan levemente — deuda previa, no replicar.)
+  desenfocado del propio plano (`gblur=sigma=26` + `eq=brightness=-0.14:saturation=0.85`).
+- Originales pesados van a `_masters/` (mismo árbol que `Asset/`), no a `Asset/`.
 
 ## Deploy (Netlify)
-- Sitio `glowing-sunflower-a7a485` → `almadigitalstudio.com`. **Plan Personal desde
-  2026-10-20**: 1.000 créditos/mes, ciclo que arranca el 20.
+- Sitio `glowing-sunflower-a7a485` → `almadigitalstudio.com`. **Plan Personal desde 2026-10-20**:
+  1.000 créditos/mes, ciclo que arranca el 20.
 - **Deploy automático desde GitHub** (repo privado en la cuenta de Beltrán):
   - push / merge a `main` → **producción** (15 créditos).
   - pull requests y otras ramas → **vista previa** con URL propia (gratis).
   - Netlify corre `python3 tools/deploy_copy.py dist` y publica `dist/` (`netlify.toml`).
-- `tools/deploy_copy.py` publica sólo las páginas, `gsap.min.js`, `robots.txt` y los
-  archivos de `Asset/` que alguna página referencia. Archivos de trabajo (`.docx`, `.ai`),
-  PNG originales, `_masters/`, `prototype/`, `CLAUDE.md` están en el repo pero no se
-  publican. **Nunca `netlify deploy --dir .`** (publicaría todo).
+- `tools/deploy_copy.py` publica las páginas (`.html` de la raíz, `work/`, `es/`, `es/work/`), `css/`,
+  `js/`, `robots.txt`, `sitemap.xml` y los archivos de `Asset/` que alguna página, CSS o JS referencia.
+  `src/`, archivos de trabajo, `_masters/`, `prototype/` y `CLAUDE.md` no se publican.
+  **Nunca `netlify deploy --dir .`** (publicaría todo).
+- Una carpeta nueva de páginas hay que sumarla a `PAGE_DIRS` en ese script.
 - Deploy manual de emergencia (cuesta 15 igual): `python tools/deploy_copy.py dist` y
   `npx netlify deploy --prod --dir dist`.
-- Una página nueva tiene que agregarse a `PAGES` en `tools/deploy_copy.py`, o sus assets
-  no se publican.
-- **Tarifas (docs oficiales de Netlify):** cada deploy de producción = **15 créditos**;
-  ancho de banda = **20 créditos/GB**; requests web = 2 créditos / 10.000. Deploy previews gratis.
-  → Agrupar cambios en **un solo deploy**. Con 300 créditos, 20 deploys agotan el mes solos.
-- El grueso es ancho de banda. Hasta el 2026-10-20 el reel de la home (39 MB, `autoplay`) se
-  descargaba entero en cada primera visita. Ahora: **carga diferida** (ver abajo) y primera
-  visita de ~0,7 MB. Recargas y loops no re-descargan (medido).
-
-### Videos grandes: carga diferida (no reabrir)
-- `#reel-video` (index) y `#sc-trailer` (soul-charger): `preload="none"`, sin `autoplay`,
-  fuente en `data-src` (y `data-src-mobile` / `data-poster-mobile` para el reel vertical).
-  Póster WebP liviano mientras tanto (`Reel Poster.webp`, `Reel Vertical Poster.webp`,
-  `Trailer Poster.webp`).
-- Un bloque JS asigna `src` cuando el video está a < media pantalla de entrar en vista y
-  pausa al salir. Disparadores: IntersectionObserver **y** scroll/resize, con `setTimeout`
-  (no rAF). En móvil elige la fuente con `isMobile` del sitio: el teléfono nunca pide la
-  versión de escritorio.
-- El overlay de pantalla completa (desktop) lee `#reel-video.dataset.src`.
-- **No volver a poner `autoplay`** en videos de más de un par de MB.
-- Videos de sección: H.264 `-crf 27 -preset slow`, AAC 128k si tienen audio, `+faststart`.
-  Reel 37→21 MB (SSIM 0,988), tráiler 42→13 MB (SSIM 0,994), vertical CRF 30 10→7,5 MB.
+- **Tarifas**: deploy de producción = 15 créditos; ancho de banda = 20 créditos/GB; requests web =
+  2 créditos / 10.000. Deploy previews gratis. → Agrupar cambios en **un solo deploy**.
 
 ## Analítica
-Cloudflare Web Analytics, **activa desde 2026-10-15**. Panel: dash.cloudflare.com →
-Web Analytics → `almadigitalstudio.com`. Cargador en el `<head>` de `index.html` y
-`soul-charger.html`, token `ee88c2886dd4410694851f5bfea47a74` (público, no es secreto).
-Una página nueva necesita el mismo bloque. Vaciar `CF_TOKEN` la desactiva.
-Sólo cuenta navegadores reales: comparar contra el ancho de banda de Netlify para estimar bots.
-**No** cambiar nameservers a Cloudflare: no hace falta para esto y movería el DNS del dominio.
+Cloudflare Web Analytics, **activa desde 2026-10-15**. Panel: dash.cloudflare.com → Web Analytics →
+`almadigitalstudio.com`. El cargador lo escribe `src/build.mjs` en el `<head>` de cada página generada
+(token en `site.json → analyticsToken`, público); `soul-charger.html` lo tiene a mano. Vaciar el token la
+desactiva. **No** cambiar nameservers a Cloudflare.
 
-## Trabajo en equipo (Beltrán + socio, cada uno con su Claude Code)
+## Trabajo en equipo (Beltrán + Vicente, cada uno con su Claude Code)
 - **No commitear directo a `main`**: cada commit ahí es un deploy de 15 créditos.
   Trabajar en una rama, abrir pull request, revisar en la URL de vista previa, merge.
-  Agrupar arreglos en un mismo pull request.
-- `git pull` antes de empezar. Casi todo vive en `index.html` (~4.800 líneas): si los dos
-  lo editan a la vez, coordinar qué sección toca cada uno para evitar conflictos.
-- Antes de agregar videos o imágenes: respetar la convención de assets y la de carga
-  diferida (abajo). Un video con `autoplay` vuelve a disparar el consumo de créditos.
-- Originales pesados nuevos van a `_masters/` (mismo árbol que `Asset/`), no a `Asset/`.
-
-## Módulos cerrados (no tocar)
-- **WebGL Fluid Simulation** — motor de física completo, no modificar
-- **Paleta de colores** y config física del fluid (ya calibrada, ver arriba)
-- **Cursor custom** — lerp y tamaños calibrados
-- **Hero logo (index.html)** — layers, breathing, parallax hover
+- `git pull` antes de empezar. Si los dos tocan `src/build.mjs` o `css/site.css` a la vez, avisarse.
+  El HTML generado da conflictos fáciles de resolver: se vuelve a correr `node src/build.mjs`.
+- Mail público de contacto: `vicente@almadigitalstudio.com` (`site.json → email`). Formulario: Formspree.
 
 ## soul-charger.html — decisiones clave
 
@@ -174,21 +177,20 @@ Sólo cuenta navegadores reales: comparar contra el ancho de banda de Netlify pa
 - Glow `::before`: `radial-gradient` púrpura + `blur(44px)` — igual que hero de index.html
 - 3 capas con `mix-blend-mode: screen` + breathing animation independiente por capa
 
-## index.html — decisiones clave
-
-### Carrusel de Projects
-- Hover sobre card: escala, brillo, atenúa vecinas — pero **NO pausa la animación**
-- Línea `animation-play-state: paused` en hover eliminada intencionalmente
-- **Duración dinámica**: el JS de duplicación de tracks setea
-  `--carousel-dur = nº de tarjetas × 6.7s` por fila. Así la velocidad se mantiene constante
-  al añadir proyectos y ambas filas van igual de rápido. El `--carousel-dur: 60s` fijo del
-  CSS queda solo como fallback.
-
-## Próximos pasos
-- Agregar video real del reel en soul-charger.html sc-3 (reemplazar placeholder)
-- Revisar soul-charger.html en móvil (orbit col se oculta en mobile)
-- Considerar deploy a producción
-- Evaluar página dedicada (tipo `soul-charger.html`) para Neural Canvas / Collective Pulse
+## Pendientes
+- **Contenido que sólo tiene el estudio**: año de cada obra (`year`), prensa (`press`), textos largos
+  (`body`; hoy sólo Neural Canvas y Collective Pulse tienen tres párrafos), más fotos por obra, reels
+  más nítidos, permiso para mostrar logos de clientes.
+- **Revisar los borradores**: titular y bajada del hero, lista de clientes y obras destacadas
+  (`site.json`), y las traducciones al español.
+- **Visor 360° / domo** en las fichas de Neurocosm Full Dome, Neurocosm 360, Alma Digital 360 y LPS:
+  falta material equirectangular. Opciones evaluadas: Pannellum (19 KB) o Three.js (155 KB); el formato
+  domo (ojo de pez) necesita un shader propio en los dos casos. Si entra Three.js, sus archivos van en
+  `js/` para que se publiquen.
+- **Probar en teléfonos reales** (ameba + fluido a la vez, batería y temperatura) y hacer un envío real
+  del formulario en la vista previa.
+- `soul-charger.html` sigue con el aspecto anterior y sólo en inglés.
+- `LDR_LLL1_0.png` da 404: textura de dithering del fluido que falta desde siempre. No afecta nada visible.
 
 ## Android scroll — decisión técnica (no reabrir)
 
@@ -202,6 +204,39 @@ Sólo cuenta navegadores reales: comparar contra el ancho de banda de Netlify pa
 El fluid sim sigue corriendo con auto-emitters en mobile. Los usuarios de Android no pueden tocar el fondo para emitir fluidos (correcto — el dedo es para el scroll).
 
 ## Historial de sesiones (última al tope)
+
+### 2026-11-16 — Etapas 1 a 3: sitio nuevo generado, bilingüe, con la ameba viva (Vicente)
+
+Rama `rediseno-landing`, encima de `etapa-0-arreglos`. Cambia la arquitectura: el sitio deja de ser un
+solo `index.html` de 4.900 líneas y pasa a generarse con `src/build.mjs`, tomando la estructura del
+prototipo de Beltrán (landing + índice filtrable + una ficha por obra).
+
+- **Landing de cinco bloques** en vez de ocho. La primera pantalla dice qué hace el estudio, muestra
+  credenciales (IDB, EUIPO, Johns Hopkins, New Images, Adidas, LATAM, Pacha Ibiza) y tiene dos botones.
+  Antes era sólo el logo.
+- **Una página por obra** (19) con URL propia, imagen para compartir y datos estructurados. Antes las
+  descripciones y créditos vivían en atributos `data-*` de un modal: no se podían enlazar ni indexar.
+- **Inglés y español** (44 páginas). Traducciones en `src/i18n/`, a revisar por el estudio.
+- **Legibilidad**: velo entre el fluido y el contenido, texto en tinta, cuerpo de 16 px como mínimo.
+- **Ameba viva** en el hero (`js/ameba.js`): respira cada 6 s, gira con el puntero, muta con el scroll y
+  cambia de forma con un clic. Se pausa fuera de pantalla y baja sola de resolución si el equipo no da.
+- **Reel con clic** en vez de arranque automático (ver "Reel y videos").
+- Equipo y spin-offs pasaron a `studio.html`.
+- Primera carga en escritorio: de 928 KB a unos 500 KB, sin ningún video.
+- Fluido y cursor copiados tal cual a `js/fluid.js` y `js/cursor.js`.
+- `tools/deploy_copy.py` reescrito para el sitio de varias páginas; `sitemap.xml` y su línea en `robots.txt`.
+
+**Verificado en local**, escritorio 1440×900 y móvil 375×812, en los dos temas: consola sin errores
+nuevos; formulario con `fetch` simulado (éxito, error, validaciones) sin enviar nada a Formspree;
+filtros, vista previa, lightbox y reel; 45 páginas y 1.241 referencias locales del paquete de
+publicación sin enlaces rotos. **Sin probar**: teléfonos reales, rendimiento con los dos canvas, un
+envío real del formulario y cómo se ve el link al compartirlo.
+
+**Borradores a revisar por el estudio**: textos del hero, lista de clientes, obras destacadas y todas
+las traducciones. Inconsistencias de los datos originales que quedaron como estaban: "Beltran Lihn"
+sin acento en el equipo y "Beltrán" en los créditos; "IDB Bank" escrito de tres formas; Mapping
+Mediamorfosis dice "Viña del Mar International Festival" en el texto y "Festival Mediamorfosis 2024" en
+las sedes; "Digital Sanctuary" / "Digital Sanctuaries"; "My2DROPS" / "my2DROPS".
 
 ### 2026-11-16 — Etapa 0: arreglos sin cambiar el diseño (Vicente)
 
