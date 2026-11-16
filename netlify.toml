@@ -1,0 +1,8 @@
+# Netlify arma el sitio con tools/deploy_copy.py: publica sólo lo que la web usa
+# (archivos de trabajo, _masters/ y prototype/ están en el repo pero no se publican).
+#
+# Rama main  → producción. Cada deploy cuesta 15 créditos.
+# Pull requests y otras ramas → vistas previas en una URL aparte. Gratis.
+[build]
+  command = "python3 tools/deploy_copy.py dist"
+  publish = "dist"

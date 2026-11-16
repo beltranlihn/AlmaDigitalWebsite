@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Alma Digital Studio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Raleway:wght@200;300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../prototype/style.css">
+</head>
+<body>
+<canvas id="fluid" aria-hidden="true"></canvas>
+<div class="scrim" aria-hidden="true"></div>
+<div class="page">
+<header class="hdr">
+  <a class="hdr__logo" href="../prototype/index.html">
+    <img src="../Asset/Asset%2034.png" alt="Alma Digital Studio">
+    <span>Alma Digital</span>
+  </a>
+  <nav>
+    <a href="../prototype/index.html" aria-current="page">Estudio</a>
+    <a href="../prototype/obras.html">Obras</a>
+    <a href="../index.html">Sitio actual</a>
+  </nav>
+</header>
+
+<section id="hero" aria-label="Alma Digital Studio">
+  <div class="hero-logo-wrap">
+    <div class="hero-logo-stack">
+      <img src="../Asset/Logo%20Studio/Version%202/Logo.webp" alt="" class="hero-layer hero-layer--blob">
+      <img src="../Asset/Logo%20Studio/Version%202/Texto%20Logo%201.webp" alt="" class="hero-layer hero-layer--text1">
+      <img src="../Asset/Logo%20Studio/Version%202/Texto%20Logo%202.webp" alt="Alma Digital Studio" class="hero-layer hero-layer--text2">
+    </div>
+  </div>
+  <div class="hero-cue"><span>Scroll</span><i></i></div>
+</section>
+
+<section id="reel-section" aria-labelledby="reel-title">
+  <div class="sec-head">
+    <h2 id="reel-title">El <em>reel</em></h2>
+    <span class="sec-num">01</span>
+  </div>
+  <div class="reel-frame">
+    <video muted loop playsinline autoplay preload="metadata"
+           poster="../Asset/Studio%20Projects/Neural%20Canvas/3%20Portada.webp">
+      <source src="../Asset/Reel%20Portfolio/Reel%20Portfolio.mp4" type="video/mp4">
+    </video>
+    <div class="reel-frame__ui">
+      <button class="reel-btn" type="button">Con sonido</button>
+      <span class="reel-time">0:00 / 0:50</span>
+    </div>
+  </div>
+</section>
+
+<section id="work-teaser" aria-labelledby="teaser-title">
+  <div class="sec-head">
+    <h2 id="teaser-title">Obras <em>y encargos</em></h2>
+    <span class="sec-num">02</span>
+  </div>
+  <div class="teaser-strip">
+      <a class="tcard" href="work/neural-canvas.html">
+        <img loading="lazy" src="../Asset/Studio%20Projects/Neural%20Canvas/3%20Portada.webp" alt="Neural Canvas">
+        <span class="tcard__t"><b>Neural Canvas</b><span>Interactive VR Painting</span></span>
+      </a>
+      <a class="tcard" href="work/collective-pulse.html">
+        <img loading="lazy" src="../Asset/Studio%20Projects/Collective%20Pulse/3%20Portada.webp" alt="Collective Pulse">
+        <span class="tcard__t"><b>Collective Pulse</b><span>Interactive Biofeedback Installation</span></span>
+      </a>
+      <a class="tcard" href="work/neurocosm-full-dome.html">
+        <img loading="lazy" src="../Asset/Studio%20Projects/Neurocosm%20Full%20Dome/Foto1%20-%20Portada.webp" alt="Neurocosm Full Dome">
+        <span class="tcard__t"><b>Neurocosm Full Dome</b><span>Full Dome Experience</span></span>
+      </a>
+      <a class="tcard" href="work/mapping-mediamorfosis.html">
+        <img loading="lazy" src="../Asset/Studio%20Projects/Mapping%20Mediamorfosis/2%20Portada.webp" alt="Mapping Mediamorfosis">
+        <span class="tcard__t"><b>Mapping Mediamorfosis</b><span>Projection Mapping</span></span>
+      </a>
+      <a class="tcard" href="work/neurocosm-xr.html">
+        <img loading="lazy" src="../Asset/Studio%20Projects/Neurocosm%20XR%20Installation/1%20Portada.webp" alt="Neurocosm XR">
+        <span class="tcard__t"><b>Neurocosm XR</b><span>Interactive Installation</span></span>
+      </a>
+      <a class="tcard" href="work/alma-digital-fest.html">
+        <img loading="lazy" src="../Asset/Studio%20Projects/Alma%20Digital%20Fest/3%20Portada.webp" alt="Alma Digital Fest">
+        <span class="tcard__t"><b>Alma Digital Fest</b><span>Immersive Art Festival</span></span>
+      </a>
+      <a class="tcard" href="work/neurocosm-360.html">
+        <img loading="lazy" src="../Asset/Studio%20Projects/Neurocosm%20360/1%20Portada.webp" alt="Neurocosm 360">
+        <span class="tcard__t"><b>Neurocosm 360</b><span>360° &amp; VR Short Film</span></span>
+      </a>
+      <a class="tcard" href="work/pixel-liquido.html">
+        <img loading="lazy" src="../Asset/Studio%20Projects/Pixel%20Liquido/2%20Portada.webp" alt="Pixel Liquido">
+        <span class="tcard__t"><b>Pixel Liquido</b><span>Interactive Exhibition</span></span>
+      </a>
+  </div>
+  <a class="teaser-all" href="obras.html">Ver las 19 obras <i>→</i></a>
+</section>
+</div>
+
+<aside class="proto">
+  <button aria-label="Ocultar aviso">✕</button>
+  <b>Prototipo</b>
+  Estructura y datos reales. Faltan los años de cada obra y el material en alta
+  — eso sale de los másters del estudio.
+</aside>
+
+<script>window.__ALMA__ = {"palette":null,"back":null};</script>
+<script src="../prototype/fluid.js"></script>
+<script src="../prototype/app.js"></script>
+</body>
+</html>

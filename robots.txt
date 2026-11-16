@@ -1,0 +1,86 @@
+# Alma Digital Studio — almadigitalstudio.com
+#
+# Sin este archivo, cualquier bot se bajaba los videos completos en cada pasada.
+# El reel de la home pesa 39 MB y los 19 reels de proyecto suman 77 MB más.
+
+# ── Buscadores y resto: pueden indexar páginas y fotos, no los videos ──────────
+User-agent: *
+Disallow: /*.mp4$
+Disallow: /*.MP4$
+Disallow: /Asset/Reel Portfolio/
+Disallow: /prototype/
+
+# ── Scrapers de entrenamiento de IA y bots de SEO ──────────────────────────────
+# Recorren el sitio entero, videos incluidos, y no traen visitas.
+# Para permitir alguno, borrá su línea "User-agent" y el "Disallow" que le sigue.
+User-agent: GPTBot
+Disallow: /
+
+User-agent: ChatGPT-User
+Disallow: /
+
+User-agent: OAI-SearchBot
+Disallow: /
+
+User-agent: ClaudeBot
+Disallow: /
+
+User-agent: anthropic-ai
+Disallow: /
+
+User-agent: Google-Extended
+Disallow: /
+
+User-agent: Applebot-Extended
+Disallow: /
+
+User-agent: CCBot
+Disallow: /
+
+User-agent: Bytespider
+Disallow: /
+
+User-agent: PerplexityBot
+Disallow: /
+
+User-agent: Amazonbot
+Disallow: /
+
+User-agent: meta-externalagent
+Disallow: /
+
+User-agent: FacebookBot
+Disallow: /
+
+User-agent: cohere-ai
+Disallow: /
+
+User-agent: Diffbot
+Disallow: /
+
+User-agent: ImagesiftBot
+Disallow: /
+
+User-agent: Timpibot
+Disallow: /
+
+User-agent: AhrefsBot
+Disallow: /
+
+User-agent: SemrushBot
+Disallow: /
+
+User-agent: MJ12bot
+Disallow: /
+
+User-agent: DotBot
+Disallow: /
+
+User-agent: DataForSeoBot
+Disallow: /
+
+User-agent: BLEXBot
+Disallow: /
+
+User-agent: PetalBot
+Disallow: /

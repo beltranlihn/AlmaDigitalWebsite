@@ -1,0 +1,251 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Obras — Alma Digital Studio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Raleway:wght@200;300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../prototype/style.css">
+</head>
+<body>
+<canvas id="fluid" aria-hidden="true"></canvas>
+<div class="scrim" aria-hidden="true"></div>
+<div class="page">
+<header class="hdr">
+  <a class="hdr__logo" href="../prototype/index.html">
+    <img src="../Asset/Asset%2034.png" alt="Alma Digital Studio">
+    <span>Alma Digital</span>
+  </a>
+  <nav>
+    <a href="../prototype/index.html">Estudio</a>
+    <a href="../prototype/obras.html" aria-current="page">Obras</a>
+    <a href="../index.html">Sitio actual</a>
+  </nav>
+</header>
+<main class="idx">
+  <div class="idx__head">
+    <h1 class="idx__title">Obras <em>y encargos</em></h1>
+    <p class="idx__count">19 obras</p>
+  </div>
+
+  <div class="filters">
+      <div class="fgroup">
+        <span class="fgroup__label">Línea</span>
+        <button class="chip" data-dim="track" data-val="all" aria-pressed="true">Todo</button>
+        <button class="chip" data-dim="track" data-val="studio" aria-pressed="false">Studio</button>
+        <button class="chip" data-dim="track" data-val="commission" aria-pressed="false">Commissions</button>
+      </div>
+      <div class="fgroup">
+        <span class="fgroup__label">Formato</span>
+        <button class="chip" data-dim="format" data-val="all" aria-pressed="true">Todo</button>
+        <button class="chip" data-dim="format" data-val="vr" aria-pressed="false">VR / XR</button>
+        <button class="chip" data-dim="format" data-val="installation" aria-pressed="false">Instalación</button>
+        <button class="chip" data-dim="format" data-val="dome" aria-pressed="false">Domo / 360°</button>
+        <button class="chip" data-dim="format" data-val="mapping" aria-pressed="false">Mapping</button>
+        <button class="chip" data-dim="format" data-val="performance" aria-pressed="false">Performance</button>
+        <button class="chip" data-dim="format" data-val="design" aria-pressed="false">Diseño inmersivo</button>
+      </div>
+  </div>
+
+  <div class="idx__body">
+    <div class="list">
+      <a class="row" href="work/neural-canvas.html"
+        data-track="studio" data-format-key="vr"
+        data-title="Neural Canvas" data-format="Interactive VR Painting"
+        data-cover="../Asset/Studio%20Projects/Neural%20Canvas/3%20Portada.webp" data-video="../Asset/Studio%20Projects/Neural%20Canvas/Neural%20Canvas%20Reel.mp4"
+        data-palette='["#050057","#050057","#050057","#08008c","#43008c","#8c4676","#7d168c","#8c4054","#08008c"]' data-back="#a299e0">
+        <img class="row__thumb" loading="lazy" src="../Asset/Studio%20Projects/Neural%20Canvas/3%20Portada.webp" alt="">
+        <span class="row__name">Neural Canvas</span>
+        <span class="row__meta">Interactive VR Painting</span>
+      </a>
+      <a class="row" href="work/collective-pulse.html"
+        data-track="studio" data-format-key="installation"
+        data-title="Collective Pulse" data-format="Interactive Biofeedback Installation"
+        data-cover="../Asset/Studio%20Projects/Collective%20Pulse/3%20Portada.webp" data-video="../Asset/Studio%20Projects/Collective%20Pulse/Collective%20Pulse%20Reel.mp4"
+        data-palette='["#57381a","#57381a","#57381a","#8c6137","#8c6846","#e6c38a","#f06f3d","#f55364","#8c6137"]' data-back="#e0cec1">
+        <img class="row__thumb" loading="lazy" src="../Asset/Studio%20Projects/Collective%20Pulse/3%20Portada.webp" alt="">
+        <span class="row__name">Collective Pulse</span>
+        <span class="row__meta">Interactive Biofeedback Installation</span>
+      </a>
+      <a class="row" href="work/neurocosm-full-dome.html"
+        data-track="studio" data-format-key="dome"
+        data-title="Neurocosm Full Dome" data-format="Full Dome Experience"
+        data-cover="../Asset/Studio%20Projects/Neurocosm%20Full%20Dome/Foto1%20-%20Portada.webp" data-video="../Asset/Studio%20Projects/Neurocosm%20Full%20Dome/NeurocosmFullDomeReel.mp4"
+        data-palette='["#570002","#570002","#570002","#8c0003","#a4000b","#ff001c","#004a8c","#8c527f","#8c0003"]' data-back="#e099a0">
+        <img class="row__thumb" loading="lazy" src="../Asset/Studio%20Projects/Neurocosm%20Full%20Dome/Foto1%20-%20Portada.webp" alt="">
+        <span class="row__name">Neurocosm Full Dome</span>
+        <span class="row__meta">Full Dome Experience</span>
+      </a>
+      <a class="row" href="work/mapping-mediamorfosis.html"
+        data-track="studio" data-format-key="mapping"
+        data-title="Mapping Mediamorfosis" data-format="Projection Mapping"
+        data-cover="../Asset/Studio%20Projects/Mapping%20Mediamorfosis/2%20Portada.webp" data-video="../Asset/Studio%20Projects/Mapping%20Mediamorfosis/Mapping%20Reel%20(1).MP4"
+        data-palette='["#332457","#332457","#332457","#a482f9","#319a8c","#845fa3","#48888c","#9a00ee","#a482f9"]' data-back="#a4ace0">
+        <img class="row__thumb" loading="lazy" src="../Asset/Studio%20Projects/Mapping%20Mediamorfosis/2%20Portada.webp" alt="">
+        <span class="row__name">Mapping Mediamorfosis</span>
+        <span class="row__meta">Projection Mapping</span>
+      </a>
+      <a class="row" href="work/neurocosm-xr.html"
+        data-track="studio" data-format-key="installation"
+        data-title="Neurocosm XR" data-format="Interactive Installation"
+        data-cover="../Asset/Studio%20Projects/Neurocosm%20XR%20Installation/1%20Portada.webp" data-video="../Asset/Studio%20Projects/Neurocosm%20XR%20Installation/Neurocosm%20XR%20Reel.MP4"
+        data-palette='["#091b57","#091b57","#091b57","#18338c","#3654ad","#9bc3ff","#9bc3ff","#18338c"]' data-back="#acbbe0">
+        <img class="row__thumb" loading="lazy" src="../Asset/Studio%20Projects/Neurocosm%20XR%20Installation/1%20Portada.webp" alt="">
+        <span class="row__name">Neurocosm XR</span>
+        <span class="row__meta">Interactive Installation</span>
+      </a>
+      <a class="row" href="work/alma-digital-fest.html"
+        data-track="studio" data-format-key="performance"
+        data-title="Alma Digital Fest" data-format="Immersive Art Festival"
+        data-cover="../Asset/Studio%20Projects/Alma%20Digital%20Fest/3%20Portada.webp" data-video="../Asset/Studio%20Projects/Alma%20Digital%20Fest/Alma%20Fest%20Reel.mp4"
+        data-palette='["#1c1f57","#1c1f57","#1c1f57","#3b3f8c","#58338c","#8c558c","#8c5171","#9a4218","#3b3f8c"]' data-back="#a8a2e0">
+        <img class="row__thumb" loading="lazy" src="../Asset/Studio%20Projects/Alma%20Digital%20Fest/3%20Portada.webp" alt="">
+        <span class="row__name">Alma Digital Fest</span>
+        <span class="row__meta">Immersive Art Festival</span>
+      </a>
+      <a class="row" href="work/neurocosm-360.html"
+        data-track="studio" data-format-key="vr"
+        data-title="Neurocosm 360" data-format="360° &amp; VR Short Film"
+        data-cover="../Asset/Studio%20Projects/Neurocosm%20360/1%20Portada.webp" data-video="../Asset/Studio%20Projects/Neurocosm%20360/Neurocosm%20360Reel.MP4"
+        data-palette='["#570015","#570015","#570015","#8c0022","#4b7a8c","#c1001d","#8c0018","#2f008c","#8c0022"]' data-back="#e099ab">
+        <img class="row__thumb" loading="lazy" src="../Asset/Studio%20Projects/Neurocosm%20360/1%20Portada.webp" alt="">
+        <span class="row__name">Neurocosm 360</span>
+        <span class="row__meta">360° &amp; VR Short Film</span>
+      </a>
+      <a class="row" href="work/pixel-liquido.html"
+        data-track="studio" data-format-key="installation"
+        data-title="Pixel Liquido" data-format="Interactive Exhibition"
+        data-cover="../Asset/Studio%20Projects/Pixel%20Liquido/2%20Portada.webp" data-video="../Asset/Studio%20Projects/Pixel%20Liquido/Pixel%20Liquido%20Reel.mp4"
+        data-palette='["#1c3657","#1c3657","#1c3657","#6aa9fa","#58788c","#9c9bfa","#256bb7","#ff7fee","#6aa9fa"]' data-back="#99bbe0">
+        <img class="row__thumb" loading="lazy" src="../Asset/Studio%20Projects/Pixel%20Liquido/2%20Portada.webp" alt="">
+        <span class="row__name">Pixel Liquido</span>
+        <span class="row__meta">Interactive Exhibition</span>
+      </a>
+      <a class="row" href="work/digital-prana.html"
+        data-track="studio" data-format-key="installation"
+        data-title="Digital Prana" data-format="AI Interactive Breathwork"
+        data-cover="../Asset/Studio%20Projects/Digital%20Prana/3%20Portada.webp" data-video="../Asset/Studio%20Projects/Digital%20Prana/DigitalPranaReel.mp4"
+        data-palette='["#120057","#120057","#120057","#3e0bff","#321c8c","#3200e6","#8c3b69","#934f6c","#3e0bff"]' data-back="#a499e0">
+        <img class="row__thumb" loading="lazy" src="../Asset/Studio%20Projects/Digital%20Prana/3%20Portada.webp" alt="">
+        <span class="row__name">Digital Prana</span>
+        <span class="row__meta">AI Interactive Breathwork</span>
+      </a>
+      <a class="row" href="work/soul-charger.html"
+        data-track="studio" data-format-key="vr"
+        data-title="Soul Charger" data-format="Interactive Biofeedback VR"
+        data-cover="../Asset/Studio%20Projects/Soul%20Charger/1%20Portada.webp" data-video="../Asset/Studio%20Projects/Soul%20Charger/Soul%20Charger%20Reel.mp4"
+        data-palette='["#570c09","#570c09","#570c09","#8c1d19","#e61f15","#ff3314","#ff3314","#8c1d19"]' data-back="#e09d99">
+        <img class="row__thumb" loading="lazy" src="../Asset/Studio%20Projects/Soul%20Charger/1%20Portada.webp" alt="">
+        <span class="row__name">Soul Charger</span>
+        <span class="row__meta">Interactive Biofeedback VR</span>
+      </a>
+      <a class="row" href="work/alma-digital-360.html"
+        data-track="studio" data-format-key="performance"
+        data-title="Alma Digital 360" data-format="Immersive Audiovisual Performance"
+        data-cover="../Asset/Studio%20Projects/Alma%20Digital%20360/2%20Portada.webp" data-video="../Asset/Studio%20Projects/Alma%20Digital%20360/Reel%20Alma%20Digital%20360.mp4"
+        data-palette='["#571213","#571213","#571213","#8c2a2a","#8c3e6c","#ff2015","#ad3664","#00788c","#8c2a2a"]' data-back="#e0afb7">
+        <img class="row__thumb" loading="lazy" src="../Asset/Studio%20Projects/Alma%20Digital%20360/2%20Portada.webp" alt="">
+        <span class="row__name">Alma Digital 360</span>
+        <span class="row__meta">Immersive Audiovisual Performance</span>
+      </a>
+      <a class="row" href="work/my2drops.html"
+        data-track="commission" data-format-key="vr"
+        data-title="My2DROPS" data-format="VR Short Film"
+        data-cover="../Asset/Commisions/my2DROPS/1%20portada.webp" data-video="../Asset/Commisions/my2DROPS/my2DROPS%20Reel.mp4"
+        data-palette='["#001a57","#001a57","#001a57","#032d90","#00218c","#849bdc","#62b993","#6bacb1","#032d90"]' data-back="#99ade0">
+        <img class="row__thumb" loading="lazy" src="../Asset/Commisions/my2DROPS/1%20portada.webp" alt="">
+        <span class="row__name">My2DROPS</span>
+        <span class="row__meta">VR Short Film</span>
+      </a>
+      <a class="row" href="work/pacha-ibiza.html"
+        data-track="commission" data-format-key="installation"
+        data-title="Pacha Ibiza" data-format="Interactive Installation"
+        data-cover="../Asset/Commisions/Pacha/3%20Portada.webp" data-video="../Asset/Commisions/Pacha/Pacha%20Reel.MP4"
+        data-palette='["#570029","#570029","#570029","#8c0042","#20188c","#63178c","#8c0085","#fb0069","#8c0042"]' data-back="#e099c4">
+        <img class="row__thumb" loading="lazy" src="../Asset/Commisions/Pacha/3%20Portada.webp" alt="">
+        <span class="row__name">Pacha Ibiza</span>
+        <span class="row__meta">Interactive Installation</span>
+      </a>
+      <a class="row" href="work/fashion-show-micsur.html"
+        data-track="commission" data-format-key="performance"
+        data-title="Fashion Show Micsur" data-format="Immersive Design — Live Performance"
+        data-cover="../Asset/Commisions/Fashion%20Show%20Micsur/3%20Portada.webp" data-video="../Asset/Commisions/Fashion%20Show%20Micsur/MICSUR%20REEL%20VERTICAL%20(1).mp4"
+        data-palette='["#005702","#005702","#005702","#008c03","#008c35","#195d8c","#3d3f8c","#8c0040","#008c03"]' data-back="#bcdae0">
+        <img class="row__thumb" loading="lazy" src="../Asset/Commisions/Fashion%20Show%20Micsur/3%20Portada.webp" alt="">
+        <span class="row__name">Fashion Show Micsur</span>
+        <span class="row__meta">Immersive Design — Live Performance</span>
+      </a>
+      <a class="row" href="work/adidas-terrex.html"
+        data-track="commission" data-format-key="installation"
+        data-title="Adidas Terrex" data-format="Immersive Design — Interactive Installation"
+        data-cover="../Asset/Commisions/Adidas%20Terrex/3%20Portada.webp" data-video="../Asset/Commisions/Adidas%20Terrex/Adidas%20Terrex%20Reel.MP4"
+        data-palette='["#572d09","#572d09","#572d09","#8c4e19","#caaa73","#8c8456","#ffdf93","#8c844f","#8c4e19"]' data-back="#e0d0ba">
+        <img class="row__thumb" loading="lazy" src="../Asset/Commisions/Adidas%20Terrex/3%20Portada.webp" alt="">
+        <span class="row__name">Adidas Terrex</span>
+        <span class="row__meta">Immersive Design — Interactive Installation</span>
+      </a>
+      <a class="row" href="work/panta-rhei.html"
+        data-track="commission" data-format-key="design"
+        data-title="Panta Rhei" data-format="Immersive Short Film"
+        data-cover="../Asset/Commisions/Panta%20Rhei/1%20portada.webp" data-video="../Asset/Commisions/Panta%20Rhei/Panta%20Rhei%20Reel.mp4"
+        data-palette='["#021657","#021657","#021657","#0c2a8c","#1442c1","#067dff","#067dff","#0c2a8c"]' data-back="#99ade0">
+        <img class="row__thumb" loading="lazy" src="../Asset/Commisions/Panta%20Rhei/1%20portada.webp" alt="">
+        <span class="row__name">Panta Rhei</span>
+        <span class="row__meta">Immersive Short Film</span>
+      </a>
+      <a class="row" href="work/eit-culture-and-creativity.html"
+        data-track="commission" data-format-key="design"
+        data-title="EIT Culture and Creativity" data-format="Immersive Design"
+        data-cover="../Asset/Commisions/EIT/3%20portada.webp" data-video="../Asset/Commisions/EIT/EIT%20Reel.mp4"
+        data-palette='["#573018","#573018","#573018","#8c5633","#8c5350","#33308c","#00318c","#8c485d","#8c5633"]' data-back="#e0bcdb">
+        <img class="row__thumb" loading="lazy" src="../Asset/Commisions/EIT/3%20portada.webp" alt="">
+        <span class="row__name">EIT Culture and Creativity</span>
+        <span class="row__meta">Immersive Design</span>
+      </a>
+      <a class="row" href="work/latam-airlines.html"
+        data-track="commission" data-format-key="design"
+        data-title="LATAM Airlines" data-format="Immersive Visuals"
+        data-cover="../Asset/Commisions/Latam/1%20portada.webp" data-video="../Asset/Commisions/Latam/Latam%20Reel.mp4"
+        data-palette='["#001557","#001557","#001557","#00218c","#004ef0","#00518c","#001da4","#fc007c","#00218c"]' data-back="#999fe0">
+        <img class="row__thumb" loading="lazy" src="../Asset/Commisions/Latam/1%20portada.webp" alt="">
+        <span class="row__name">LATAM Airlines</span>
+        <span class="row__meta">Immersive Visuals</span>
+      </a>
+      <a class="row" href="work/lps.html"
+        data-track="commission" data-format-key="dome"
+        data-title="LPS" data-format="Immersive Visuals — 360°"
+        data-cover="../Asset/Commisions/LPS/2%20Portada.webp" data-video=""
+        data-palette='["#001057","#001057","#001057","#001fad","#15008c","#001d8c","#8c4430","#7d508c","#001fad"]' data-back="#9c99e0">
+        <img class="row__thumb" loading="lazy" src="../Asset/Commisions/LPS/2%20Portada.webp" alt="">
+        <span class="row__name">LPS</span>
+        <span class="row__meta">Immersive Visuals — 360°</span>
+      </a>
+      <p class="empty" hidden>No hay obras con esos filtros.</p>
+    </div>
+
+    <div class="preview" aria-hidden="true">
+      <div class="preview__media">
+        <img class="preview__img" alt="">
+        <video class="preview__vid" muted loop playsinline></video>
+      </div>
+      <div class="preview__idle">Pasá por una obra</div>
+      <div class="preview__cap"><h3></h3><p></p></div>
+    </div>
+  </div>
+</main>
+</div>
+
+<aside class="proto">
+  <button aria-label="Ocultar aviso">✕</button>
+  <b>Prototipo</b>
+  Estructura y datos reales. Faltan los años de cada obra y el material en alta
+  — eso sale de los másters del estudio.
+</aside>
+
+<script>window.__ALMA__ = {"palette":null,"back":null};</script>
+<script src="../prototype/fluid.js"></script>
+<script src="../prototype/app.js"></script>
+</body>
+</html>

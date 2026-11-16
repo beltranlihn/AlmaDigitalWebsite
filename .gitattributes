@@ -1,0 +1,18 @@
+# Fin de línea normalizado: sin diferencias fantasma entre Windows y Mac.
+* text=auto
+
+# Binarios: git no los toca.
+*.mp4  binary
+*.MP4  binary
+*.mov  binary
+*.webp binary
+*.png  binary
+*.jpg  binary
+*.jpeg binary
+*.ico  binary
+*.ttf  binary
+*.otf  binary
+*.ai   binary
+*.psd  binary
+*.docx binary
+*.pdf  binary

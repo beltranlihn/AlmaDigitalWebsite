@@ -1,0 +1,17 @@
+# Carpeta local de la CLI de Netlify
+.netlify
+
+# Salida del build: la genera tools/deploy_copy.py en cada deploy
+dist/
+
+# Dependencias (sharp, para scripts de imágenes): se reinstalan con `npm install`
+node_modules/
+
+# Sistema operativo
+Thumbs.db
+desktop.ini
+.DS_Store
+__pycache__/
+
+# Configuración personal de Claude Code de cada uno (launch.json sí se comparte)
+.claude/settings.local.json

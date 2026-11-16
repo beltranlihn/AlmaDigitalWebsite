@@ -1,0 +1,879 @@
+{
+  "meta": {
+    "note": "Prototipo. year y press quedan vacíos a propósito: son datos que sólo tiene el estudio.",
+    "tracks": {
+      "studio": "Studio Projects",
+      "commission": "Commissions"
+    },
+    "formats": {
+      "vr": "VR / XR",
+      "installation": "Instalación",
+      "dome": "Domo / 360°",
+      "mapping": "Mapping",
+      "performance": "Performance",
+      "design": "Diseño inmersivo"
+    }
+  },
+  "projects": [
+    {
+      "slug": "neural-canvas",
+      "title": "Neural Canvas",
+      "format": "Interactive VR Painting",
+      "track": "studio",
+      "cover": "Asset/Studio Projects/Neural Canvas/3 Portada.webp",
+      "video": "Asset/Studio Projects/Neural Canvas/Neural Canvas Reel.mp4",
+      "photos": [
+        "Asset/Studio Projects/Neural Canvas/1.webp",
+        "Asset/Studio Projects/Neural Canvas/2.webp",
+        "Asset/Studio Projects/Neural Canvas/3 Portada.webp"
+      ],
+      "desc": "An interactive VR painting experience where each participant paints freely for two minutes while an EEG sensor tracks their state of calm, folding brain activity into the creative gesture itself. The 200 individual sessions were assembled into a single collective artwork, unveiled live at the EUIPO headquarters in Alicante.",
+      "commissionedBy": "",
+      "presentedAt": [
+        "EUIPO, Alicante, Spain — EIT Culture & Creativity Innovation Forum"
+      ],
+      "credits": [
+        "Created and Produced by: Alma Digital Studio",
+        "Visuals & Music by: Vicente Manzano & Beltrán Lihn",
+        "Development by: Beltrán Lihn & Nicolas Pirelli"
+      ],
+      "palette": [
+        "#050057",
+        "#050057",
+        "#050057",
+        "#08008c",
+        "#43008c",
+        "#8c4676",
+        "#7d168c",
+        "#8c4054",
+        "#08008c"
+      ],
+      "back": "#a299e0",
+      "body": [
+        "Neural Canvas VR is an interactive VR painting experience created by Alma Digital Studio for the EIT Culture & Creativity Innovation Forum.",
+        "Each participant steps into a virtual studio and paints freely for two minutes while an EEG sensor tracks their state of calm, folding brain activity into the creative gesture itself.",
+        "The 200 individual sessions are assembled into a single collective artwork, unveiled live at the EUIPO headquarters in Alicante. The piece distills the studio's thesis: creativity, biofeedback and wellbeing in one measurable, shared experience."
+      ],
+      "tech": [
+        "EEG",
+        "VR",
+        "Biofeedback"
+      ],
+      "year": "",
+      "press": [],
+      "formatKey": "vr"
+    },
+    {
+      "slug": "collective-pulse",
+      "title": "Collective Pulse",
+      "format": "Interactive Biofeedback Installation",
+      "track": "studio",
+      "cover": "Asset/Studio Projects/Collective Pulse/3 Portada.webp",
+      "video": "Asset/Studio Projects/Collective Pulse/Collective Pulse Reel.mp4",
+      "photos": [
+        "Asset/Studio Projects/Collective Pulse/1.webp",
+        "Asset/Studio Projects/Collective Pulse/2.webp",
+        "Asset/Studio Projects/Collective Pulse/3 Portada.webp"
+      ],
+      "desc": "Visitors place a finger on a pulse sensor and their heartbeat appears on a large-scale projection as a living organic form, beating at their own rhythm. When several people are read at once, their forms share the same field, drifting toward one another or pulling apart. Nothing is pre-rendered: each form lives only for its session.",
+      "commissionedBy": "",
+      "presentedAt": [
+        "ArtLac Gallery, IDB Bank, Washington DC, USA"
+      ],
+      "credits": [
+        "Created and Produced by: Alma Digital Studio",
+        "Visuals & Music by: Vicente Manzano & Beltrán Lihn"
+      ],
+      "palette": [
+        "#57381a",
+        "#57381a",
+        "#57381a",
+        "#8c6137",
+        "#8c6846",
+        "#e6c38a",
+        "#f06f3d",
+        "#f55364",
+        "#8c6137"
+      ],
+      "back": "#e0cec1",
+      "body": [
+        "Real-time biometric installation for groups. Visitors place a finger on a pulse sensor and their heartbeat appears on a large-scale projection as a living organic form, beating at their own rhythm.",
+        "When several people are read at the same time, their forms share the same field: they drift toward one another or pull apart. The piece runs on a custom real-time engine developed in-house, rendering at 60fps. Nothing is pre-rendered — every form exists only during the session that produced it, and disappears with it.",
+        "The work makes no claim that an audience synchronises. What the room shows is behaviour, attraction and dispersion, and what it asks is older than the sensor: what, if anything, a group of bodies shares when they are read together."
+      ],
+      "tech": [
+        "Biofeedback",
+        "Tiempo real",
+        "Sensor de pulso"
+      ],
+      "year": "",
+      "press": [],
+      "formatKey": "installation"
+    },
+    {
+      "slug": "neurocosm-full-dome",
+      "title": "Neurocosm Full Dome",
+      "format": "Full Dome Experience",
+      "track": "studio",
+      "cover": "Asset/Studio Projects/Neurocosm Full Dome/Foto1 - Portada.webp",
+      "video": "Asset/Studio Projects/Neurocosm Full Dome/NeurocosmFullDomeReel.mp4",
+      "photos": [
+        "Asset/Studio Projects/Neurocosm Full Dome/Foto1 - Portada.webp",
+        "Asset/Studio Projects/Neurocosm Full Dome/Foto2.webp",
+        "Asset/Studio Projects/Neurocosm Full Dome/Foto3.webp"
+      ],
+      "desc": "A 45-minute immersive full dome audiovisual performance guiding audiences through a meditative journey. Integrates generative visuals with real-time biometric data from EEG headsets.",
+      "commissionedBy": "",
+      "presentedAt": [
+        "Cult VR, Cardiff, Wales",
+        "The Market Hall, Plymouth, England",
+        "Full Dome Festival, Santiago, Chile",
+        "Full Dome Festival, Montevideo, Uruguay"
+      ],
+      "credits": [
+        "Created and Produced by: Alma Digital Studio",
+        "Visuals by: Vicente Manzano & Beltrán Lihn",
+        "Live Performance by: Vicente Manzano & Beltrán Lihn",
+        "Dolby Atmos Mix by: Christopher Manhey at Omni SoundLab"
+      ],
+      "palette": [
+        "#570002",
+        "#570002",
+        "#570002",
+        "#8c0003",
+        "#a4000b",
+        "#ff001c",
+        "#004a8c",
+        "#8c527f",
+        "#8c0003"
+      ],
+      "back": "#e099a0",
+      "tech": [
+        "EEG",
+        "Dolby Atmos",
+        "Biofeedback",
+        "Visuales generativas",
+        "Tiempo real"
+      ],
+      "body": [
+        "A 45-minute immersive full dome audiovisual performance guiding audiences through a meditative journey. Integrates generative visuals with real-time biometric data from EEG headsets."
+      ],
+      "year": "",
+      "press": [],
+      "formatKey": "dome"
+    },
+    {
+      "slug": "mapping-mediamorfosis",
+      "title": "Mapping Mediamorfosis",
+      "format": "Projection Mapping",
+      "track": "studio",
+      "cover": "Asset/Studio Projects/Mapping Mediamorfosis/2 Portada.webp",
+      "video": "Asset/Studio Projects/Mapping Mediamorfosis/Mapping Reel (1).MP4",
+      "photos": [
+        "Asset/Studio Projects/Mapping Mediamorfosis/1.webp",
+        "Asset/Studio Projects/Mapping Mediamorfosis/2 Portada.webp",
+        "Asset/Studio Projects/Mapping Mediamorfosis/3.webp"
+      ],
+      "desc": "Large-scale projection mapping on the historic Palacio Vergara, featuring a 45-minute live audiovisual show at the Viña del Mar International Festival.",
+      "commissionedBy": "",
+      "presentedAt": [
+        "Festival Mediamorfosis 2024, Viña del Mar, Chile"
+      ],
+      "credits": [
+        "Created and Produced by: Alma Digital Studio",
+        "Original Visuals and Music by: Alma Digital",
+        "Live Audiovisual Performance by: Alma Digital"
+      ],
+      "palette": [
+        "#332457",
+        "#332457",
+        "#332457",
+        "#a482f9",
+        "#319a8c",
+        "#845fa3",
+        "#48888c",
+        "#9a00ee",
+        "#a482f9"
+      ],
+      "back": "#a4ace0",
+      "tech": [
+        "Projection mapping"
+      ],
+      "body": [
+        "Large-scale projection mapping on the historic Palacio Vergara, featuring a 45-minute live audiovisual show at the Viña del Mar International Festival."
+      ],
+      "year": "",
+      "press": [],
+      "formatKey": "mapping"
+    },
+    {
+      "slug": "neurocosm-xr",
+      "title": "Neurocosm XR",
+      "format": "Interactive Installation",
+      "track": "studio",
+      "cover": "Asset/Studio Projects/Neurocosm XR Installation/1 Portada.webp",
+      "video": "Asset/Studio Projects/Neurocosm XR Installation/Neurocosm XR Reel.MP4",
+      "photos": [
+        "Asset/Studio Projects/Neurocosm XR Installation/1 Portada.webp",
+        "Asset/Studio Projects/Neurocosm XR Installation/2.webp",
+        "Asset/Studio Projects/Neurocosm XR Installation/3.webp"
+      ],
+      "desc": "An interactive biofeedback installation translating neural activity via EEG headsets into generative visual fields projected in real time.",
+      "commissionedBy": "",
+      "presentedAt": [
+        "ArtLac Gallery, Washington, DC — IDB Bank (March–July 2025)",
+        "CRITIC Fest, Santiago, Chile, 2024",
+        "Mediamorfosis Fest Chile — Pitch XR Winner",
+        "New Images Festival — XR Market, Paris, France"
+      ],
+      "credits": [
+        "Created and Developed by: Alma Digital Studio",
+        "Directed by: Vicente Manzano",
+        "UX & Interactivity by: Beltrán Lihn & Marco Gajardo",
+        "Sound Design by: Vicente Manzano & Beltrán Lihn",
+        "Dolby Atmos Mix by: Christopher Manhey at Omni SoundLab"
+      ],
+      "palette": [
+        "#091b57",
+        "#091b57",
+        "#091b57",
+        "#18338c",
+        "#3654ad",
+        "#9bc3ff",
+        "#9bc3ff",
+        "#18338c"
+      ],
+      "back": "#acbbe0",
+      "tech": [
+        "EEG",
+        "Dolby Atmos",
+        "Biofeedback",
+        "Visuales generativas",
+        "Tiempo real"
+      ],
+      "body": [
+        "An interactive biofeedback installation translating neural activity via EEG headsets into generative visual fields projected in real time."
+      ],
+      "year": "",
+      "press": [],
+      "formatKey": "installation"
+    },
+    {
+      "slug": "alma-digital-fest",
+      "title": "Alma Digital Fest",
+      "format": "Immersive Art Festival",
+      "track": "studio",
+      "cover": "Asset/Studio Projects/Alma Digital Fest/3 Portada.webp",
+      "video": "Asset/Studio Projects/Alma Digital Fest/Alma Fest Reel.mp4",
+      "photos": [
+        "Asset/Studio Projects/Alma Digital Fest/1.webp",
+        "Asset/Studio Projects/Alma Digital Fest/2.webp",
+        "Asset/Studio Projects/Alma Digital Fest/3 Portada.webp"
+      ],
+      "desc": "An 8-hour immersive art festival at Palacio Concha y Toro in Santiago, merging live performances, interactive installations, and generative environments.",
+      "commissionedBy": "",
+      "presentedAt": [
+        "Palacio Concha y Toro, Santiago, Chile"
+      ],
+      "credits": [
+        "Created and Produced by: Alma Digital Studio",
+        "Immersive Audio System: Stecher Lab",
+        "Interactive Installations by: Alma Digital",
+        "Interactive Developer: Marco Gajardo",
+        "Live Performances by: Alma Digital and other artists"
+      ],
+      "palette": [
+        "#1c1f57",
+        "#1c1f57",
+        "#1c1f57",
+        "#3b3f8c",
+        "#58338c",
+        "#8c558c",
+        "#8c5171",
+        "#9a4218",
+        "#3b3f8c"
+      ],
+      "back": "#a8a2e0",
+      "tech": [
+        "Visuales generativas"
+      ],
+      "body": [
+        "An 8-hour immersive art festival at Palacio Concha y Toro in Santiago, merging live performances, interactive installations, and generative environments."
+      ],
+      "year": "",
+      "press": [],
+      "formatKey": "performance"
+    },
+    {
+      "slug": "neurocosm-360",
+      "title": "Neurocosm 360",
+      "format": "360° & VR Short Film",
+      "track": "studio",
+      "cover": "Asset/Studio Projects/Neurocosm 360/1 Portada.webp",
+      "video": "Asset/Studio Projects/Neurocosm 360/Neurocosm 360Reel.MP4",
+      "photos": [
+        "Asset/Studio Projects/Neurocosm 360/1 Portada.webp",
+        "Asset/Studio Projects/Neurocosm 360/2.webp",
+        "Asset/Studio Projects/Neurocosm 360/3.webp"
+      ],
+      "desc": "Adapts the Neurocosm experience for specialized immersive rooms and VR environments, expanding its reach beyond fixed-dome installations.",
+      "commissionedBy": "",
+      "presentedAt": [
+        "Sabda Studio, Barcelona, Spain",
+        "XR Lab, Barcelona, Spain"
+      ],
+      "credits": [
+        "Created and Produced by: Alma Digital Studio",
+        "Visuals by: Vicente Manzano & Beltrán Lihn",
+        "Live Performance by: Vicente Manzano & Beltrán Lihn",
+        "Dolby Atmos Mix by: Christopher Manhey at Omni SoundLab"
+      ],
+      "palette": [
+        "#570015",
+        "#570015",
+        "#570015",
+        "#8c0022",
+        "#4b7a8c",
+        "#c1001d",
+        "#8c0018",
+        "#2f008c",
+        "#8c0022"
+      ],
+      "back": "#e099ab",
+      "tech": [
+        "Dolby Atmos",
+        "VR"
+      ],
+      "body": [
+        "Adapts the Neurocosm experience for specialized immersive rooms and VR environments, expanding its reach beyond fixed-dome installations."
+      ],
+      "year": "",
+      "press": [],
+      "formatKey": "vr"
+    },
+    {
+      "slug": "pixel-liquido",
+      "title": "Pixel Liquido",
+      "format": "Interactive Exhibition",
+      "track": "studio",
+      "cover": "Asset/Studio Projects/Pixel Liquido/2 Portada.webp",
+      "video": "Asset/Studio Projects/Pixel Liquido/Pixel Liquido Reel.mp4",
+      "photos": [
+        "Asset/Studio Projects/Pixel Liquido/1.webp",
+        "Asset/Studio Projects/Pixel Liquido/2 Portada.webp",
+        "Asset/Studio Projects/Pixel Liquido/3.webp"
+      ],
+      "desc": "An interactive exhibition exploring the fluid boundaries between digital and physical matter through responsive generative environments.",
+      "commissionedBy": "",
+      "presentedAt": [],
+      "credits": [
+        "Created and Produced by: Alma Digital Studio",
+        "Visuals by: Vicente Manzano & Beltrán Lihn"
+      ],
+      "palette": [
+        "#1c3657",
+        "#1c3657",
+        "#1c3657",
+        "#6aa9fa",
+        "#58788c",
+        "#9c9bfa",
+        "#256bb7",
+        "#ff7fee",
+        "#6aa9fa"
+      ],
+      "back": "#99bbe0",
+      "tech": [
+        "Visuales generativas"
+      ],
+      "body": [
+        "An interactive exhibition exploring the fluid boundaries between digital and physical matter through responsive generative environments."
+      ],
+      "year": "",
+      "press": [],
+      "formatKey": "installation"
+    },
+    {
+      "slug": "digital-prana",
+      "title": "Digital Prana",
+      "format": "AI Interactive Breathwork",
+      "track": "studio",
+      "cover": "Asset/Studio Projects/Digital Prana/3 Portada.webp",
+      "video": "Asset/Studio Projects/Digital Prana/DigitalPranaReel.mp4",
+      "photos": [
+        "Asset/Studio Projects/Digital Prana/1.webp",
+        "Asset/Studio Projects/Digital Prana/2.webp",
+        "Asset/Studio Projects/Digital Prana/3 Portada.webp"
+      ],
+      "desc": "An AI-powered interactive breathwork experience that adapts generative visuals and soundscapes to the collective emotional state of the audience.",
+      "commissionedBy": "",
+      "presentedAt": [
+        "ETM Entrepreneurs Festival",
+        "IDB Bank, March–July 2025"
+      ],
+      "credits": [
+        "Created and Produced by: Alma Digital Studio",
+        "Visuals by: Vicente Manzano & Beltrán Lihn",
+        "Dolby Atmos Mix by: Christopher Manhey at Omni SoundLab"
+      ],
+      "palette": [
+        "#120057",
+        "#120057",
+        "#120057",
+        "#3e0bff",
+        "#321c8c",
+        "#3200e6",
+        "#8c3b69",
+        "#934f6c",
+        "#3e0bff"
+      ],
+      "back": "#a499e0",
+      "tech": [
+        "Dolby Atmos",
+        "IA",
+        "Visuales generativas"
+      ],
+      "body": [
+        "An AI-powered interactive breathwork experience that adapts generative visuals and soundscapes to the collective emotional state of the audience."
+      ],
+      "year": "",
+      "press": [],
+      "formatKey": "installation"
+    },
+    {
+      "slug": "soul-charger",
+      "title": "Soul Charger",
+      "format": "Interactive Biofeedback VR",
+      "track": "studio",
+      "cover": "Asset/Studio Projects/Soul Charger/1 Portada.webp",
+      "video": "Asset/Studio Projects/Soul Charger/Soul Charger Reel.mp4",
+      "photos": [
+        "Asset/Studio Projects/Soul Charger/1 Portada.webp",
+        "Asset/Studio Projects/Soul Charger/2.webp",
+        "Asset/Studio Projects/Soul Charger/3.webp"
+      ],
+      "desc": "A 10-minute interactive VR experience merging biofeedback, neuroaesthetics, AI, and applied bioethics into a transformative personal journey. In Collaboration with iDeas Lab, Johns Hopkins University's Berman Institute of Bioethics.",
+      "commissionedBy": "",
+      "presentedAt": [],
+      "credits": [
+        "Created and Produced by: Alma Digital Studio",
+        "Visuals by: Vicente Manzano & Beltrán Lihn",
+        "Live Performance by: Vicente Manzano & Beltrán Lihn",
+        "Dolby Atmos Mix by: Christopher Manhey at Omni SoundLab"
+      ],
+      "legacyUrl": "soul-charger.html",
+      "palette": [
+        "#570c09",
+        "#570c09",
+        "#570c09",
+        "#8c1d19",
+        "#e61f15",
+        "#ff3314",
+        "#ff3314",
+        "#8c1d19"
+      ],
+      "back": "#e09d99",
+      "tech": [
+        "Dolby Atmos",
+        "VR",
+        "Biofeedback",
+        "IA"
+      ],
+      "body": [
+        "A 10-minute interactive VR experience merging biofeedback, neuroaesthetics, AI, and applied bioethics into a transformative personal journey. In Collaboration with iDeas Lab, Johns Hopkins University's Berman Institute of Bioethics."
+      ],
+      "year": "",
+      "press": [],
+      "formatKey": "vr"
+    },
+    {
+      "slug": "alma-digital-360",
+      "title": "Alma Digital 360",
+      "format": "Immersive Audiovisual Performance",
+      "track": "studio",
+      "cover": "Asset/Studio Projects/Alma Digital 360/2 Portada.webp",
+      "video": "Asset/Studio Projects/Alma Digital 360/Reel Alma Digital 360.mp4",
+      "photos": [
+        "Asset/Studio Projects/Alma Digital 360/1.webp",
+        "Asset/Studio Projects/Alma Digital 360/2 Portada.webp",
+        "Asset/Studio Projects/Alma Digital 360/3.webp"
+      ],
+      "desc": "An immersive audiovisual performance designed as a transformative journey through generative landscapes and spatial sound.",
+      "commissionedBy": "",
+      "presentedAt": [
+        "Fixiona Immersive Space, Santiago, Chile, 2024",
+        "Sabda Studio, Barcelona, Spain, 2024"
+      ],
+      "credits": [
+        "Created and Produced by: Alma Digital Studio",
+        "Visuals & Music by: Vicente Manzano & Beltrán Lihn",
+        "Live Performance by: Vicente Manzano & Beltrán Lihn",
+        "Dolby Atmos Mix by: Christopher Manhey at Omni SoundLab"
+      ],
+      "palette": [
+        "#571213",
+        "#571213",
+        "#571213",
+        "#8c2a2a",
+        "#8c3e6c",
+        "#ff2015",
+        "#ad3664",
+        "#00788c",
+        "#8c2a2a"
+      ],
+      "back": "#e0afb7",
+      "tech": [
+        "Dolby Atmos",
+        "Visuales generativas"
+      ],
+      "body": [
+        "An immersive audiovisual performance designed as a transformative journey through generative landscapes and spatial sound."
+      ],
+      "year": "",
+      "press": [],
+      "formatKey": "performance"
+    },
+    {
+      "slug": "my2drops",
+      "title": "My2DROPS",
+      "format": "VR Short Film",
+      "track": "commission",
+      "cover": "Asset/Commisions/my2DROPS/1 portada.webp",
+      "video": "Asset/Commisions/my2DROPS/my2DROPS Reel.mp4",
+      "photos": [
+        "Asset/Commisions/my2DROPS/1 portada.webp",
+        "Asset/Commisions/my2DROPS/2.webp",
+        "Asset/Commisions/my2DROPS/3.webp"
+      ],
+      "desc": "A narrative immersive audiovisual experience and Virtual Reality journey showcasing the heart of my2DROPS, a future-oriented startup. The piece highlights the brand's core values and vision through high-end immersive storytelling.",
+      "commissionedBy": "my2DROPS",
+      "presentedAt": [],
+      "credits": [
+        "Created and Produced by: Alma Digital",
+        "Music by: Alma Digital"
+      ],
+      "palette": [
+        "#001a57",
+        "#001a57",
+        "#001a57",
+        "#032d90",
+        "#00218c",
+        "#849bdc",
+        "#62b993",
+        "#6bacb1",
+        "#032d90"
+      ],
+      "back": "#99ade0",
+      "tech": [
+        "VR"
+      ],
+      "body": [
+        "A narrative immersive audiovisual experience and Virtual Reality journey showcasing the heart of my2DROPS, a future-oriented startup. The piece highlights the brand's core values and vision through high-end immersive storytelling."
+      ],
+      "year": "",
+      "press": [],
+      "formatKey": "vr"
+    },
+    {
+      "slug": "pacha-ibiza",
+      "title": "Pacha Ibiza",
+      "format": "Interactive Installation",
+      "track": "commission",
+      "cover": "Asset/Commisions/Pacha/3 Portada.webp",
+      "video": "Asset/Commisions/Pacha/Pacha Reel.MP4",
+      "photos": [
+        "Asset/Commisions/Pacha/1.webp",
+        "Asset/Commisions/Pacha/2.webp",
+        "Asset/Commisions/Pacha/3 Portada.webp"
+      ],
+      "desc": "A series of interactive installations for Pacha Ibiza's summer season, transforming a 10-meter LED tunnel into an immersive responsive environment. Fifteen custom interactive installations were created using motion tracking and depth mapping technology, each tailored to complement Pacha's signature events.",
+      "commissionedBy": "Gola Studio & Pacha Ibiza",
+      "presentedAt": [],
+      "credits": [
+        "Produced by: Alma Digital Studio & Gola Studio",
+        "Visuals by: Vicente Manzano & Beltrán Lihn",
+        "Interactivity by: Vicente Manzano & Beltrán Lihn",
+        "Software Development by: Beltrán Lihn"
+      ],
+      "palette": [
+        "#570029",
+        "#570029",
+        "#570029",
+        "#8c0042",
+        "#20188c",
+        "#63178c",
+        "#8c0085",
+        "#fb0069",
+        "#8c0042"
+      ],
+      "back": "#e099c4",
+      "tech": [
+        "Projection mapping",
+        "Motion tracking",
+        "Depth mapping"
+      ],
+      "body": [
+        "A series of interactive installations for Pacha Ibiza's summer season, transforming a 10-meter LED tunnel into an immersive responsive environment. Fifteen custom interactive installations were created using motion tracking and depth mapping technology, each tailored to complement Pacha's signature events."
+      ],
+      "year": "",
+      "press": [],
+      "formatKey": "installation"
+    },
+    {
+      "slug": "fashion-show-micsur",
+      "title": "Fashion Show Micsur",
+      "format": "Immersive Design — Live Performance",
+      "track": "commission",
+      "cover": "Asset/Commisions/Fashion Show Micsur/3 Portada.webp",
+      "video": "Asset/Commisions/Fashion Show Micsur/MICSUR REEL VERTICAL (1).mp4",
+      "photos": [
+        "Asset/Commisions/Fashion Show Micsur/1.webp",
+        "Asset/Commisions/Fashion Show Micsur/2.webp",
+        "Asset/Commisions/Fashion Show Micsur/3 Portada.webp"
+      ],
+      "desc": "Developed for MICSUR and presented at the Museo de Arte Contemporáneo, this project integrated immersive visual environments with a live fashion show, combining original music performed in real-time with an immersive sound system mixed in Dolby Atmos.",
+      "commissionedBy": "Ministry of Cultures, Arts & Heritage of Chile & 500 Nanometros",
+      "presentedAt": [
+        "Museo de Arte Contemporáneo, Santiago, Chile"
+      ],
+      "credits": [
+        "Created and Produced by: Alma Digital Studio",
+        "Immersive Audiovisual Installation & Live AV Performance by: Vicente Manzano & Beltrán Lihn",
+        "Lights by: Claudio Huichalaf",
+        "Immersive Sound System: StecherLab"
+      ],
+      "palette": [
+        "#005702",
+        "#005702",
+        "#005702",
+        "#008c03",
+        "#008c35",
+        "#195d8c",
+        "#3d3f8c",
+        "#8c0040",
+        "#008c03"
+      ],
+      "back": "#bcdae0",
+      "tech": [
+        "Dolby Atmos",
+        "Tiempo real",
+        "Sonido inmersivo"
+      ],
+      "body": [
+        "Developed for MICSUR and presented at the Museo de Arte Contemporáneo, this project integrated immersive visual environments with a live fashion show, combining original music performed in real-time with an immersive sound system mixed in Dolby Atmos."
+      ],
+      "year": "",
+      "press": [],
+      "formatKey": "performance"
+    },
+    {
+      "slug": "adidas-terrex",
+      "title": "Adidas Terrex",
+      "format": "Immersive Design — Interactive Installation",
+      "track": "commission",
+      "cover": "Asset/Commisions/Adidas Terrex/3 Portada.webp",
+      "video": "Asset/Commisions/Adidas Terrex/Adidas Terrex Reel.MP4",
+      "photos": [
+        "Asset/Commisions/Adidas Terrex/1.webp",
+        "Asset/Commisions/Adidas Terrex/2.webp",
+        "Asset/Commisions/Adidas Terrex/3 Portada.webp"
+      ],
+      "desc": "An event centered around an interactive cube-shaped installation equipped with motion sensors. Included creative direction, augmented reality design, and immersive soundscapes that responded to audience participation, combining earthy textures and the brand's Mountain aesthetic.",
+      "commissionedBy": "Adidas Terrex CL",
+      "presentedAt": [],
+      "credits": [
+        "Created and Produced by: Alma Digital Studio",
+        "Production by: Alma Digital Studio & Francisco Fontaine",
+        "Visuals by: Vicente Manzano & Beltrán Lihn",
+        "Interactivity by: Beltrán Lihn",
+        "Sound Design by: Vicente Manzano & Beltrán Lihn"
+      ],
+      "palette": [
+        "#572d09",
+        "#572d09",
+        "#572d09",
+        "#8c4e19",
+        "#caaa73",
+        "#8c8456",
+        "#ffdf93",
+        "#8c844f",
+        "#8c4e19"
+      ],
+      "back": "#e0d0ba",
+      "tech": [
+        "AR",
+        "Sensores de movimiento",
+        "Sonido inmersivo"
+      ],
+      "body": [
+        "An event centered around an interactive cube-shaped installation equipped with motion sensors. Included creative direction, augmented reality design, and immersive soundscapes that responded to audience participation, combining earthy textures and the brand's Mountain aesthetic."
+      ],
+      "year": "",
+      "press": [],
+      "formatKey": "installation"
+    },
+    {
+      "slug": "panta-rhei",
+      "title": "Panta Rhei",
+      "format": "Immersive Short Film",
+      "track": "commission",
+      "cover": "Asset/Commisions/Panta Rhei/1 portada.webp",
+      "video": "Asset/Commisions/Panta Rhei/Panta Rhei Reel.mp4",
+      "photos": [
+        "Asset/Commisions/Panta Rhei/1 portada.webp",
+        "Asset/Commisions/Panta Rhei/1.webp",
+        "Asset/Commisions/Panta Rhei/2.webp"
+      ],
+      "desc": "An immersive experience exploring how climate change is affecting our oceans, combining scientific data, 360° visuals, and surround sound to raise environmental awareness. Part of an educational initiative with the Government of Catalonia, featuring seasonal transformations generated from real ocean data.",
+      "commissionedBy": "Sabda Studio",
+      "presentedAt": [],
+      "credits": [
+        "Created by: Alma Digital Studio",
+        "Visuals and Music by: Vicente Manzano & Beltrán Lihn"
+      ],
+      "palette": [
+        "#021657",
+        "#021657",
+        "#021657",
+        "#0c2a8c",
+        "#1442c1",
+        "#067dff",
+        "#067dff",
+        "#0c2a8c"
+      ],
+      "back": "#99ade0",
+      "tech": [
+        "360°",
+        "Sonido inmersivo"
+      ],
+      "body": [
+        "An immersive experience exploring how climate change is affecting our oceans, combining scientific data, 360° visuals, and surround sound to raise environmental awareness. Part of an educational initiative with the Government of Catalonia, featuring seasonal transformations generated from real ocean data."
+      ],
+      "year": "",
+      "press": [],
+      "formatKey": "design"
+    },
+    {
+      "slug": "eit-culture-and-creativity",
+      "title": "EIT Culture and Creativity",
+      "format": "Immersive Design",
+      "track": "commission",
+      "cover": "Asset/Commisions/EIT/3 portada.webp",
+      "video": "Asset/Commisions/EIT/EIT Reel.mp4",
+      "photos": [
+        "Asset/Commisions/EIT/1.webp",
+        "Asset/Commisions/EIT/2.webp",
+        "Asset/Commisions/EIT/3 portada.webp"
+      ],
+      "desc": "Event design and production for a private event in Porto, Portugal. Included the creative direction and design of the stage and screen layout, custom visuals, animations, and a specialized soundscape tailored to the event's identity.",
+      "commissionedBy": "EIT Culture and Creativity",
+      "presentedAt": [],
+      "credits": [
+        "Created and Produced by: Alma Digital Studio",
+        "Visuals and Sound by: Vicente Manzano & Beltrán Lihn",
+        "Event Manager: Chris Alvarez"
+      ],
+      "palette": [
+        "#573018",
+        "#573018",
+        "#573018",
+        "#8c5633",
+        "#8c5350",
+        "#33308c",
+        "#00318c",
+        "#8c485d",
+        "#8c5633"
+      ],
+      "back": "#e0bcdb",
+      "tech": [],
+      "body": [
+        "Event design and production for a private event in Porto, Portugal. Included the creative direction and design of the stage and screen layout, custom visuals, animations, and a specialized soundscape tailored to the event's identity."
+      ],
+      "year": "",
+      "press": [],
+      "formatKey": "design"
+    },
+    {
+      "slug": "latam-airlines",
+      "title": "LATAM Airlines",
+      "format": "Immersive Visuals",
+      "track": "commission",
+      "cover": "Asset/Commisions/Latam/1 portada.webp",
+      "video": "Asset/Commisions/Latam/Latam Reel.mp4",
+      "photos": [
+        "Asset/Commisions/Latam/1 portada.webp",
+        "Asset/Commisions/Latam/2.webp",
+        "Asset/Commisions/Latam/3.webp"
+      ],
+      "desc": "Creation of high-impact immersive visuals for a private corporate event, focusing on atmospheric and brand-aligned digital art.",
+      "commissionedBy": "Venue Brand Marketing",
+      "presentedAt": [],
+      "credits": [
+        "Created by: Alma Digital Studio",
+        "Visuals by: Vicente Manzano & Beltrán Lihn"
+      ],
+      "palette": [
+        "#001557",
+        "#001557",
+        "#001557",
+        "#00218c",
+        "#004ef0",
+        "#00518c",
+        "#001da4",
+        "#fc007c",
+        "#00218c"
+      ],
+      "back": "#999fe0",
+      "tech": [],
+      "body": [
+        "Creation of high-impact immersive visuals for a private corporate event, focusing on atmospheric and brand-aligned digital art."
+      ],
+      "year": "",
+      "press": [],
+      "formatKey": "design"
+    },
+    {
+      "slug": "lps",
+      "title": "LPS",
+      "format": "Immersive Visuals — 360°",
+      "track": "commission",
+      "cover": "Asset/Commisions/LPS/2 Portada.webp",
+      "video": "",
+      "photos": [
+        "Asset/Commisions/LPS/1.webp",
+        "Asset/Commisions/LPS/2 Portada.webp",
+        "Asset/Commisions/LPS/3.webp"
+      ],
+      "desc": "360° immersive visual content designed for a private event presented at the IDEAL Digital Center in Barcelona, utilizing the center's large-scale projection capabilities to create a fully enveloping digital environment.",
+      "commissionedBy": "Lavinia Next",
+      "presentedAt": [
+        "IDEAL Digital Center, Barcelona, Spain"
+      ],
+      "credits": [
+        "Created by: Alma Digital Studio",
+        "Visuals by: Vicente Manzano & Beltrán Lihn"
+      ],
+      "palette": [
+        "#001057",
+        "#001057",
+        "#001057",
+        "#001fad",
+        "#15008c",
+        "#001d8c",
+        "#8c4430",
+        "#7d508c",
+        "#001fad"
+      ],
+      "back": "#9c99e0",
+      "tech": [
+        "360°"
+      ],
+      "body": [
+        "360° immersive visual content designed for a private event presented at the IDEAL Digital Center in Barcelona, utilizing the center's large-scale projection capabilities to create a fully enveloping digital environment."
+      ],
+      "year": "",
+      "press": [],
+      "formatKey": "dome",
+      "reelImage": "Asset/Commisions/LPS/Reel LPS.webp"
+    }
+  ]
+}
