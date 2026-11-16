@@ -3,24 +3,36 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="Cache-Control" content="no-cache">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
-    <title>Alma Digital Studio</title>
+    <title>Alma Digital Studio — Immersive Wellness Art Studio</title>
+    <meta name="description" content="Alma Digital is an immersive wellness art studio that creates multimedia experiences at the intersection of audiovisual art, live music, immersive storytelling, and XR.">
+    <!-- El dominio principal es sin www (www redirige con 301). -->
+    <link rel="canonical" href="https://almadigitalstudio.com/">
 
     <!-- ── Favicon ── -->
     <link rel="icon" type="image/x-icon" href="Asset/Web Icons/1-271c3808.ico">
     <link rel="apple-touch-icon" href="Asset/Web Icons/PERFIL 3.png">
 
-    <!-- ── Open Graph (WhatsApp, Twitter, LinkedIn previews) ── -->
+    <!-- ── Open Graph (WhatsApp, Twitter, LinkedIn previews) ──
+         og:image es un JPG 1200×630 (formato que piden las redes). Se arma con
+         tools/make_share_images.py a partir de Asset/Logo.png. -->
+    <meta property="og:site_name"   content="Alma Digital Studio">
     <meta property="og:title"       content="Alma Digital Studio">
     <meta property="og:description" content="Immersive Art Studio — Creating multimedia experiences at the intersection of audiovisual art, live music and immersive storytelling.">
-    <meta property="og:image"       content="https://www.almadigitalstudio.com/Asset/Web%20Icons/PERFIL%203.png">
-    <meta property="og:url"         content="https://www.almadigitalstudio.com">
+    <meta property="og:image"       content="https://almadigitalstudio.com/Asset/Web%20Icons/og-alma-digital.jpg">
+    <meta property="og:image:width"  content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt"   content="Alma Digital — immersive wellness art studio">
+    <meta property="og:url"         content="https://almadigitalstudio.com/">
     <meta property="og:type"        content="website">
     <meta name="twitter:card"       content="summary_large_image">
-    <meta name="twitter:image"      content="https://www.almadigitalstudio.com/Asset/Web%20Icons/PERFIL%203.png">
+    <meta name="twitter:title"      content="Alma Digital Studio">
+    <meta name="twitter:description" content="Immersive Art Studio — Creating multimedia experiences at the intersection of audiovisual art, live music and immersive storytelling.">
+    <meta name="twitter:image"      content="https://almadigitalstudio.com/Asset/Web%20Icons/og-alma-digital.jpg">
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"Organization","name":"Alma Digital Studio","url":"https://almadigitalstudio.com/","logo":"https://almadigitalstudio.com/Asset/Web%20Icons/PERFIL%203.png","description":"Immersive wellness art studio creating multimedia experiences at the intersection of audiovisual art, live music, immersive storytelling, and XR.","sameAs":["https://www.instagram.com/alma.digital.studio/","https://www.linkedin.com/company/almadigitalstudio/"]}</script>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -64,6 +76,22 @@
     *, *::before, *::after {
         margin: 0; padding: 0; box-sizing: border-box;
         user-select: none; -webkit-user-select: none; cursor: none;
+    }
+    /* El texto de lectura sí se puede seleccionar y copiar (descripciones, créditos, bios, mail).
+       El resto sigue sin selección para no pelear con el fluido y los carruseles.
+       Los campos del formulario lo necesitan para escribir bien en Safari. */
+    input, textarea,
+    .about-clip, .about-clip *,
+    .po-left, .po-left *,
+    .m-sheet-info, .m-sheet-info *,
+    .member-name, .member-role, .member-bio,
+    .spinoff-card__desc,
+    .cm-sub, .cm-sub *, .cm-feedback {
+        user-select: text; -webkit-user-select: text;
+    }
+    .sr-only {
+        position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0;
+        overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; border: 0;
     }
     html { overflow-x: hidden; overflow-y: scroll; background: #000; }
     body { width: 100%; background: transparent; color: #fff; font-family: var(--font-sans); font-weight: 300; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; text-rendering: geometricPrecision; font-synthesis: none; }
@@ -828,7 +856,10 @@
     .cm-sub {
         font-family: var(--font-sans); font-size: 12px;
         color: rgba(255,255,255,0.38); letter-spacing: 0.04em; margin: 0 0 28px;
+        line-height: 1.6;
     }
+    .cm-mail { color: rgba(255,255,255,0.72); text-decoration: underline; text-underline-offset: 2px; }
+    .cm-mail:hover { color: #fff; }
     .cm-field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
     .cm-field label {
         font-family: var(--font-sans); font-size: 10px;
@@ -1206,6 +1237,8 @@
             font-family: var(--font-sans); font-size: 13px;
             line-height: 1.78; color: rgba(255,255,255,0.60); margin: 0;
         }
+        /* Doble clase: .po-detail-link se define más abajo y si no pisa estos valores. */
+        .po-detail-link.m-sheet-link { margin-top: 4px; font-size: 11px; padding: 13px 22px; }
         .m-sheet-divider { height: 1px; background: rgba(255,255,255,0.07); margin: 2px 0; }
         .m-sheet-label {
             font-family: var(--font-sans); font-size: 9px;
@@ -1417,19 +1450,23 @@
 
     <!-- ── Redes sociales fijas ── -->
     <aside id="social-fixed" aria-label="Redes sociales">
-        <a href="https://www.instagram.com/alma.digital.studio/" class="social-link" aria-label="Instagram" target="_blank">
+        <a href="https://www.instagram.com/alma.digital.studio/" class="social-link" aria-label="Instagram" target="_blank" rel="noopener">
             <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
         </a>
-        <a href="https://www.linkedin.com/company/almadigitalstudio/" class="social-link" aria-label="LinkedIn" target="_blank">
+        <a href="https://www.linkedin.com/company/almadigitalstudio/" class="social-link" aria-label="LinkedIn" target="_blank" rel="noopener">
             <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
         </a>
-        <a href="https://open.spotify.com/intl-es/artist/2wHtuSMLUK3lt4ebGX9Kr5?si=sFQtnk_JTIuD7qp1kATiMg" class="social-link" aria-label="Spotify" target="_blank">
+        <a href="https://open.spotify.com/intl-es/artist/2wHtuSMLUK3lt4ebGX9Kr5?si=sFQtnk_JTIuD7qp1kATiMg" class="social-link" aria-label="Spotify" target="_blank" rel="noopener">
             <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>
         </a>
         <a href="mailto:vicente@almadigitalstudio.com" class="social-link" aria-label="Email">
             <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
         </a>
     </aside>
+
+    <!-- Título de la página para buscadores y lectores de pantalla. No se ve:
+         en pantalla el título es el logo del hero. -->
+    <h1 class="sr-only">Alma Digital Studio — Immersive Wellness Art Studio</h1>
 
     <!-- ── Hero: logo en 3 capas con parallax hover ── -->
     <section id="hero" aria-label="Alma Digital Studio">
@@ -1676,7 +1713,7 @@
                             data-photo1="Asset/Studio Projects/Soul Charger/1 Portada.webp"
                             data-photo2="Asset/Studio Projects/Soul Charger/2.webp"
                             data-photo3="Asset/Studio Projects/Soul Charger/3.webp"
-                            data-desc="A 10-minute interactive VR experience merging biofeedback, neuroaesthetics, AI, and applied bioethics into a transformative personal journey. In Collaboration with iDeas Lab, Johns Hopkins University's Berman Institute of Bioethics."
+                            data-desc="A 15-minute interactive VR experience merging biofeedback, neuroaesthetics, AI, and applied bioethics into a transformative personal journey. In Collaboration with iDeas Lab, Johns Hopkins University's Berman Institute of Bioethics."
                             data-credits="Created and Produced by: Alma Digital Studio|Visuals by: Vicente Manzano &amp; Beltrán Lihn|Live Performance by: Vicente Manzano &amp; Beltrán Lihn|Dolby Atmos Mix by: Christopher Manhey at Omni SoundLab"
                             data-url="soul-charger.html">
                             <img class="proj-card__cover" loading="lazy" src="Asset/Studio Projects/Soul Charger/1 Portada.webp" alt="Soul Charger">
@@ -1867,7 +1904,7 @@
 
                 <article class="founder-card reveal">
                     <div class="founder-photo">
-                        <img src="Asset/Foto Equipo/1_Foto Vicente.webp" alt="Vicente Manzano">
+                        <img loading="lazy" decoding="async" src="Asset/Foto Equipo/1_Foto Vicente.webp" alt="Vicente Manzano">
                     </div>
                     <div class="founder-info">
                         <p class="member-role">Founder &amp; Creative Director</p>
@@ -1878,7 +1915,7 @@
 
                 <article class="founder-card reveal">
                     <div class="founder-photo">
-                        <img src="Asset/Foto Equipo/2_Foto Beltran.webp" alt="Beltran Lihn">
+                        <img loading="lazy" decoding="async" src="Asset/Foto Equipo/2_Foto Beltran.webp" alt="Beltran Lihn">
                     </div>
                     <div class="founder-info">
                         <p class="member-role">Co-founder &amp; Creative Technologist Director</p>
@@ -1894,17 +1931,17 @@
 
                 <article class="team-card reveal">
                     <div class="team-photo">
-                        <img src="Asset/Foto Equipo/Foto Nico.webp" alt="Nico Perilli">
+                        <img loading="lazy" decoding="async" src="Asset/Foto Equipo/Foto Nico.webp" alt="Nico Pirelli">
                     </div>
                     <div class="team-info">
                         <p class="member-role">Software Developer</p>
-                        <h3 class="member-name">Nico Perilli</h3>
+                        <h3 class="member-name">Nico Pirelli</h3>
                     </div>
                 </article>
 
                 <article class="team-card reveal">
                     <div class="team-photo">
-                        <img src="Asset/Foto Equipo/Foto Chris.webp" alt="Chris Alvarez">
+                        <img loading="lazy" decoding="async" src="Asset/Foto Equipo/Foto Chris.webp" alt="Chris Alvarez">
                     </div>
                     <div class="team-info">
                         <p class="member-role">Event Production Manager</p>
@@ -1914,7 +1951,7 @@
 
                 <article class="team-card reveal">
                     <div class="team-photo">
-                        <img src="Asset/Foto Equipo/Foto Pato.webp" alt="Patricio Cerda">
+                        <img loading="lazy" decoding="async" src="Asset/Foto Equipo/Foto Pato.webp" alt="Patricio Cerda">
                     </div>
                     <div class="team-info">
                         <p class="member-role">AI &amp; Machine Learning Advisor</p>
@@ -1922,7 +1959,7 @@
                     </div>
                 </article>
 
-                <article class="team-card team-join reveal">
+                <article class="team-card team-join reveal" role="button" tabindex="0" aria-label="Write to us">
                     <div class="join-plus">
                         <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="rgba(255,255,255,0.55)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                             <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
@@ -1943,7 +1980,7 @@
     <section id="spinoff" aria-labelledby="spinoff-title">
         <div class="section-head reveal">
             <h2 id="spinoff-title">Spin <em>Off</em></h2>
-            <span class="section-num">05</span>
+            <span class="section-num">04</span>
         </div>
         <div class="spinoff-cards">
             <article class="spinoff-card reveal" data-href="https://www.ritodigital.com">
@@ -1977,19 +2014,19 @@
     <section id="contact" aria-labelledby="contact-title">
         <div class="contact-inner">
             <div class="contact-left">
-                <p class="contact-cta reveal">Let's create<br>something</p>
+                <p class="contact-cta reveal" id="contact-title">Let's create<br>something</p>
                 <button class="contact-btn reveal" id="open-contact-modal" type="button">
                     <svg viewBox="0 0 24 24" stroke-width="1.5"><path d="M3 8l9 6 9-6M3 8h18v11a1 1 0 01-1 1H4a1 1 0 01-1-1V8z" stroke-linecap="round" stroke-linejoin="round"/></svg>
                     Get in touch
                 </button>
                 <nav class="contact-socials reveal" aria-label="Redes sociales">
-                    <a href="https://www.instagram.com/alma.digital.studio/" class="social-link" aria-label="Instagram" target="_blank">
+                    <a href="https://www.instagram.com/alma.digital.studio/" class="social-link" aria-label="Instagram" target="_blank" rel="noopener">
                         <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
                     </a>
-                    <a href="https://www.linkedin.com/company/almadigitalstudio/" class="social-link" aria-label="LinkedIn" target="_blank">
+                    <a href="https://www.linkedin.com/company/almadigitalstudio/" class="social-link" aria-label="LinkedIn" target="_blank" rel="noopener">
                         <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
                     </a>
-                    <a href="https://open.spotify.com/intl-es/artist/2wHtuSMLUK3lt4ebGX9Kr5?si=sFQtnk_JTIuD7qp1kATiMg" class="social-link" aria-label="Spotify" target="_blank">
+                    <a href="https://open.spotify.com/intl-es/artist/2wHtuSMLUK3lt4ebGX9Kr5?si=sFQtnk_JTIuD7qp1kATiMg" class="social-link" aria-label="Spotify" target="_blank" rel="noopener">
                         <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>
                     </a>
                     <a href="mailto:vicente@almadigitalstudio.com" class="social-link" aria-label="Email">
@@ -3854,9 +3891,19 @@ function hashCode (s) {
                 for (let i = 0; i < needed; i++) {
                     const clone = originals[i % count].cloneNode(true);
                     clone.setAttribute('aria-hidden', 'true');
+                    clone.setAttribute('tabindex', '-1');   // las copias del loop no entran en el orden de tabulación
                     track.appendChild(clone);
                 }
             }
+        });
+
+        /* ── Teclado: Enter / Espacio abren la tarjeta enfocada (antes sólo respondían al clic) ── */
+        document.querySelectorAll('.proj-card:not([aria-hidden])').forEach(card => {
+            card.addEventListener('keydown', e => {
+                if (e.target !== card || (e.key !== 'Enter' && e.key !== ' ')) return;
+                e.preventDefault();
+                card.click();
+            });
         });
 
         /* ── Hover: video play/pause on proj-cards (desktop only) ── */
@@ -3941,7 +3988,7 @@ function hashCode (s) {
                   '<div class="po-section po-section--commissioned"><p class="po-section-label">Commissioned by</p><p class="po-section-text po-commissioned"></p></div>',
                   '<div class="po-section po-section--presented"><p class="po-section-label">Presented at</p><p class="po-section-text po-presented"></p></div>',
                   '<div class="po-section"><p class="po-section-label">Credits</p><p class="po-section-text po-credits"></p></div>',
-                  '<a class="po-detail-link" href="" target="_blank" style="display:none">View Page <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a>',
+                  '<a class="po-detail-link" href="" target="_blank" rel="noopener" style="display:none">View Page <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a>',
                 '</div>',
                 '<div class="po-right">',
                   '<div class="po-photos-col">',
@@ -4528,6 +4575,9 @@ function hashCode (s) {
                     '<h2 class="m-sheet-title"></h2>',
                     '<p class="m-sheet-format"></p>',
                     '<p class="m-sheet-desc"></p>',
+                    // Enlace a la página propia del proyecto (hoy sólo Soul Charger). Se abre en la
+                    // misma pestaña: el botón "Volver" de esa página usa history.back().
+                    '<a class="po-detail-link m-sheet-link" href="" style="display:none">View Page <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a>',
                     '<div class="m-sheet-divider"></div>',
                     '<p class="m-sheet-label commissioned-label" style="display:none">Commissioned by</p>',
                     '<p class="m-sheet-meta commissioned-val" style="display:none"></p>',
@@ -4573,6 +4623,12 @@ function hashCode (s) {
             const sheetPresVal   = sheet.querySelector('.presented-val');
             const sheetCredVal   = sheet.querySelector('.credits-val');
             const sheetNavDots  = sheet.querySelector('.m-sheet-nav-dots');
+            const sheetLink     = sheet.querySelector('.m-sheet-link');
+            function updateSheetLink(card) {
+                const url = card.dataset.url || '';
+                sheetLink.href = url;
+                sheetLink.style.display = url ? '' : 'none';
+            }
 
             let sheetList = [], sheetIdx = 0;
 
@@ -4590,6 +4646,7 @@ function hashCode (s) {
                 sheetTitle.textContent  = card.querySelector('.proj-card__title').textContent;
                 sheetFormat.textContent = card.querySelector('.proj-card__desc').textContent;
                 sheetDesc.textContent   = card.dataset.desc || '';
+                updateSheetLink(card);
 
                 const com = card.dataset.commissioned || '';
                 sheetComLabel.style.display = com ? '' : 'none';
@@ -4649,6 +4706,7 @@ function hashCode (s) {
                     sheetTitle.textContent  = nextCard.querySelector('.proj-card__title').textContent;
                     sheetFormat.textContent = nextCard.querySelector('.proj-card__desc').textContent;
                     sheetDesc.textContent   = nextCard.dataset.desc || '';
+                    updateSheetLink(nextCard);
                     const com = nextCard.dataset.commissioned || '';
                     sheetComLabel.style.display = com ? '' : 'none';
                     sheetComVal.style.display   = com ? '' : 'none';
@@ -4753,7 +4811,7 @@ function hashCode (s) {
                 <svg viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
             </button>
             <h2 class="cm-title" id="cm-title-text">Get in touch</h2>
-            <p class="cm-sub">We'll get back to you as soon as possible.</p>
+            <p class="cm-sub">We'll get back to you as soon as possible. You can also write to <a class="cm-mail" href="mailto:vicente@almadigitalstudio.com">vicente@almadigitalstudio.com</a>.</p>
             <form id="cm-form" novalidate>
                 <div class="cm-field">
                     <label for="cm-name">Name</label>
@@ -4768,7 +4826,7 @@ function hashCode (s) {
                     <textarea id="cm-message" name="message" placeholder="Tell us about your project…" required></textarea>
                 </div>
                 <button class="cm-submit" type="submit" id="cm-submit">Send message</button>
-                <p class="cm-feedback" id="cm-feedback"></p>
+                <p class="cm-feedback" id="cm-feedback" role="status" aria-live="polite"></p>
             </form>
         </div>
     </div>
@@ -4787,15 +4845,23 @@ function hashCode (s) {
         // Formspree endpoint — replace YOUR_FORM_ID with the ID from formspree.io
         const ENDPOINT = 'https://formspree.io/f/xkopqoyl';
 
+        const CONTACT_EMAIL = 'vicente@almadigitalstudio.com';
+        let sending = false, closeTimer = null;
+
+        function setFeedback(text, kind) {
+            feedback.textContent = text;
+            feedback.className = 'cm-feedback' + (kind ? ' ' + kind + ' visible' : '');
+        }
         function open() {
             modal.classList.add('cm-open');
             document.getElementById('cm-name').focus();
         }
         function close() {
+            if (sending) return;   // no cerrar con un envío en curso: se perdería el resultado
+            clearTimeout(closeTimer);
             modal.classList.remove('cm-open');
             form.reset();
-            feedback.className = 'cm-feedback';
-            feedback.textContent = '';
+            setFeedback('', '');
             submitBtn.disabled = false;
             submitBtn.textContent = 'Send message';
         }
@@ -4810,21 +4876,66 @@ function hashCode (s) {
 
         if (form) form.addEventListener('submit', async function(e) {
             e.preventDefault();
+            if (sending) return;
+            const emailEl = document.getElementById('cm-email');
             const name    = document.getElementById('cm-name').value.trim();
-            const email   = document.getElementById('cm-email').value.trim();
+            const email   = emailEl.value.trim();
             const message = document.getElementById('cm-message').value.trim();
             if (!name || !email || !message) {
-                feedback.textContent = 'Please fill in all fields.';
-                feedback.className = 'cm-feedback error visible';
+                setFeedback('Please fill in all fields.', 'error');
                 return;
             }
-            close();
-            fetch(ENDPOINT, {
-                method: 'POST',
-                headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
-                body: JSON.stringify({ name, email, message }),
-            }).catch(() => {});
+            if (!emailEl.checkValidity()) {
+                setFeedback('Please enter a valid email address.', 'error');
+                emailEl.focus();
+                return;
+            }
+
+            // El modal queda abierto hasta saber si el envío salió bien:
+            // antes se cerraba primero y un envío fallido no lo veía nadie.
+            sending = true;
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Sending…';
+            setFeedback('', '');
+
+            let ok = false;
+            const ctrl  = ('AbortController' in window) ? new AbortController() : null;
+            const abort = setTimeout(() => { if (ctrl) ctrl.abort(); }, 15000);
+            try {
+                const res = await fetch(ENDPOINT, {
+                    method: 'POST',
+                    headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, email, message }),
+                    signal: ctrl ? ctrl.signal : undefined,
+                });
+                ok = res.ok;
+            } catch (err) {
+                ok = false;
+            }
+            clearTimeout(abort);
+            sending = false;
+
+            if (ok) {
+                form.reset();
+                submitBtn.textContent = 'Sent';
+                setFeedback("Thanks — your message was sent. We'll get back to you soon.", 'success');
+                closeTimer = setTimeout(close, 2800);
+            } else {
+                // Se conserva lo escrito para que pueda reintentar o copiarlo.
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Send message';
+                setFeedback("Your message couldn't be sent. Please try again, or write to " + CONTACT_EMAIL + '.', 'error');
+            }
         });
+
+        // Tarjeta "This could be you / Write to us" del equipo: abre el formulario.
+        const joinCard = document.querySelector('.team-join');
+        if (joinCard) {
+            joinCard.addEventListener('click', open);
+            joinCard.addEventListener('keydown', e => {
+                if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); }
+            });
+        }
     })();
     </script>
 

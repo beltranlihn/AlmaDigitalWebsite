@@ -18,6 +18,7 @@ Alma Digital Portfolio/
 ├── gsap.min.js         # GSAP local
 ├── robots.txt          # bots fuera de los videos + bloqueo de scrapers de IA/SEO
 ├── tools/deploy_copy.py # arma dist/ con sólo lo que la web usa (lo corre Netlify)
+├── tools/make_share_images.py # genera las imágenes 1200×630 para compartir (og:image)
 ├── netlify.toml        # build: python3 tools/deploy_copy.py dist → publica dist/
 ├── _masters/           # originales de los archivos recomprimidos (NO se publica)
 ├── prototype/          # rediseño descartado; projects.json reutilizable (NO se publica)
@@ -201,6 +202,53 @@ Sólo cuenta navegadores reales: comparar contra el ancho de banda de Netlify pa
 El fluid sim sigue corriendo con auto-emitters en mobile. Los usuarios de Android no pueden tocar el fondo para emitir fluidos (correcto — el dedo es para el scroll).
 
 ## Historial de sesiones (última al tope)
+
+### 2026-11-16 — Etapa 0: arreglos sin cambiar el diseño (Vicente)
+
+Primera etapa de un plan de rediseño en cuatro (0 arreglos · 1 legibilidad · 2 estructura con una
+página por obra · 3 animación). Rama `etapa-0-arreglos`. No toca ningún módulo cerrado.
+
+**index.html:**
+- **Formulario de contacto:** antes cerraba el modal y recién después enviaba, descartando errores:
+  un envío fallido no lo veía nadie. Ahora queda abierto con "Sending…", confirma el envío y se
+  cierra solo, o muestra el error conservando lo escrito. Valida el formato del mail, corta a los
+  15 s y no deja cerrar con un envío en curso. Mail visible bajo el título (`vicente@…`).
+- **Head:** `<title>` con el tagline, meta description, canonical, `og:image` 1200×630 en JPG,
+  Twitter cards completas y JSON-LD `Organization`. **El dominio principal es sin `www`** (www
+  redirige con 301): canonical y Open Graph apuntan a `https://almadigitalstudio.com/`.
+- **`<h1>`** oculto visualmente (`.sr-only`) antes del hero: la página no tenía ninguno.
+- **Teclado:** Enter / Espacio abren la tarjeta de proyecto enfocada. Las copias del loop del
+  carrusel salen del orden de tabulación (`tabindex="-1"`).
+- **Zoom y selección:** fuera `user-scalable=no`. `user-select: none` sigue global (evita selección
+  accidental sobre el fluido y los carruseles) pero el texto de lectura y los campos del formulario
+  son seleccionables. `cursor: none` no se tocó.
+- **Panel móvil de proyecto:** botón "View Page" cuando la tarjeta tiene `data-url` (hoy sólo Soul
+  Charger). Abre en la misma pestaña, porque el "Volver" de esa página usa `history.back()`.
+- **Datos:** "Nico Pirelli" (antes "Perilli" en Team), Soul Charger 15 minutos (la home decía 10),
+  Spin Off numerado 04 (decía 05), `rel="noopener"` en enlaces externos, `id="contact-title"`.
+- La tarjeta "This could be you / Write to us" ahora abre el formulario.
+- Fotos del equipo con `loading="lazy"`: 416 KB menos en la primera carga.
+
+**soul-charger.html:** description, canonical, Open Graph, favicon y zoom habilitado.
+
+**Assets:**
+- `tools/make_share_images.py` (Pillow) genera `Asset/Web Icons/og-alma-digital.jpg` (`Asset/Logo.png`
+  sobre el aura de marca) y `Asset/Soul Charger/og-soul-charger.jpg`.
+- `Foto Chris.webp` y `Foto Pato.webp`: 2680×1568 → 1340×784 (180 → 67 KB). Originales en `_masters/`.
+
+**Verificado en local** (escritorio y 375×812): consola sin errores nuevos; formulario probado con
+`fetch` simulado (éxito, error de red, 422) sin enviar nada a Formspree; `deploy_copy.py` publica las
+imágenes nuevas. **Falta probar en teléfonos reales y un envío real del formulario en la vista previa.**
+
+**Decisiones de Vicente para las etapas siguientes** (a confirmar entre los dos socios):
+- El sitio le habla a un público amplio (marcas, instituciones, festivales); no se segmenta.
+- De acuerdo con reabrir el **logo del hero** (ameba viva con shader propio) y la **navegación por
+  secciones** (volver al scroll normal). Fluido, paleta y cursor siguen cerrados.
+- **Se mantiene Raleway**: la web no adopta las tipografías del sistema de marca.
+- Sitio en **inglés y español**.
+- De acuerdo con un paso de generación local para las fichas de obra (como `prototype/build.mjs`).
+- Three.js queda como opcional: la ameba se resuelve con un shader propio (~5 KB) y un visor 360°
+  básico con Pannellum (19 KB). Si entra Three.js, declarar sus archivos en `tools/deploy_copy.py`.
 
 ### 2026-11-16 — repo en GitHub y deploy automático
 
