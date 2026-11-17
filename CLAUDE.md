@@ -124,15 +124,16 @@ Idea tomada de [unseen.co](https://unseen.co/): el sitio suena, y entrar a una o
   página porque la navegación no recarga. Se calla con la pestaña oculta y mientras suena un video con
   audio (el reel a pantalla completa).
 - **Profundidad** (`AlmaSound.setDepth`, lo llama `initSound()` de `js/app.js`): landing y Studio 0, índice
-  de obras 0,25, ficha de obra 1. A más profundidad, un filtro deja la música sorda y grave y aparece un
-  rumor de fondo.
-- **Aire de superficie** (`sound.air`, 0 lo quita): una capa muy suave de ruido filtrado que sube y baja
-  como oleaje, generada en el navegador. Está porque "Breath" es casi toda grave (bajo 150 Hz): sin algo
-  brillante arriba, el filtro no tiene qué apagar y la zambullida no se oye. Por lo mismo, en parlantes de
-  teléfono o notebook la música casi no se escucha: **conviene una pista con medios y agudos**.
+  de obras 0,25, ficha de obra 1. A más profundidad, un filtro deja la música sorda y grave.
+- **Sólo suena la música. Nada de ruido de fondo** (decisión de Vicente, 2026-11-17): se probó una capa
+  de "aire de superficie" y un rumor grave hechos con ruido blanco y se oían como un ruido fuerte. Los
+  sonidos de transición son tonos suaves con eco, afinados a la música (si bemol): bajan una quinta al
+  sumergirse, con unas gotas, y suben al salir.
+- "Breath" es casi toda grave (bajo 150 Hz): en parlantes de teléfono o notebook casi no se escucha y el
+  filtro tiene poco que apagar. **Con una pista que tenga medios y agudos el efecto se nota mucho más.**
 - **Zambullida** (`water()` en `js/app.js`, aspecto en `.dive` de `css/site.css`): al pasar de una página
   de superficie a una ficha, el agua sube, la página cambia por debajo y el agua se aclara (cerca de 1 s),
-  con un chapuzón y burbujas si el sonido está encendido. Al salir de la ficha, el agua baja. Entre dos
+  con su sonido de transición si el sonido está encendido. Al salir de la ficha, el agua baja. Entre dos
   fichas no hay zambullida. Con "reducir movimiento" no hay agua (el sonido sí cambia).
 - **Para apagar todo**: `site.json → sound.enabled: false` y build. No se genera ni el botón ni el script.
 - **Para cambiar la música**: recortar un tramo que se repita sin corte y comprimirlo. En Mac:
@@ -281,6 +282,15 @@ desactiva. **No** cambiar nameservers a Cloudflare.
 El fluid sim sigue corriendo con auto-emitters en mobile. Los usuarios de Android no pueden tocar el fondo para emitir fluidos (correcto — el dedo es para el scroll).
 
 ## Historial de sesiones (última al tope)
+
+### 2026-11-17 — Sonido: sólo la música, sin ruido (Vicente)
+
+Vicente escuchó la primera versión: el sonido iba bien pero se oía un ruido blanco muy fuerte. Se
+quitaron de `js/sound.js` la capa de aire de superficie, el rumor grave y el chapuzón de ruido. Quedan la
+música, el filtro por profundidad y dos sonidos de transición hechos sólo con tonos suaves, afinados a
+"Breath" (si bemol). Medido en Chrome: sobre 2 kHz ya no hay nada más que la música (de −53 a −104 dB);
+el tono de transición sube unos 8 dB la banda de 150 a 500 Hz durante un segundo y se apaga.
+**Falta que Vicente lo escuche de nuevo.**
 
 ### 2026-11-17 — Inmersión: sonido de ambiente y zambullida (Vicente)
 

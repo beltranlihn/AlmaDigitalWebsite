@@ -226,7 +226,7 @@ function page(c, { title, desc, ogImage, jsonld, current, body, bodyClass, runti
   const rt = {
     lang: c.lang, email: site.email, endpoint: site.formspree, legacy: Object.values(site.legacyPages),
     t: Object.fromEntries(RUNTIME_KEYS.map(k => [k, t[k]])),
-    ...(sound ? { sound: { src: sound.src, level: sound.level, air: sound.air } } : {}),
+    ...(sound ? { sound: { src: sound.src, level: sound.level } } : {}),
     ...(runtime || {}),
   };
   return `${head(c, { title, desc, ogImage: ogImage || 'Asset/Web Icons/og-alma-digital.jpg', jsonld })}

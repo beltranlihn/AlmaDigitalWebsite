@@ -6,15 +6,14 @@
    un clic). Como el sitio no recarga al navegar, sigue sonando de una página
    a otra sin cortes.
 
-   La profundidad cambia el sonido: en la superficie (landing) la música suena
-   abierta; al entrar a una obra pasa por un filtro que la deja sorda y grave,
-   como bajo el agua. setDepth(0…1) lo mueve; splash() hace el chapuzón.
+   La profundidad cambia el sonido: en la superficie la música suena abierta;
+   bajo el agua (más abajo en el landing, y en la ficha de una obra) pasa por
+   un filtro que la deja sorda y grave. setDepth(0…1) lo mueve.
 
-   Sobre la música va una capa muy suave de "aire de superficie" (ruido
-   filtrado que sube y baja como oleaje, generado acá, sin archivo). Hace
-   falta porque la pista actual es casi toda grave (bajo 150 Hz): el filtro
-   no tendría qué apagar y la zambullida no se oiría. Con una música que tenga
-   medios y agudos se puede bajar o quitar (site.json → sound.air: 0).
+   SÓLO SUENA LA MÚSICA. No hay ruido de fondo de ningún tipo (se probó una
+   capa de "aire" y un rumor grave hechos con ruido blanco: molestaban). Los
+   sonidos de transición (splash) son tonos suaves con un poco de eco,
+   afinados a la música: "Breath" está en si bemol.
 
    Cuida el ancho de banda y al visitante:
      · el archivo (site.json → sound.src, 1,8 MB) se pide recién al encender;
@@ -40,21 +39,20 @@
 
   var URL_SRC = new URL('../' + cfg.src, here).href;   // Asset/ está al lado de js/
   var LEVEL = cfg.level || 0.55;                       // volumen general
-  var AIR = cfg.air === undefined ? 1 : +cfg.air;      // capa de aire de superficie (0 la quita)
   var CROSS = 6;                                       // s de cruce al repetir
   var KEY = 'alma-sound';
   var root = document.documentElement;
 
-  var ctx = null, master, lp, lp2, rumble, air, fx, meter, noise;
+  var ctx = null, master, lp, lp2, fx, meter;
   var els = [], gains = [], active = 0, crossing = false, ticker = 0, offTimer = 0;
   var want = false;        // lo que eligió el visitante
   var running = false;     // está sonando de verdad
   var ducked = false;      // callada porque suena un video
   var depth = 0;
 
-  /* Filtro "bajo el agua": de 20 kHz (no se nota) a 520 Hz, con algo de resonancia.
+  /* Filtro "bajo el agua": de 20 kHz (no se nota) a 380 Hz, con algo de resonancia.
      Son dos en serie (24 dB por octava): uno solo deja pasar demasiado. */
-  function cutoff(d) { return 20000 * Math.pow(520 / 20000, d); }
+  function cutoff(d) { return 20000 * Math.pow(380 / 20000, d); }
   function reso(d) { return 0.7 + d * 1.6; }
 
   function build() {
@@ -77,42 +75,15 @@
       els.push(a); gains.push(g);
     }
 
-    /* Ruido blanco: sirve para el rumor del fondo y para los chapuzones. */
-    noise = ctx.createBuffer(1, ctx.sampleRate * 3, ctx.sampleRate);
-    var data = noise.getChannelData(0);
-    for (var n = 0; n < data.length; n++) data[n] = Math.random() * 2 - 1;
-
-    /* Rumor grave que aparece con la profundidad (presión del agua). */
-    var src = ctx.createBufferSource(); src.buffer = noise; src.loop = true;
-    var f1 = ctx.createBiquadFilter(); f1.type = 'lowpass'; f1.frequency.value = 130;
-    var f2 = ctx.createBiquadFilter(); f2.type = 'lowpass'; f2.frequency.value = 130;
-    rumble = ctx.createGain(); rumble.gain.value = depth * 0.5;
-    src.connect(f1); f1.connect(f2); f2.connect(rumble); rumble.connect(master);
-    src.start();
-
-    /* Aire de superficie: ruido en dos bandas (cuerpo y brillo) que sube y baja
-       despacio, como oleaje. Pasa por el filtro, así que al sumergirse se apaga. */
-    air = ctx.createGain(); air.gain.value = airLevel(depth);
-    if (AIR > 0) {
-      var a1 = ctx.createBufferSource(); a1.buffer = noise; a1.loop = true;
-      var body = ctx.createBiquadFilter(); body.type = 'bandpass'; body.frequency.value = 850; body.Q.value = 0.6;
-      var hp = ctx.createBiquadFilter(); hp.type = 'highpass'; hp.frequency.value = 2400;
-      var sheen = ctx.createGain(); sheen.gain.value = 0.3;
-      var swell = ctx.createGain(); swell.gain.value = 0.6;
-      [[1 / 12, 0.28], [1 / 7.3, 0.12]].forEach(function (l) {      // dos ritmos que no coinciden
-        var o = ctx.createOscillator(), d = ctx.createGain();
-        o.frequency.value = l[0]; d.gain.value = l[1];
-        o.connect(d); d.connect(swell.gain); o.start();
-      });
-      a1.connect(body); body.connect(swell);
-      a1.connect(hp); hp.connect(sheen); sheen.connect(swell);
-      swell.connect(air); air.connect(lp);
-      a1.start();
-    }
-
+    /* Sonidos de transición: directo, más un eco corto que se va apagando. */
     fx = ctx.createGain(); fx.gain.value = 1; fx.connect(master);
+    var echo = ctx.createDelay(1); echo.delayTime.value = 0.31;
+    var damp = ctx.createBiquadFilter(); damp.type = 'lowpass'; damp.frequency.value = 1500;
+    var back = ctx.createGain(); back.gain.value = 0.42;
+    var wet = ctx.createGain(); wet.gain.value = 0.5;
+    fx.connect(echo); echo.connect(damp); damp.connect(back); back.connect(echo);
+    damp.connect(wet); wet.connect(master);
   }
-  function airLevel(d) { return 0.12 * AIR * (1 - 0.9 * d); }
 
   function setLevel(seconds) {
     if (!ctx) return;
@@ -187,33 +158,43 @@
     lp.frequency.cancelScheduledValues(t); lp.frequency.setTargetAtTime(cutoff(depth), t, tc);
     lp.Q.cancelScheduledValues(t); lp.Q.setTargetAtTime(reso(depth), t, tc);
     lp2.frequency.cancelScheduledValues(t); lp2.frequency.setTargetAtTime(cutoff(depth), t, tc);
-    air.gain.cancelScheduledValues(t); air.gain.setTargetAtTime(airLevel(depth), t, tc);
-    rumble.gain.cancelScheduledValues(t); rumble.gain.setTargetAtTime(depth * 0.5, t, tc);
   }
-  function bubble(t) {
-    var o = ctx.createOscillator(), g = ctx.createGain(), f = 300 + Math.random() * 520;
+  /* Notas del acorde de la música (si bemol mayor con sexta). */
+  var NOTE = { Bb3: 233.08, F4: 349.23, G4: 392.00, Bb4: 466.16, D5: 587.33, F5: 698.46 };
+  /* Un tono que se desliza de una nota a otra, con entrada y salida lentas. */
+  function tone(from, to, t, len, peak) {
+    var o = ctx.createOscillator(), g = ctx.createGain();
     o.type = 'sine';
-    o.frequency.setValueAtTime(f, t); o.frequency.exponentialRampToValueAtTime(f * 2.3, t + 0.09);
+    o.frequency.setValueAtTime(from, t);
+    if (to !== from) o.frequency.exponentialRampToValueAtTime(to, t + len * 0.8);
     g.gain.setValueAtTime(0.0001, t);
-    g.gain.exponentialRampToValueAtTime(0.06, t + 0.012);
-    g.gain.exponentialRampToValueAtTime(0.0001, t + 0.14);
-    o.connect(g); g.connect(fx); o.start(t); o.stop(t + 0.16);
+    g.gain.exponentialRampToValueAtTime(peak, t + len * 0.25);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + len);
+    o.connect(g); g.connect(fx); o.start(t); o.stop(t + len + 0.05);
   }
-  /* 'dive': golpe de agua que se hunde y unas burbujas. 'surface': el agua que se abre. */
+  /* Una gota: nota corta que sube un poco, como una burbuja. */
+  function drop(f, t) {
+    var o = ctx.createOscillator(), g = ctx.createGain();
+    o.type = 'sine';
+    o.frequency.setValueAtTime(f, t); o.frequency.exponentialRampToValueAtTime(f * 1.5, t + 0.07);
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(0.02, t + 0.015);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + 0.2);
+    o.connect(g); g.connect(fx); o.start(t); o.stop(t + 0.22);
+  }
+  /* 'dive': dos tonos que bajan una quinta y unas gotas. 'surface': suben, con un brillo al final. */
   function splash(kind) {
     if (!ctx || !running || ducked) return;
-    var down = kind !== 'surface', t = ctx.currentTime + 0.02, len = down ? 1.5 : 1.0;
-    var src = ctx.createBufferSource(); src.buffer = noise; src.loop = true;
-    var bp = ctx.createBiquadFilter(); bp.type = 'bandpass'; bp.Q.value = 0.9;
-    bp.frequency.setValueAtTime(down ? 2600 : 300, t);
-    bp.frequency.exponentialRampToValueAtTime(down ? 240 : 3200, t + len * 0.75);
-    var g = ctx.createGain();
-    g.gain.setValueAtTime(0.0001, t);
-    g.gain.exponentialRampToValueAtTime(down ? 0.34 : 0.22, t + 0.08);
-    g.gain.exponentialRampToValueAtTime(0.0001, t + len);
-    src.connect(bp); bp.connect(g); g.connect(fx);
-    src.start(t); src.stop(t + len + 0.1);
-    if (down) for (var i = 0; i < 7; i++) bubble(t + 0.35 + Math.random() * 1.2);
+    var t = ctx.currentTime + 0.03;
+    if (kind === 'surface') {
+      tone(NOTE.Bb3, NOTE.F4, t, 1.3, 0.05);
+      tone(NOTE.F4, NOTE.Bb4, t + 0.12, 1.4, 0.026);
+      tone(NOTE.D5, NOTE.D5, t + 0.45, 1.6, 0.012);
+    } else {
+      tone(NOTE.F4, NOTE.Bb3, t, 1.6, 0.055);
+      tone(NOTE.Bb4, NOTE.F4, t + 0.1, 1.5, 0.026);
+      [NOTE.F5, NOTE.D5, NOTE.Bb4, NOTE.G4].forEach(function (f, i) { drop(f, t + 0.5 + i * 0.22 + Math.random() * 0.1); });
+    }
   }
 
   /* ── Botón del menú ───────────────────────────────────────────────────── */
