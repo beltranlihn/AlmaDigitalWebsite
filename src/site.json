@@ -208,7 +208,13 @@
       "lbZoomOut": "Zoom out",
       "lbHint": "← → to navigate · Esc to close",
       "lbLabel": "Enlarged gallery",
-      "reelPlay": "Play the reel"
+      "reelPlay": "Play the reel",
+      "breathStart": "Breathe with it",
+      "breathStop": "Stop",
+      "breathIn": "Breathe in",
+      "breathOut": "Breathe out",
+      "breathEnd": "Thank you for breathing with us.",
+      "breathLabel": "One-minute guided breathing with the amoeba"
     },
     "es": {
       "langName": "Español",
@@ -305,7 +311,13 @@
       "lbZoomOut": "Alejar",
       "lbHint": "← → para navegar · Esc para salir",
       "lbLabel": "Galería ampliada",
-      "reelPlay": "Ver el reel"
+      "reelPlay": "Ver el reel",
+      "breathStart": "Respira con ella",
+      "breathStop": "Detener",
+      "breathIn": "Inhala",
+      "breathOut": "Exhala",
+      "breathEnd": "Gracias por respirar con nosotros.",
+      "breathLabel": "Un minuto de respiración guiada con la ameba"
     }
   }
 }

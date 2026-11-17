@@ -205,6 +205,30 @@ El fluid sim sigue corriendo con auto-emitters en mobile. Los usuarios de Androi
 
 ## Historial de sesiones (última al tope)
 
+### 2026-11-17 — Interactividad: respirar con la ameba, arrastrarla, tarjetas vivas (Vicente)
+
+Rama `rediseno-landing`. Tres mejoras, sin material nuevo:
+
+- **Respira con ella** (`js/ameba.js` + bloque `.breath` del hero): botón bajo la ameba que inicia un
+  minuto guiado, seis ciclos de 4 s de inhalación y 6 s de exhalación. La ameba crece y se recoge
+  marcando el ritmo, con la indicación "Inhala / Exhala" y el número de ciclo. No pide micrófono ni
+  cámara. Se detiene si la pestaña queda oculta. El botón sólo aparece si WebGL arrancó. La
+  indicación cambia de texto pero no se mueve (regla de marca: la tipografía no se anima).
+- **Ameba que se toca**: se arrastra para girarla, con inercia, y se aplasta un poco mientras se la
+  presiona. Un toque sin arrastre sigue cambiando la forma. En táctil el canvas tiene
+  `touch-action: pan-y`: el scroll vertical pasa de largo y el arrastre horizontal la gira.
+- **Tarjetas de obras destacadas**: el reel se reproduce dentro de la tarjeta al dejar el cursor
+  encima 0,3 s (sólo con mouse; un cursor de paso no descarga nada).
+- **Transición entre páginas** (`css/site.css`, View Transitions entre documentos): fundido al navegar
+  y la portada de la obra se convierte en la cabecera de su ficha. La imagen de origen recibe el nombre
+  `work-cover` al hacer clic (`js/app.js`); en la ficha lo tiene `.phero__bg`. Lo soportan Chrome y
+  Safari; en el resto no hay animación. Desactivada con "reducir movimiento".
+
+**Verificado en local**: el ciclo de respiración (textos y conteo), el arranque y la pausa del reel en
+las tarjetas, y que la transición se dispara con el nombre puesto y no deja restos al volver atrás.
+**Sin ver**: la animación de la transición en sí (las capturas no la registran) y el arrastre con el
+dedo en un teléfono real.
+
 ### 2026-11-16 — Etapas 1 a 3: sitio nuevo generado, bilingüe, con la ameba viva (Vicente)
 
 Rama `rediseno-landing`, encima de `etapa-0-arreglos`. Cambia la arquitectura: el sitio deja de ser un

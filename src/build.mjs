@@ -197,7 +197,8 @@ function modal(c) {
 
 const RUNTIME_KEYS = ['modalSend', 'modalSending', 'modalSent', 'modalOk', 'modalFail', 'modalFill', 'modalBadEmail',
   'modalAbout', 'indexCount', 'indexCountOne', 'reelSound', 'reelMute', 'reelUnmute', 'reelClose',
-  'lbClose', 'lbPrev', 'lbNext', 'lbZoom', 'lbZoomOut', 'lbHint', 'lbLabel'];
+  'lbClose', 'lbPrev', 'lbNext', 'lbZoom', 'lbZoomOut', 'lbHint', 'lbLabel',
+  'breathStart', 'breathStop', 'breathIn', 'breathOut', 'breathEnd'];
 
 function page(c, { title, desc, ogImage, jsonld, current, body, bodyClass, ameba, runtime }) {
   const t = c.t;
@@ -235,7 +236,8 @@ function buildLanding(lang) {
   const featured = site.featured.map(s => loc(projects.find(p => p.slug === s), lang));
 
   const cards = featured.map(p => `    <a class="wcard" href="${link(c, `work/${p.slug}.html`)}">
-      <img loading="lazy" decoding="async" width="1920" height="1080" src="${asset(c, p.cover)}" alt="">
+      <img loading="lazy" decoding="async" width="1920" height="1080" src="${asset(c, p.cover)}" alt="">${p.video ? `
+      <video class="wcard__v" muted loop playsinline preload="none" data-src="${asset(c, p.video)}" aria-hidden="true" tabindex="-1"></video>` : ''}
       <span class="wcard__t"><b>${esc(p.title)}</b><span>${esc(p.format)}</span></span>
     </a>`).join('\n');
 
@@ -252,9 +254,16 @@ function buildLanding(lang) {
     </div>
     <p class="hero__proof"><span class="label">${esc(t.heroProof)}</span>${site.proof.map(esc).join(' · ')}</p>
   </div>
-  <div class="hero__ameba" id="ameba-wrap">
-    <img class="hero__fallback" src="${asset(c, 'Asset/Logo Studio/Version 2/Logo.webp')}" alt="" width="1920" height="1080">
-    <canvas id="ameba" role="img" aria-label="${esc(t.amebaLabel)}"></canvas>
+  <div class="hero__stage">
+    <div class="hero__ameba" id="ameba-wrap">
+      <img class="hero__fallback" src="${asset(c, 'Asset/Logo Studio/Version 2/Logo.webp')}" alt="" width="1920" height="1080">
+      <canvas id="ameba" role="img" aria-label="${esc(t.amebaLabel)}"></canvas>
+    </div>
+    <!-- Minuto de respiración guiada. js/ameba.js lo muestra sólo si la ameba está viva. -->
+    <div class="breath" id="breath" role="group" aria-label="${esc(t.breathLabel)}" hidden>
+      <p class="breath__cue" aria-live="polite"><span id="breath-cue"></span><span class="label" id="breath-count"></span></p>
+      <button class="btn breath__btn" type="button" id="breath-btn" aria-pressed="false">${esc(t.breathStart)}</button>
+    </div>
   </div>
 </section>
 

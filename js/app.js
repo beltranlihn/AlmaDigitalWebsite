@@ -378,6 +378,51 @@
     });
   })();
 
+  /* ── Obras destacadas: el reel se reproduce dentro de la tarjeta ──────
+     Sólo con mouse y tras una pequeña espera, para no bajar un video (0,6 a
+     4 MB) por cada tarjeta que el cursor cruza de paso. */
+  if (fine) $$('.wcard').forEach(function (card) {
+    var v = $('.wcard__v', card), timer = 0;
+    if (!v) return;
+    card.addEventListener('pointerenter', function () {
+      clearTimeout(timer);
+      timer = setTimeout(function () {
+        if (!v.getAttribute('src')) v.src = v.dataset.src;
+        var p = v.play(); if (p && p.catch) p.catch(function () {});
+        card.classList.add('is-playing');
+      }, 320);
+    });
+    card.addEventListener('pointerleave', function () {
+      clearTimeout(timer);
+      card.classList.remove('is-playing');
+      v.pause();
+    });
+  });
+
+  /* ── Transición de portada a ficha ────────────────────────────────────
+     Al hacer clic en una obra, su imagen visible toma el nombre que en la
+     ficha tiene la foto de cabecera (css: view-transition-name: work-cover),
+     y el navegador anima una hacia la otra. Sin soporte, no pasa nada. */
+  (function () {
+    if (!window.CSS || !CSS.supports || !CSS.supports('view-transition-name', 'none')) return;
+    function clear() {
+      $$('[data-vt]').forEach(function (el) { el.style.viewTransitionName = ''; el.removeAttribute('data-vt'); });
+    }
+    document.addEventListener('click', function (e) {
+      var a = e.target.closest && e.target.closest('a.wcard, a.row');
+      if (!a || e.metaKey || e.ctrlKey || e.shiftKey || e.button) return;
+      clear();
+      var img = $('img', a);
+      // En el índice de escritorio la miniatura está oculta: se usa la vista previa, si muestra esta obra.
+      var prev = $('.preview__img.on');
+      if (a.classList.contains('row') && prev && a.classList.contains('is-active')) img = prev;
+      if (!img || !img.getClientRects().length) return;
+      img.style.viewTransitionName = 'work-cover';
+      img.setAttribute('data-vt', '');
+    }, true);
+    window.addEventListener('pageshow', clear);   // al volver atrás no queda el nombre puesto
+  })();
+
   /* ── Barra de revisión: comparar los dos temas ────────────────────────
      Sólo aparece en localhost y en las vistas previas de Netlify, nunca en
      el dominio publicado. */
