@@ -65,12 +65,22 @@
   <div class="world__stage">
     <div class="world__depth" aria-hidden="true"></div>
     <div class="world__canvas" aria-hidden="true"></div>
+    <!-- La presentación del estudio es la misma del landing (site.json → hero*). -->
     <div class="world__intro">
-      <p class="eyebrow">A journey through the works</p>
-      <h1 id="world-title">Enter the <em>inner</em> world.</h1>
-      <p class="world__lead">Scroll to travel inside. Each work floats in its own drop: come close, and step in.</p>
-      <p class="world__hint label" aria-hidden="true">Scroll to travel <i>↓</i></p>
+      <p class="eyebrow">Immersive wellness art studio</p>
+      <h1 id="world-title">We are an <em>immersive</em> art studio.</h1>
+      <p class="world__lead">We create VR, fulldome, projection mapping and biofeedback experiences that merge art, technology and science to support well-being and inner exploration.</p>
+      <div class="world__row">
+        <a class="btn btn--solid" href="work/">See the work</a>
+        <button class="btn" type="button" data-contact>Start a project</button>
+      </div>
+      <p class="hero__proof world__proof"><span class="label">Presented at and commissioned by</span>IDB · EUIPO · Johns Hopkins · New Images Festival · Adidas · LATAM Airlines · Pacha Ibiza</p>
     </div>
+    <!-- La invitación va sobre la ameba de entrada. Un clic lleva hasta la primera obra. -->
+    <button class="world__invite" type="button" data-w-enter>
+      <span class="world__invite-t">Enter the <em>inner</em> world.</span>
+      <span class="label">Scroll to travel <i aria-hidden="true">↓</i></span>
+    </button>
     <div class="world__hud">
       <p class="label" data-w-count></p>
       <p class="world__name" data-w-title></p>

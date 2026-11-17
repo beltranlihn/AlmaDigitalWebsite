@@ -426,12 +426,22 @@ function buildWorld(lang) {
   <div class="world__stage">
     <div class="world__depth" aria-hidden="true"></div>
     <div class="world__canvas" aria-hidden="true"></div>
+    <!-- La presentación del estudio es la misma del landing (site.json → hero*). -->
     <div class="world__intro">
-      <p class="eyebrow">${esc(t.worldEyebrow)}</p>
-      <h1 id="world-title">${em(t.worldTitle)}</h1>
-      <p class="world__lead">${esc(t.worldLead)}</p>
-      <p class="world__hint label" aria-hidden="true">${esc(t.worldHint)} <i>↓</i></p>
+      <p class="eyebrow">${esc(t.heroEyebrow)}</p>
+      <h1 id="world-title">${em(t.heroTitle)}</h1>
+      <p class="world__lead">${esc(t.heroLead)}</p>
+      <div class="world__row">
+        <a class="btn btn--solid" href="${link(c, 'work/index.html')}">${esc(t.heroCtaWork)}</a>
+        <button class="btn" type="button" data-contact>${esc(t.heroCtaContact)}</button>
+      </div>
+      <p class="hero__proof world__proof"><span class="label">${esc(t.heroProof)}</span>${site.proof.map(esc).join(' · ')}</p>
     </div>
+    <!-- La invitación va sobre la ameba de entrada. Un clic lleva hasta la primera obra. -->
+    <button class="world__invite" type="button" data-w-enter>
+      <span class="world__invite-t">${em(t.worldTitle)}</span>
+      <span class="label">${esc(t.worldHint)} <i aria-hidden="true">↓</i></span>
+    </button>
     <div class="world__hud">
       <p class="label" data-w-count></p>
       <p class="world__name" data-w-title></p>

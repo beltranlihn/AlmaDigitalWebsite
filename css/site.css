@@ -764,13 +764,23 @@ body.has-review .ftr { padding-bottom: 78px; }   /* que la barra no tape el pie 
 .world__list { list-style: none; margin: 0; padding: 0; }
 .world__intro h1 { font-size: clamp(2.5rem, 5.4vw, 4.7rem); margin: 14px 0 18px; }
 .world__lead { font-size: clamp(1.06rem, 1.5vw, 1.28rem); line-height: 1.6; max-width: 30em; }
-.world__hint { margin-top: 30px; }
-.world__hint i { font-style: normal; }
+.world__proof { margin-top: 26px; }
+/* "Entra al mundo interior": la invitación, sobre la ameba de entrada. */
+.world__invite { display: none; text-align: center; color: var(--ink); }
+.world__invite-t { display: block; font-size: clamp(1.5rem, 2.5vw, 2.3rem); font-weight: 200; letter-spacing: -.03em; line-height: 1.1; margin-bottom: 10px; }
+.world__invite-t em { font-style: italic; color: var(--em); }
+.world__invite .label { transition: color .3s var(--ease); }
+.world__invite:hover .label { color: var(--ink); }
+.world__invite i { font-style: normal; }
+.world:not(.world--flat) .world__invite {
+  display: block; position: absolute; z-index: 1; left: 75%; top: clamp(92px, 13vh, 132px); transform: translateX(-50%);
+  width: min(420px, 44vw);
+}
 .world__row { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 24px; }
 
 .world--flat .world__stage { max-width: var(--max); margin: 0 auto; padding: calc(var(--header-h) + clamp(28px, 6vw, 80px)) var(--px) clamp(48px, 8vw, 110px); }
 .world--flat .world__depth, .world--flat .world__canvas, .world--flat .world__hud,
-.world--flat .world__dots, .world--flat .world__hint { display: none; }
+.world--flat .world__dots { display: none; }
 .world--flat .world__intro { margin-bottom: clamp(28px, 5vw, 60px); }
 .world--flat .world__end { margin-top: clamp(40px, 7vw, 90px); }
 .world--flat .world__list { margin-top: 0; }
@@ -780,10 +790,22 @@ body.has-review .ftr { padding-bottom: 78px; }   /* que la barra no tape el pie 
 .world:not(.world--flat) { height: calc((var(--n) + 2.2) * 100vh); }
 .world:not(.world--flat) .world__stage { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; }
 .world__stage.is-deep { color: var(--ink-body); font-weight: var(--w-body); }
-/* Lo oscuro de adentro: js/world.js mueve --deep de 0 a 1 al cruzar la ameba de entrada. */
+/* Lo oscuro de adentro. js/world.js mueve --deep de 0 a 1 al cruzar la ameba de entrada.
+   Casi todo lo hace .world-tint (abajo), que tiñe el fluido; esta capa sólo
+   asegura contraste para el texto, sobre todo abajo. */
 .world__depth {
   position: absolute; inset: 0; opacity: var(--deep, 0); pointer-events: none;
-  background: radial-gradient(120% 85% at 62% 8%, rgba(98, 70, 186, .84) 0%, rgba(40, 27, 96, .91) 46%, rgba(13, 11, 34, .95) 100%);
+  background: linear-gradient(to bottom, rgba(20, 14, 52, .16) 0%, rgba(13, 11, 34, .34) 60%, rgba(10, 8, 28, .62) 100%);
+}
+/* El fluido del sitio es el "líquido" del mundo: adentro, el velo claro se
+   retira y esta capa lo multiplica por violeta. Los remolinos siguen ahí y
+   siguen respondiendo al cursor, pero en profundidad. La crea js/world.js al
+   lado de .veil (tiene que estar fuera de <main> para poder mezclarse con el
+   canvas del fluido) y la quita al salir de la página. */
+.world-tint {
+  position: fixed; inset: 0; z-index: 1; pointer-events: none; opacity: 0; mix-blend-mode: multiply;
+  /* El fondo del fluido es celeste: para que el resultado dé violeta y no azul, el tinte lleva más rojo. */
+  background: radial-gradient(125% 95% at 62% 4%, #a57af0 0%, #7442b4 34%, #3a216c 68%, #180e36 100%);
 }
 .world__canvas { position: absolute; inset: 0; touch-action: pan-y; }
 .world__canvas canvas { width: 100%; height: 100%; display: block; touch-action: pan-y; }
@@ -795,6 +817,7 @@ body.has-review .ftr { padding-bottom: 78px; }   /* que la barra no tape el pie 
   max-width: min(560px, 46vw);
 }
 .world:not(.world--flat) .world__intro { pointer-events: none; }
+.world:not(.world--flat) .world__intro a, .world:not(.world--flat) .world__intro button { pointer-events: auto; }
 .world:not(.world--flat) .world__end, .world:not(.world--flat) .world__hud { opacity: 0; visibility: hidden; }
 /* La ficha de cada obra: vidrio esmerilado. Lo que pasa por detrás se ve borroso. */
 .world:not(.world--flat) .world__hud {
@@ -827,7 +850,13 @@ body.has-review .ftr { padding-bottom: 78px; }   /* que la barra no tape el pie 
   .world:not(.world--flat) .world__hud {
     top: auto; bottom: clamp(22px, 6vh, 64px); transform: none; right: var(--px); max-width: none; width: auto;
   }
-  .world__intro h1 { font-size: clamp(2.1rem, 9vw, 3rem); }
+  .world__intro h1 { font-size: clamp(1.9rem, 8.4vw, 2.8rem); margin: 10px 0 12px; }
+  .world__lead { font-size: 1rem; line-height: 1.5; }
+  .world__row { margin-top: 16px; gap: 8px; }
+  .world__row .btn { padding-left: 16px; padding-right: 16px; }
+  .world__proof { display: none; }
+  .world:not(.world--flat) .world__invite { left: 50%; top: 74px; width: calc(100% - 2 * var(--px)); }
+  .world__invite-t { font-size: 1.45rem; margin-bottom: 6px; }
   .world:not(.world--flat) .world__hud { padding: 18px 20px 20px; }
   .world__fmt { margin-bottom: 14px; }
   .world:not(.world--flat) .world__dots { top: 34%; right: 4px; }

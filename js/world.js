@@ -7,6 +7,10 @@
      · se entra por una ameba grande, la del logo: es la puerta;
      · adentro está oscuro y cada obra flota dentro de una ameba de vidrio que
        deforma su portada como una gota;
+     · el fondo sigue siendo el fluido del sitio, teñido de violeta profundo:
+       sus remolinos son el "líquido" de este mundo y responden al cursor;
+     · hay polvo en suspensión y tres corrientes de partículas que giran
+       alrededor del camino;
      · se avanza con el scroll NORMAL de la página (no se secuestra la rueda):
        la sección es alta y el escenario queda fijo mientras se la recorre;
      · un clic en una ameba (o en "Entrar a la obra") hace que la cámara entre
@@ -67,6 +71,7 @@ const FRAG = `
   uniform sampler2D uMap;
   uniform float uHasMap, uOpacity, uTime, uSeed, uFocus, uGlow, uSolid;
   uniform vec3 uA, uB, uC;
+  uniform vec2 uLook;
   varying vec3 vN; varying vec3 vP;
   void main() {
     vec3 N = normalize(vN), V = normalize(-vP);
@@ -78,14 +83,17 @@ const FRAG = `
     vec3 glow = mix(uA, uB, clamp(g, 0.0, 1.0));
     glow = mix(glow, uC, smoothstep(0.25, 0.95, ndv) * 0.3);
 
-    vec3 img = texture2D(uMap, 0.5 + d * 0.5 * (0.74 + 0.26 * r * r)).rgb;
+    /* La portada se corre un poco con el cursor, como al mirar dentro de una bola de cristal. */
+    vec3 img = texture2D(uMap, 0.5 + d * 0.5 * (0.74 + 0.26 * r * r) + uLook * (1.0 - r * r)).rgb;
     img *= mix(1.0, 0.6, smoothstep(0.55, 1.0, r));
     img *= 0.72 + 0.28 * uFocus;
     vec3 col = mix(glow, img, uHasMap);
 
-    vec3 irid = 0.5 + 0.5 * cos(6.2832 * (fres * 0.9 + vec3(0.02, 0.36, 0.62)) + uSeed);
+    /* Película líquida: bandas de color que se arrastran por la superficie, como en una pompa de jabón. */
+    float film = 0.5 + 0.5 * sin(d.x * 5.0 + sin(d.y * 6.0 + uTime * 0.45 + uSeed) * 1.6 + uTime * 0.3);
+    vec3 irid = 0.5 + 0.5 * cos(6.2832 * (fres * 0.9 + film * 0.35 + vec3(0.02, 0.36, 0.62)) + uSeed);
     col = mix(col, vec3(0.93, 0.86, 1.0), fres * 0.55);
-    col += irid * fres * 0.22;
+    col += irid * (fres * 0.22 + film * smoothstep(0.35, 1.0, r) * 0.1);
     vec3 L1 = normalize(vec3(-0.55, 0.75, 0.6)), L2 = normalize(vec3(0.7, -0.35, 0.5));
     col += smoothstep(0.62, 0.97, dot(N, L1)) * mix(0.09, 0.22, uHasMap);
     col += pow(max(dot(N, normalize(L1 + V)), 0.0), 260.0) * mix(0.3, 0.7, uHasMap);
@@ -97,24 +105,43 @@ const FRAG = `
     gl_FragColor = vec4(col, a * uOpacity);
   }`;
 
+/* Partículas: polvo que deriva y titila, y corrientes (aFlow) que giran
+   alrededor del camino. El cursor las aparta y crecen cuando se avanza rápido. */
 const DUST_VERT = `
-  attribute float aSize;
-  uniform float uPx;
-  varying float vFade;
+  attribute float aSize, aSeed, aTint, aFlow;
+  uniform float uPx, uTime, uBoost, uPush;
+  uniform vec2 uMouse;
+  varying float vFade; varying float vTint;
   void main() {
-    vec4 mv = modelViewMatrix * vec4(position, 1.0);
-    gl_Position = projectionMatrix * mv;
+    vec3 p = position;
+    if (aFlow > 0.5) {
+      float a = uTime * 0.045, c = cos(a), s = sin(a);
+      p.xy = vec2(p.x * c - p.y * s, p.x * s + p.y * c);
+      p.y *= 0.62;
+    }
+    p.x += sin(uTime * 0.21 + aSeed * 6.3) * 0.3;
+    p.y += cos(uTime * 0.17 + aSeed * 9.1) * 0.26;
+    vec4 mv = modelViewMatrix * vec4(p, 1.0);
+    vec4 clip = projectionMatrix * mv;
+    vec2 ndc = clip.xy / clip.w, d = ndc - uMouse;
+    ndc += normalize(d + 1e-5) * exp(-dot(d, d) * 14.0) * uPush * 0.12;
+    clip.xy = ndc * clip.w;
+    gl_Position = clip;
     float depth = -mv.z;
-    gl_PointSize = aSize * uPx * (5.0 / depth);
-    vFade = smoothstep(26.0, 7.0, depth) * smoothstep(0.3, 1.6, depth);
+    gl_PointSize = aSize * uPx * (5.0 / depth) * (1.0 + uBoost * 1.5);
+    float twinkle = 0.55 + 0.45 * sin(uTime * (0.6 + aSeed * 1.4) + aSeed * 40.0);
+    vFade = smoothstep(28.0, 7.0, depth) * smoothstep(0.3, 1.6, depth) * twinkle;
+    vTint = aTint;
   }`;
 const DUST_FRAG = `
   uniform float uDeep;
-  varying float vFade;
+  varying float vFade; varying float vTint;
   void main() {
     float d = length(gl_PointCoord - 0.5);
     float a = smoothstep(0.5, 0.0, d);
-    gl_FragColor = vec4(vec3(0.86, 0.78, 1.0), a * a * vFade * 0.6 * uDeep);
+    vec3 lilac = vec3(0.86, 0.78, 1.0), blue = vec3(0.62, 0.72, 1.0), pink = vec3(1.0, 0.74, 0.92);
+    vec3 c = vTint < 0.5 ? mix(lilac, blue, vTint * 2.0) : mix(blue, pink, vTint * 2.0 - 1.0);
+    gl_FragColor = vec4(c, a * a * vFade * 0.9 * uDeep);
   }`;
 
 export function mount(section, opts) {
@@ -153,7 +180,7 @@ export function mount(section, opts) {
       uniforms: {
         uTime: { value: 0 }, uSeed: { value: o.seed }, uWobble: { value: o.wobble },
         uMap: { value: blank }, uHasMap: { value: 0 }, uOpacity: { value: 0 }, uFocus: { value: 0 },
-        uGlow: { value: 0 }, uSolid: { value: o.solid || 0 },
+        uGlow: { value: 0 }, uSolid: { value: o.solid || 0 }, uLook: { value: new THREE.Vector2() },
         uA: { value: new THREE.Vector3(...o.a) }, uB: { value: new THREE.Vector3(...o.b) }, uC: { value: new THREE.Vector3(...o.c) },
       },
     });
@@ -161,7 +188,7 @@ export function mount(section, opts) {
     const mesh = new THREE.Mesh(geo, mat);
     mesh.frustumCulled = false;
     scene.add(mesh);
-    return { mesh, u: mat.uniforms, r: 1, base: new THREE.Vector3(), drift: o.drift || 0, seed: o.seed, far: o.far || 30 };
+    return { mesh, u: mat.uniforms, r: 1, base: new THREE.Vector3(), drift: o.drift || 0, seed: o.seed, far: o.far || 30, wob: o.wobble, hov: 0 };
   }
   const door = ameba(geoBig, { seed: 1.7, wobble: 1, solid: 1, a: C.violet, b: C.pink, c: C.mist });
   const core = ameba(geoBig, { seed: 4.2, wobble: 1, solid: 1, a: C.purple, b: C.lilac, c: C.mist, far: 44 });
@@ -174,28 +201,43 @@ export function mount(section, opts) {
   });
   const palette = [[C.violet, C.pink, C.mist], [C.blue, C.lilac, C.mist], [C.purple, C.pink, C.lilac], [C.blue, C.violet, C.pink]];
   const extras = [];
-  for (let i = 0; i < (coarse ? 9 : 18); i++) {
+  for (let i = 0; i < (coarse ? 12 : 30); i++) {
     const p = palette[i % palette.length];
     const e = ameba(geoSmall, { seed: rnd(0, 20), wobble: 1.15, a: p[0], b: p[1], c: p[2], drift: rnd(0.15, 0.5) });
     const side = i % 2 ? 1 : -1;
     e.base.set(side * rnd(2.6, 6.2), rnd(-3.2, 3.2), rnd(-6, -74));
-    e.r = rnd(0.22, 0.85);
+    e.r = i % 3 ? rnd(0.08, 0.3) : rnd(0.3, 0.85);       // muchas chicas, unas pocas grandes
     extras.push(e);
   }
 
   /* ── Polvo en suspensión: da la sensación de avanzar ────────────────── */
-  const DN = coarse ? 450 : 1100;
-  const dPos = new Float32Array(DN * 3), dSize = new Float32Array(DN);
+  const LOOSE = coarse ? 800 : 2200, FLOW = coarse ? 800 : 2400, DN = LOOSE + FLOW;
+  const dPos = new Float32Array(DN * 3), dSize = new Float32Array(DN), dSeed = new Float32Array(DN);
+  const dTint = new Float32Array(DN), dFlow = new Float32Array(DN);
   for (let i = 0; i < DN; i++) {
-    dPos[i * 3] = rnd(-8, 8); dPos[i * 3 + 1] = rnd(-4.5, 4.5); dPos[i * 3 + 2] = rnd(4, -84);
-    dSize[i] = Math.random() < 0.06 ? rnd(2.2, 4) : rnd(0.5, 1.4);
+    dSeed[i] = Math.random(); dTint[i] = Math.random();
+    if (i < LOOSE) {                   // polvo suelto
+      dPos[i * 3] = rnd(-8, 8); dPos[i * 3 + 1] = rnd(-4.5, 4.5); dPos[i * 3 + 2] = rnd(4, -86);
+      dSize[i] = Math.random() < 0.07 ? rnd(2.4, 4.4) : rnd(0.7, 1.7);
+    } else {                           // tres corrientes en hélice alrededor del camino
+      const k = i % 3, z = rnd(2, -86), a = z * 0.22 + k * 2.094 + rnd(-0.22, 0.22), rad = 3.3 + k * 0.6 + rnd(-0.4, 0.4);
+      dPos[i * 3] = Math.cos(a) * rad; dPos[i * 3 + 1] = Math.sin(a) * rad; dPos[i * 3 + 2] = z;
+      dSize[i] = Math.random() < 0.05 ? rnd(2, 3.2) : rnd(0.7, 1.7); dFlow[i] = 1;
+      dTint[i] = clamp(k / 2 + rnd(-0.18, 0.18), 0, 1);     // cada corriente tira a un color
+    }
   }
   const dGeo = new THREE.BufferGeometry();
   dGeo.setAttribute('position', new THREE.BufferAttribute(dPos, 3));
   dGeo.setAttribute('aSize', new THREE.BufferAttribute(dSize, 1));
+  dGeo.setAttribute('aSeed', new THREE.BufferAttribute(dSeed, 1));
+  dGeo.setAttribute('aTint', new THREE.BufferAttribute(dTint, 1));
+  dGeo.setAttribute('aFlow', new THREE.BufferAttribute(dFlow, 1));
   const dMat = new THREE.ShaderMaterial({
     vertexShader: DUST_VERT, fragmentShader: DUST_FRAG, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending,
-    uniforms: { uPx: { value: 3 * dpr }, uDeep: { value: 0 } },
+    uniforms: {
+      uPx: { value: 4 * dpr }, uDeep: { value: 0 }, uTime: { value: 0 }, uBoost: { value: 0 },
+      uPush: { value: 0 }, uMouse: { value: new THREE.Vector2(9, 9) },
+    },
   });
   const dust = new THREE.Points(dGeo, dMat);
   dust.frustumCulled = false;
@@ -219,8 +261,8 @@ export function mount(section, opts) {
     /* Dónde cae en pantalla: fx, fy son fracciones del medio ancho/alto visible a la distancia d. */
     const at = (d, fx, fy) => [fx * TAN * d * aspect, fy * TAN * d];
 
-    const d0 = 8.5, dr = wide ? 2.1 : 1.3;
-    const [dx, dy] = wide ? at(d0, 0.5, 0.04) : at(d0, 0, 0.42);
+    const d0 = 8.5, dr = wide ? 1.85 : 0.95;
+    const [dx, dy] = wide ? at(d0, 0.5, -0.16) : at(d0, 0, 0.36);
     door.base.set(dx, dy, 0); door.r = dr;
 
     const R = 1.25;
@@ -271,11 +313,23 @@ export function mount(section, opts) {
     img.src = wk.cover;
   }
 
+  /* ── El fluido del sitio como líquido del mundo ───────────────────────
+     Al entrar, el velo claro se retira y una capa violeta multiplica el fluido
+     (css: .world-tint). Va al lado de .veil, fuera de <main>, porque sólo así
+     puede mezclarse con el canvas del fluido. */
+  const veil = document.querySelector('.veil');
+  const tint = document.createElement('div');
+  tint.className = 'world-tint'; tint.setAttribute('aria-hidden', 'true');
+  if (veil && veil.parentNode) veil.parentNode.insertBefore(tint, veil.nextSibling); else document.body.appendChild(tint);
+  const invite = q('[data-w-enter]');
+
   /* ── Estado ─────────────────────────────────────────────────────────── */
   const still = reduce;
   let p = 0, ps = 0, time = 0, last = 0, raf = 0, visible = true, disposed = false;
   let index = -1, shown = -2, deepOn = null, sDepth = -1, hover = -1, started = false;
   let entering = null;                 // { i, t } mientras la cámara entra a una obra
+  let vel = 0, pulse = 0, push = 0, fov = 45, tintO = -1;
+  const TAU = Math.PI * 2;
   const mouse = { x: 0, y: 0, sx: 0, sy: 0, in: false, cx: 0, cy: 0 };
   const tmp = new THREE.Vector3(), ray = new THREE.Vector3();
 
@@ -315,11 +369,23 @@ export function mount(section, opts) {
     ps = still ? p : ps + (p - ps) * (1 - Math.exp(-dt * 5));
     if (Math.abs(p - ps) < 0.0004) ps = p;
     time += dt;
+    /* Qué tan rápido se avanza (0…1): abre un poco el ángulo de la cámara, agita las amebas y agranda el polvo. */
+    vel += (clamp(Math.abs(p - ps) * 60, 0, 1) - vel) * 0.1;
+    pulse *= 0.94;
 
     /* Profundidad: se oscurece al entrar por la puerta. */
     const deep = smooth(0.02, T_DOOR, ps);
-    stage.style.setProperty('--deep', deep.toFixed(3));
-    dMat.uniforms.uDeep.value = 0.25 + 0.75 * deep;
+    const dq = Math.round(deep * 200) / 200;
+    if (dq !== tintO) {
+      tintO = dq;
+      stage.style.setProperty('--deep', dq);
+      tint.style.opacity = dq;
+      if (veil) veil.style.opacity = 1 - 0.85 * dq;
+    }
+    const du = dMat.uniforms;
+    du.uDeep.value = 0.25 + 0.75 * deep; du.uTime.value = still ? 0 : time; du.uBoost.value = vel + pulse;
+    push += ((mouse.in ? 1 : 0) - push) * 0.08;
+    du.uPush.value = push; du.uMouse.value.set(mouse.sx, mouse.sy);
     const on = deep > 0.55;
     if (on !== deepOn) {
       const first = deepOn === null;
@@ -341,6 +407,7 @@ export function mount(section, opts) {
     }
     showWork(index >= 0 ? index : (shown >= 0 ? shown : -1));
     setOpacity(intro, 1 - smooth(0.012, 0.06, ps));
+    setOpacity(invite, 1 - smooth(0.012, 0.06, ps));
     setOpacity(hud, entering ? 0 : (index >= 0 ? 1 - smooth(HALF * 0.55, HALF, bestD) : 0));
     setOpacity(end, entering ? 0 : smooth(0.93, 0.985, ps));
     setOpacity(dots, entering ? 0 : deep);
@@ -348,7 +415,12 @@ export function mount(section, opts) {
     /* Cámara. */
     path(ps);
     mouse.sx += (mouse.x - mouse.sx) * 0.06; mouse.sy += (mouse.y - mouse.sy) * 0.06;
-    if (!still && !coarse) { camPos.x += mouse.sx * 0.3; camPos.y += mouse.sy * 0.18; }
+    if (!still) {
+      if (!coarse) { camPos.x += mouse.sx * 0.3; camPos.y += mouse.sy * 0.18; }
+      camPos.y += Math.sin(time * TAU / 6) * 0.045;           // la cámara respira: un ciclo cada 6 s
+      const f = 45 + vel * 7;
+      if (Math.abs(f - fov) > 0.02) { fov = f; camera.fov = f; camera.updateProjectionMatrix(); }
+    }
     let grow = 1;
     if (entering) {
       entering.t = Math.min(1, entering.t + dt / 0.9);
@@ -362,24 +434,29 @@ export function mount(section, opts) {
     }
     camera.position.copy(camPos); camera.lookAt(camLook);
 
-    door.u.uOpacity.value = place(door, 1, 1) * (1 - smooth(T_DOOR * 0.72, T_DOOR, ps));
+    const stir = vel * 0.8 + pulse * 0.5;                      // agitación general
+    door.u.uWobble.value = door.wob * (1 + stir);
+    door.u.uOpacity.value = place(door, still ? 1 : 1 + 0.03 * Math.sin(time * TAU / 6), 1) * (1 - smooth(T_DOOR * 0.72, T_DOOR, ps));
     door.mesh.visible = door.u.uOpacity.value > 0.01;
     core.u.uOpacity.value = place(core, 1, 0.8);
     core.mesh.visible = core.u.uOpacity.value > 0.01;
-    core.u.uGlow.value = 0.35;
+    core.u.uGlow.value = 0.35; core.u.uWobble.value = core.wob * (1 + stir);
     works.forEach((wk, i) => {
       if (!wk.asked && tWork(i) - ps < HALF * 4.5) ask(wk);
       wk.mix += (wk.mixTo - wk.mix) * (still ? 1 : 0.06);
       const mine = entering && entering.i === i;
-      const o = place(wk, mine ? grow : 1, 0.7);
+      wk.hov += ((hover === i ? 1 : 0) - wk.hov) * 0.12;      // la que está bajo el cursor se hincha y se agita
+      const o = place(wk, mine ? grow : 1 + 0.05 * wk.hov, 0.7);
       wk.u.uOpacity.value = mine ? Math.max(o, entering.t) : (entering ? o * (1 - entering.t) : o);
       wk.mesh.visible = wk.u.uOpacity.value > 0.01;
       wk.u.uHasMap.value = wk.mix;
       wk.u.uFocus.value = 1 - smooth(HALF * 0.6, HALF * 1.6, Math.abs(ps - tWork(i)));
-      wk.u.uGlow.value += ((hover === i ? 0.6 : 0) - wk.u.uGlow.value) * 0.12;
-      if (mine) wk.u.uWobble.value = 0.55 * (1 - entering.t);
+      wk.u.uGlow.value = 0.6 * wk.hov;
+      wk.u.uLook.value.set(mouse.sx * 0.07, mouse.sy * 0.07);
+      wk.u.uWobble.value = mine ? wk.wob * (1 - entering.t) : wk.wob * (1 + 0.6 * wk.hov + stir);
     });
     extras.forEach((e) => {
+      e.u.uWobble.value = e.wob * (1 + stir);
       e.u.uOpacity.value = place(e, 1, 1) * deep * (entering ? 1 - entering.t : 1);
       e.mesh.visible = e.u.uOpacity.value > 0.01;
     });
@@ -440,18 +517,37 @@ export function mount(section, opts) {
 
   const ac = new AbortController(), sig = { signal: ac.signal };
   let downX = 0, downY = 0;
-  host.addEventListener('pointermove', (e) => {
+  stage.addEventListener('pointermove', (e) => {
     const r = canvas.getBoundingClientRect();
     mouse.in = true; mouse.cx = e.clientX; mouse.cy = e.clientY;
     mouse.x = ((e.clientX - r.left) / r.width) * 2 - 1; mouse.y = -(((e.clientY - r.top) / r.height) * 2 - 1);
   }, sig);
-  host.addEventListener('pointerleave', () => { mouse.in = false; mouse.x = mouse.y = 0; hover = -1; stage.classList.remove('is-hot'); }, sig);
+  stage.addEventListener('pointerleave', () => { mouse.in = false; mouse.x = mouse.y = 0; hover = -1; stage.classList.remove('is-hot'); }, sig);
   host.addEventListener('pointerdown', (e) => { downX = e.clientX; downY = e.clientY; }, sig);
   host.addEventListener('click', (e) => {
     if (Math.abs(e.clientX - downX) + Math.abs(e.clientY - downY) > 8) return;   // fue un arrastre o un scroll con el dedo
     const i = hit(e.clientX, e.clientY);
-    if (i < 0) return;
+    if (i < 0) {                       // tocar el agua: todo se agita un momento y suena una nota
+      if (deepOn && !still) { pulse = 1; if (sound && sound.chime) sound.chime((Math.random() * 6) | 0); }
+      return;
+    }
     if (Math.abs(ps - tWork(i)) > HALF * 0.7) scrollToT(tWork(i)); else enter(i);  // si está lejos, primero se va hasta ella
+  }, sig);
+  /* "Entra al mundo interior": lleva hasta la primera obra. */
+  if (invite) invite.addEventListener('click', () => scrollToT(tWork(0)), sig);
+  /* Flechas izquierda y derecha: parada anterior y siguiente (arriba y abajo siguen siendo el scroll normal). */
+  const STOPS = [0].concat(works.map((_, i) => tWork(i)), [1]);
+  window.addEventListener('keydown', (e) => {
+    if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+    if (e.altKey || e.metaKey || e.ctrlKey || !visible || entering) return;
+    const t = e.target;
+    if (t && (t.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName))) return;
+    let k = 0;
+    STOPS.forEach((v, i) => { if (Math.abs(v - p) < Math.abs(STOPS[k] - p)) k = i; });
+    const next = clamp(k + (e.key === 'ArrowRight' ? 1 : -1), 0, STOPS.length - 1);
+    if (next === k) return;
+    e.preventDefault();
+    scrollToT(STOPS[next]);
   }, sig);
   if (hudOpen) hudOpen.addEventListener('click', (e) => {
     if (still || e.metaKey || e.ctrlKey || e.shiftKey || e.button || shown < 0) return;   // en pestaña nueva: enlace normal
@@ -494,6 +590,8 @@ export function mount(section, opts) {
       try { renderer.forceContextLoss(); } catch (e) {}
       canvas.remove();
       if (dots) dots.textContent = '';
+      tint.remove();
+      if (veil) veil.style.opacity = '';
       document.documentElement.classList.remove('is-under');
     },
   };

@@ -124,10 +124,23 @@ acompaña al bloque de obras del landing: no está en el menú ni en el sitemap 
 
 - **Cómo llegar**: `http://localhost:5599/inner-world.html`, o el botón "Mundo 3D" de la barra de revisión
   (localhost y vistas previas de Netlify).
-- **Qué se ve**: se entra por una ameba grande, la del logo, que es la puerta. Adentro está oscuro y cada
-  obra flota dentro de una ameba de vidrio que deforma su portada como una gota. A la izquierda, una
-  ficha de vidrio esmerilado con el nombre y el botón; a la derecha, puntos para saltar de obra. Al final,
-  una ameba grande y los botones de siempre.
+- **La entrada**: a la izquierda, la presentación del estudio, la misma del hero del landing (`site.json →
+  hero*`). A la derecha, la ameba grande del logo, que es la puerta, y sobre ella la invitación "Entra al
+  mundo interior" (`t.worldTitle`): un clic lleva hasta la primera obra.
+- **Adentro**: está oscuro y cada obra flota dentro de una ameba de vidrio que deforma su portada como una
+  gota. A la izquierda, una ficha de vidrio esmerilado con el nombre y el botón; a la derecha, puntos para
+  saltar de obra. Al final, una ameba grande y los botones de siempre.
+- **El líquido del mundo es el fluido del sitio.** Al entrar, el velo claro se retira y una capa violeta
+  (`.world-tint`, `mix-blend-mode: multiply`) tiñe el fluido: sus remolinos quedan de fondo, en
+  profundidad, y siguen respondiendo al cursor. No se toca `js/fluid.js`. La capa la crea `js/world.js`
+  al lado de `.veil`, fuera de `<main>`: adentro de `<main>` no podría mezclarse con el canvas del fluido.
+- **Detalle**: polvo en suspensión de tres colores que deriva y titila, tres corrientes de partículas en
+  hélice que giran alrededor del camino, treinta amebas chicas de fondo y una película iridiscente que se
+  arrastra por la superficie de cada ameba, como en una pompa de jabón.
+- **Lo que responde**: el cursor mueve la cámara, corre la portada dentro de cada ameba y aparta las
+  partículas; la ameba bajo el cursor se hincha; al avanzar rápido la cámara abre el ángulo y todo se
+  agita; un clic en el vacío agita el mundo y suena una nota; las flechas izquierda y derecha saltan de
+  parada; la cámara y la puerta respiran cada 6 s.
 - **Scroll real**: la sección mide (obras + 2,2) pantallas y el escenario queda fijo (`position: sticky`)
   mientras se la recorre. No se secuestra la rueda, a diferencia de Mirages: funciona con el dedo y el
   teclado. El avance del scroll (0 a 1) mueve la cámara, que frena frente a cada obra.
@@ -315,6 +328,30 @@ desactiva. **No** cambiar nameservers a Cloudflare.
 El fluid sim sigue corriendo con auto-emitters en mobile. Los usuarios de Android no pueden tocar el fondo para emitir fluidos (correcto — el dedo es para el scroll).
 
 ## Historial de sesiones (última al tope)
+
+### 2026-11-17 — El mundo interior: más identidad y más respuesta (Vicente)
+
+Vicente vio la prueba ("funciona bastante bien") y pidió seguir mejorándola como mundo aparte, antes de
+decidir si sirve de landing: más detalle (partículas, patrones líquidos), la presentación del estudio en
+la entrada con "Entra al mundo interior" a la derecha sobre la ameba, y más interactividad.
+
+- **Entrada**: la presentación del hero del landing a la izquierda; la invitación arriba de la ameba, a la
+  derecha, como botón que lleva a la primera obra. Se quitaron los textos `worldEyebrow` y `worldLead`.
+- **Patrón líquido**: el fluido del sitio teñido de violeta con una capa en modo multiplicar. El fondo del
+  fluido es celeste, así que el tinte lleva más rojo para que dé violeta y no azul.
+- **Partículas**: de 1.100 a 4.600 en escritorio (1.600 en táctil), con color, deriva, titilar y tres
+  corrientes en hélice. Más amebas chicas de fondo. Película iridiscente en las amebas.
+- **Interactividad**: ver "Lo que responde" en la sección del mundo.
+
+**Verificado en Chrome**: la entrada en los dos idiomas, el fondo teñido y las partículas (capturas), la
+invitación, las flechas, el cursor sobre una ameba y el clic en el vacío. En emulación 375×812 la entrada
+entra en una pantalla, sin desbordes. **Sin probar**: teléfonos reales, Safari y Firefox; el costo de la
+capa en modo multiplicar sobre el fluido en equipos lentos.
+
+**Ideas para seguir** (no construidas): que el fluido reciba un empujón al llegar a cada obra (hay que
+abrir `js/fluid.js`); agua que refleje; transición líquida al entrar a la obra; que las partículas
+formen el nombre o un símbolo de cada obra al detenerse; arrastrar para mirar alrededor; que la música
+cambie de capa por obra.
 
 ### 2026-11-17 — Prueba: el mundo interior en 3D (Vicente)
 
