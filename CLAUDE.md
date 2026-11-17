@@ -10,6 +10,8 @@ estudio, sus proyectos y equipo con una estética audiovisual interactiva, en in
   de datos, y se commitean ya generadas. Netlify no corre el generador: publica el HTML tal cual.
 - WebGL Fluid Simulation (fork de PavelDoGreat) en `js/fluid.js`.
 - Ameba del hero: shader propio en `js/ameba.js` (WebGL 1, sin librerías, ~6 KB).
+- Partículas de las obras principales: `js/particles.js`, la única pieza que usa **Three.js** (0.187.0,
+  desde el CDN jsDelivr, 156 KB comprimido). Se carga sólo en las fichas que lo piden.
 - Google Fonts: Raleway (200, 300, 400, 500). GSAP (`gsap.min.js`) sólo lo usa `soul-charger.html`.
 
 ## Estructura de carpetas
@@ -26,6 +28,7 @@ estudio, sus proyectos y equipo con una estética audiovisual interactiva, en in
 │   ├── fluid.js               # MÓDULO CERRADO: simulación de fluido
 │   ├── cursor.js              # MÓDULO CERRADO: cursor propio
 │   ├── ameba.js               # la ameba viva del hero
+│   ├── particles.js           # partículas en la cabecera de las obras principales (Three.js)
 │   └── app.js                 # header, contacto, reel, filtros, lightbox
 ├── index.html, studio.html    # GENERADOS (inglés). No editar a mano
 ├── work/index.html            # GENERADO: índice de obras con filtros
@@ -76,6 +79,8 @@ Consecuencias:
 - No guardar referencias a elementos del header, main, footer o modal fuera de `initPage()`: se
   reemplazan. Buscarlos en el momento.
 - Las páginas hechas a mano (`site.json → legacyPages`, hoy `soul-charger.html`) se abren con carga normal.
+- Lo que una página monta por su cuenta y hay que soltar al salir (hoy las partículas, que abren un
+  contexto WebGL) deja su función de limpieza en `life.cleanups`.
 - Donde el navegador soporta View Transitions (Chrome, Safari, Firefox recientes) el cambio lleva un
   fundido, la portada de la obra se convierte en la cabecera de su ficha y la ameba se desliza. Sin
   soporte, el cambio es inmediato y la ameba se desliza por JavaScript.
@@ -93,6 +98,12 @@ Consecuencias:
   vista previa al pasar el mouse.
 - **Ficha de obra** (`work/<slug>.html`): portada, ficha técnica, concepto, galería con lightbox, reel,
   créditos, historial de exhibición, botón de consulta y obra siguiente.
+- **Partículas en la cabecera** de las obras principales (`site.json → particles`, hoy Neurocosm XR,
+  Collective Pulse, Soul Charger y Neural Canvas): sobre la foto se enciende un campo de puntos con una
+  formación y colores propios de la obra. Se arrastra para girarlo, el cursor aparta las partículas y un
+  clic lo dispersa. Para sumar una obra: agregar su entrada en `particles` (`formation`: `attractor`,
+  `pulse`, `halo` o `strokes`; `stage`: color del fondo; `colors`) y correr el build. Para sacarla,
+  borrar la entrada. Una formación nueva se escribe en `FORMATIONS` de `js/particles.js`.
 - **Studio** (`studio.html`): about, equipo y spin-offs.
 - **Español**: las mismas páginas bajo `/es/`, con los mismos slugs. Cada página enlaza a su par
   (`hreflang`) y el header tiene el cambio de idioma.
@@ -214,9 +225,10 @@ desactiva. **No** cambiar nameservers a Cloudflare.
 - **Revisar los borradores**: titular y bajada del hero, lista de clientes y obras destacadas
   (`site.json`), y las traducciones al español.
 - **Visor 360° / domo** en las fichas de Neurocosm Full Dome, Neurocosm 360, Alma Digital 360 y LPS:
-  falta material equirectangular. Opciones evaluadas: Pannellum (19 KB) o Three.js (155 KB); el formato
-  domo (ojo de pez) necesita un shader propio en los dos casos. Si entra Three.js, sus archivos van en
-  `js/` para que se publiquen.
+  falta material equirectangular. Opciones evaluadas: Pannellum (19 KB) o Three.js (que ya se usa en
+  `js/particles.js`); el formato domo (ojo de pez) necesita un shader propio en los dos casos.
+- **Three.js viene de un CDN** (jsDelivr). Si se prefiere servirlo desde el sitio, bajar el archivo a
+  `js/` (se publica solo) y cambiar la línea `import` de `js/particles.js`.
 - **Probar en teléfonos reales** (ameba + fluido a la vez, batería y temperatura) y hacer un envío real
   del formulario en la vista previa.
 - `soul-charger.html` sigue con el aspecto anterior y sólo en inglés.
@@ -234,6 +246,34 @@ desactiva. **No** cambiar nameservers a Cloudflare.
 El fluid sim sigue corriendo con auto-emitters en mobile. Los usuarios de Android no pueden tocar el fondo para emitir fluidos (correcto — el dedo es para el scroll).
 
 ## Historial de sesiones (última al tope)
+
+### 2026-11-17 — Partículas en la cabecera de las obras principales (Vicente)
+
+Rama `rediseno-landing`. Referencia de Vicente: [flow.nrly.fun](https://flow.nrly.fun/).
+
+- **`js/particles.js`** (módulo ES, Three.js 0.187.0 desde jsDelivr): 13.000 puntos en escritorio y
+  5.200 en táctil, con cuatro formaciones: `attractor` (madeja caótica, Neurocosm XR), `pulse`
+  (organismos que laten, Collective Pulse), `halo` (anillos que respiran cada 6 s, Soul Charger) y
+  `strokes` (trazos que fluyen, Neural Canvas). Arrastrar lo gira con inercia, el cursor aparta las
+  partículas y un clic lo dispersa. Se pausa fuera de pantalla y con la pestaña oculta; con "reducir
+  movimiento" dibuja un cuadro quieto.
+- **Carga sólo donde hace falta**: `js/app.js` lo pide con `import()` en las fichas que traen
+  `data-particles`. El resto del sitio no descarga Three.js. Si el CDN o WebGL fallan, queda la foto.
+- **Se desmonta al navegar** (`life.cleanups`): libera el contexto WebGL y quita su canvas.
+- Se usa el paquete `+esm` de jsDelivr (un archivo, 156 KB). El `build/three.module.min.js` del
+  paquete importa el núcleo sin minificar y suma 285 KB: no usarlo.
+- La indicación bajo el título cambia de texto según el equipo (mouse o dedo). En pantallas angostas
+  las líneas bajo el título ya no pasan por detrás de la ameba.
+
+**Verificado**: en Chrome, las cuatro formaciones, arrastre y clic; navegación sin recarga de ida y
+vuelta (el canvas aparece y desaparece, Three.js se descarga una sola vez). En emulación 375×812, sin
+desbordes y con el texto para táctil. Paquete de publicación: 45 páginas, 1.377 referencias, ninguna rota.
+**Sin probar**: teléfonos reales (en una ficha con partículas hay tres canvas WebGL a la vez: fluido,
+ameba y partículas), Safari y Firefox.
+
+**Idea siguiente** (referencia: [unseen.co](https://unseen.co/)): inmersión con sonido. Música de
+ambiente que sigue sonando al cambiar de página y un efecto de "sumergirse" (imagen y sonido) al entrar
+a una obra. Vicente puede pasar la música.
 
 ### 2026-11-17 — Navegación continua y landing como recorrido (Vicente)
 

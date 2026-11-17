@@ -25,6 +25,9 @@
   var isMobile = window.matchMedia('(pointer: coarse)').matches || ('ontouchstart' in window) || window.innerWidth <= 767;
   var $ = function (s, el) { return (el || document).querySelector(s); };
   var $$ = function (s, el) { return [].slice.call((el || document).querySelectorAll(s)); };
+  /* Carpeta de este script, absoluta: los import() relativos se resolverían contra
+     la URL de la página, que cambia al navegar. */
+  var scriptBase = (document.currentScript && document.currentScript.src) ? document.currentScript.src.replace(/[^\/]*$/, '') : '';
   function CFG() { return window.__ALMA__ || {}; }
   function T(k) { var t = CFG().t || {}; return t[k] || ''; }
   function play(el) { var p = el.play(); if (p && p.catch) p.catch(function () {}); }
@@ -34,7 +37,7 @@
 
   /* ── Ciclo de vida de la página ───────────────────────────────────────── */
   var life = null;
-  function newLife() { return { ac: ('AbortController' in window) ? new AbortController() : null, nodes: [], obs: [] }; }
+  function newLife() { return { ac: ('AbortController' in window) ? new AbortController() : null, nodes: [], obs: [], cleanups: [] }; }
   /* addEventListener que se desengancha solo al cambiar de página. */
   function on(target, type, fn, opts) {
     opts = opts || {};
@@ -50,6 +53,7 @@
     if (life.ac) life.ac.abort();
     life.nodes.forEach(function (n) { if (n.parentNode) n.parentNode.removeChild(n); });
     life.obs.forEach(function (o) { o.disconnect(); });
+    life.cleanups.forEach(function (fn) { try { fn(); } catch (e) {} });
     root.style.overflow = '';
     life = null;
   }
@@ -458,9 +462,31 @@
     });
   }
 
+  /* ── Partículas en la cabecera de las obras principales ───────────────
+     js/particles.js es un módulo aparte (el único que usa Three.js) y se pide
+     sólo en las fichas que lo declaran, así el resto del sitio no lo descarga.
+     Al cambiar de página se desmonta para soltar su contexto WebGL. */
+  function initParticles() {
+    var hero = $('.phero[data-particles]');
+    var stage = hero && $('.phero__stage', hero);
+    if (!stage || !scriptBase) return;
+    var mine = life;
+    import(scriptBase + 'particles.js').then(function (m) {
+      if (life !== mine || !document.contains(hero)) return;   // ya se navegó a otra página
+      var handle = m.mount(stage, {
+        formation: hero.getAttribute('data-particles'),
+        colors: (hero.getAttribute('data-colors') || '').split(',').filter(Boolean),
+        hero: hero,
+      });
+      if (!handle) return;
+      hero.classList.add('is-live');
+      mine.cleanups.push(handle.dispose);
+    }).catch(function () {});                                   // sin CDN o sin WebGL: queda la foto
+  }
+
   function initPage() {
     life = newLife();
-    initReel(); initProjectReels(); initPalette(); initIndex(); initLightbox(); initCards(); initCreds();
+    initReel(); initProjectReels(); initPalette(); initIndex(); initLightbox(); initCards(); initCreds(); initParticles();
     if (window.AlmaAmeba && window.AlmaAmeba.showBreath) window.AlmaAmeba.showBreath();
     stuck();
   }

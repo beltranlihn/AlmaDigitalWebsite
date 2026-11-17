@@ -29,6 +29,28 @@
   "perProjectPalette": false,
   "reelAutoplayOnView": false,
   "breathing": false,
+  "particles": {
+    "neurocosm-xr": {
+      "formation": "attractor",
+      "stage": "#05060f",
+      "colors": ["#6ea8ff", "#3d6bff", "#b9d2ff", "#ffffff", "#7a5cf2"]
+    },
+    "collective-pulse": {
+      "formation": "pulse",
+      "stage": "#0b0a1c",
+      "colors": ["#ff8fb1", "#ffd166", "#7ad7f0", "#b48cff", "#8ef0c2", "#ffffff"]
+    },
+    "soul-charger": {
+      "formation": "halo",
+      "stage": "#140609",
+      "colors": ["#ff7a59", "#ffb199", "#ff4f6d", "#ffd6c2", "#ffffff"]
+    },
+    "neural-canvas": {
+      "formation": "strokes",
+      "stage": "#04052b",
+      "colors": ["#ff8a3d", "#ffb469", "#3f6bff", "#8fb0ff", "#ffffff"]
+    }
+  },
   "legacyPages": {
     "soul-charger": "soul-charger.html"
   },
@@ -251,7 +273,9 @@
       "contactCommission": "Commission a project",
       "contactCommissionSubject": "Commission",
       "contactFestival": "Festivals and press",
-      "contactFestivalSubject": "Festival or press"
+      "contactFestivalSubject": "Festival or press",
+      "pParticlesHint": "Drag to turn · Click to scatter",
+      "pParticlesHintTouch": "Swipe to turn · Tap to scatter"
     },
     "es": {
       "langName": "Español",
@@ -364,7 +388,9 @@
       "contactCommission": "Encargar un proyecto",
       "contactCommissionSubject": "Encargo",
       "contactFestival": "Festivales y prensa",
-      "contactFestivalSubject": "Festival o prensa"
+      "contactFestivalSubject": "Festival o prensa",
+      "pParticlesHint": "Arrastra para girar · Clic para dispersar",
+      "pParticlesHintTouch": "Desliza para girar · Toca para dispersar"
     }
   }
 }

@@ -470,12 +470,18 @@ function buildProject(raw, rawNext, lang) {
 
   const legacy = site.legacyPages[p.slug];
 
-  const body = `<section class="phero">
-  <img class="phero__bg" src="${asset(c, p.cover)}" alt="" width="1920" height="1080" fetchpriority="high">
+  /* Obras principales (site.json → particles): sobre la foto se enciende un
+     campo de partículas con la formación y los colores de la obra. Lo monta
+     js/app.js con js/particles.js; sin eso, queda la foto como en las demás. */
+  const live = (site.particles || {})[p.slug];
+  const body = `<section class="phero${live ? ' phero--live' : ''}"${live ? ` data-particles="${esc(live.formation)}" data-colors="${esc(live.colors.join(','))}" style="--stage:${esc(live.stage)}"` : ''}>
+  <img class="phero__bg" src="${asset(c, p.cover)}" alt="" width="1920" height="1080" fetchpriority="high">${live ? `
+  <div class="phero__stage" aria-hidden="true"></div>` : ''}
   <div class="phero__txt">
     <p class="phero__eyebrow"><a href="${link(c, 'work/index.html')}">${esc(c.t.indexTitle)}</a> · ${esc(track)}</p>
     <h1>${esc(p.title)}</h1>
-    <p class="phero__fmt">${esc(p.format)}</p>
+    <p class="phero__fmt">${esc(p.format)}</p>${live ? `
+    <p class="phero__hint" aria-hidden="true"><span class="phero__hint-m">${esc(t.pParticlesHint)}</span><span class="phero__hint-t">${esc(t.pParticlesHintTouch)}</span></p>` : ''}
   </div>
   <div class="phero__slot" data-ameba-slot="project"></div>
 </section>
