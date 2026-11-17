@@ -13,8 +13,9 @@
        alrededor del camino;
      · se avanza con el scroll NORMAL de la página (no se secuestra la rueda):
        la sección es alta y el escenario queda fijo mientras se la recorre;
-     · un clic en una ameba (o en "Entrar a la obra") hace que la cámara entre
-       en ella y abre la ficha.
+     · un clic en una ameba (o en "Entrar a la obra") la derrama como un
+       líquido hasta cubrir la pantalla, y ese líquido se asienta en la
+       cabecera de la ficha, que se abre a continuación.
 
    Sin esto la página igual sirve: js/app.js deja la lista de obras a la vista
    si Three.js o WebGL no arrancan, y sin JavaScript queda esa misma lista.
@@ -144,6 +145,65 @@ const DUST_FRAG = `
     gl_FragColor = vec4(c, a * a * vFade * 0.9 * uDeep);
   }`;
 
+/* ── El derrame ────────────────────────────────────────────────────────
+   Al entrar a una obra, su ameba se vuelve líquido: una mancha que crece desde
+   donde estaba hasta cubrir la pantalla, con el borde ondulando. Adentro, la
+   portada pasa de verse como a través de la gota a verse plana, y al final se
+   acomoda en el encuadre y el degradado que tiene la cabecera de la ficha
+   (css: .phero), así el cambio de página casi no se nota. Es un plano a
+   pantalla completa, dibujado encima de todo.
+   uT 0…1: hasta 0,62 crece; desde 0,62 se asienta. */
+const LIQ_VERT = `
+  varying vec2 vUv;
+  void main() { vUv = position.xy * 0.5 + 0.5; gl_Position = vec4(position.xy, 0.0, 1.0); }`;
+const LIQ_FRAG = `
+  uniform sampler2D uFull;
+  uniform float uT, uTime, uAspect, uR0, uRMax, uHero, uImg, uSeed, uFade;
+  uniform vec2 uCenter;
+  varying vec2 vUv;
+  /* uv dentro de una caja con ese aspecto → uv de la imagen, como object-fit: cover. */
+  vec2 coverUV(vec2 uv, float boxAspect) {
+    vec2 k = boxAspect > uImg ? vec2(1.0, uImg / boxAspect) : vec2(boxAspect / uImg, 1.0);
+    return (uv - 0.5) * k + 0.5;
+  }
+  void main() {
+    vec2 p = vUv - uCenter; p.x *= uAspect;                      // en altos de pantalla
+    float d = length(p), ang = atan(p.y, p.x);
+    float grow = smoothstep(0.0, 0.62, uT);
+    float settle = smoothstep(0.62, 1.0, uT);
+    float calm = 1.0 - smoothstep(0.38, 0.72, uT);
+    float lob = sin(ang * 3.0 + uTime * 1.6 + uSeed) * 0.16 + sin(ang * 5.0 - uTime * 2.1 + uSeed * 2.0) * 0.09
+              + sin(ang * 8.0 + uTime * 2.7) * 0.04;
+    float R = mix(uR0, uRMax, grow) * (1.0 + lob * calm * (0.35 + grow));
+    float edge = d - R;
+    float inside = smoothstep(0.006, -0.006, edge);
+    if (inside < 0.002) discard;
+    float band = smoothstep(-0.16 - 0.1 * grow, 0.0, edge);     // 0 adentro → 1 en el frente del líquido
+    vec2 dir = p / max(d, 1e-4);
+
+    /* Un solo muestreo cuyo encuadre va cambiando (mezclar dos imágenes se veía doble):
+       como en la gota → portada a pantalla completa → encuadre de la cabecera de la ficha. */
+    vec2 q = p / max(R, 1e-4); float rr = min(length(q), 1.0);
+    vec2 lens = 0.5 + q * 0.5 * (0.74 + 0.26 * rr * rr);         // la gota mostraba el cuadrado del centro
+    vec2 dropUV = vec2(0.5 + (lens.x - 0.5) / uImg, lens.y);
+    vec2 bend = dir * band * band * 0.05 * (1.0 - settle);       // el frente dobla la imagen
+    vec2 fullUV = coverUV(vUv - bend, uAspect);
+    vec2 box = vec2(vUv.x, (vUv.y - (1.0 - uHero)) / uHero);     // la cabecera de la ficha: la franja de arriba
+    vec2 heroUV = coverUV(box, uAspect / uHero);
+    vec2 uv = mix(mix(dropUV, fullUV, smoothstep(0.0, 0.55, uT)), heroUV, settle);
+    vec3 col = texture2D(uFull, uv).rgb;
+
+    col = mix(col, vec3(0.93, 0.86, 1.0), pow(band, 5.0) * 0.45 * (1.0 - settle));
+    vec3 irid = 0.5 + 0.5 * cos(6.2832 * (band * 0.9 + vec3(0.02, 0.36, 0.62)) + uSeed);
+    col += irid * pow(band, 2.5) * 0.2 * (1.0 - settle);
+
+    /* Al asentarse: el mismo degradado de .phero::after, y se abre por debajo de la cabecera. */
+    float shade = box.y < 0.46 ? mix(0.9, 0.36, box.y / 0.46) : mix(0.36, 0.3, (box.y - 0.46) / 0.54);
+    col = mix(col, mix(col, vec3(0.031, 0.027, 0.094), clamp(shade, 0.0, 1.0)), settle);
+    float below = 1.0 - smoothstep(-0.03, 0.0, box.y);
+    gl_FragColor = vec4(col, inside * (1.0 - below * settle) * uFade);
+  }`;
+
 export function mount(section, opts) {
   opts = opts || {};
   const reduce = !!opts.reduce, coarse = !!opts.coarse, sound = opts.sound || null;
@@ -244,6 +304,21 @@ export function mount(section, opts) {
   scene.add(dust);
   disposables.push(dGeo, dMat);
 
+  /* ── El derrame: plano a pantalla completa, sólo mientras se entra a una obra ── */
+  const liqGeo = new THREE.PlaneGeometry(2, 2);
+  const liqMat = new THREE.ShaderMaterial({
+    vertexShader: LIQ_VERT, fragmentShader: LIQ_FRAG, transparent: true, depthTest: false, depthWrite: false,
+    uniforms: {
+      uFull: { value: blank }, uT: { value: 0 }, uTime: { value: 0 }, uAspect: { value: 1 },
+      uR0: { value: 0.2 }, uRMax: { value: 2 }, uHero: { value: 0.78 }, uImg: { value: 16 / 9 }, uSeed: { value: 0 },
+      uFade: { value: 0 }, uCenter: { value: new THREE.Vector2(0.5, 0.5) },
+    },
+  });
+  const liquid = new THREE.Mesh(liqGeo, liqMat);
+  liquid.frustumCulled = false; liquid.renderOrder = 10; liquid.visible = false;
+  scene.add(liquid);
+  disposables.push(liqGeo, liqMat);
+
   /* ── Recorrido ──────────────────────────────────────────────────────
      Tiempos (0…1 del scroll): puerta, una parada por obra, final. Entre dos
      paradas la cámara acelera y frena, así que se detiene frente a cada obra. */
@@ -251,7 +326,6 @@ export function mount(section, opts) {
   const tWork = (i) => (n === 1 ? 0.5 : lerp(T_FIRST, T_LAST, i / (n - 1)));
   const HALF = n === 1 ? 0.2 : (T_LAST - T_FIRST) / (n - 1) / 2;
   let keys = [];                       // [{ t, pos, look }]
-  let DIST = 5;                        // distancia de la cámara a la obra en cada parada
   function layout() {
     const w = Math.max(2, stage.clientWidth), h = Math.max(2, stage.clientHeight), aspect = w / h;
     renderer.setSize(w, h, false);
@@ -268,7 +342,6 @@ export function mount(section, opts) {
     const R = 1.25;
     const D = Math.max(5, wide ? 5.7 : (2 * R) / (0.64 * 2 * TAN * aspect));
     const [wx, wy] = wide ? at(D, 0.4, 0) : at(D, 0, 0.3);
-    DIST = D;
     keys = [
       { t: 0, pos: V(0, 0, d0), look: V(0, 0, 0) },
       { t: T_DOOR, pos: V(dx, dy, 0), look: V(dx * 0.4, dy * 0.4, -10) },
@@ -307,7 +380,7 @@ export function mount(section, opts) {
       const tex = new THREE.CanvasTexture(cv);
       tex.anisotropy = 4;
       disposables.push(tex);
-      wk.u.uMap.value = tex; wk.mixTo = 1;
+      wk.u.uMap.value = tex; wk.mixTo = 1; wk.img = img;
       if (still) draw(0);
     };
     img.src = wk.cover;
@@ -421,16 +494,12 @@ export function mount(section, opts) {
       const f = 45 + vel * 7;
       if (Math.abs(f - fov) > 0.02) { fov = f; camera.fov = f; camera.updateProjectionMatrix(); }
     }
-    let grow = 1;
     if (entering) {
-      entering.t = Math.min(1, entering.t + dt / 0.9);
-      const e = entering.t * entering.t * (3 - 2 * entering.t), wk = works[entering.i];
-      /* La cámara se pone de frente y la ameba crece hasta llenar la pantalla
-         (la cámara queda afuera: desde adentro no se vería nada). */
-      tmp.set(wk.base.x, wk.base.y, wk.base.z + DIST);
-      camPos.lerp(tmp, e); camLook.lerp(wk.base, e);
-      grow = lerp(1, (DIST * 0.9) / wk.r, e);
-      if (entering.t >= 1 && !entering.done) { entering.done = true; if (opts.navigate) opts.navigate(wk.href); }
+      entering.t = Math.min(1, entering.t + dt / 1.25);
+      const lu = liqMat.uniforms;
+      lu.uT.value = entering.t; lu.uTime.value = time; lu.uAspect.value = camera.aspect;
+      lu.uFade.value = smooth(0, 0.1, entering.t);
+      if (entering.t >= 1 && !entering.done) { entering.done = true; if (opts.navigate) opts.navigate(works[entering.i].href); }
     }
     camera.position.copy(camPos); camera.lookAt(camLook);
 
@@ -446,14 +515,15 @@ export function mount(section, opts) {
       wk.mix += (wk.mixTo - wk.mix) * (still ? 1 : 0.06);
       const mine = entering && entering.i === i;
       wk.hov += ((hover === i ? 1 : 0) - wk.hov) * 0.12;      // la que está bajo el cursor se hincha y se agita
-      const o = place(wk, mine ? grow : 1 + 0.05 * wk.hov, 0.7);
-      wk.u.uOpacity.value = mine ? Math.max(o, entering.t) : (entering ? o * (1 - entering.t) : o);
+      const o = place(wk, 1 + 0.05 * wk.hov, 0.7);
+      /* Al entrar, la ameba le deja el lugar al derrame y las demás se apagan. */
+      wk.u.uOpacity.value = entering ? o * (1 - smooth(mine ? 0.02 : 0, mine ? 0.14 : 0.5, entering.t)) : o;
       wk.mesh.visible = wk.u.uOpacity.value > 0.01;
       wk.u.uHasMap.value = wk.mix;
       wk.u.uFocus.value = 1 - smooth(HALF * 0.6, HALF * 1.6, Math.abs(ps - tWork(i)));
       wk.u.uGlow.value = 0.6 * wk.hov;
       wk.u.uLook.value.set(mouse.sx * 0.07, mouse.sy * 0.07);
-      wk.u.uWobble.value = mine ? wk.wob * (1 - entering.t) : wk.wob * (1 + 0.6 * wk.hov + stir);
+      wk.u.uWobble.value = wk.wob * (1 + 0.6 * wk.hov + stir);
     });
     extras.forEach((e) => {
       e.u.uWobble.value = e.wob * (1 + stir);
@@ -511,8 +581,33 @@ export function mount(section, opts) {
   function enter(i) {
     if (entering || i < 0) return;
     if (still) { if (opts.navigate) opts.navigate(works[i].href); return; }
+    const wk = works[i], lu = liqMat.uniforms, aspect = camera.aspect;
+    /* Dónde está la ameba en pantalla y de qué tamaño se ve. */
+    tmp.copy(wk.mesh.position).project(camera);
+    const cx = tmp.x * 0.5 + 0.5, cy = tmp.y * 0.5 + 0.5;
+    const depth = -tmp.copy(wk.mesh.position).applyMatrix4(camera.matrixWorldInverse).z;
+    lu.uCenter.value.set(cx, cy);
+    lu.uR0.value = (0.5 * wk.r) / (Math.max(0.5, depth) * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)));
+    let far = 0;                       // hasta la esquina más lejana, con margen por el borde ondulado
+    [[0, 0], [1, 0], [0, 1], [1, 1]].forEach((c) => { far = Math.max(far, Math.hypot((c[0] - cx) * aspect, c[1] - cy)); });
+    lu.uRMax.value = far * 1.5;
+    /* La cabecera de la ficha (css: .phero): min(78vh, 740px), con 420px de mínimo. */
+    const vh = Math.max(1, stage.clientHeight);
+    lu.uHero.value = clamp(Math.max(420, Math.min(0.78 * vh, 740)) / vh, 0.2, 1);
+    lu.uSeed.value = wk.seed;
+    if (wk.img) {
+      if (!wk.full) {                  // la portada entera, para el encuadre a pantalla completa
+        wk.full = new THREE.Texture(wk.img);
+        wk.full.minFilter = THREE.LinearFilter; wk.full.generateMipmaps = false; wk.full.needsUpdate = true;
+        disposables.push(wk.full);
+      }
+      lu.uFull.value = wk.full; lu.uImg.value = wk.img.naturalWidth / Math.max(1, wk.img.naturalHeight);
+    } else { lu.uFull.value = blank; lu.uImg.value = 1; }
+    lu.uT.value = 0; lu.uFade.value = 0;
+    liquid.visible = true;
     entering = { i, t: 0, done: false };
     stage.classList.add('is-entering');
+    if (sound) sound.splash('dive');
   }
 
   const ac = new AbortController(), sig = { signal: ac.signal };

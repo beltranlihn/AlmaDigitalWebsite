@@ -144,8 +144,13 @@ acompaña al bloque de obras del landing: no está en el menú ni en el sitemap 
 - **Scroll real**: la sección mide (obras + 2,2) pantallas y el escenario queda fijo (`position: sticky`)
   mientras se la recorre. No se secuestra la rueda, a diferencia de Mirages: funciona con el dedo y el
   teclado. El avance del scroll (0 a 1) mueve la cámara, que frena frente a cada obra.
-- **Entrar a una obra**: clic en la ameba o en "Entrar a la obra". La ameba crece hasta llenar la pantalla
-  y se abre la ficha con la navegación continua. Con "atrás" se vuelve al mismo punto del recorrido.
+- **Entrar a una obra**: clic en la ameba o en "Entrar a la obra". La ameba se derrama como un líquido
+  desde donde está hasta cubrir la pantalla (borde ondulado, con brillo de vidrio), la portada pasa de
+  verse como en la gota a verse plana, y al final se acomoda en el encuadre y el degradado de la cabecera
+  de la ficha (`.phero`), que se abre a continuación con la navegación continua: el cambio de página casi
+  no se nota. Dura 1,25 s. Con "atrás" se vuelve al mismo punto del recorrido. Es un shader a pantalla
+  completa (`LIQ_FRAG` en `js/world.js`); **si cambia el alto o el degradado de `.phero` en el CSS, hay
+  que cambiarlos también ahí** (`uHero` y el cálculo de `shade`).
 - **Qué obras**: `site.json → world.works` (lista de slugs); vacío usa `featured`. `world.enabled: false`
   y un build sacan la página.
 - **Cómo está hecho** (`js/world.js`): Three.js con WebGL, canvas transparente sobre el fluido. Cada ameba
@@ -328,6 +333,18 @@ desactiva. **No** cambiar nameservers a Cloudflare.
 El fluid sim sigue corriendo con auto-emitters en mobile. Los usuarios de Android no pueden tocar el fondo para emitir fluidos (correcto — el dedo es para el scroll).
 
 ## Historial de sesiones (última al tope)
+
+### 2026-11-17 — El mundo interior: transición líquida al entrar a una obra (Vicente)
+
+Antes la ameba crecía y había un fundido. Ahora se derrama (ver "Entrar a una obra" en la sección del
+mundo). Primera versión mezclaba dos imágenes y a mitad de camino se veía doble; quedó con un solo
+muestreo cuyo encuadre va cambiando.
+
+**Verificado en Chrome** en cámara lenta (se frenó el reloj de la página para capturar los cuadros): el
+derrame desde la ameba, la pantalla cubierta, el asentamiento en el encuadre de la cabecera, y la ficha
+abierta sin recarga. A velocidad normal: entra con el botón y con un clic en la ameba, suena la
+transición, y "atrás" devuelve el mundo al mismo punto. **Sin ver**: el derrame en pantalla vertical (la
+emulación de teléfono frena la animación) y en teléfonos reales.
 
 ### 2026-11-17 — El mundo interior: más identidad y más respuesta (Vicente)
 
