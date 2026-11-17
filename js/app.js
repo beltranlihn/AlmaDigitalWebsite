@@ -484,6 +484,32 @@
     }).catch(function () {});                                   // sin CDN o sin WebGL: queda la foto
   }
 
+  /* ── El mundo interior (página de prueba) ─────────────────────────────
+     js/world.js es un módulo aparte (usa Three.js, como las partículas) y se
+     pide sólo en esa página. El HTML llega como lista de obras (world--flat);
+     acá se arma el escenario y, si el 3D no arranca, se vuelve a la lista. */
+  function initWorld() {
+    var sec = $('[data-world]');
+    if (!sec || !scriptBase) return;
+    var mine = life;
+    function flat() { if (document.contains(sec)) sec.classList.add('world--flat'); }
+    sec.classList.remove('world--flat');
+    import(scriptBase + 'world.js').then(function (m) {
+      if (life !== mine || !document.contains(sec)) return;     // ya se navegó a otra página
+      var handle = m.mount(sec, {
+        reduce: reduce,
+        coarse: window.matchMedia('(pointer: coarse)').matches,
+        sound: window.AlmaSound,
+        navigate: function (href) {
+          try { go(new URL(href, location.href), true); } catch (e) { location.href = href; }
+        },
+      });
+      if (!handle) { flat(); return; }
+      sec.classList.add('is-live');
+      mine.cleanups.push(handle.dispose);
+    }).catch(flat);
+  }
+
   /* ── Sonido: profundidad de la página ─────────────────────────────────
      js/sound.js es global y sigue sonando al navegar. Acá sólo se le dice qué
      tan "hondo" está la página (la ficha de una obra es el fondo) y se pone al
@@ -500,7 +526,7 @@
 
   function initPage() {
     life = newLife();
-    initReel(); initProjectReels(); initPalette(); initIndex(); initLightbox(); initCards(); initCreds(); initParticles(); initSound();
+    initReel(); initProjectReels(); initPalette(); initIndex(); initLightbox(); initCards(); initCreds(); initParticles(); initSound(); initWorld();
     if (window.AlmaAmeba && window.AlmaAmeba.showBreath) window.AlmaAmeba.showBreath();
     stuck();
   }
@@ -624,7 +650,12 @@
     var token = ++navToken;
     var url = u.pathname + u.search + u.hash;
     closeContact(true);
-    var deep = document.body.classList.contains('pg-project'), deeper = isWork(u.pathname);
+    /* "Abajo" es la ficha de una obra y también el interior del mundo de prueba
+       (html.is-under): entre dos lugares de abajo no hay agua. Al volver con
+       "atrás" a ese mundo ya recorrido, tampoco. */
+    var deep = document.body.classList.contains('pg-project') || root.classList.contains('is-under');
+    var deeper = isWork(u.pathname) ||
+      (!push && /\/inner-world\.html$/.test(u.pathname) && (y || 0) > window.innerHeight * 0.6);
     var mode = (deep === deeper || reduce || document.hidden || !root.animate) ? '' : (deeper ? 'dive' : 'surface');
     var w = mode ? water(mode) : null;
     if (mode && window.AlmaSound) {
@@ -643,6 +674,10 @@
         }
         teardown();
         swap(html);
+        /* El mundo de prueba llega como lista corta y pasa a ser una sección alta: se arma
+           antes de reponer el scroll, o al volver con "atrás" quedaría más arriba de donde estaba. */
+        var w3d = scriptBase && $('[data-world]');
+        if (w3d) w3d.classList.remove('world--flat');
         currentKey = location.pathname + location.search;
         scrollNow(push ? 0 : (y || 0));
         initPage();
@@ -727,15 +762,20 @@
     bar.className = 'review';
     bar.innerHTML = '<span>Tema</span>' +
       '<button type="button" data-theme-set="aura">Aura</button>' +
-      '<button type="button" data-theme-set="night">Night</button>';
+      '<button type="button" data-theme-set="night">Night</button>' +
+      (CFG().world ? '<button type="button" data-review-world>Mundo 3D</button>' : '');
     document.body.appendChild(bar);
     document.body.classList.add('has-review');
     function sync() {
       var cur = root.getAttribute('data-theme') || 'aura';
-      $$('button', bar).forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.themeSet === cur)); });
+      $$('button[data-theme-set]', bar).forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.themeSet === cur)); });
     }
     bar.addEventListener('click', function (e) {
       var b = e.target.closest('button'); if (!b) return;
+      if (b.hasAttribute('data-review-world')) {           // acceso a la página de prueba, en el idioma en que se está
+        go(new URL((CFG().lang === 'es' ? '../es/' : '../') + 'inner-world.html', scriptBase), true);
+        return;
+      }
       root.setAttribute('data-theme', b.dataset.themeSet);
       try { sessionStorage.setItem('alma-theme', b.dataset.themeSet); } catch (err) {}
       sync();

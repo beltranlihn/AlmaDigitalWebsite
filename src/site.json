@@ -29,6 +29,10 @@
   "perProjectPalette": false,
   "reelAutoplayOnView": false,
   "breathing": false,
+  "world": {
+    "enabled": true,
+    "works": []
+  },
   "sound": {
     "enabled": true,
     "src": "Asset/Audio/breath-loop.m4a",
@@ -280,6 +284,16 @@
       "contactFestival": "Festivals and press",
       "contactFestivalSubject": "Festival or press",
       "soundLabel": "Sound",
+      "worldTitleTag": "The inner world — Alma Digital Studio",
+      "worldDesc": "A journey through the main works of Alma Digital Studio: scroll to travel inside.",
+      "worldEyebrow": "A journey through the works",
+      "worldTitle": "Enter the *inner* world.",
+      "worldLead": "Scroll to travel inside. Each work floats in its own drop: come close, and step in.",
+      "worldHint": "Scroll to travel",
+      "worldOpen": "Enter the work",
+      "worldEndTitle": "There is *more* inside.",
+      "worldEndAll": "See all {n} works",
+      "worldListLabel": "Works in this journey",
       "pParticlesHint": "Drag to turn · Click to scatter",
       "pParticlesHintTouch": "Swipe to turn · Tap to scatter"
     },
@@ -396,6 +410,16 @@
       "contactFestival": "Festivales y prensa",
       "contactFestivalSubject": "Festival o prensa",
       "soundLabel": "Sonido",
+      "worldTitleTag": "El mundo interior — Alma Digital Studio",
+      "worldDesc": "Un recorrido por las obras principales de Alma Digital Studio: haz scroll para avanzar hacia adentro.",
+      "worldEyebrow": "Un recorrido por las obras",
+      "worldTitle": "Entra al mundo *interior*.",
+      "worldLead": "Haz scroll para avanzar hacia adentro. Cada obra flota en su propia gota: acércate y entra.",
+      "worldHint": "Haz scroll para avanzar",
+      "worldOpen": "Entrar a la obra",
+      "worldEndTitle": "Hay *más* adentro.",
+      "worldEndAll": "Ver las {n} obras",
+      "worldListLabel": "Obras del recorrido",
       "pParticlesHint": "Arrastra para girar · Clic para dispersar",
       "pParticlesHintTouch": "Desliza para girar · Toca para dispersar"
     }

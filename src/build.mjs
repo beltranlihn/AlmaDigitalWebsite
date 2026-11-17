@@ -95,7 +95,7 @@ const ogFor = slug => {
 };
 
 /* ── Piezas comunes ─────────────────────────────────────────────────────── */
-function head(c, { title, desc, ogImage, jsonld }) {
+function head(c, { title, desc, ogImage, jsonld, noindex }) {
   const alt = LANGS.map(l => `<link rel="alternate" hreflang="${l}" href="${abs(l, c.rel)}">`).join('\n');
   return `<!doctype html>
 <!-- Generado por src/build.mjs. No editar a mano: se pisa en el próximo build. -->
@@ -104,7 +104,8 @@ function head(c, { title, desc, ogImage, jsonld }) {
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>${esc(title)}</title>
-<meta name="description" content="${esc(desc)}">
+<meta name="description" content="${esc(desc)}">${noindex ? `
+<meta name="robots" content="noindex">` : ''}
 <link rel="canonical" href="${abs(c.lang, c.rel)}">
 ${alt}
 <link rel="alternate" hreflang="x-default" href="${abs('en', c.rel)}">
@@ -143,6 +144,9 @@ ${jsonld ? `<script type="application/ld+json">${JSON.stringify(jsonld)}</script
 /* Música de ambiente (site.json → sound). Con enabled en false no se genera ni
    el botón ni el script. */
 const sound = site.sound && site.sound.enabled && site.sound.src ? site.sound : null;
+
+/* El mundo interior: página de prueba (site.json → world). */
+const world = site.world && site.world.enabled ? site.world : null;
 
 function header(c, current) {
   const t = c.t;
@@ -221,15 +225,16 @@ const RUNTIME_KEYS = ['modalSend', 'modalSending', 'modalSent', 'modalOk', 'moda
   'lbClose', 'lbPrev', 'lbNext', 'lbZoom', 'lbZoomOut', 'lbHint', 'lbLabel',
   'breathStart', 'breathStop', 'breathIn', 'breathOut', 'breathEnd'];
 
-function page(c, { title, desc, ogImage, jsonld, current, body, bodyClass, runtime }) {
+function page(c, { title, desc, ogImage, jsonld, current, body, bodyClass, runtime, noindex }) {
   const t = c.t;
   const rt = {
     lang: c.lang, email: site.email, endpoint: site.formspree, legacy: Object.values(site.legacyPages),
     t: Object.fromEntries(RUNTIME_KEYS.map(k => [k, t[k]])),
     ...(sound ? { sound: { src: sound.src, level: sound.level } } : {}),
+    ...(world ? { world: true } : {}),
     ...(runtime || {}),
   };
-  return `${head(c, { title, desc, ogImage: ogImage || 'Asset/Web Icons/og-alma-digital.jpg', jsonld })}
+  return `${head(c, { title, desc, ogImage: ogImage || 'Asset/Web Icons/og-alma-digital.jpg', jsonld, noindex })}
 <body class="${bodyClass || ''}">
 <a class="skip" href="#main">${esc(t.skip)}</a>
 <canvas id="fluid" aria-hidden="true"></canvas>
@@ -399,6 +404,56 @@ ${contactBand(c)}`;
       url: abs(lang, 'index.html'), logo: absAsset('Asset/Web Icons/PERFIL 3.png'),
       description: t.siteDesc, email: site.email, sameAs: site.socials.map(s => s.url),
     },
+  })];
+}
+
+/* ── El mundo interior (PÁGINA DE PRUEBA) ───────────────────────────────────
+   Recorrido en 3D por las obras principales (js/world.js). No está enlazada
+   desde el menú ni va al sitemap, y pide a los buscadores que no la indexen.
+   El HTML trae la lista de obras como tarjetas: es lo que se ve sin JavaScript
+   o si el 3D no arranca (class "world--flat"; js/app.js la quita al montarlo). */
+function buildWorld(lang) {
+  const c = ctx(lang, 'inner-world.html');
+  const t = c.t;
+  const slugs = world.works && world.works.length ? world.works : site.featured;
+  const works = slugs.map(s => loc(projects.find(p => p.slug === s), lang));
+  const items = works.map(p => `      <li><a class="wcard" data-w-item href="${link(c, `work/${p.slug}.html`)}" data-cover="${asset(c, p.cover)}" data-title="${esc(p.title)}" data-format="${esc(p.format)}">
+        <img loading="lazy" decoding="async" width="1920" height="1080" src="${asset(c, p.cover)}" alt="">
+        <span class="wcard__t"><b>${esc(p.title)}</b><span>${esc(p.format)}</span></span>
+      </a></li>`).join('\n');
+
+  const body = `<section class="world world--flat" data-world aria-labelledby="world-title" style="--n:${works.length}">
+  <div class="world__stage">
+    <div class="world__depth" aria-hidden="true"></div>
+    <div class="world__canvas" aria-hidden="true"></div>
+    <div class="world__intro">
+      <p class="eyebrow">${esc(t.worldEyebrow)}</p>
+      <h1 id="world-title">${em(t.worldTitle)}</h1>
+      <p class="world__lead">${esc(t.worldLead)}</p>
+      <p class="world__hint label" aria-hidden="true">${esc(t.worldHint)} <i>↓</i></p>
+    </div>
+    <div class="world__hud">
+      <p class="label" data-w-count></p>
+      <p class="world__name" data-w-title></p>
+      <p class="world__fmt" data-w-fmt></p>
+      <a class="btn" data-w-open href="${link(c, `work/${works[0].slug}.html`)}">${esc(t.worldOpen)} <i aria-hidden="true">→</i></a>
+    </div>
+    <nav class="world__dots" aria-label="${esc(t.worldListLabel)}"></nav>
+    <div class="world__end">
+      <h2>${em(t.worldEndTitle)}</h2>
+      <div class="world__row">
+        <a class="btn btn--solid" href="${link(c, 'work/index.html')}">${esc(fill(t.worldEndAll, { n: projects.length }))}</a>
+        <button class="btn" type="button" data-contact>${esc(t.heroCtaContact)}</button>
+      </div>
+    </div>
+    <ol class="world__list wgrid" aria-label="${esc(t.worldListLabel)}">
+${items}
+    </ol>
+  </div>
+</section>`;
+
+  return [c.path, page(c, {
+    title: t.worldTitleTag, desc: t.worldDesc, current: '', body, bodyClass: 'pg-world', noindex: true,
   })];
 }
 
@@ -632,6 +687,7 @@ ${contactBand(c)}`;
 const out = [];
 for (const lang of LANGS) {
   out.push(buildLanding(lang), buildIndex(lang), buildStudio(lang));
+  if (world) out.push(buildWorld(lang));
   projects.forEach((p, i) => out.push(buildProject(p, projects[(i + 1) % projects.length], lang)));
 }
 

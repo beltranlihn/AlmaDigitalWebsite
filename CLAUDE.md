@@ -10,8 +10,9 @@ estudio, sus proyectos y equipo con una estética audiovisual interactiva, en in
   de datos, y se commitean ya generadas. Netlify no corre el generador: publica el HTML tal cual.
 - WebGL Fluid Simulation (fork de PavelDoGreat) en `js/fluid.js`.
 - Ameba del hero: shader propio en `js/ameba.js` (WebGL 1, sin librerías, ~6 KB).
-- Partículas de las obras principales: `js/particles.js`, la única pieza que usa **Three.js** (0.187.0,
-  desde el CDN jsDelivr, 156 KB comprimido). Se carga sólo en las fichas que lo piden.
+- **Three.js** (0.187.0, desde el CDN jsDelivr, 156 KB comprimido) lo usan dos módulos, que se cargan
+  sólo en las páginas que los piden: `js/particles.js` (partículas de las obras principales) y
+  `js/world.js` (el mundo interior, página de prueba).
 - Sonido de ambiente: `js/sound.js` (Web Audio, sin librerías). La música es un archivo de 1,8 MB en
   `Asset/Audio/`, que se pide sólo si el visitante enciende el sonido.
 - Google Fonts: Raleway (200, 300, 400, 500). GSAP (`gsap.min.js`) sólo lo usa `soul-charger.html`.
@@ -31,9 +32,11 @@ estudio, sus proyectos y equipo con una estética audiovisual interactiva, en in
 │   ├── cursor.js              # MÓDULO CERRADO: cursor propio
 │   ├── ameba.js               # la ameba viva del hero
 │   ├── particles.js           # partículas en la cabecera de las obras principales (Three.js)
-│   ├── sound.js               # música de ambiente, filtro "bajo el agua" y chapuzones
+│   ├── sound.js               # música de ambiente, filtro "bajo el agua" y sonidos de transición
+│   ├── world.js               # PRUEBA: recorrido 3D por las obras (Three.js)
 │   └── app.js                 # header, contacto, reel, filtros, lightbox
 ├── index.html, studio.html    # GENERADOS (inglés). No editar a mano
+├── inner-world.html           # GENERADO: PRUEBA del mundo interior (no enlazada, no indexada)
 ├── work/index.html            # GENERADO: índice de obras con filtros
 ├── work/<obra>.html           # GENERADO: una ficha por obra (19)
 ├── es/…                       # GENERADO: lo mismo en español
@@ -112,6 +115,36 @@ Consecuencias:
 - **Studio** (`studio.html`): about, equipo y spin-offs.
 - **Español**: las mismas páginas bajo `/es/`, con los mismos slugs. Cada página enlaza a su par
   (`hreflang`) y el header tiene el cambio de idioma.
+
+## El mundo interior (página de prueba)
+`inner-world.html` (y `es/inner-world.html`). Idea de Vicente a partir de
+[mirages.nrly.fun](https://mirages.nrly.fun/) (Nathan Riley, Unseen Studio): en vez de una lista, se
+**avanza** por un mundo 3D y las obras aparecen en el camino. Es una prueba para decidir si reemplaza o
+acompaña al bloque de obras del landing: no está en el menú ni en el sitemap y lleva `noindex`.
+
+- **Cómo llegar**: `http://localhost:5599/inner-world.html`, o el botón "Mundo 3D" de la barra de revisión
+  (localhost y vistas previas de Netlify).
+- **Qué se ve**: se entra por una ameba grande, la del logo, que es la puerta. Adentro está oscuro y cada
+  obra flota dentro de una ameba de vidrio que deforma su portada como una gota. A la izquierda, una
+  ficha de vidrio esmerilado con el nombre y el botón; a la derecha, puntos para saltar de obra. Al final,
+  una ameba grande y los botones de siempre.
+- **Scroll real**: la sección mide (obras + 2,2) pantallas y el escenario queda fijo (`position: sticky`)
+  mientras se la recorre. No se secuestra la rueda, a diferencia de Mirages: funciona con el dedo y el
+  teclado. El avance del scroll (0 a 1) mueve la cámara, que frena frente a cada obra.
+- **Entrar a una obra**: clic en la ameba o en "Entrar a la obra". La ameba crece hasta llenar la pantalla
+  y se abre la ficha con la navegación continua. Con "atrás" se vuelve al mismo punto del recorrido.
+- **Qué obras**: `site.json → world.works` (lista de slugs); vacío usa `featured`. `world.enabled: false`
+  y un build sacan la página.
+- **Cómo está hecho** (`js/world.js`): Three.js con WebGL, canvas transparente sobre el fluido. Cada ameba
+  es una esfera deformada en el shader; la portada se ve adentro usando la normal como lente. Las portadas
+  se piden de a una, cuando uno se acerca. Mirages usa WebGPU; acá se eligió WebGL para que corra en todos
+  los teléfonos.
+- **Sin 3D sirve igual**: el HTML trae las obras como tarjetas (`class="world--flat"`). `js/app.js` quita
+  esa clase al montar el mundo y la repone si Three.js o WebGL fallan. Sin JavaScript queda la lista.
+- **`html.is-under`**: lo pone `js/world.js` mientras se está adentro. Viste de oscuro el header y el pie,
+  pasa el cursor a blanco y le dice a la navegación que no hace falta zambullida para entrar a una obra.
+- **Sonido**: la música se filtra al entrar; una nota suave marca la llegada a cada obra (`AlmaSound.chime`).
+- **Textos** (`site.json → t.world*`): borradores, a revisar por el estudio.
 
 ## Sonido e inmersión
 Idea tomada de [unseen.co](https://unseen.co/): el sitio suena, y entrar a una obra es sumergirse.
@@ -282,6 +315,34 @@ desactiva. **No** cambiar nameservers a Cloudflare.
 El fluid sim sigue corriendo con auto-emitters en mobile. Los usuarios de Android no pueden tocar el fondo para emitir fluidos (correcto — el dedo es para el scroll).
 
 ## Historial de sesiones (última al tope)
+
+### 2026-11-17 — Prueba: el mundo interior en 3D (Vicente)
+
+Rama `rediseno-landing`. Vicente trajo [mirages.nrly.fun](https://mirages.nrly.fun/) y pidió probar "un
+entorno 3D simple de amebas por el que avanzamos, como entrando al mundo interior de Alma Digital",
+además del listado estándar. Ver la sección "El mundo interior".
+
+- **Análisis de Mirages**: un solo HTML con unos 75 KB de código propio, Three.js r180 con WebGPU, scroll
+  secuestrado con la rueda, esferas de vidrio con la obra adentro y agua que las refleja; unos 2,2 MB.
+- **Lo que se construyó**: `inner-world.html` en los dos idiomas, `js/world.js`, estilos `.world*`,
+  `initWorld()` en `js/app.js` y la nota `chime()` en `js/sound.js`.
+- **Tres diferencias a propósito con Mirages**: scroll real, WebGL en vez de WebGPU, y el listado de
+  obras sigue existiendo.
+- Quedó **sin construir** la inmersión por scroll dentro del landing que Vicente había pedido antes (una
+  línea de agua al llegar al segundo bloque): este recorrido cubre el mismo momento.
+
+**Verificado en Chrome**: el recorrido completo (puerta, seis obras, final) en inglés y español; el
+salto con los puntos; entrar a una obra con el botón y con un clic en la ameba; volver con "atrás" al
+mismo punto, sin recarga y sin zambullida; que el sonido recibe la zambullida y una nota por obra; el
+respaldo en lista. En emulación 375×812: composición de teléfono, sin desbordes. Paquete: 47 páginas,
+1.495 referencias, ninguna rota.
+**Sin probar**: teléfonos reales (con el fluido de fondo son dos animaciones WebGL a la vez; el fluido
+no se puede pausar sin abrir ese módulo), Safari y Firefox, y la fluidez real: en la ventana de prueba
+Chrome dibujaba a 31 cuadros por segundo tanto en el landing como en el mundo, así que no se pudo medir
+cuánto margen queda.
+
+**Ideas que quedaron afuera**: agua que refleje las amebas, una transición líquida al entrar a la obra
+(hoy la ameba crece y hay un fundido), amebas más ricas hechas por un artista 3D en vez de por código.
 
 ### 2026-11-17 — Sonido: sólo la música, sin ruido (Vicente)
 

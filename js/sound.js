@@ -25,7 +25,7 @@
    del final. Un solo <audio loop> deja un hueco audible en cada vuelta, y
    decodificar el archivo entero en memoria pesa unos 60 MB.
 
-   API: window.AlmaSound = { toggle(), setDepth(d, seg), splash('dive'|'surface'),
+   API: window.AlmaSound = { toggle(), setDepth(d, seg), splash('dive'|'surface'), chime(i),
    sync(), level(), analyser, on, playing }. Sin Web Audio o sin sound.src no existe, y el botón
    del menú queda oculto (css: html.has-sound).
    ═══════════════════════════════════════════════════════════════════════ */
@@ -182,6 +182,14 @@
     g.gain.exponentialRampToValueAtTime(0.0001, t + 0.2);
     o.connect(g); g.connect(fx); o.start(t); o.stop(t + 0.22);
   }
+  /* Una nota suelta del acorde, muy suave: marca la llegada a cada obra del recorrido. */
+  var CHORD = [NOTE.Bb3, 293.66, NOTE.F4, NOTE.G4, NOTE.Bb4, NOTE.D5];
+  function chime(i) {
+    if (!ctx || !running || ducked) return;
+    var f = CHORD[((i % CHORD.length) + CHORD.length) % CHORD.length], t = ctx.currentTime + 0.02;
+    tone(f, f, t, 1.9, 0.03);
+    tone(f * 2, f * 2, t + 0.05, 1.3, 0.007);
+  }
   /* 'dive': dos tonos que bajan una quinta y unas gotas. 'surface': suben, con un brillo al final. */
   function splash(kind) {
     if (!ctx || !running || ducked) return;
@@ -255,7 +263,7 @@
   }
 
   window.AlmaSound = {
-    toggle: toggle, setDepth: setDepth, splash: splash, level: level,
+    toggle: toggle, setDepth: setDepth, splash: splash, chime: chime, level: level,
     sync: function () { sync(); recheck(); },
     get on() { return want; },
     get playing() { return running; },
