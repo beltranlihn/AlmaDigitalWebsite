@@ -14,6 +14,12 @@
    Netlify NO lo corre: publica el HTML ya generado (tools/deploy_copy.py).
    Las páginas generadas no se editan a mano: se pisan en el próximo build.
    Parte de la estructura viene del prototipo de Beltrán (prototype/build.mjs).
+
+   Cada página es un documento completo (sirve sola, se indexa sola), pero al
+   navegar dentro del sitio js/app.js sólo reemplaza <header>, <main>, <footer>
+   y el modal de contacto: el fluido y la ameba siguen vivos entre páginas.
+   Por eso todo lo que cambia de una página a otra tiene que estar dentro de
+   esas cuatro piezas, en el <head> (que también se sincroniza) o en #alma-data.
    ═══════════════════════════════════════════════════════════════════════ */
 import { readFile, writeFile, mkdir, rm } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
@@ -40,6 +46,9 @@ const other = l => (l === 'en' ? 'es' : 'en');
 
 const esc = s => String(s ?? '')
   .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+/* Títulos a dos voces: en site.json, *palabra* marca la parte en cursiva fina. */
+const em = s => esc(s).replace(/\*([^*]+)\*/g, '<em>$1</em>');
+const plain = s => String(s ?? '').replace(/\*/g, '');
 const fill = (s, vars) => String(s).replace(/\{(\w+)\}/g, (_, k) => vars[k]);
 const clip = (s, n) => {
   s = String(s || '').replace(/\s+/g, ' ').trim();
@@ -116,7 +125,7 @@ ${alt}
 <meta name="twitter:image" content="${absAsset(ogImage)}">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Raleway:wght@200;300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,200;0,300;0,400;0,500;1,200&display=swap" rel="stylesheet">
 <script>
 /* Tema: "aura" (claro, por defecto) o "night". ?theme=night lo cambia para comparar. */
 (function(){try{var p=new URLSearchParams(location.search).get('theme');if(p)sessionStorage.setItem('alma-theme',p);var t=p||sessionStorage.getItem('alma-theme');if(t==='night'||t==='aura')document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
@@ -149,14 +158,20 @@ function header(c, current) {
 </header>`;
 }
 
+/* Contacto con dos caminos: cada botón abre el formulario con su asunto. La
+   ameba viaja hasta acá (data-ameba-slot) cuando el bloque entra en pantalla. */
 function contactBand(c) {
   const t = c.t;
   return `<section class="cta" aria-labelledby="cta-title">
-  <h2 id="cta-title">${esc(t.contactTitle)}</h2>
-  <div class="cta__row">
-    <button class="btn btn--solid" type="button" data-contact>${esc(t.contactCta)}</button>
+  <div class="cta__txt">
+    <h2 id="cta-title">${em(t.contactTitle)}</h2>
+    <div class="cta__row">
+      <button class="btn btn--solid" type="button" data-contact data-contact-subject="${esc(t.contactCommissionSubject)}">${esc(t.contactCommission)}</button>
+      <button class="btn" type="button" data-contact data-contact-subject="${esc(t.contactFestivalSubject)}">${esc(t.contactFestival)}</button>
+    </div>
     <p class="cta__mail">${esc(t.contactOr)} <a href="mailto:${site.email}">${site.email}</a></p>
   </div>
+  <div class="cta__slot" data-ameba-slot="contact"></div>
 </section>`;
 }
 
@@ -181,6 +196,7 @@ function modal(c) {
     <button class="cm__close" type="button" data-cm-close aria-label="${esc(t.modalClose)}">✕</button>
     <h2 class="cm__title" id="cm-title">${esc(t.modalTitle)}</h2>
     <p class="cm__sub">${esc(t.modalSub)} <a href="mailto:${site.email}">${site.email}</a>.</p>
+    <p class="label cm__about" id="cm-about" hidden></p>
     <form id="cm-form" novalidate>
       <label class="cm__field"><span>${esc(t.modalName)}</span>
         <input id="cm-name" name="name" type="text" placeholder="${esc(t.modalNamePh)}" autocomplete="name" required></label>
@@ -200,10 +216,10 @@ const RUNTIME_KEYS = ['modalSend', 'modalSending', 'modalSent', 'modalOk', 'moda
   'lbClose', 'lbPrev', 'lbNext', 'lbZoom', 'lbZoomOut', 'lbHint', 'lbLabel',
   'breathStart', 'breathStop', 'breathIn', 'breathOut', 'breathEnd'];
 
-function page(c, { title, desc, ogImage, jsonld, current, body, bodyClass, ameba, runtime }) {
+function page(c, { title, desc, ogImage, jsonld, current, body, bodyClass, runtime }) {
   const t = c.t;
   const rt = {
-    lang: c.lang, email: site.email, endpoint: site.formspree,
+    lang: c.lang, email: site.email, endpoint: site.formspree, legacy: Object.values(site.legacyPages),
     t: Object.fromEntries(RUNTIME_KEYS.map(k => [k, t[k]])),
     ...(runtime || {}),
   };
@@ -220,14 +236,30 @@ ${body}
 </main>
 ${footer(c)}
 ${modal(c)}
-<script>window.__ALMA__=${JSON.stringify(rt)};</script>
+<!-- La ameba vive fuera de <main>: no se recarga al navegar. js/ameba.js la
+     ubica sobre el [data-ameba-slot] de la página que esté más en pantalla. -->
+<div class="ameba" id="ameba-wrap" aria-hidden="true">
+  <img class="ameba__fallback" src="${asset(c, 'Asset/Logo Studio/Version 2/Logo.webp')}" alt="" width="1920" height="1080">
+  <canvas id="ameba"></canvas>
+</div>
+<script type="application/json" id="alma-data">${JSON.stringify(rt).replace(/</g, '\\u003c')}</script>
+<script>window.__ALMA__=JSON.parse(document.getElementById('alma-data').textContent);</script>
 <script src="${c.up}js/fluid.js"></script>
 <script src="${c.up}js/cursor.js"></script>
-${ameba ? `<script src="${c.up}js/ameba.js"></script>\n` : ''}<script src="${c.up}js/app.js"></script>
+<script src="${c.up}js/ameba.js"></script>
+<script src="${c.up}js/app.js"></script>
 </body>
 </html>
 `;
 }
+
+/* Cabecera de página interior, con el lugar donde se posa la ameba. */
+const phead = (inner) => `<header class="phead phead--slot">
+    <div>
+${inner}
+    </div>
+    <div class="phead__slot" data-ameba-slot="page"></div>
+  </header>`;
 
 /* ── Landing ────────────────────────────────────────────────────────────── */
 function buildLanding(lang) {
@@ -241,12 +273,37 @@ function buildLanding(lang) {
       <span class="wcard__t"><b>${esc(p.title)}</b><span>${esc(p.format)}</span></span>
     </a>`).join('\n');
 
-  const li = arr => arr.map(x => `<li>${esc(x)}</li>`).join('');
+  /* Manifiesto: el segundo párrafo del "about", palabra por palabra para que
+     el CSS pueda encenderlas con el scroll. */
+  const manifesto = (studio.about[lang]?.length ? studio.about[lang] : studio.about.en)[1] || '';
+  const words = manifesto.split(/\s+/).filter(Boolean)
+    .map((w, i) => `<span style="--i:${i}">${esc(w)}</span>`).join(' ');
+
+  /* Lo que hacemos: una fila por formato, con la portada de su primera obra. */
+  const disc = Object.entries(site.formats).map(([key, label]) => {
+    const list = projects.filter(p => p.formatKey === key);
+    if (!list.length) return '';
+    const n = list.length;
+    const count = n === 1 ? t.indexCountOne : fill(t.indexCount, { n });
+    return `      <a class="row" href="${link(c, 'work/index.html')}?format=${key}"
+        data-title="${esc(label[lang])}" data-format="${esc(site.formatsDesc[key][lang])}"
+        data-cover="${asset(c, list[0].cover)}" data-video="">
+        <img class="row__thumb" loading="lazy" decoding="async" src="${asset(c, list[0].cover)}" alt="">
+        <span class="row__name">${esc(label[lang])}</span>
+        <span class="row__meta">${esc(count)}</span>
+      </a>`;
+  }).join('\n');
+
+  const track = arr => arr.map(x => `<span class="marquee__item">${esc(x)}</span>`).join('');
+  const marquee = (arr, rev) => `    <div class="marquee${rev ? ' marquee--rev' : ''}">
+      <div class="marquee__track">${track(arr)}</div>
+      <div class="marquee__track" aria-hidden="true">${track(arr)}</div>
+    </div>`;
 
   const body = `<section class="hero" aria-labelledby="hero-title">
   <div class="hero__txt">
     <p class="eyebrow">${esc(t.heroEyebrow)}</p>
-    <h1 id="hero-title">${esc(t.heroTitle)}</h1>
+    <h1 id="hero-title">${em(t.heroTitle)}</h1>
     <p class="hero__lead">${esc(t.heroLead)}</p>
     <div class="hero__cta">
       <a class="btn btn--solid" href="${link(c, 'work/index.html')}">${esc(t.heroCtaWork)}</a>
@@ -255,16 +312,49 @@ function buildLanding(lang) {
     <p class="hero__proof"><span class="label">${esc(t.heroProof)}</span>${site.proof.map(esc).join(' · ')}</p>
   </div>
   <div class="hero__stage">
-    <div class="hero__ameba" id="ameba-wrap">
-      <img class="hero__fallback" src="${asset(c, 'Asset/Logo Studio/Version 2/Logo.webp')}" alt="" width="1920" height="1080">
-      <canvas id="ameba" role="img" aria-label="${esc(t.amebaLabel)}"></canvas>
-    </div>
+    <div class="hero__slot" data-ameba-slot="hero"><noscript><img src="${asset(c, 'Asset/Logo Studio/Version 2/Logo.webp')}" alt=""></noscript></div>
 ${site.breathing ? `    <!-- Minuto de respiración guiada. js/ameba.js lo muestra sólo si la ameba está viva. -->
     <div class="breath" id="breath" role="group" aria-label="${esc(t.breathLabel)}" hidden>
       <p class="breath__cue" aria-live="polite"><span id="breath-cue"></span><span class="label" id="breath-count"></span></p>
       <button class="btn breath__btn" type="button" id="breath-btn" aria-pressed="false">${esc(t.breathStart)}</button>
     </div>
 ` : ''}  </div>
+</section>
+
+<section class="manifesto" aria-labelledby="man-label">
+  <div class="manifesto__slot" data-ameba-slot="manifesto"></div>
+  <div>
+    <p class="eyebrow" id="man-label">${esc(t.manifestoLabel)}</p>
+    <p class="manifesto__txt">${words}</p>
+    <a class="more" href="${link(c, 'studio.html')}">${esc(t.manifestoMore)} <i aria-hidden="true">→</i></a>
+  </div>
+</section>
+
+<section class="sec disc" aria-labelledby="disc-title">
+  <h2 id="disc-title">${em(t.discTitle)}</h2>
+  <div class="idx__body">
+    <div class="list">
+${disc}
+    </div>
+    <div class="preview" aria-hidden="true">
+      <div class="preview__media">
+        <img class="preview__img" alt="">
+        <video class="preview__vid" muted loop playsinline></video>
+      </div>
+      <div class="preview__idle">${esc(t.discHover)}</div>
+      <div class="preview__cap"><h3></h3><p></p></div>
+    </div>
+  </div>
+</section>
+
+<section class="sec" aria-labelledby="sel-title">
+  <div class="sec__head">
+    <h2 id="sel-title">${em(t.selectedTitle)}</h2>
+    <a class="more" href="${link(c, 'work/index.html')}">${esc(fill(t.selectedAll, { n: projects.length }))} <i aria-hidden="true">→</i></a>
+  </div>
+  <div class="wgrid wgrid--mosaic">
+${cards}
+  </div>
 </section>
 
 <section class="sec" id="reel" aria-labelledby="reel-title">
@@ -281,36 +371,22 @@ ${site.breathing ? `    <!-- Minuto de respiración guiada. js/ameba.js lo muest
   </div>
 </section>
 
-<section class="sec" aria-labelledby="sel-title">
+<section class="sec creds" aria-labelledby="cl-title">
   <div class="sec__head">
-    <h2 id="sel-title">${esc(t.selectedTitle)}</h2>
-    <a class="more" href="${link(c, 'work/index.html')}">${esc(fill(t.selectedAll, { n: projects.length }))} <i aria-hidden="true">→</i></a>
+    <h2 id="cl-title">${em(t.clientsTitle)}</h2>
+    <button class="creds__pause" type="button" aria-pressed="false" data-pause="${esc(t.credsPause)}" data-play="${esc(t.credsPlay)}">${esc(t.credsPause)}</button>
   </div>
-  <div class="wgrid">
-${cards}
+  <div class="creds__rows">
+${marquee(site.clients.institutions, false)}
+${marquee(site.clients.brands, true)}
   </div>
-</section>
-
-<section class="sec clients" aria-labelledby="cl-title">
-  <h2 id="cl-title">${esc(t.clientsTitle)}</h2>
-  <div class="clients__cols">
-    <div>
-      <h3 class="label">${esc(t.clientsInstitutions)}</h3>
-      <ul class="clients__list">${li(site.clients.institutions)}</ul>
-    </div>
-    <div>
-      <h3 class="label">${esc(t.clientsBrands)}</h3>
-      <ul class="clients__list">${li(site.clients.brands)}</ul>
-      <h3 class="label clients__award">${esc(t.clientsAward)}</h3>
-      <p class="clients__list">${esc(site.clients.award[lang])}</p>
-    </div>
-  </div>
+  <p class="creds__award"><span class="label">${esc(t.clientsAward)}</span>${esc(site.clients.award[lang])}</p>
 </section>
 
 ${contactBand(c)}`;
 
   return [c.path, page(c, {
-    title: t.siteTitle, desc: t.siteDesc, current: 'home', body, bodyClass: 'pg-home', ameba: true,
+    title: t.siteTitle, desc: t.siteDesc, current: 'home', body, bodyClass: 'pg-home',
     jsonld: {
       '@context': 'https://schema.org', '@type': 'Organization', name: 'Alma Digital Studio',
       url: abs(lang, 'index.html'), logo: absAsset('Asset/Web Icons/PERFIL 3.png'),
@@ -342,10 +418,8 @@ function buildIndex(lang) {
       </div>`;
 
   const body = `<div class="idx">
-  <header class="phead">
-    <h1>${esc(t.indexTitle)}</h1>
-    <p class="label idx__count" aria-live="polite">${esc(fill(t.indexCount, { n: projects.length }))}</p>
-  </header>
+  ${phead(`      <h1>${esc(t.indexTitle)}</h1>
+      <p class="label idx__count" aria-live="polite">${esc(fill(t.indexCount, { n: projects.length }))}</p>`)}
 
   <div class="filters">
 ${group(t.filterLine, 'track', Object.entries(site.tracks).map(([k, v]) => [k, v[lang]]))}
@@ -403,6 +477,7 @@ function buildProject(raw, rawNext, lang) {
     <h1>${esc(p.title)}</h1>
     <p class="phero__fmt">${esc(p.format)}</p>
   </div>
+  <div class="phero__slot" data-ameba-slot="project"></div>
 </section>
 
 <div class="sheet">
@@ -504,9 +579,7 @@ function buildStudio(lang) {
     </a>`;
 
   const body = `<div class="studio">
-  <header class="phead">
-    <h1>${esc(t.studioTitle)}</h1>
-  </header>
+  ${phead(`      <h1>${esc(t.studioTitle)}</h1>`)}
 
   <section class="about">
 ${about.map(x => `    <p>${esc(x)}</p>`).join('\n')}

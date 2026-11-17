@@ -45,6 +45,7 @@
   --modal-bg: rgba(240, 241, 252, .95);
   --field-bg: rgba(255, 255, 255, .62);
   --err: #8a2a5c;
+  --em: #4b46d1;                 /* la segunda voz de los títulos (cursiva fina) */
 }
 
 :root[data-theme="night"] {
@@ -74,6 +75,7 @@
   --modal-bg: rgba(14, 12, 36, .95);
   --field-bg: rgba(255, 255, 255, .06);
   --err: #ff9db8;
+  --em: #fbc2ff;
 }
 
 *, *::before, *::after { box-sizing: border-box; }
@@ -139,6 +141,13 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
   color: var(--ink-muted); line-height: 1.5;
 }
 h1, h2, h3 { color: var(--ink); font-weight: 200; letter-spacing: -.03em; line-height: 1.06; text-wrap: balance; }
+/* Títulos a dos voces: la recta en 300 y la cursiva fina en el acento.
+   En site.json se marca con *asteriscos*. */
+h1:has(em), h2:has(em) { font-weight: 300; }
+h1 em, h2 em { font-style: italic; font-weight: 200; color: var(--em); padding-right: .04em; }
+main:focus { outline: none; }
+/* Sin View Transitions, el contenido nuevo entra con un fundido corto. */
+.page.is-entering { animation: rise .5s var(--ease) both; }
 h2 { font-size: clamp(1.9rem, 3.8vw, 3rem); }
 h2.label { font-size: .74rem; font-weight: 500; letter-spacing: .18em; line-height: 1.5; margin-bottom: 16px; }
 h3.label { font-size: .74rem; font-weight: 500; letter-spacing: .18em; line-height: 1.5; }
@@ -221,11 +230,30 @@ h3.label { font-size: .74rem; font-weight: 500; letter-spacing: .18em; line-heig
 .hero__proof { font-size: .98rem; line-height: 1.7; color: var(--ink-body); margin-top: 8px; max-width: 36em; }
 .hero__proof .label { display: block; margin-bottom: 4px; }
 
-/* La ameba: canvas WebGL (js/ameba.js) con la imagen de siempre como respaldo. */
-.hero__stage { display: flex; flex-direction: column; align-items: center; min-width: 0; }
-.hero__ameba { position: relative; width: 100%; max-width: 620px; aspect-ratio: 1; margin: 0 auto; }
+/* ── La ameba ──────────────────────────────────────────────────────────
+   Vive fuera de <main> (no se recarga al navegar) y js/ameba.js la ubica, en
+   coordenadas del documento, sobre el [data-ameba-slot] que esté más en
+   pantalla: el hero, el manifiesto, el bloque de contacto, la cabecera de las
+   páginas interiores o la esquina de la foto de una ficha. Los slots son cajas
+   vacías que sólo reservan el lugar. */
+.ameba {
+  position: absolute; left: 0; top: 0; width: 0; height: 0; z-index: 3;
+  transform-origin: 0 0; opacity: 0;   /* sin transición: aparece ya ubicada */
+  view-transition-name: ameba;
+}
+.ameba.is-placed { opacity: 1; }
 /* pan-y: en táctil el scroll vertical pasa de largo y el arrastre horizontal la gira. */
-.hero__ameba canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; touch-action: pan-y; }
+.ameba canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; touch-action: pan-y; }
+.ameba__fallback {
+  position: absolute; inset: 9%; width: 82%; height: 82%;
+  object-fit: cover; transition: opacity .5s var(--ease);
+  filter: drop-shadow(0 0 60px rgba(122, 92, 242, .35));
+}
+.ameba.is-live .ameba__fallback { opacity: 0; }
+
+.hero__stage { display: flex; flex-direction: column; align-items: center; min-width: 0; }
+.hero__slot { width: 100%; max-width: 620px; aspect-ratio: 1; margin: 0 auto; }
+.hero__slot img { width: 100%; height: 100%; object-fit: cover; }
 
 /* Respira con ella: la indicación cambia de texto, pero no se mueve. */
 .breath { display: flex; flex-direction: column; align-items: center; gap: 10px; margin-top: -18px; }
@@ -237,12 +265,6 @@ h3.label { font-size: .74rem; font-weight: 500; letter-spacing: .18em; line-heig
 }
 .breath.is-on .breath__cue { opacity: 1; }
 .breath__btn { padding: 10px 20px; font-size: .76rem; }
-.hero__fallback {
-  position: absolute; inset: 9%; width: 82%; height: 82%;
-  object-fit: cover; transition: opacity .5s var(--ease);
-  filter: drop-shadow(0 0 60px rgba(122, 92, 242, .35));
-}
-.hero__ameba.is-live .hero__fallback { opacity: 0; }
 
 /* El texto del hero no tiene animación de entrada a propósito: tiene que estar
    legible desde el primer cuadro (pestañas en segundo plano, vistas previas). */
@@ -251,11 +273,44 @@ h3.label { font-size: .74rem; font-weight: 500; letter-spacing: .18em; line-heig
 @media (max-width: 860px) {
   .hero { grid-template-columns: minmax(0, 1fr); align-content: center; gap: 8px; padding-top: calc(var(--header-h) + 4px); }
   .hero__stage { order: -1; }
-  .hero__ameba { max-width: min(74vw, 340px); }
+  .hero__slot { max-width: min(74vw, 340px); }
   .breath { margin-top: -10px; margin-bottom: 14px; }
   .breath__cue { min-height: 2.3rem; }
   .hero__txt { gap: 18px; }
 }
+
+/* ── Landing: manifiesto ───────────────────────────────────────────────
+   Una frase grande. Donde el navegador lo soporta, las palabras se encienden
+   una tras otra con el scroll; donde no, se lee completa desde el principio. */
+.manifesto {
+  max-width: var(--max); margin: 0 auto; padding: clamp(40px, 8vw, 120px) var(--px) 0;
+  display: grid; grid-template-columns: minmax(0, .62fr) minmax(0, 1.38fr);
+  gap: clamp(24px, 5vw, 80px); align-items: center;
+}
+.manifesto__slot { width: 100%; max-width: 340px; aspect-ratio: 1; justify-self: center; }
+.manifesto__txt {
+  margin: 14px 0 26px;
+  font-size: clamp(1.7rem, 3.5vw, 3.1rem); font-weight: 200; line-height: 1.2; letter-spacing: -.03em;
+  color: var(--ink); text-wrap: balance;
+}
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .manifesto__txt span {
+      opacity: .2; animation: word linear both; animation-timeline: view();
+      animation-range-start: cover calc(14% + var(--i) * 1.3%);
+      animation-range-end: cover calc(26% + var(--i) * 1.3%);
+    }
+  }
+}
+@keyframes word { to { opacity: 1; } }
+@media (max-width: 860px) {
+  .manifesto { grid-template-columns: minmax(0, 1fr); gap: 8px; }
+  .manifesto__slot { max-width: 150px; justify-self: start; }
+}
+
+/* Lo que hacemos: reusa la lista con vista previa del índice. */
+.disc .preview__cap p { text-transform: none; letter-spacing: 0; font-size: .98rem; font-weight: 400; line-height: 1.45; color: rgba(255, 255, 255, .9); }
+.disc .preview__cap h3 { font-size: 1.5rem; margin-bottom: 8px; }
 
 /* ── Secciones ─────────────────────────────────────────────────────────── */
 .sec { max-width: var(--max); margin: 0 auto; padding: clamp(64px, 9vw, 128px) var(--px) 0; }
@@ -309,6 +364,8 @@ h3.label { font-size: .74rem; font-weight: 500; letter-spacing: .18em; line-heig
   position: relative; display: block; aspect-ratio: 4 / 3; border-radius: var(--r-md); overflow: hidden;
   background: #0c0a18; box-shadow: var(--glow);
 }
+/* Con mouse la tarjeta se inclina hacia el cursor (js/app.js): la transición le da peso. */
+.wcard { transition: transform .5s var(--ease); will-change: transform; }
 .wcard img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .9s var(--ease); }
 .wcard:hover img, .wcard:focus-visible img { transform: scale(1.05); }
 /* Reel al pasar el cursor (sólo escritorio; lo carga js/app.js). */
@@ -324,16 +381,61 @@ h3.label { font-size: .74rem; font-weight: 500; letter-spacing: .18em; line-heig
 @media (max-width: 980px) { .wgrid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 600px) { .wgrid { grid-template-columns: minmax(0, 1fr); gap: 16px; } .wcard { aspect-ratio: 16 / 10; } }
 
-/* Con quién trabajamos */
-.clients__cols { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 32px clamp(28px, 6vw, 96px); }
-.clients__list { margin-top: 12px; font-size: clamp(1.12rem, 1.9vw, 1.55rem); font-weight: 300; line-height: 1.55; letter-spacing: -.01em; color: var(--ink); }
-.clients__award { margin-top: 34px; }
-@media (max-width: 700px) { .clients__cols { grid-template-columns: minmax(0, 1fr); } }
+/* En el landing las destacadas van grandes y alternadas: ancha + angosta, angosta + ancha. */
+.wgrid--mosaic { grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 22px; }
+.wgrid--mosaic .wcard { aspect-ratio: auto; height: clamp(260px, 32vw, 440px); grid-column: span 5; }
+.wgrid--mosaic .wcard:nth-child(4n+1), .wgrid--mosaic .wcard:nth-child(4n+4) { grid-column: span 7; }
+.wgrid--mosaic .wcard__t b { font-size: clamp(1.25rem, 2vw, 1.7rem); }
+@media (max-width: 980px) { .wgrid--mosaic .wcard, .wgrid--mosaic .wcard:nth-child(n) { grid-column: span 6; height: clamp(220px, 36vw, 340px); } }
+@media (max-width: 600px) { .wgrid--mosaic { gap: 16px; } .wgrid--mosaic .wcard, .wgrid--mosaic .wcard:nth-child(n) { grid-column: span 12; height: auto; aspect-ratio: 16 / 10; } }
 
-/* Contacto */
-.cta { max-width: var(--max); margin: 0 auto; padding: clamp(80px, 12vw, 170px) var(--px) clamp(72px, 10vw, 140px); }
-.cta h2 { font-size: clamp(2.4rem, 7vw, 5.4rem); }
-.cta__row { display: flex; flex-wrap: wrap; align-items: center; gap: 16px 28px; margin-top: 32px; }
+/* Con quién trabajamos: dos franjas que se desplazan en sentidos opuestos.
+   Se pausan con el cursor encima o con el botón (WCAG 2.2.2), y con "reducir
+   movimiento" quedan quietas y en varias líneas. */
+.creds__pause {
+  font-size: .74rem; font-weight: 500; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-muted);
+  border: 1px solid var(--line); border-radius: 999px; padding: 6px 14px;
+}
+.creds__pause:hover { color: var(--ink); }
+.creds__rows { display: flex; flex-direction: column; gap: 6px; margin: 0 calc(var(--px) * -1); }
+.marquee {
+  display: flex; overflow: hidden;
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 9%, #000 91%, transparent);
+  mask-image: linear-gradient(to right, transparent, #000 9%, #000 91%, transparent);
+}
+.marquee__track { display: flex; flex: none; animation: marquee 70s linear infinite; }
+.marquee--rev .marquee__track { animation-direction: reverse; animation-duration: 52s; }
+.marquee__item {
+  white-space: nowrap; padding: 6px 0;
+  font-size: clamp(1.5rem, 3vw, 2.6rem); font-weight: 200; letter-spacing: -.02em; color: var(--ink);
+}
+.marquee__item::after { content: '·'; padding: 0 .7em; color: var(--ink-muted); }
+@keyframes marquee { to { transform: translateX(-100%); } }
+.marquee:hover .marquee__track, .creds.is-paused .marquee__track { animation-play-state: paused; }
+.creds__award { margin-top: 30px; font-size: clamp(1.05rem, 1.6vw, 1.3rem); color: var(--ink); }
+.creds__award .label { display: block; margin-bottom: 6px; }
+@media (prefers-reduced-motion: reduce) {
+  .creds__pause { display: none; }
+  .creds__rows { margin: 0; gap: 18px; }
+  .marquee { -webkit-mask-image: none; mask-image: none; }
+  .marquee__track { flex: 1 1 auto; flex-wrap: wrap; animation: none; }
+  .marquee__track[aria-hidden] { display: none; }
+  .marquee__item { white-space: normal; font-size: clamp(1.15rem, 2vw, 1.6rem); }
+}
+
+/* Contacto: dos caminos y, al lado, el lugar donde se posa la ameba. */
+.cta {
+  max-width: var(--max); margin: 0 auto; padding: clamp(80px, 12vw, 170px) var(--px) clamp(72px, 10vw, 140px);
+  display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, .75fr); gap: clamp(20px, 4vw, 64px); align-items: center;
+}
+.cta h2 { font-size: clamp(2.4rem, 6.4vw, 5.2rem); }
+.cta__row { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-top: 32px; }
+.cta__mail { margin-top: 18px; }
+.cta__slot { width: 100%; max-width: 380px; aspect-ratio: 1; justify-self: center; }
+@media (max-width: 860px) {
+  .cta { grid-template-columns: minmax(0, 1fr); }
+  .cta__slot { max-width: 200px; order: -1; justify-self: start; }
+}
 .cta__mail a, .cm__sub a, .ftr a { color: var(--link); text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; }
 
 /* Footer */
@@ -345,6 +447,10 @@ h3.label { font-size: .74rem; font-weight: 500; letter-spacing: .18em; line-heig
 /* ── Cabecera de página interior ───────────────────────────────────────── */
 .phead { padding: calc(var(--header-h) + clamp(28px, 6vw, 70px)) 0 clamp(22px, 3vw, 36px); }
 .phead h1 { font-size: clamp(2.6rem, 7vw, 5rem); }
+/* Con lugar para la ameba a la derecha del título. */
+.phead--slot { display: flex; align-items: flex-end; justify-content: space-between; gap: 20px; }
+.phead--slot > div:first-child { min-width: 0; }
+.phead__slot { flex: none; width: clamp(92px, 15vw, 210px); aspect-ratio: 1; margin: 0 0 -14px; }
 
 /* ── Índice de obras ───────────────────────────────────────────────────── */
 .idx { max-width: var(--max); margin: 0 auto; padding: 0 var(--px) 90px; }
@@ -423,6 +529,8 @@ h3.label { font-size: .74rem; font-weight: 500; letter-spacing: .18em; line-heig
 .phero__eyebrow a { text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 1px; }
 .phero h1 { color: #fff; font-size: clamp(2.3rem, 6.4vw, 5rem); margin-bottom: 12px; }
 .phero__fmt { font-size: 1.02rem; color: rgba(255, 255, 255, .86); }
+/* La ameba se posa en la esquina de la foto. */
+.phero__slot { position: absolute; right: var(--px); bottom: clamp(18px, 3vw, 40px); width: clamp(84px, 11vw, 150px); aspect-ratio: 1; z-index: 2; }
 
 .sheet { max-width: 1180px; margin: 0 auto; padding: 0 var(--px) 100px; }
 .block { padding-top: clamp(46px, 7vw, 78px); }
@@ -538,6 +646,8 @@ h3.label { font-size: .74rem; font-weight: 500; letter-spacing: .18em; line-heig
 .cm__close:hover { background: var(--glass); }
 .cm__title { font-size: clamp(1.7rem, 4vw, 2.1rem); font-weight: 300; margin-bottom: 8px; padding-right: 40px; }
 .cm__sub { font-size: .95rem; line-height: 1.55; margin-bottom: 22px; overflow-wrap: anywhere; }
+.cm__about { margin: -8px 0 16px; }
+.cm__about[hidden] { display: none; }
 .cm__field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
 .cm__field span { font-size: .74rem; font-weight: 500; letter-spacing: .16em; text-transform: uppercase; color: var(--ink-muted); }
 .cm__field input, .cm__field textarea {
@@ -577,6 +687,11 @@ body.has-review .ftr { padding-bottom: 78px; }   /* que la barra no tape el pie 
 ::view-transition-group(work-cover) { animation-duration: .7s; animation-timing-function: cubic-bezier(.22, 1, .36, 1); }
 ::view-transition-old(work-cover), ::view-transition-new(work-cover) { width: 100%; height: 100%; object-fit: cover; }
 ::view-transition-old(root), ::view-transition-new(root) { animation-duration: .4s; }
+/* La ameba no se funde: es siempre la misma, viva, y el navegador la desliza
+   del lugar anterior al nuevo. */
+::view-transition-group(ameba) { animation-duration: 1s; animation-timing-function: cubic-bezier(.22, 1, .36, 1); }
+::view-transition-old(ameba) { display: none; }
+::view-transition-new(ameba) { animation: none; }
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }

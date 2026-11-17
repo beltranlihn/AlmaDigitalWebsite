@@ -68,6 +68,32 @@
       "es": "Encargos"
     }
   },
+  "formatsDesc": {
+    "vr": {
+      "en": "Virtual reality pieces and 360° films, from interactive painting to guided biofeedback journeys.",
+      "es": "Piezas de realidad virtual y películas 360°, desde pintura interactiva hasta recorridos guiados con biofeedback."
+    },
+    "installation": {
+      "en": "Interactive installations that respond to the body: pulse, brain activity, breath and movement.",
+      "es": "Instalaciones interactivas que responden al cuerpo: pulso, actividad cerebral, respiración y movimiento."
+    },
+    "dome": {
+      "en": "Fulldome and 360° shows for domes and immersive rooms.",
+      "es": "Experiencias fulldome y 360° para domos y salas inmersivas."
+    },
+    "mapping": {
+      "en": "Large-scale projection mapping on architecture.",
+      "es": "Mapping de gran formato sobre arquitectura."
+    },
+    "performance": {
+      "en": "Live audiovisual performances and festivals with spatial sound.",
+      "es": "Performances audiovisuales en vivo y festivales con sonido espacial."
+    },
+    "design": {
+      "en": "Immersive design and visuals for events, brands and venues.",
+      "es": "Diseño y visuales inmersivos para eventos, marcas y espacios."
+    }
+  },
   "techEn": {
     "Tiempo real": "Real-time",
     "Sensor de pulso": "Pulse sensor",
@@ -127,7 +153,7 @@
       "navContact": "Contact",
       "homeLabel": "Alma Digital Studio, home",
       "heroEyebrow": "Immersive wellness art studio",
-      "heroTitle": "We are an immersive art studio.",
+      "heroTitle": "We are an *immersive* art studio.",
       "heroLead": "We create VR, fulldome, projection mapping and biofeedback experiences that merge art, technology and science to support well-being and inner exploration.",
       "heroProof": "Presented at and commissioned by",
       "heroCtaWork": "See the work",
@@ -138,13 +164,13 @@
       "reelMute": "Mute",
       "reelUnmute": "Sound on",
       "reelClose": "Close video",
-      "selectedTitle": "Selected work",
+      "selectedTitle": "Selected *work*",
       "selectedAll": "All {n} works",
-      "clientsTitle": "Who we have worked with",
+      "clientsTitle": "Who we have *worked with*",
       "clientsInstitutions": "Institutions and festivals",
       "clientsBrands": "Brands and commissioners",
       "clientsAward": "Recognition",
-      "contactTitle": "Let's create something.",
+      "contactTitle": "Let's create *something*.",
       "contactCta": "Get in touch",
       "contactOr": "or write to",
       "footerTagline": "Immersive wellness art studio",
@@ -215,7 +241,17 @@
       "breathIn": "Breathe in",
       "breathOut": "Breathe out",
       "breathEnd": "Thank you for breathing with us.",
-      "breathLabel": "One-minute guided breathing with the amoeba"
+      "breathLabel": "One-minute guided breathing with the amoeba",
+      "manifestoLabel": "What moves us",
+      "manifestoMore": "Meet the studio",
+      "discTitle": "What we *do*",
+      "discHover": "Hover a format",
+      "credsPause": "Pause",
+      "credsPlay": "Play",
+      "contactCommission": "Commission a project",
+      "contactCommissionSubject": "Commission",
+      "contactFestival": "Festivals and press",
+      "contactFestivalSubject": "Festival or press"
     },
     "es": {
       "langName": "Español",
@@ -230,7 +266,7 @@
       "navContact": "Contacto",
       "homeLabel": "Alma Digital Studio, inicio",
       "heroEyebrow": "Estudio de arte inmersivo y bienestar",
-      "heroTitle": "Somos un estudio de arte inmersivo.",
+      "heroTitle": "Somos un estudio de arte *inmersivo*.",
       "heroLead": "Creamos experiencias de VR, fulldome, mapping y biofeedback que unen arte, tecnología y ciencia para acompañar el bienestar y la exploración interior.",
       "heroProof": "Presentado en y encargado por",
       "heroCtaWork": "Ver las obras",
@@ -241,13 +277,13 @@
       "reelMute": "Silenciar",
       "reelUnmute": "Activar sonido",
       "reelClose": "Cerrar video",
-      "selectedTitle": "Obras destacadas",
+      "selectedTitle": "Obras *destacadas*",
       "selectedAll": "Las {n} obras",
-      "clientsTitle": "Con quién hemos trabajado",
+      "clientsTitle": "Con quién hemos *trabajado*",
       "clientsInstitutions": "Instituciones y festivales",
       "clientsBrands": "Marcas y encargos",
       "clientsAward": "Reconocimiento",
-      "contactTitle": "Creemos algo juntos.",
+      "contactTitle": "Creemos algo *juntos*.",
       "contactCta": "Escríbenos",
       "contactOr": "o escribe a",
       "footerTagline": "Estudio de arte inmersivo y bienestar",
@@ -318,7 +354,17 @@
       "breathIn": "Inhala",
       "breathOut": "Exhala",
       "breathEnd": "Gracias por respirar con nosotros.",
-      "breathLabel": "Un minuto de respiración guiada con la ameba"
+      "breathLabel": "Un minuto de respiración guiada con la ameba",
+      "manifestoLabel": "Lo que nos mueve",
+      "manifestoMore": "Conoce el estudio",
+      "discTitle": "Lo que *hacemos*",
+      "discHover": "Pasa por un formato",
+      "credsPause": "Pausar",
+      "credsPlay": "Reanudar",
+      "contactCommission": "Encargar un proyecto",
+      "contactCommissionSubject": "Encargo",
+      "contactFestival": "Festivales y prensa",
+      "contactFestivalSubject": "Festival o prensa"
     }
   }
 }

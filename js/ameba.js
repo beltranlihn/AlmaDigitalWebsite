@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════════════════
-   Alma Digital — la ameba viva del hero
+   Alma Digital — la ameba viva
    Un fragment shader (WebGL 1, sin librerías) que dibuja la ameba como un
    campo de distancias: un núcleo y seis lóbulos fundidos entre sí.
 
@@ -7,15 +7,19 @@
      · sigue al puntero y se puede arrastrar para girarla, con inercia
      · se aplasta un poco mientras se la presiona
      · muta con el scroll, y cambia de forma con un clic o un toque
-     · "Respira con ella": un minuto guiado (inhalar 4 s, exhalar 6 s, seis
-       veces) en el que la ameba marca el ritmo. No pide micrófono ni cámara.
+     · viaja: vive fuera de <main>, así que no se recarga al cambiar de página.
+       Se posa sobre el [data-ameba-slot] que esté más en pantalla y, cuando
+       ese lugar cambia (otro bloque del landing, otra página), se desliza
+       hasta el nuevo.
 
    Corre en un canvas chico, propio, encima del fluido (que es otro canvas y
    no se toca). Para no pesar: resolución limitada, se pausa fuera de pantalla
    o con la pestaña oculta, baja sola de resolución si el equipo no da, y con
-   "reducir movimiento" dibuja un único cuadro quieto (salvo durante el minuto
-   guiado, que la persona pide a propósito). Si WebGL no arranca queda la
-   imagen de siempre (.hero__fallback) y el botón de respirar no aparece.
+   "reducir movimiento" dibuja un único cuadro quieto y no se desliza. Si WebGL
+   no arranca queda la imagen de siempre (.ameba__fallback), en el mismo lugar.
+
+   "Respira con ella" (minuto guiado) sigue acá pero apagado: su botón sólo se
+   genera con site.json → breathing: true.
    ═══════════════════════════════════════════════════════════════════════ */
 (function () {
   'use strict';
@@ -23,7 +27,7 @@
   var canvas = document.getElementById('ameba');
   if (!wrap || !canvas) return;
 
-  var T = (window.__ALMA__ && window.__ALMA__.t) || {};
+  var T = function (k) { var a = window.__ALMA__; return (a && a.t && a.t[k]) || ''; };
 
   var VS = 'attribute vec2 p;void main(){gl_Position=vec4(p,0.,1.);}';
   var FS = [
@@ -119,9 +123,9 @@
     catch (e) { gl = null; }
     if (!gl) return false;
     var vs = compile(gl.VERTEX_SHADER, VS), fs = compile(gl.FRAGMENT_SHADER, FS);
-    if (!vs || !fs) return false;
+    if (!vs || !fs) { gl = null; return false; }
     var prog = gl.createProgram(); gl.attachShader(prog, vs); gl.attachShader(prog, fs); gl.linkProgram(prog);
-    if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) return false;
+    if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) { gl = null; return false; }
     gl.useProgram(prog);
     var buf = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, buf);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
@@ -144,10 +148,11 @@
     if (cycle >= CYCLES) { stopGuide(true); return; }
     var phase = w < IN ? 'in' : 'out';
     breath = phase === 'in' ? ease(w / IN) : 1 - ease((w - IN) / OUT);
-    if (phase !== gPhase || cycle !== gCycle) { gPhase = phase; gCycle = cycle; cue(phase === 'in' ? T.breathIn : T.breathOut, (cycle + 1) + ' / ' + CYCLES); }
+    if (phase !== gPhase || cycle !== gCycle) { gPhase = phase; gCycle = cycle; cue(phase === 'in' ? T('breathIn') : T('breathOut'), (cycle + 1) + ' / ' + CYCLES); }
   }
 
   function draw(now) {
+    if (!gl) return;
     size();
     stepGuide(now);
     px += (tx - px) * .05; py += (ty - py) * .05;
@@ -178,22 +183,103 @@
     if (!still || guiding || guide > .01 || dragging || Math.abs(vyaw) + Math.abs(vpitch) > .0005 || press > .01) raf = requestAnimationFrame(loop);
   }
   function kick() { if (!raf && gl) raf = requestAnimationFrame(loop); }
-  function once() { if (gl) { if (still) kick(); } }
+  function once() { if (gl && still) kick(); }
 
-  if (!init()) return;
+  /* ── Dónde se posa ────────────────────────────────────────────────────
+     El contenedor es position:absolute en coordenadas del documento, así que
+     acompaña el scroll sin JavaScript. Sólo se recalcula cuando cambia el lugar
+     (otro slot, otra página) o el layout (resize, imágenes que cargan). */
+  var current = null, placed = false, anim = null, ticking = false;
 
-  /* ── Puntero lejano, scroll ── */
+  function box(el) { var r = el.getBoundingClientRect(); return (r.width > 1 && r.height > 1) ? r : null; }
+  function seen(r) {
+    var h = Math.min(r.bottom, window.innerHeight) - Math.max(r.top, 0);
+    var w = Math.min(r.right, window.innerWidth) - Math.max(r.left, 0);
+    return (h > 0 && w > 0) ? (h * w) / (r.width * r.height) : 0;
+  }
+  function pick() {
+    var list = [].slice.call(document.querySelectorAll('[data-ameba-slot]'));
+    var best = null, bestQ = 0, curQ = 0, first = null;
+    list.forEach(function (el) {
+      var r = box(el); if (!r) return;
+      if (!first) first = el;
+      var q = seen(r);
+      if (el === current) curQ = q;
+      if (q > bestQ) { bestQ = q; best = el; }
+    });
+    if (current && document.contains(current) && box(current)) {
+      if (!best || best === current) return current;
+      // Con histéresis: cambia sólo si el otro lugar está claramente más a la vista.
+      return (bestQ >= .55 && bestQ > curQ + .2) ? best : current;
+    }
+    return best || first;
+  }
+  function setRect(el) {
+    var r = box(el); if (!r) return false;
+    var s = Math.min(r.width, r.height);
+    wrap.style.width = s + 'px'; wrap.style.height = s + 'px';
+    wrap.style.left = (r.left + window.scrollX + (r.width - s) / 2) + 'px';
+    wrap.style.top = (r.top + window.scrollY + (r.height - s) / 2) + 'px';
+    return true;
+  }
+  /* animate: deslizarse desde donde estaba. from: rectángulo de pantalla de
+     partida (lo pasa la navegación, que lo mide antes de cambiar la página). */
+  function place(animate, from) {
+    var next = pick();
+    if (!next) { current = null; placed = false; wrap.classList.remove('is-placed'); return; }
+    var first = from || wrap.getBoundingClientRect();
+    var had = placed, changed = next !== current;
+    current = next;
+    if (!setRect(next)) return;
+    placed = true; wrap.classList.add('is-placed');
+    if (animate && had && changed && !still && wrap.animate && first.width > 1) {
+      var lastR = wrap.getBoundingClientRect();
+      // Si hay una animación en curso, lastR ya la incluye: se parte de lo que se ve.
+      if (anim) { anim.cancel(); lastR = wrap.getBoundingClientRect(); }
+      var dx = first.left - lastR.left, dy = first.top - lastR.top, sc = first.width / Math.max(1, lastR.width);
+      anim = wrap.animate(
+        [{ transform: 'translate(' + dx + 'px,' + dy + 'px) scale(' + sc + ')' }, { transform: 'none' }],
+        { duration: 1100, easing: 'cubic-bezier(.22,1,.36,1)' });
+      anim.onfinish = anim.oncancel = function () { anim = null; };
+    }
+    once(); kick();
+  }
+  function onScroll() {
+    tm = window.scrollY / 520; once();
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(function () {
+      ticking = false;
+      if (pick() !== current) place(true);
+    });
+  }
+  function relayout() { if (current && document.contains(current)) setRect(current); else place(false); once(); }
+
+  window.AlmaAmeba = {
+    /* Rectángulo actual en pantalla: la navegación lo mide antes de cambiar la página. */
+    rect: function () { return wrap.getBoundingClientRect(); },
+    /* Tras cambiar el contenido: buscar el lugar nuevo. animate=false cuando la
+       transición del navegador (View Transitions) ya se encarga del movimiento. */
+    refresh: function (animate, from) { if (current && !document.contains(current)) current = null; place(!!animate, from); },
+  };
+
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', relayout, { passive: true });
+  window.addEventListener('load', relayout);
+  if ('ResizeObserver' in window) new ResizeObserver(relayout).observe(document.body);
+
+  var hasGL = init();
+
+  /* ── Puntero lejano ── */
   window.addEventListener('pointermove', function (e) {
     tx = (e.clientX / window.innerWidth) * 2 - 1; ty = (e.clientY / window.innerHeight) * 2 - 1;
   }, { passive: true });
-  window.addEventListener('scroll', function () { tm = window.scrollY / 520; once(); }, { passive: true });
-  window.addEventListener('resize', once, { passive: true });
 
   /* ── Arrastrar para girar; un toque sin arrastre cambia de forma ──
      En táctil el canvas deja pasar el scroll vertical (touch-action: pan-y en el
      CSS): sólo el arrastre horizontal llega acá. */
   canvas.addEventListener('pointerdown', function (e) {
-    if (e.button) return;
+    if (e.button || !gl) return;
     dragging = true; dragId = e.pointerId; lx = e.clientX; ly = e.clientY; moved = 0; vyaw = vpitch = 0;
     try { canvas.setPointerCapture(dragId); } catch (err) {}
     kick();
@@ -231,42 +317,43 @@
     if (init()) { wrap.classList.add('is-live'); kick(); }
   });
 
-  /* ── Respira con ella ── */
-  var box = document.getElementById('breath');
-  var btn = document.getElementById('breath-btn');
-  var cueEl = document.getElementById('breath-cue');
-  var countEl = document.getElementById('breath-count');
+  /* ── Respira con ella (sólo si la página trae el bloque #breath) ── */
   var endTimer = 0;
-
+  function el(id) { return document.getElementById(id); }
   function cue(text, count) {
-    if (cueEl) cueEl.textContent = text || '';
-    if (countEl) countEl.textContent = count || '';
+    var c = el('breath-cue'), n = el('breath-count');
+    if (c) c.textContent = text || '';
+    if (n) n.textContent = count || '';
   }
   function startGuide() {
     clearTimeout(endTimer);
     guiding = true; gStart = performance.now(); gPhase = ''; gCycle = -1; breath = 0;
-    if (box) box.classList.add('is-on');
-    if (btn) { btn.textContent = T.breathStop; btn.setAttribute('aria-pressed', 'true'); }
+    var b = el('breath'), btn = el('breath-btn');
+    if (b) b.classList.add('is-on');
+    if (btn) { btn.textContent = T('breathStop'); btn.setAttribute('aria-pressed', 'true'); }
     kick();
   }
   function stopGuide(finished) {
     guiding = false; breath = 0;
-    if (btn) { btn.textContent = T.breathStart; btn.setAttribute('aria-pressed', 'false'); }
+    var b = el('breath'), btn = el('breath-btn');
+    if (btn) { btn.textContent = T('breathStart'); btn.setAttribute('aria-pressed', 'false'); }
     if (finished) {
-      cue(T.breathEnd, '');
-      endTimer = setTimeout(function () { cue('', ''); if (box) box.classList.remove('is-on'); }, 5000);
+      cue(T('breathEnd'), '');
+      endTimer = setTimeout(function () { cue('', ''); var x = el('breath'); if (x) x.classList.remove('is-on'); }, 5000);
     } else {
       cue('', '');
-      if (box) box.classList.remove('is-on');
+      if (b) b.classList.remove('is-on');
     }
     kick();
   }
-  if (box && btn) {
-    box.hidden = false;                    // el botón sólo existe si la ameba está viva
-    btn.addEventListener('click', function () { guiding ? stopGuide(false) : startGuide(); });
-  }
+  document.addEventListener('click', function (e) {
+    var btn = e.target.closest && e.target.closest('#breath-btn');
+    if (btn && gl) { guiding ? stopGuide(false) : startGuide(); }
+  });
+  function showBreath() { var b = el('breath'); if (b && gl) b.hidden = false; }
 
-  draw(performance.now());
-  wrap.classList.add('is-live');
-  kick();
+  place(false);
+  if (hasGL) { draw(performance.now()); wrap.classList.add('is-live'); kick(); }
+  showBreath();
+  window.AlmaAmeba.showBreath = showBreath;
 })();

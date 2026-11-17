@@ -58,9 +58,37 @@ tiene que existir en `site.json → formats`), su traducción en `projects.es.js
 compartir) y `node src/build.mjs`. Si falta la traducción, la ficha en español sale en inglés y el
 generador lo avisa.
 
+## Navegación continua (leer antes de tocar `js/app.js` o las plantillas)
+Cada página es un HTML completo: sirve sola, se indexa sola y funciona sin JavaScript. Pero al navegar
+**dentro** del sitio no se recarga: `js/app.js` pide el HTML de destino y reemplaza sólo `<header>`,
+`<main>`, `<footer>` y el modal de contacto, y sincroniza el `<head>` (título, description, canonical,
+hreflang, Open Graph, JSON-LD) y `window.__ALMA__`. El fluido (`#fluid`) y la ameba (`#ameba-wrap`)
+no se tocan: el fondo no se corta y la ameba viaja de un lugar a otro. Cambiar de idioma también es
+una navegación continua. Si el pedido falla, se navega de la forma normal.
+
+Consecuencias:
+- Todo lo que cambia de una página a otra tiene que estar **dentro** de esas cuatro piezas, en el
+  `<head>` o en `#alma-data` (los textos que usa el JS). Lo que quede suelto en `<body>` no se actualiza.
+- En `js/app.js` hay dos tipos de código. Lo **global** se engancha una vez (contacto, navegación,
+  barra de tema). Lo **de página** va en `initPage()` y tiene que desmontarse solo: los listeners en
+  `window`/`document` se registran con `on()`, los observers con `observe()` y los nodos que se agregan
+  a `<body>` se anotan en `life.nodes`. Si no, se acumulan en cada navegación.
+- No guardar referencias a elementos del header, main, footer o modal fuera de `initPage()`: se
+  reemplazan. Buscarlos en el momento.
+- Las páginas hechas a mano (`site.json → legacyPages`, hoy `soul-charger.html`) se abren con carga normal.
+- Donde el navegador soporta View Transitions (Chrome, Safari, Firefox recientes) el cambio lleva un
+  fundido, la portada de la obra se convierte en la cabecera de su ficha y la ameba se desliza. Sin
+  soporte, el cambio es inmediato y la ameba se desliza por JavaScript.
+
 ## Páginas
-- **Landing** (`index.html`), cinco bloques: hero (ameba viva + titular + credenciales + dos botones),
-  reel, seis obras destacadas (`site.json → featured`), "con quién trabajamos" y contacto.
+- **Landing** (`index.html`), siete bloques: hero (titular a dos voces + credenciales + dos botones),
+  manifiesto (una frase grande que se enciende con el scroll), "lo que hacemos" (los seis formatos, con
+  vista previa, que llevan al índice ya filtrado: `work/?format=dome`), seis obras destacadas grandes y
+  alternadas (`site.json → featured`), reel, credenciales en dos franjas en movimiento y contacto con
+  dos caminos (encargos / festivales y prensa).
+- **La ameba** se posa en el `[data-ameba-slot]` que esté más en pantalla: hero, manifiesto y contacto
+  en el landing; a la derecha del título en Obras y Studio; en la esquina de la foto en cada ficha.
+  Los slots son cajas vacías que sólo reservan el lugar.
 - **Índice de obras** (`work/`): lista filtrable por línea (obra propia / encargos) y formato, con
   vista previa al pasar el mouse.
 - **Ficha de obra** (`work/<slug>.html`): portada, ficha técnica, concepto, galería con lightbox, reel,
@@ -86,6 +114,8 @@ El velo existe porque el texto directo sobre el fluido daba un contraste de 1,7:
   `0.119`; splatPointer `×0.162`; emisores `×0.097`.
 - **Paleta de soul-charger.html**: fondo `{r:132, g:95, b:221}`, mismos colores sin crema, multiplicador `0.108`.
 - **Tipografía**: Raleway 200–500. Se decidió **no** adoptar Poiret One / DM Sans en la web (nov. 2026).
+- **Títulos a dos voces**: recta en 300 + cursiva fina (Raleway Italic 200) en el color de acento. En
+  `site.json` la parte en cursiva se marca con `*asteriscos*`.
 - **Scroll normal**: sin salto por secciones ni puntos de navegación. Zoom y selección de texto habilitados.
 - **Sin animaciones de entrada sobre el texto**: todo lo que se lee tiene que estar visible en el primer
   cuadro (pestañas en segundo plano, vistas previas de enlaces).
@@ -204,6 +234,36 @@ desactiva. **No** cambiar nameservers a Cloudflare.
 El fluid sim sigue corriendo con auto-emitters en mobile. Los usuarios de Android no pueden tocar el fondo para emitir fluidos (correcto — el dedo es para el scroll).
 
 ## Historial de sesiones (última al tope)
+
+### 2026-11-17 — Navegación continua y landing como recorrido (Vicente)
+
+Rama `rediseno-landing`. Referencia que trajo Vicente: [unseen.co](https://unseen.co/), donde todo el
+sitio es un mismo lugar 3D y nunca hay un corte entre páginas. Se tomó la idea, no la técnica: el
+"lugar" de Alma son el fluido y la ameba.
+
+- **Navegación continua** (ver la sección de arriba): las páginas cambian sin recargar; el fluido sigue
+  corriendo y la ameba viaja. `js/app.js` reescrito en código global + código de página.
+- **Ameba persistente** (`js/ameba.js`): sale de `<main>` y se posa en un `[data-ameba-slot]` por
+  página o por bloque. Se desliza al nuevo lugar cuando cambia.
+- **Landing como recorrido**: de cinco a siete bloques. Nuevos: manifiesto, "lo que hacemos" y
+  credenciales en movimiento (con botón de pausa; quietas con "reducir movimiento"). Las obras
+  destacadas pasan a un mosaico grande y alternado.
+- **Tarjetas que se inclinan** hacia el cursor (sólo con mouse).
+- **Títulos a dos voces** dentro de Raleway. **Contacto con dos caminos**, que mandan su asunto.
+- El índice de obras acepta `?format=` y `?line=` para llegar filtrado.
+
+**No se copió de Unseen**: la portada de entrada (aparece en cada carga directa), el scroll controlado
+por el sitio y el mundo 3D modelado (1,6 MB de JavaScript contra unos 105 KB de este sitio).
+
+**Verificado**: en Chrome, la navegación sin recarga (ida, atrás, cambio de idioma), el viaje de la
+ameba entre bloques y páginas, filtros por URL, formulario con `fetch` simulado, galería y reel después
+de navegar, y que no se acumulan nodos tras varias navegaciones. En emulación 375×812, medidas sin
+desbordes. Paquete de publicación: 45 páginas, 1.377 referencias locales, ninguna rota.
+**Sin probar**: teléfonos reales, Safari y Firefox, y un envío real del formulario.
+
+**Idea siguiente** (referencia de Vicente: [flow.nrly.fun](https://flow.nrly.fun/), partículas en
+Three.js que toman distintas formaciones y reaccionan al arrastre): usar un sistema así en la cabecera
+de las obras principales o en el landing. Es el caso donde Three.js sí se justifica.
 
 ### 2026-11-17 — Interactividad: respirar con la ameba, arrastrarla, tarjetas vivas (Vicente)
 
