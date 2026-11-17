@@ -209,6 +209,9 @@ El fluid sim sigue corriendo con auto-emitters en mobile. Los usuarios de Androi
 
 Rama `rediseno-landing`. Tres mejoras, sin material nuevo:
 
+> **"Respira con ella" quedó apagada** el mismo día a pedido de Vicente (`site.json → breathing: false`):
+> el botón no se genera. El código sigue en `js/ameba.js`; con `breathing: true` y un build vuelve.
+
 - **Respira con ella** (`js/ameba.js` + bloque `.breath` del hero): botón bajo la ameba que inicia un
   minuto guiado, seis ciclos de 4 s de inhalación y 6 s de exhalación. La ameba crece y se recoge
   marcando el ritmo, con la indicación "Inhala / Exhala" y el número de ciclo. No pide micrófono ni

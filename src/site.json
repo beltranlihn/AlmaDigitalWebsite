@@ -28,6 +28,7 @@
   ],
   "perProjectPalette": false,
   "reelAutoplayOnView": false,
+  "breathing": false,
   "legacyPages": {
     "soul-charger": "soul-charger.html"
   },

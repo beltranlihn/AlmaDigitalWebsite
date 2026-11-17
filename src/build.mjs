@@ -259,12 +259,12 @@ function buildLanding(lang) {
       <img class="hero__fallback" src="${asset(c, 'Asset/Logo Studio/Version 2/Logo.webp')}" alt="" width="1920" height="1080">
       <canvas id="ameba" role="img" aria-label="${esc(t.amebaLabel)}"></canvas>
     </div>
-    <!-- Minuto de respiración guiada. js/ameba.js lo muestra sólo si la ameba está viva. -->
+${site.breathing ? `    <!-- Minuto de respiración guiada. js/ameba.js lo muestra sólo si la ameba está viva. -->
     <div class="breath" id="breath" role="group" aria-label="${esc(t.breathLabel)}" hidden>
       <p class="breath__cue" aria-live="polite"><span id="breath-cue"></span><span class="label" id="breath-count"></span></p>
       <button class="btn breath__btn" type="button" id="breath-btn" aria-pressed="false">${esc(t.breathStart)}</button>
     </div>
-  </div>
+` : ''}  </div>
 </section>
 
 <section class="sec" id="reel" aria-labelledby="reel-title">
