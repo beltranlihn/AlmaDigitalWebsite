@@ -31,7 +31,17 @@
   "breathing": false,
   "world": {
     "enabled": true,
-    "works": []
+    "works": [],
+    "forms": {
+      "neurocosm-full-dome": {
+        "formation": "dome",
+        "colors": ["#ff5a3c", "#ff9a6b", "#ffd0b0", "#ffffff"]
+      },
+      "pacha-ibiza": {
+        "formation": "wave",
+        "colors": ["#ff4fa0", "#ff8fc8", "#b48cff", "#ffffff"]
+      }
+    }
   },
   "sound": {
     "enabled": true,

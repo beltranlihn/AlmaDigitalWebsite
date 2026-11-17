@@ -417,7 +417,10 @@ function buildWorld(lang) {
   const t = c.t;
   const slugs = world.works && world.works.length ? world.works : site.featured;
   const works = slugs.map(s => loc(projects.find(p => p.slug === s), lang));
-  const items = works.map(p => `      <li><a class="wcard" data-w-item href="${link(c, `work/${p.slug}.html`)}" data-cover="${asset(c, p.cover)}" data-title="${esc(p.title)}" data-format="${esc(p.format)}">
+  /* Forma y colores de las partículas que rodean a cada obra: los de su ficha
+     (site.json → particles) o, si no tiene, los de world.forms. */
+  const formOf = slug => (world.forms && world.forms[slug]) || (site.particles && site.particles[slug]) || { formation: 'halo', colors: [] };
+  const items = works.map(p => `      <li><a class="wcard" data-w-item href="${link(c, `work/${p.slug}.html`)}" data-cover="${asset(c, p.cover)}" data-title="${esc(p.title)}" data-format="${esc(p.format)}" data-form="${esc(formOf(p.slug).formation)}" data-colors="${esc((formOf(p.slug).colors || []).join(','))}">
         <img loading="lazy" decoding="async" width="1920" height="1080" src="${asset(c, p.cover)}" alt="">
         <span class="wcard__t"><b>${esc(p.title)}</b><span>${esc(p.format)}</span></span>
       </a></li>`).join('\n');

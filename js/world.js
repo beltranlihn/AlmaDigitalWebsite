@@ -11,6 +11,10 @@
        sus remolinos son el "líquido" de este mundo y responden al cursor;
      · hay polvo en suspensión y tres corrientes de partículas que giran
        alrededor del camino;
+     · cada obra tiene su enjambre: suelto mientras se pasa, y al detenerse
+       frente a ella se ordena en una forma propia (anillos, madeja, domo…);
+     · al avanzar, unos hilos de luz se adelantan y dos luces con cola van
+       por delante, como guías;
      · se avanza con el scroll NORMAL de la página (no se secuestra la rueda):
        la sección es alta y el escenario queda fijo mientras se la recorre;
      · un clic en una ameba (o en "Entrar a la obra") la derrama como un
@@ -143,6 +147,173 @@ const DUST_FRAG = `
     vec3 lilac = vec3(0.86, 0.78, 1.0), blue = vec3(0.62, 0.72, 1.0), pink = vec3(1.0, 0.74, 0.92);
     vec3 c = vTint < 0.5 ? mix(lilac, blue, vTint * 2.0) : mix(blue, pink, vTint * 2.0 - 1.0);
     gl_FragColor = vec4(c, a * a * vFade * 0.9 * uDeep);
+  }`;
+
+/* ── El enjambre de cada obra ──────────────────────────────────────────
+   Unas cientos de partículas por obra. Sueltas, son una nube que deriva
+   alrededor de la ameba; al detenerse frente a la obra (uForm → 1) cada una
+   va a su lugar en la forma, en espiral y a destiempo. La forma gira, y según
+   la obra late, respira u ondula. */
+const SWARM_VERT = `
+  attribute vec3 aTarget, aColor;
+  attribute float aSeed, aSize;
+  uniform float uForm, uTime, uPx, uSpin, uBeat, uBpm, uBreath, uWave;
+  uniform mat3 uTilt;
+  varying vec3 vColor; varying float vA;
+  mat2 rot(float a) { float c = cos(a), s = sin(a); return mat2(c, -s, s, c); }
+  float beat(float t) {                      // latido: dos golpes
+    float p = fract(t), a = (p - 0.08) / 0.045, b = (p - 0.30) / 0.06;
+    return exp(-a * a) + 0.55 * exp(-b * b);
+  }
+  void main() {
+    vec3 f = position;
+    f.xz = rot(uTime * 0.04) * f.xz;
+    f += vec3(sin(uTime * 0.23 + aSeed * 17.0), cos(uTime * 0.19 + aSeed * 11.0), sin(uTime * 0.17 + aSeed * 5.0)) * 0.22;
+
+    vec3 t = aTarget;
+    float far = length(t);
+    t.xz = rot(uTime * uSpin) * t.xz;
+    t.y += uWave * sin(length(t.xz) * 5.0 - uTime * 2.2);
+    t *= 1.0 + uBeat * beat(uTime * uBpm / 60.0 - far * 0.22) + uBreath * sin(uTime * 1.0472);   // 1,0472 = un ciclo cada 6 s
+    t = uTilt * t;
+
+    float k = smoothstep(aSeed * 0.45, aSeed * 0.45 + 0.55, uForm);
+    vec3 p = mix(f, t, k);
+    p.xz = rot((1.0 - k) * k * 2.4) * p.xz;
+    vec4 mv = modelViewMatrix * vec4(p, 1.0);
+    gl_Position = projectionMatrix * mv;
+    float depth = -mv.z;
+    gl_PointSize = aSize * uPx * (5.0 / depth) * mix(0.55, 1.0, k);        // sueltas se confunden con el polvo; formadas, se destacan
+    float tw = 0.6 + 0.4 * sin(uTime * (0.7 + aSeed * 1.6) + aSeed * 40.0);
+    vA = smoothstep(0.3, 1.6, depth) * mix(0.3, 1.0, k) * mix(tw, 0.75 + 0.25 * tw, k);
+    vColor = mix(vec3(0.86, 0.78, 1.0), aColor, 0.35 + 0.65 * k);
+  }`;
+const SWARM_FRAG = `
+  uniform float uOpacity;
+  varying vec3 vColor; varying float vA;
+  void main() {
+    float d = length(gl_PointCoord - 0.5);
+    float a = smoothstep(0.5, 0.0, d);
+    gl_FragColor = vec4(vColor, a * a * vA * uOpacity);
+  }`;
+const TAU2 = Math.PI * 2;
+function onSphere(r) {
+  const u = rnd(-1, 1), a = rnd(0, TAU2), q = Math.sqrt(1 - u * u);
+  return [q * Math.cos(a) * r, u * r, q * Math.sin(a) * r];
+}
+/* Formas: n puntos alrededor de la ameba (radio 1,25), centrados en ella. */
+const FORMS = {
+  /* Anillos concéntricos, como los de la respiración (Soul Charger). */
+  halo(n, put) {
+    const R = [1.62, 1.92, 2.22, 2.52];
+    for (let i = 0; i < n; i++) {
+      const r = R[(Math.random() * R.length) | 0] + rnd(-0.035, 0.035), a = rnd(0, TAU2);
+      put(i, Math.cos(a) * r, rnd(-0.03, 0.03), Math.sin(a) * r);
+    }
+  },
+  /* Madeja que no se repite: atractor de Thomas (Neurocosm XR). */
+  attractor(n, put) {
+    const B = 0.208186;
+    for (let i = 0; i < n; i++) {
+      let x = rnd(-2.4, 2.4), y = rnd(-2.4, 2.4), z = rnd(-2.4, 2.4);
+      for (let k = 0; k < 260; k++) {
+        const dx = Math.sin(y) - B * x, dy = Math.sin(z) - B * y, dz = Math.sin(x) - B * z;
+        x += dx * 0.09; y += dy * 0.09; z += dz * 0.09;
+      }
+      put(i, x * 0.56, y * 0.56, z * 0.56);
+    }
+  },
+  /* Tres capas que laten de adentro hacia afuera (Collective Pulse). */
+  pulse(n, put) {
+    for (let i = 0; i < n; i++) {
+      const w = Math.random(), r = (w < 0.5 ? 1.7 : w < 0.8 ? 2.1 : 2.5) + rnd(-0.04, 0.04), q = onSphere(r);
+      put(i, q[0], q[1], q[2]);
+    }
+  },
+  /* Pinceladas: arcos gruesos al medio y finos en las puntas (Neural Canvas). */
+  strokes(n, put) {
+    const S = 9, st = [];
+    for (let k = 0; k < S; k++) st.push({ r: rnd(1.65, 2.5), a: rnd(0, TAU2), len: rnd(1.3, 2.8), rise: rnd(-0.5, 0.5), rx: rnd(-0.9, 0.9), rz: rnd(-0.9, 0.9) });
+    for (let i = 0; i < n; i++) {
+      const k = st[i % S], u = Math.random(), a = k.a + u * k.len, r = k.r + (u - 0.5) * 0.25 + rnd(-1, 1) * 0.06 * Math.sin(Math.PI * u);
+      let x = Math.cos(a) * r, y = k.rise * (u - 0.5) + rnd(-1, 1) * 0.05 * Math.sin(Math.PI * u), z = Math.sin(a) * r;
+      const cx = Math.cos(k.rx), sx = Math.sin(k.rx), cz = Math.cos(k.rz), sz = Math.sin(k.rz);
+      const y1 = y * cx - z * sx, z1 = y * sx + z * cx;            // inclinación propia de cada trazo
+      put(i, x * cz - y1 * sz, x * sz + y1 * cz, z1);
+    }
+  },
+  /* Media esfera de meridianos y paralelos (Neurocosm Full Dome). */
+  dome(n, put) {
+    const R = 2.25;
+    for (let i = 0; i < n; i++) {
+      let th, ph;
+      if (Math.random() < 0.55) { ph = ((Math.random() * 14) | 0) / 14 * TAU2; th = Math.acos(Math.random()); }
+      else { th = (((Math.random() * 5) | 0) + 1) / 5.6 * Math.PI / 2; ph = rnd(0, TAU2); }
+      put(i, R * Math.sin(th) * Math.cos(ph), R * Math.cos(th) - 0.75, R * Math.sin(th) * Math.sin(ph));
+    }
+  },
+  /* Ondas que se abren en un plano, como sonido (Pacha Ibiza). */
+  wave(n, put) {
+    for (let i = 0; i < n; i++) {
+      const r = 1.5 + ((Math.random() * 6) | 0) * 0.3 + rnd(-0.03, 0.03), a = rnd(0, TAU2);
+      put(i, Math.cos(a) * r, -0.95, Math.sin(a) * r);
+    }
+  },
+};
+/* Cómo se mueve cada forma: giro (rad/s), inclinación, latido, respiración, onda. */
+const FORM_FX = {
+  halo: { spin: 0.3, tilt: [1.08, 0.12], breath: 0.05 },
+  attractor: { spin: 0.16, tilt: [0.25, 0], breath: 0.03 },
+  pulse: { spin: 0.08, tilt: [0.15, 0], beat: 0.11, bpm: 62 },
+  strokes: { spin: 0.2, tilt: [0.2, 0.1] },
+  dome: { spin: 0.14, tilt: [0.3, 0], breath: 0.02 },
+  wave: { spin: 0.1, tilt: [0.55, 0], wave: 0.13 },
+};
+
+/* ── Luces que avanzan ─────────────────────────────────────────────────
+   Hilos: líneas finas alrededor del camino que se adelantan a la cámara y se
+   estiran con la velocidad; en reposo son chispas casi quietas.
+   Guías: dos luces con cola que van por delante (siguen al scroll, no a la
+   cámara, así que se adelantan y uno las alcanza). La cola tiembla un poco,
+   como electricidad. */
+const STREAK_VERT = `
+  attribute float aEnd, aSeed;
+  uniform float uCamZ, uTravel, uBoost, uDir, uTime, uDeep;
+  varying float vA;
+  void main() {
+    float z = mod(position.z + uTravel + uTime * 0.25, 34.0);        // avanzan al doble que la cámara, y despacio en reposo
+    float zw = uCamZ + 4.0 - z;                                   // de 4 por detrás de la cámara a 30 por delante
+    zw += aEnd * (0.12 + uBoost * 3.2) * uDir;                    // la cola queda hacia donde se venía
+    vec2 xy = position.xy + vec2(sin(zw * 1.3 + uTime * 2.0 + aSeed * 30.0), cos(zw * 1.1 + uTime * 1.7 + aSeed * 12.0)) * 0.07;
+    vec4 mv = modelViewMatrix * vec4(xy, zw, 1.0);
+    gl_Position = projectionMatrix * mv;
+    float depth = -mv.z;
+    vA = (1.0 - aEnd) * smoothstep(30.0, 14.0, depth) * smoothstep(0.5, 3.0, depth) * (0.22 + 0.78 * uBoost) * uDeep;
+  }`;
+const STREAK_FRAG = `
+  varying float vA;
+  void main() { gl_FragColor = vec4(0.9, 0.86, 1.0, vA); }`;
+const WISP_VERT = `
+  attribute float aAge;
+  attribute vec3 aColor;
+  uniform float uPx, uTime, uDeep;
+  varying vec3 vColor; varying float vA;
+  void main() {
+    vec3 p = position;
+    p.xy += vec2(sin(aAge * 38.0 - uTime * 9.0), cos(aAge * 31.0 - uTime * 7.0)) * 0.03 * aAge;   // la cola tiembla
+    vec4 mv = modelViewMatrix * vec4(p, 1.0);
+    gl_Position = projectionMatrix * mv;
+    float depth = -mv.z;
+    gl_PointSize = uPx * (5.0 / depth) * mix(3.4, 0.5, aAge);
+    vA = pow(1.0 - aAge, 1.6) * smoothstep(0.4, 2.0, depth) * uDeep;
+    vColor = mix(vec3(1.0), aColor, smoothstep(0.0, 0.25, aAge));
+  }`;
+const WISP_FRAG = `
+  varying vec3 vColor; varying float vA;
+  void main() {
+    float d = length(gl_PointCoord - 0.5);
+    float a = smoothstep(0.5, 0.0, d);
+    gl_FragColor = vec4(vColor, a * a * vA * 0.5);
   }`;
 
 /* ── El derrame ────────────────────────────────────────────────────────
@@ -304,6 +475,93 @@ export function mount(section, opts) {
   scene.add(dust);
   disposables.push(dGeo, dMat);
 
+  /* ── Enjambre por obra ───────────────────────────────────────────────── */
+  const SN = coarse ? 220 : 560;
+  const hex = (c) => { const h = c.trim().replace('#', ''); return [0, 2, 4].map((k) => parseInt(h.substr(k, 2), 16) / 255); };
+  links.forEach((a, i) => {
+    const kind = a.getAttribute('data-form'), make = FORMS[kind] || FORMS.halo, fx = FORM_FX[kind] || FORM_FX.halo;
+    const list = (a.getAttribute('data-colors') || '').split(',').filter(Boolean);
+    const pal = (list.length ? list : ['#c99ef9', '#f2b8dd', '#8fb0ff', '#ffffff']).map(hex);
+    const free = new Float32Array(SN * 3), tgt = new Float32Array(SN * 3), col = new Float32Array(SN * 3);
+    const seed = new Float32Array(SN), size = new Float32Array(SN);
+    make(SN, (j, x, y, z) => { tgt[j * 3] = x; tgt[j * 3 + 1] = y; tgt[j * 3 + 2] = z; });
+    for (let j = 0; j < SN; j++) {
+      const q = onSphere(rnd(1.9, 4.2)), c = pal[(Math.random() * pal.length) | 0];
+      free[j * 3] = q[0]; free[j * 3 + 1] = q[1] * 0.75; free[j * 3 + 2] = q[2];
+      col[j * 3] = c[0]; col[j * 3 + 1] = c[1]; col[j * 3 + 2] = c[2];
+      seed[j] = Math.random(); size[j] = Math.random() < 0.05 ? rnd(2, 2.8) : rnd(0.8, 1.6);
+    }
+    const g = new THREE.BufferGeometry();
+    g.setAttribute('position', new THREE.BufferAttribute(free, 3));
+    g.setAttribute('aTarget', new THREE.BufferAttribute(tgt, 3));
+    g.setAttribute('aColor', new THREE.BufferAttribute(col, 3));
+    g.setAttribute('aSeed', new THREE.BufferAttribute(seed, 1));
+    g.setAttribute('aSize', new THREE.BufferAttribute(size, 1));
+    const tilt = new THREE.Matrix3().setFromMatrix4(new THREE.Matrix4().makeRotationFromEuler(new THREE.Euler(fx.tilt[0], 0, fx.tilt[1])));
+    const m = new THREE.ShaderMaterial({
+      vertexShader: SWARM_VERT, fragmentShader: SWARM_FRAG, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending,
+      uniforms: {
+        uForm: { value: 0 }, uTime: { value: 0 }, uPx: { value: 7 * dpr }, uOpacity: { value: 0 }, uTilt: { value: tilt },   // más grandes que el polvo, o la forma se pierde
+        uSpin: { value: fx.spin || 0 }, uBeat: { value: fx.beat || 0 }, uBpm: { value: fx.bpm || 60 },
+        uBreath: { value: fx.breath || 0 }, uWave: { value: fx.wave || 0 },
+      },
+    });
+    const pts = new THREE.Points(g, m);
+    pts.frustumCulled = false; pts.renderOrder = 2;          // después de las amebas: las de atrás quedan tapadas, las de adelante no
+    scene.add(pts);
+    disposables.push(g, m);
+    works[i].swarm = { points: pts, u: m.uniforms, form: 0 };
+  });
+
+  /* ── Hilos de luz ────────────────────────────────────────────────────── */
+  const SK = coarse ? 22 : 52;
+  const kPos = new Float32Array(SK * 6), kEnd = new Float32Array(SK * 2), kSeed = new Float32Array(SK * 2);
+  for (let i = 0; i < SK; i++) {
+    const a = rnd(0, TAU2), r = rnd(1.4, 5.2), x = Math.cos(a) * r, y = Math.sin(a) * r * 0.62, z = rnd(0, 34), sd = Math.random();
+    for (let e = 0; e < 2; e++) {
+      kPos[(i * 2 + e) * 3] = x; kPos[(i * 2 + e) * 3 + 1] = y; kPos[(i * 2 + e) * 3 + 2] = z;
+      kEnd[i * 2 + e] = e; kSeed[i * 2 + e] = sd;
+    }
+  }
+  const kGeo = new THREE.BufferGeometry();
+  kGeo.setAttribute('position', new THREE.BufferAttribute(kPos, 3));
+  kGeo.setAttribute('aEnd', new THREE.BufferAttribute(kEnd, 1));
+  kGeo.setAttribute('aSeed', new THREE.BufferAttribute(kSeed, 1));
+  const kMat = new THREE.ShaderMaterial({
+    vertexShader: STREAK_VERT, fragmentShader: STREAK_FRAG, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending,
+    uniforms: { uCamZ: { value: 0 }, uTravel: { value: 0 }, uBoost: { value: 0 }, uDir: { value: 1 }, uTime: { value: 0 }, uDeep: { value: 0 } },
+  });
+  const streaks = new THREE.LineSegments(kGeo, kMat);
+  streaks.frustumCulled = false; streaks.renderOrder = 1;
+  scene.add(streaks);
+  disposables.push(kGeo, kMat);
+
+  /* ── Luces guía ──────────────────────────────────────────────────────── */
+  const WISPS = coarse ? 1 : 2, TRAIL = 70;
+  const wPos = new Float32Array(WISPS * TRAIL * 3), wAge = new Float32Array(WISPS * TRAIL), wCol = new Float32Array(WISPS * TRAIL * 3);
+  const wTint = [[0.80, 0.70, 1.0], [1.0, 0.72, 0.9]];
+  for (let w = 0; w < WISPS; w++) for (let j = 0; j < TRAIL; j++) {
+    const k = w * TRAIL + j;
+    wAge[k] = j / (TRAIL - 1);
+    wCol[k * 3] = wTint[w][0]; wCol[k * 3 + 1] = wTint[w][1]; wCol[k * 3 + 2] = wTint[w][2];
+  }
+  const wGeo = new THREE.BufferGeometry();
+  const wAttr = new THREE.BufferAttribute(wPos, 3);
+  wAttr.setUsage(THREE.DynamicDrawUsage);
+  wGeo.setAttribute('position', wAttr);
+  wGeo.setAttribute('aAge', new THREE.BufferAttribute(wAge, 1));
+  wGeo.setAttribute('aColor', new THREE.BufferAttribute(wCol, 3));
+  const wMat = new THREE.ShaderMaterial({
+    vertexShader: WISP_VERT, fragmentShader: WISP_FRAG, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending,
+    uniforms: { uPx: { value: 4 * dpr }, uTime: { value: 0 }, uDeep: { value: 0 } },
+  });
+  const wisps = new THREE.Points(wGeo, wMat);
+  wisps.frustumCulled = false; wisps.renderOrder = 3;
+  scene.add(wisps);
+  disposables.push(wGeo, wMat);
+  const heads = [];
+  for (let w = 0; w < WISPS; w++) heads.push({ pos: new THREE.Vector3(), ready: false, dist: 5.2 + w * 1.5, ph: w * 2.4 });
+
   /* ── El derrame: plano a pantalla completa, sólo mientras se entra a una obra ── */
   const liqGeo = new THREE.PlaneGeometry(2, 2);
   const liqMat = new THREE.ShaderMaterial({
@@ -326,6 +584,7 @@ export function mount(section, opts) {
   const tWork = (i) => (n === 1 ? 0.5 : lerp(T_FIRST, T_LAST, i / (n - 1)));
   const HALF = n === 1 ? 0.2 : (T_LAST - T_FIRST) / (n - 1) / 2;
   let keys = [];                       // [{ t, pos, look }]
+  let formScale = 1;                   // los enjambres se achican en pantallas angostas
   function layout() {
     const w = Math.max(2, stage.clientWidth), h = Math.max(2, stage.clientHeight), aspect = w / h;
     renderer.setSize(w, h, false);
@@ -342,6 +601,7 @@ export function mount(section, opts) {
     const R = 1.25;
     const D = Math.max(5, wide ? 5.7 : (2 * R) / (0.64 * 2 * TAN * aspect));
     const [wx, wy] = wide ? at(D, 0.4, 0) : at(D, 0, 0.3);
+    formScale = wide ? 1 : clamp((TAN * D * aspect) / 2.7, 0.5, 1);
     keys = [
       { t: 0, pos: V(0, 0, d0), look: V(0, 0, 0) },
       { t: T_DOOR, pos: V(dx, dy, 0), look: V(dx * 0.4, dy * 0.4, -10) },
@@ -358,12 +618,12 @@ export function mount(section, opts) {
     if (still) draw(0);
   }
   const camPos = new THREE.Vector3(), camLook = new THREE.Vector3();
-  function path(p) {
+  function path(p, outPos, outLook) {
     let k = 0;
     while (k < keys.length - 2 && p > keys[k + 1].t) k++;
     const a = keys[k], b = keys[k + 1];
     const u = smooth(0, 1, (p - a.t) / (b.t - a.t));
-    camPos.lerpVectors(a.pos, b.pos, u); camLook.lerpVectors(a.look, b.look, u);
+    (outPos || camPos).lerpVectors(a.pos, b.pos, u); (outLook || camLook).lerpVectors(a.look, b.look, u);
   }
 
   /* ── Portadas: se piden cuando uno se acerca ────────────────────────── */
@@ -405,6 +665,8 @@ export function mount(section, opts) {
   const TAU = Math.PI * 2;
   const mouse = { x: 0, y: 0, sx: 0, sy: 0, in: false, cx: 0, cy: 0 };
   const tmp = new THREE.Vector3(), ray = new THREE.Vector3();
+  const tA = new THREE.Vector3(), tB = new THREE.Vector3(), tR = new THREE.Vector3(), tU = new THREE.Vector3(), UP = new THREE.Vector3(0, 1, 0);
+  let dirS = 1;                        // hacia dónde se avanza: 1 adelante, -1 atrás (suavizado)
 
   function readScroll() {
     const r = section.getBoundingClientRect();
@@ -503,6 +765,35 @@ export function mount(section, opts) {
     }
     camera.position.copy(camPos); camera.lookAt(camLook);
 
+    /* Hilos de luz y luces guía: sólo adentro, y se apagan al entrar a una obra. */
+    const lights = still ? 0 : deep * (entering ? 1 - smooth(0, 0.4, entering.t) : 1);
+    if (Math.abs(p - ps) > 0.0006) dirS += ((p > ps ? 1 : -1) - dirS) * 0.1;
+    const ku = kMat.uniforms;
+    ku.uCamZ.value = camera.position.z; ku.uTravel.value = keys[0].pos.z - camera.position.z;
+    ku.uBoost.value = vel; ku.uDir.value = dirS; ku.uTime.value = time; ku.uDeep.value = lights;
+    streaks.visible = lights > 0.01;
+    wMat.uniforms.uTime.value = time; wMat.uniforms.uDeep.value = lights;
+    wisps.visible = lights > 0.01;
+    if (wisps.visible) {
+      /* Van por delante de donde ESTARÁ la cámara (el scroll sin suavizar), así que se adelantan. */
+      path(p, tA, tB);
+      tB.sub(tA).normalize(); tR.crossVectors(tB, UP).normalize(); tU.crossVectors(tR, tB);
+      heads.forEach((h, w) => {
+        const ox = Math.sin(time * 0.45 + h.ph) * 1.1 - 0.5, oy = Math.cos(time * 0.6 + h.ph * 1.7) * 0.7 - 0.1;
+        tmp.copy(tA).addScaledVector(tB, h.dist).addScaledVector(tR, ox).addScaledVector(tU, oy);
+        const base = w * TRAIL * 3;
+        if (!h.ready) {
+          h.ready = true; h.pos.copy(tmp);
+          for (let j = 0; j < TRAIL; j++) { wPos[base + j * 3] = tmp.x; wPos[base + j * 3 + 1] = tmp.y; wPos[base + j * 3 + 2] = tmp.z; }
+        } else {
+          h.pos.lerp(tmp, 0.1);
+          wPos.copyWithin(base + 3, base, base + (TRAIL - 1) * 3);    // la cola es por donde pasó
+        }
+        wPos[base] = h.pos.x; wPos[base + 1] = h.pos.y; wPos[base + 2] = h.pos.z;
+      });
+      wAttr.needsUpdate = true;
+    }
+
     const stir = vel * 0.8 + pulse * 0.5;                      // agitación general
     door.u.uWobble.value = door.wob * (1 + stir);
     door.u.uOpacity.value = place(door, still ? 1 : 1 + 0.03 * Math.sin(time * TAU / 6), 1) * (1 - smooth(T_DOOR * 0.72, T_DOOR, ps));
@@ -519,6 +810,14 @@ export function mount(section, opts) {
       /* Al entrar, la ameba le deja el lugar al derrame y las demás se apagan. */
       wk.u.uOpacity.value = entering ? o * (1 - smooth(mine ? 0.02 : 0, mine ? 0.14 : 0.5, entering.t)) : o;
       wk.mesh.visible = wk.u.uOpacity.value > 0.01;
+      /* Su enjambre: se ordena al detenerse frente a la obra y se suelta al seguir. */
+      const sw = wk.swarm, su = sw.u;
+      const want = (!entering && Math.abs(ps - tWork(i)) < HALF * 0.5 && vel < 0.3) ? 1 : 0;
+      sw.form = still ? want : sw.form + (want - sw.form) * (1 - Math.exp(-dt * (want ? 1.6 : 4.5)));
+      sw.points.position.copy(wk.mesh.position); sw.points.scale.setScalar(formScale);
+      su.uForm.value = sw.form * (1 - pulse * 0.7); su.uTime.value = still ? 0 : time;
+      su.uOpacity.value = o * deep * (entering ? 1 - smooth(0, 0.35, entering.t) : 1);
+      sw.points.visible = su.uOpacity.value > 0.01;
       wk.u.uHasMap.value = wk.mix;
       wk.u.uFocus.value = 1 - smooth(HALF * 0.6, HALF * 1.6, Math.abs(ps - tWork(i)));
       wk.u.uGlow.value = 0.6 * wk.hov;

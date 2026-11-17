@@ -137,6 +137,17 @@ acompaña al bloque de obras del landing: no está en el menú ni en el sitemap 
 - **Detalle**: polvo en suspensión de tres colores que deriva y titila, tres corrientes de partículas en
   hélice que giran alrededor del camino, treinta amebas chicas de fondo y una película iridiscente que se
   arrastra por la superficie de cada ameba, como en una pompa de jabón.
+- **Enjambre por obra**: cada obra tiene unas 560 partículas propias (220 en táctil), en sus colores.
+  Mientras se pasa son una nube suelta; al detenerse frente a la obra se ordenan, en espiral y a
+  destiempo, en una forma que la representa, y se sueltan al seguir. Formas (`FORMS` en `js/world.js`):
+  `attractor` madeja (Neurocosm XR), `halo` anillos que respiran (Soul Charger), `strokes` pinceladas
+  (Neural Canvas), `pulse` capas que laten de adentro hacia afuera (Collective Pulse), `dome` media
+  esfera de meridianos (Neurocosm Full Dome), `wave` ondas en un plano (Pacha Ibiza). La forma y los
+  colores salen de `site.json → particles` (los de la ficha) o, si la obra no tiene, de `world.forms`.
+  Tienen que ser más grandes que el polvo: del mismo tamaño la forma se pierde.
+- **Luces que avanzan**: unos 50 hilos finos alrededor del camino que van al doble de la velocidad de la
+  cámara y se estiran al avanzar (en reposo son chispas), y dos luces guía con cola que van por delante:
+  siguen al scroll y no a la cámara, así que se adelantan y uno las alcanza. Sólo adentro.
 - **Lo que responde**: el cursor mueve la cámara, corre la portada dentro de cada ameba y aparta las
   partículas; la ameba bajo el cursor se hincha; al avanzar rápido la cámara abre el ángulo y todo se
   agita; un clic en el vacío agita el mundo y suena una nota; las flechas izquierda y derecha saltan de
@@ -333,6 +344,23 @@ desactiva. **No** cambiar nameservers a Cloudflare.
 El fluid sim sigue corriendo con auto-emitters en mobile. Los usuarios de Android no pueden tocar el fondo para emitir fluidos (correcto — el dedo es para el scroll).
 
 ## Historial de sesiones (última al tope)
+
+### 2026-11-17 — El mundo interior: enjambre por obra y luces que avanzan (Vicente)
+
+Dos pedidos de Vicente: que las partículas tomen la forma de cada obra al detenerse, y elementos
+sutiles que avancen con uno al hacer scroll, "como una pequeña luz o electricidad fluida" (en Mirages
+son unas tiras de luz). Ver "Enjambre por obra" y "Luces que avanzan" en la sección del mundo.
+
+- Seis formas, una por obra; dos son nuevas (`dome`, `wave`) y se configuran en `site.json → world.forms`.
+- Hilos de luz (`THREE.LineSegments`) y dos luces guía con cola que tiembla.
+- **Tropiezo**: la primera versión no se veía. Las partículas del enjambre tenían el tamaño del polvo y
+  la forma se perdía entre las 4.600 de fondo; se confirmó agrandándolas en vivo. Quedaron casi el doble
+  de grandes y más brillantes cuando están formadas.
+
+**Verificado en Chrome**: las seis formas armadas (capturas ampliadas), y los hilos y una luz guía en
+pleno avance. Sin errores de consola. Paquete: 47 páginas, 1.497 referencias, ninguna rota.
+**Sin ver**: todo esto en pantalla vertical (la emulación de teléfono frena la animación) y en teléfonos
+reales; el movimiento en sí (sólo cuadros sueltos).
 
 ### 2026-11-17 — El mundo interior: transición líquida al entrar a una obra (Vicente)
 
