@@ -208,11 +208,44 @@ h3.label { font-size: .74rem; font-weight: 500; letter-spacing: .18em; line-heig
   font-size: .76rem; font-weight: 500; letter-spacing: .12em;
   border: 1px solid var(--line); border-radius: 999px; padding: 5px 11px;
 }
+
+/* Botón de sonido. Sólo se ve si js/sound.js arrancó (html.has-sound); el lugar
+   queda reservado para que el menú no salte. Las barras se mueven mientras suena. */
+.hdr__sound { display: inline-flex; align-items: center; gap: 9px; visibility: hidden; }
+.has-sound .hdr__sound { visibility: visible; }
+.eq { display: inline-flex; align-items: center; gap: 2px; height: 14px; }
+.eq i { display: block; width: 2px; height: 100%; border-radius: 1px; background: currentColor; transform: scaleY(.4); opacity: .6; transition: transform .3s var(--ease), opacity .3s var(--ease); }
+/* Apagado: barras quietas de distinta altura, para que se lea como "sonido" y no como un menú. */
+.eq i:nth-child(2) { transform: scaleY(.75); }
+.eq i:nth-child(3) { transform: scaleY(1); }
+.eq i:nth-child(4) { transform: scaleY(.55); }
+.sound-on .eq i { opacity: 1; animation: eq 1.1s ease-in-out infinite alternate; }
+.sound-on .eq i:nth-child(2) { animation-duration: .8s; animation-delay: -.3s; }
+.sound-on .eq i:nth-child(3) { animation-duration: 1.3s; animation-delay: -.6s; }
+.sound-on .eq i:nth-child(4) { animation-duration: .95s; animation-delay: -.2s; }
+@keyframes eq { from { transform: scaleY(.25); } to { transform: scaleY(1); } }
+/* En pantallas chicas queda sólo el icono; el nombre sigue para lectores de pantalla. */
 @media (max-width: 640px) {
   .hdr { padding: 14px var(--px); }
   .hdr__mark--full { display: none; }
   .hdr__mark--icon { display: block; }
   .hdr__nav a, .hdr__nav button { font-size: .86rem; }
+}
+@media (max-width: 860px) {
+  .hdr__sound { gap: 0; justify-content: center; min-width: 28px; min-height: 32px; }
+  .hdr__sound-txt { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+}
+/* Teléfonos angostos: el menú en español con el botón de sonido no entra a 360 px sin apretar. */
+@media (max-width: 400px) {
+  .hdr { gap: 12px; }
+  .hdr__nav { gap: 11px; }
+  .hdr__nav a, .hdr__nav button { font-size: .82rem; }
+  .hdr__nav .hdr__lang { padding: 5px 9px; }
+}
+@media (max-width: 340px) {
+  .hdr { padding-left: 12px; padding-right: 12px; gap: 8px; }
+  .hdr__nav { gap: 8px; }
+  .hdr__nav a, .hdr__nav button { font-size: .78rem; letter-spacing: .02em; }
 }
 
 /* ── Landing: hero ─────────────────────────────────────────────────────── */
@@ -719,7 +752,36 @@ body.has-review .ftr { padding-bottom: 78px; }   /* que la barra no tape el pie 
 ::view-transition-old(ameba) { display: none; }
 ::view-transition-new(ameba) { animation: none; }
 
+/* ── Zambullida ────────────────────────────────────────────────────────────
+   Al entrar a una obra el agua sube y tapa la pantalla; la página cambia por
+   debajo y el agua se aclara. Al salir, el agua baja y deja ver la superficie.
+   La capa la crea y la anima js/app.js (water()); acá va su aspecto. */
+.dive { position: fixed; inset: 0; z-index: 680; pointer-events: none; overflow: hidden; }
+.dive__water { position: absolute; inset: 0; will-change: transform; }
+.dive__body { position: absolute; inset: 0; background: linear-gradient(to bottom, #5a40a4 0%, #2a1c58 24%, #1a1338 58%, #0c0a18 100%); }
+.dive__body::before { content: ''; position: absolute; left: 0; right: 0; top: 0; height: 30%; background: linear-gradient(to bottom, rgba(201, 158, 249, .5), rgba(201, 158, 249, 0)); }
+.dive__wave { position: absolute; left: 0; bottom: 100%; width: 200%; height: clamp(26px, 7vh, 70px); margin-bottom: -1px; display: block; animation: dive-wave 1.5s linear infinite; }
+.dive__wave path { fill: #5a40a4; }
+.dive__wave--back { height: clamp(36px, 10vh, 96px); opacity: .55; animation-duration: 2.3s; animation-direction: reverse; }
+.dive__wave--back path { fill: #8a4ee0; }
+@keyframes dive-wave { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+.dive__bubbles i {
+  position: absolute; bottom: -24px; width: var(--s); height: var(--s); border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, .6);
+  background: radial-gradient(circle at 32% 30%, rgba(255, 255, 255, .55), rgba(255, 255, 255, 0) 62%);
+  animation: dive-bubble var(--t) cubic-bezier(.3, .1, .4, 1) var(--d) both;
+}
+@keyframes dive-bubble {
+  from { transform: translate3d(0, 0, 0) scale(.6); opacity: 0; }
+  15% { opacity: .9; }
+  to { transform: translate3d(calc(var(--s) * 1.5), -112vh, 0) scale(1.15); opacity: 0; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   *, *::before, *::after { animation-duration: .001ms !important; animation-delay: 0s !important; transition-duration: .001ms !important; }
+  /* Sonido encendido: barras quietas a distinta altura. Sin zambullida. */
+  .sound-on .eq i { animation: none; transform: scaleY(.85); }
+  .sound-on .eq i:nth-child(2n) { transform: scaleY(.45); }
+  .dive { display: none; }
 }

@@ -12,6 +12,8 @@ estudio, sus proyectos y equipo con una estética audiovisual interactiva, en in
 - Ameba del hero: shader propio en `js/ameba.js` (WebGL 1, sin librerías, ~6 KB).
 - Partículas de las obras principales: `js/particles.js`, la única pieza que usa **Three.js** (0.187.0,
   desde el CDN jsDelivr, 156 KB comprimido). Se carga sólo en las fichas que lo piden.
+- Sonido de ambiente: `js/sound.js` (Web Audio, sin librerías). La música es un archivo de 1,8 MB en
+  `Asset/Audio/`, que se pide sólo si el visitante enciende el sonido.
 - Google Fonts: Raleway (200, 300, 400, 500). GSAP (`gsap.min.js`) sólo lo usa `soul-charger.html`.
 
 ## Estructura de carpetas
@@ -29,6 +31,7 @@ estudio, sus proyectos y equipo con una estética audiovisual interactiva, en in
 │   ├── cursor.js              # MÓDULO CERRADO: cursor propio
 │   ├── ameba.js               # la ameba viva del hero
 │   ├── particles.js           # partículas en la cabecera de las obras principales (Three.js)
+│   ├── sound.js               # música de ambiente, filtro "bajo el agua" y chapuzones
 │   └── app.js                 # header, contacto, reel, filtros, lightbox
 ├── index.html, studio.html    # GENERADOS (inglés). No editar a mano
 ├── work/index.html            # GENERADO: índice de obras con filtros
@@ -79,6 +82,8 @@ Consecuencias:
 - No guardar referencias a elementos del header, main, footer o modal fuera de `initPage()`: se
   reemplazan. Buscarlos en el momento.
 - Las páginas hechas a mano (`site.json → legacyPages`, hoy `soul-charger.html`) se abren con carga normal.
+- Entre una página de superficie y la ficha de una obra el cambio no usa View Transitions sino la
+  zambullida (ver "Sonido e inmersión"): la capa de agua tapa la pantalla mientras se reemplaza la página.
 - Lo que una página monta por su cuenta y hay que soltar al salir (hoy las partículas, que abren un
   contexto WebGL) deja su función de limpieza en `life.cleanups`.
 - Donde el navegador soporta View Transitions (Chrome, Safari, Firefox recientes) el cambio lleva un
@@ -107,6 +112,36 @@ Consecuencias:
 - **Studio** (`studio.html`): about, equipo y spin-offs.
 - **Español**: las mismas páginas bajo `/es/`, con los mismos slugs. Cada página enlaza a su par
   (`hreflang`) y el header tiene el cambio de idioma.
+
+## Sonido e inmersión
+Idea tomada de [unseen.co](https://unseen.co/): el sitio suena, y entrar a una obra es sumergirse.
+
+- **Apagado por defecto.** Lo enciende el botón "Sonido" del menú (los navegadores no dejan sonar una
+  página sin un clic). La elección dura lo que dura la visita (`sessionStorage`): si recarga o va y
+  vuelve de `soul-charger.html`, la música regresa con su primer clic; una visita nueva empieza en silencio.
+- **La música** (`site.json → sound.src`, hoy `Asset/Audio/breath-loop.m4a`): bucle exacto de 2:48 sacado
+  de "Breath" (música de Soul Charger VR). Se descarga recién al encender. Sigue sonando al cambiar de
+  página porque la navegación no recarga. Se calla con la pestaña oculta y mientras suena un video con
+  audio (el reel a pantalla completa).
+- **Profundidad** (`AlmaSound.setDepth`, lo llama `initSound()` de `js/app.js`): landing y Studio 0, índice
+  de obras 0,25, ficha de obra 1. A más profundidad, un filtro deja la música sorda y grave y aparece un
+  rumor de fondo.
+- **Aire de superficie** (`sound.air`, 0 lo quita): una capa muy suave de ruido filtrado que sube y baja
+  como oleaje, generada en el navegador. Está porque "Breath" es casi toda grave (bajo 150 Hz): sin algo
+  brillante arriba, el filtro no tiene qué apagar y la zambullida no se oye. Por lo mismo, en parlantes de
+  teléfono o notebook la música casi no se escucha: **conviene una pista con medios y agudos**.
+- **Zambullida** (`water()` en `js/app.js`, aspecto en `.dive` de `css/site.css`): al pasar de una página
+  de superficie a una ficha, el agua sube, la página cambia por debajo y el agua se aclara (cerca de 1 s),
+  con un chapuzón y burbujas si el sonido está encendido. Al salir de la ficha, el agua baja. Entre dos
+  fichas no hay zambullida. Con "reducir movimiento" no hay agua (el sonido sí cambia).
+- **Para apagar todo**: `site.json → sound.enabled: false` y build. No se genera ni el botón ni el script.
+- **Para cambiar la música**: recortar un tramo que se repita sin corte y comprimirlo. En Mac:
+  `ffmpeg -ss <inicio> -t <duración> -i master.wav -c:a pcm_s16le loop.wav` y
+  `afconvert loop.wav "Asset/Audio/<nombre>.m4a" -f m4af -d aac -b 96000 -s 2 -q 127`
+  (en Windows: `ffmpeg -i loop.wav -c:a aac -b:a 96k -movflags +faststart <salida>.m4a`). Después cambiar
+  `sound.src` y correr el build. El final y el principio se cruzan 6 s al repetir.
+- `robots.txt` deja a los bots fuera de `/Asset/Audio/`.
+- El máster de "Breath" (WAV, 89 MB) **no está en el repo**: pasa el aviso de 50 MB de GitHub. Lo tiene Vicente.
 
 ## Temas
 `css/site.css` define todo el color con tokens en `:root`. Hay dos temas:
@@ -246,6 +281,36 @@ desactiva. **No** cambiar nameservers a Cloudflare.
 El fluid sim sigue corriendo con auto-emitters en mobile. Los usuarios de Android no pueden tocar el fondo para emitir fluidos (correcto — el dedo es para el scroll).
 
 ## Historial de sesiones (última al tope)
+
+### 2026-11-17 — Inmersión: sonido de ambiente y zambullida (Vicente)
+
+Rama `rediseno-landing`. Referencia: [unseen.co](https://unseen.co/). Música que pasó Vicente:
+"Breath" (Soul Charger VR).
+
+- **`js/sound.js`**: música de ambiente con Web Audio, apagada por defecto, con botón en el menú (cuatro
+  barras que se mueven mientras suena; en pantallas chicas queda sólo el icono). Filtro "bajo el agua"
+  según la profundidad de la página, rumor de fondo, chapuzón y burbujas sintetizados, capa de aire de
+  superficie. Ver la sección "Sonido e inmersión".
+- **La música**: "Breath" dura 5:36 pero es un bucle de 168 s repetido dos veces, idéntico muestra a
+  muestra. Se recortó ese tramo (de 0:30 a 3:18) y se comprimió a AAC 96 kbps: de 89 MB a 1,8 MB.
+- **Zambullida** al entrar y salir de una obra (`water()` en `js/app.js`).
+- **Menú en teléfonos**: con el botón nuevo, el menú en español no entraba a 360 px de ancho. Se apretó
+  en dos cortes (400 y 340 px).
+
+**Verificado en Chrome** midiendo la salida de audio (no se puede escuchar desde acá): la música se
+descarga sólo al encender; bajo el agua la banda de 2 a 8 kHz cae de −53 a −129 dB y vuelve al salir;
+el reel con sonido calla la música y al cerrarlo regresa; apagar suspende el audio; la elección sobrevive
+a una recarga y arranca con el primer clic. La zambullida se midió cuadro a cuadro (sube en 0,5 s, cambia
+la página, se aclara en 0,6 s; no queda ninguna capa colgada) y se miró en capturas. Navegación sin
+recarga en todas las combinaciones. Menú medido a 320, 360 y 375 px. Paquete: 45 páginas, 1.421
+referencias, ninguna rota, con la música incluida.
+**Sin probar**: cómo suena de verdad (volúmenes del aire, del chapuzón y del rumor: ajustables en
+`js/sound.js`), teléfonos reales (en iPhone el audio pasa por Web Audio y hay que confirmar que suena),
+Safari y Firefox.
+
+**Para decidir**: "Breath" es casi toda grave y en parlantes chicos apenas se oye. Opciones: otra
+pista con medios y agudos, una mezcla de "Breath" con las capas medias más arriba, o realzar los medios
+en el navegador (cambia cómo suena la obra: preguntar antes).
 
 ### 2026-11-17 — Partículas en la cabecera de las obras principales (Vicente)
 

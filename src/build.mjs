@@ -140,6 +140,10 @@ ${jsonld ? `<script type="application/ld+json">${JSON.stringify(jsonld)}</script
 </head>`;
 }
 
+/* Música de ambiente (site.json → sound). Con enabled en false no se genera ni
+   el botón ni el script. */
+const sound = site.sound && site.sound.enabled && site.sound.src ? site.sound : null;
+
 function header(c, current) {
   const t = c.t;
   const cur = k => (current === k ? ' aria-current="page"' : '');
@@ -152,7 +156,8 @@ function header(c, current) {
   <nav class="hdr__nav">
     <a href="${link(c, 'work/index.html')}"${cur('work')}>${esc(t.navWork)}</a>
     <a href="${link(c, 'studio.html')}"${cur('studio')}>${esc(t.navStudio)}</a>
-    <button type="button" data-contact>${esc(t.navContact)}</button>
+    <button type="button" data-contact>${esc(t.navContact)}</button>${sound ? `
+    <button class="hdr__sound" type="button" data-sound aria-pressed="false"><span class="eq" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span class="hdr__sound-txt">${esc(t.soundLabel)}</span></button>` : ''}
     <a class="hdr__lang" href="${link(c, c.rel, other(c.lang))}" lang="${other(c.lang)}" hreflang="${other(c.lang)}" aria-label="${esc(t.otherLangLabel)}">${esc(t.otherLang)}</a>
   </nav>
 </header>`;
@@ -221,6 +226,7 @@ function page(c, { title, desc, ogImage, jsonld, current, body, bodyClass, runti
   const rt = {
     lang: c.lang, email: site.email, endpoint: site.formspree, legacy: Object.values(site.legacyPages),
     t: Object.fromEntries(RUNTIME_KEYS.map(k => [k, t[k]])),
+    ...(sound ? { sound: { src: sound.src, level: sound.level, air: sound.air } } : {}),
     ...(runtime || {}),
   };
   return `${head(c, { title, desc, ogImage: ogImage || 'Asset/Web Icons/og-alma-digital.jpg', jsonld })}
@@ -246,7 +252,8 @@ ${modal(c)}
 <script>window.__ALMA__=JSON.parse(document.getElementById('alma-data').textContent);</script>
 <script src="${c.up}js/fluid.js"></script>
 <script src="${c.up}js/cursor.js"></script>
-<script src="${c.up}js/ameba.js"></script>
+<script src="${c.up}js/ameba.js"></script>${sound ? `
+<script src="${c.up}js/sound.js"></script>` : ''}
 <script src="${c.up}js/app.js"></script>
 </body>
 </html>

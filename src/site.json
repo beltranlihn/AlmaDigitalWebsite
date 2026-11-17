@@ -29,6 +29,12 @@
   "perProjectPalette": false,
   "reelAutoplayOnView": false,
   "breathing": false,
+  "sound": {
+    "enabled": true,
+    "src": "Asset/Audio/breath-loop.m4a",
+    "level": 0.55,
+    "air": 1
+  },
   "particles": {
     "neurocosm-xr": {
       "formation": "attractor",
@@ -274,6 +280,7 @@
       "contactCommissionSubject": "Commission",
       "contactFestival": "Festivals and press",
       "contactFestivalSubject": "Festival or press",
+      "soundLabel": "Sound",
       "pParticlesHint": "Drag to turn · Click to scatter",
       "pParticlesHintTouch": "Swipe to turn · Tap to scatter"
     },
@@ -389,6 +396,7 @@
       "contactCommissionSubject": "Encargo",
       "contactFestival": "Festivales y prensa",
       "contactFestivalSubject": "Festival o prensa",
+      "soundLabel": "Sonido",
       "pParticlesHint": "Arrastra para girar · Clic para dispersar",
       "pParticlesHintTouch": "Desliza para girar · Toca para dispersar"
     }

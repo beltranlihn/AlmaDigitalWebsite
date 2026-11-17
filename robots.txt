@@ -8,6 +8,7 @@ User-agent: *
 Disallow: /*.mp4$
 Disallow: /*.MP4$
 Disallow: /Asset/Reel Portfolio/
+Disallow: /Asset/Audio/
 Disallow: /prototype/
 
 # ── Scrapers de entrenamiento de IA y bots de SEO ──────────────────────────────

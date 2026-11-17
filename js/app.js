@@ -484,9 +484,23 @@
     }).catch(function () {});                                   // sin CDN o sin WebGL: queda la foto
   }
 
+  /* ── Sonido: profundidad de la página ─────────────────────────────────
+     js/sound.js es global y sigue sonando al navegar. Acá sólo se le dice qué
+     tan "hondo" está la página (la ficha de una obra es el fondo) y se pone al
+     día el botón del menú, que se reemplaza en cada cambio. */
+  function pageDepth() {
+    var c = document.body.classList;
+    return c.contains('pg-project') ? 1 : c.contains('pg-index') ? 0.25 : 0;
+  }
+  function initSound() {
+    var S = window.AlmaSound; if (!S) return;
+    S.sync();
+    S.setDepth(pageDepth());
+  }
+
   function initPage() {
     life = newLife();
-    initReel(); initProjectReels(); initPalette(); initIndex(); initLightbox(); initCards(); initCreds(); initParticles();
+    initReel(); initProjectReels(); initPalette(); initIndex(); initLightbox(); initCards(); initCreds(); initParticles(); initSound();
     if (window.AlmaAmeba && window.AlmaAmeba.showBreath) window.AlmaAmeba.showBreath();
     stuck();
   }
@@ -561,15 +575,67 @@
     $$('[data-vt]').forEach(function (el) { el.style.viewTransitionName = ''; el.removeAttribute('data-vt'); });
   }
 
+  /* ── Zambullida ───────────────────────────────────────────────────────
+     Entrar a una obra es sumergirse: el agua sube y tapa la pantalla, la página
+     cambia por debajo y el agua se aclara. Salir es volver a la superficie: el
+     agua aparece, la página cambia y el agua baja. Entre dos obras no hay
+     zambullida (ya se está abajo). El aspecto está en css/site.css (.dive).
+     Devuelve covered (promesa: ya tapa todo), reveal() y cancel(). */
+  var WAVE = '<path d="M0 40C120 12 240 12 360 40S600 68 720 40S960 12 1080 40S1320 68 1440 40V80H0Z"/></svg>';
+  function isWork(path) { return /\/work\/(?!index\.html$)[^\/]+\.html$/.test(path); }
+  function water(mode) {
+    var el = document.createElement('div'), bubbles = '';
+    el.className = 'dive dive--' + mode;
+    el.setAttribute('aria-hidden', 'true');
+    if (mode === 'dive') for (var i = 0; i < 14; i++) {
+      bubbles += '<i style="left:' + (4 + Math.random() * 92).toFixed(1) + '%;--s:' + (4 + Math.random() * 11).toFixed(1) +
+        'px;--d:' + (Math.random() * 0.5).toFixed(2) + 's;--t:' + (0.9 + Math.random() * 0.8).toFixed(2) + 's"></i>';
+    }
+    var svg = '<svg viewBox="0 0 1440 80" preserveAspectRatio="none" class="dive__wave';
+    el.innerHTML = '<div class="dive__water">' + svg + ' dive__wave--back">' + WAVE + svg + '">' + WAVE +
+      '<div class="dive__body"></div></div><div class="dive__bubbles">' + bubbles + '</div>';
+    document.body.appendChild(el);
+    var body = el.firstChild, OUT = 'translateY(112%)', IN = 'translateY(0)';
+    /* Si las animaciones están frenadas (pestaña en segundo plano), el temporizador evita que la navegación se cuelgue. */
+    function done(anim, ms) {
+      return Promise.race([anim.finished.catch(function () {}), new Promise(function (r) { setTimeout(r, ms + 400); })]);
+    }
+    function remove() { if (el.parentNode) el.parentNode.removeChild(el); }
+    var covered = mode === 'dive'
+      ? done(body.animate([{ transform: OUT }, { transform: IN }], { duration: 480, easing: 'cubic-bezier(.5, 0, .25, 1)', fill: 'forwards' }), 480)
+      : done(el.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 240, easing: 'ease-out', fill: 'forwards' }), 240);
+    return {
+      covered: covered,
+      cancel: remove,
+      reveal: function () {
+        var a = mode === 'dive'
+          ? el.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 620, easing: 'cubic-bezier(.3, 0, .3, 1)', fill: 'forwards' })
+          : body.animate([{ transform: IN }, { transform: OUT }], { duration: 640, easing: 'cubic-bezier(.6, 0, .3, 1)', fill: 'forwards' });
+        done(a, 640).then(remove);
+      },
+    };
+  }
+  window.addEventListener('pageshow', function () {       // al volver con el botón atrás del navegador no queda agua colgada
+    $$('.dive').forEach(function (n) { n.parentNode.removeChild(n); });
+  });
+
   /* push=true: navegación nueva (arriba de todo). push=false: atrás/adelante (vuelve a su scroll). */
   function go(u, push, y) {
     var token = ++navToken;
     var url = u.pathname + u.search + u.hash;
     closeContact(true);
-    load(u).then(function (html) {
-      if (token !== navToken) return;
+    var deep = document.body.classList.contains('pg-project'), deeper = isWork(u.pathname);
+    var mode = (deep === deeper || reduce || document.hidden || !root.animate) ? '' : (deeper ? 'dive' : 'surface');
+    var w = mode ? water(mode) : null;
+    if (mode && window.AlmaSound) {
+      window.AlmaSound.splash(mode);
+      if (deeper) window.AlmaSound.setDepth(1, 0.7);      // se ensordece mientras el agua sube
+    }
+    Promise.all([load(u), w ? w.covered : null]).then(function (loaded) {
+      var html = loaded[0];
+      if (token !== navToken) { if (w) w.cancel(); return; }
       var from = window.AlmaAmeba ? window.AlmaAmeba.rect() : null;
-      var useVT = !!document.startViewTransition && !reduce;
+      var useVT = !w && !!document.startViewTransition && !reduce;
       var run = function () {
         if (push) {
           history.replaceState({ alma: true, y: window.scrollY }, '');
@@ -585,10 +651,11 @@
         if (m) {
           m.setAttribute('tabindex', '-1');
           try { m.focus({ preventScroll: true }); } catch (e) {}
-          if (!useVT && !reduce) { m.classList.add('is-entering'); setTimeout(function () { m.classList.remove('is-entering'); }, 700); }
+          if (!useVT && !reduce && !w) { m.classList.add('is-entering'); setTimeout(function () { m.classList.remove('is-entering'); }, 700); }
         }
       };
-      if (useVT) {
+      if (w) { run(); w.reveal(); }
+      else if (useVT) {
         vtRunning = true;
         try { var tr = document.startViewTransition(run); tr.finished.then(clearVT, clearVT); }
         catch (e) { clearVT(); run(); }
