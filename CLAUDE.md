@@ -459,8 +459,8 @@ Vicente vio el mundo ("funciona bastante bien todo") y pidió siete ajustes. Tod
   works / Obras seleccionadas" en el centro.
 - **Amebas sin fotos**: arte con la paleta de cada obra. La transición líquida arranca con esos colores
   y la portada aparece adentro.
-- **Entrada**: se quitó "Immersive wellness art studio" y va el logo debajo del título. Interpretación
-  mía: "el logo" es el lockup `alma ◎ digital`, recortado de `Texto Logo 2.webp` (a confirmar).
+- **Entrada**: se quitó "Immersive wellness art studio" y va el logo debajo del título: el
+  lockup `alma ◎ digital`, recortado de `Texto Logo 2.webp` (Vicente lo confirmó).
 - **"Selected works" en vez de "19 works"**: en el cierre del recorrido y en el contador del índice de obras.
 - **"Who we have worked with"** pasó a Studio, después del texto "about".
 
