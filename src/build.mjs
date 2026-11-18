@@ -529,19 +529,63 @@ function buildProject(raw, rawNext, lang) {
   const t = c.t;
   const track = p.track === 'studio' ? t.pStudio : t.pCommission;
 
-  const cell = (k, v) => `      <div class="spec__cell"><p class="label">${esc(k)}</p>${v}</div>`;
-  const cells = [
-    cell(t.pFormat, `<p>${esc(p.format)}</p>`),
-    cell(t.pLine, `<p>${esc(track)}</p>`),
-  ];
-  if (p.year) cells.push(cell(t.pYear, `<p>${esc(p.year)}</p>`));
-  if (p.tech?.length) cells.push(cell(t.pTech, `<p>${p.tech.map(esc).join(' · ')}</p>`));
-  if (p.commissionedBy) cells.push(cell(t.pCommissionedBy, `<p>${esc(p.commissionedBy)}</p>`));
-  // Las sedes no van en la ficha técnica: ya están completas más abajo, en "Historial de exhibición".
+  /* Ficha técnica, al lado del resumen. Las sedes no van acá: están en el
+     historial de exhibición. */
+  const meta = [[t.pFormat, p.format, ''], [t.pLine, track, '']];
+  if (p.year) meta.push([t.pYear, p.year, '']);
+  if (p.commissionedBy) meta.push([t.pCommissionedBy, p.commissionedBy, '']);
+  if (p.tech?.length) meta.push([t.pTech, p.tech.join(' · '), ' class="pj-meta__wide"']);
+  const metaHtml = meta.map(([k, v, cls]) => `      <div${cls}><dt class="label">${esc(k)}</dt><dd>${esc(v)}</dd></div>`).join('\n');
 
-  const shots = p.photos.map((ph, i) => `      <figure class="shot${i === 0 ? ' shot--wide' : ''}">
-        <img loading="lazy" decoding="async" width="1920" height="1080" src="${asset(c, ph)}" alt="${esc(p.title)}, ${esc(t.pImage)} ${i + 1}">
-      </figure>`).join('\n');
+  /* ── Recorrido de imágenes y video ─────────────────────────────────────
+     El diseño completo tiene 8 lugares para fotos y 2 para video vertical:
+       ancha · teléfonos + texto · a sangre · dúo escalonado · trío en mosaico · ancha
+     Las fotos de projects.json los van ocupando en orden (la portada va al
+     final: ya está arriba). Con pocas fotos, los lugares que faltan quedan
+     vacíos: en el sitio publicado es espacio en blanco o el bloque no sale; en
+     localhost y en las vistas previas se ven marcados, para saber qué sumar.
+     Más de 8 fotos siguen en dúos. La aparición curva es sólo CSS. */
+  const order = [...p.photos.filter(x => x !== p.cover), ...p.photos.filter(x => x === p.cover)];
+  let used = 0;
+  const gap = (kind, text) => `    <div class="slot slot--${kind}" aria-hidden="true"><span>${text}</span></div>`;
+  const mod = (type, size) => {
+    const items = [];
+    let real = 0;
+    for (let i = 0; i < size; i++) {
+      const ph = order[used];
+      if (ph) {
+        used++; real++;
+        items.push(`    <figure class="shot"><img loading="lazy" decoding="async" width="1920" height="1080" src="${asset(c, ph)}" alt="${esc(p.title)}, ${esc(t.pImage)} ${used}"></figure>`);
+      } else items.push(gap('img', 'Espacio para imagen<br>horizontal · 1920×1080'));
+    }
+    return `  <div class="pj-m pj-m--${type}" data-n="${real}">\n${items.join('\n')}\n  </div>`;
+  };
+
+  /* Videos verticales, en marco de teléfono. El primero es el reel de la obra;
+     "verticals" (opcional en projects.json) suma más: .mp4 o imagen 9:16. */
+  const verticals = [p.video || p.reelImage, ...(p.verticals || [])].filter(Boolean).slice(0, 2);
+  const phone = v => `      <div class="pj-phone"><div class="pj-phone__screen preel">${/\.mp4$/i.test(v)
+    ? `<video muted loop playsinline preload="none" poster="${asset(c, p.cover)}" data-src="${asset(c, v)}"></video>`
+    : `<img loading="lazy" decoding="async" src="${asset(c, v)}" alt="${esc(p.title)}, reel">`}</div></div>`;
+  const phones = [...verticals.map(phone)];
+  while (phones.length < 2) phones.push(`      <div class="pj-phone pj-phone--empty slot" aria-hidden="true"><span>Espacio para video vertical<br>9:16 · 406×720</span></div>`);
+  /* Al lado: el resto del texto si lo hay; si no, dónde se presentó. */
+  const rest = p.body.slice(1);
+  const side = rest.length
+    ? `<h2 class="label">${esc(t.pConcept)}</h2>\n${rest.map(x => `      <p>${esc(x)}</p>`).join('\n')}`
+    : (p.presentedAt.length ? `<h2 class="label">${esc(t.pHistory)}</h2>\n      <ul class="plain">${p.presentedAt.map(x => `<li>${esc(x)}</li>`).join('')}</ul>` : '');
+  const historyBelow = rest.length > 0 && p.presentedAt.length > 0;
+  const phonesMod = `  <section class="pj-m pj-m--phones${side ? '' : ' pj-m--alone'}" data-n="${verticals.length}" aria-label="${esc(t.pReel)}">
+    <div class="pj-phones">
+${phones.join('\n')}
+    </div>${side ? `
+    <div class="pj-side">
+      ${side}
+    </div>` : ''}
+  </section>`;
+
+  const flow = [mod('wide', 1), phonesMod, mod('bleed', 1), mod('duo', 2), mod('trio', 3), mod('wide', 1)];
+  while (used < order.length) flow.push(mod('duo', 2));
 
   const legacy = site.legacyPages[p.slug];
 
@@ -561,43 +605,28 @@ function buildProject(raw, rawNext, lang) {
   <div class="phero__slot" data-ameba-slot="project"></div>
 </section>
 
-<div class="sheet">
-  <section class="block" aria-label="${esc(t.pSheet)}">
-    <div class="spec">
-${cells.join('\n')}
-    </div>
-  </section>
-
-  <section class="block concept" aria-labelledby="concept-h">
-    <h2 class="label" id="concept-h">${esc(t.pConcept)}</h2>
-    <div class="concept__body">
-${p.body.map(x => `      <p>${esc(x)}</p>`).join('\n')}
-    </div>${legacy ? `
+<section class="pj-over" aria-labelledby="over-h">
+  <div class="pj-over__lead">
+    <h2 class="label" id="over-h">${esc(t.pOverview)}</h2>
+    <p class="pj-over__txt">${esc(p.body[0] || p.desc)}</p>${legacy ? `
     <a class="more" href="${c.up}${legacy}">${esc(t.pPage)} <i aria-hidden="true">→</i></a>` : ''}
-  </section>
-${p.photos.length ? `
-  <section class="block" aria-labelledby="gal-h">
-    <h2 class="label" id="gal-h">${esc(t.pGallery)}</h2>
-    <div class="gal">
-${shots}
-    </div>
-  </section>` : ''}
-${p.video || p.reelImage ? `
-  <section class="block" aria-labelledby="reel-h">
-    <h2 class="label" id="reel-h">${esc(t.pReel)}</h2>
-    <div class="preel">
-      ${p.video
-        ? `<video muted loop playsinline preload="none" poster="${asset(c, p.cover)}" data-src="${asset(c, p.video)}"></video>`
-        : `<img loading="lazy" src="${asset(c, p.reelImage)}" alt="${esc(p.title)}, reel">`}
-    </div>
-  </section>` : ''}
+  </div>
+  <dl class="pj-meta" aria-label="${esc(t.pSheet)}">
+${metaHtml}
+  </dl>
+</section>
 
+<div class="pj-flow">
+${flow.join('\n\n')}
+</div>
+
+<div class="sheet">
   <section class="block">
     <div class="cols">
       <div>
         <h2 class="label">${esc(t.pCredits)}</h2>
         <ul class="plain">${p.credits.map(x => `<li>${esc(x)}</li>`).join('')}</ul>
-      </div>${p.presentedAt.length ? `
+      </div>${historyBelow ? `
       <div>
         <h2 class="label">${esc(t.pHistory)}</h2>
         <ul class="plain">${p.presentedAt.map(x => `<li>${esc(x)}</li>`).join('')}</ul>

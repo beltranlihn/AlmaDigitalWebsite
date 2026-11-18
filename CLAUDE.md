@@ -104,8 +104,9 @@ Consecuencias:
   Los slots son cajas vacías que sólo reservan el lugar.
 - **Índice de obras** (`work/`): lista filtrable por línea (obra propia / encargos) y formato, con
   vista previa al pasar el mouse.
-- **Ficha de obra** (`work/<slug>.html`): portada, ficha técnica, concepto, galería con lightbox, reel,
-  créditos, historial de exhibición, botón de consulta y obra siguiente.
+- **Ficha de obra** (`work/<slug>.html`): portada, resumen con la ficha técnica al lado, un recorrido de
+  imágenes y video, créditos, historial de exhibición, botón de consulta y obra siguiente. Ver "Ficha de
+  obra: el recorrido de imágenes".
 - **Partículas en la cabecera** de las obras principales (`site.json → particles`, hoy Neurocosm XR,
   Collective Pulse, Soul Charger y Neural Canvas): sobre la foto se enciende un campo de puntos con una
   formación y colores propios de la obra. Se arrastra para girarlo, el cursor aparta las partículas y un
@@ -115,6 +116,30 @@ Consecuencias:
 - **Studio** (`studio.html`): about, equipo y spin-offs.
 - **Español**: las mismas páginas bajo `/es/`, con los mismos slugs. Cada página enlaza a su par
   (`hreflang`) y el header tiene el cambio de idioma.
+
+## Ficha de obra: el recorrido de imágenes
+Referencia de Vicente: las páginas de proyecto de [unseen.co](https://unseen.co/projects/blue-marine-foundation/).
+Lo que se tomó: el resumen en letra grande con los datos al lado, los medios que alternan ancho y ritmo,
+los videos verticales en marco de teléfono y la entrada curva al hacer scroll.
+
+- **El diseño completo tiene 8 lugares para fotos y 2 para video vertical**, en este orden: imagen ancha ·
+  teléfonos + texto · imagen a sangre · dúo escalonado · trío en mosaico · imagen ancha. Lo arma
+  `buildProject` en `src/build.mjs`; el aspecto está en `css/site.css` (`.pj-*`).
+- **Las fotos de `projects.json → photos` van ocupando los lugares en orden** (la portada va al final,
+  porque ya está arriba). Hoy cada obra tiene 3, así que quedan 5 lugares libres. Para sumar fotos basta
+  agregarlas a `photos` y correr el build. Más de 8 siguen en dúos.
+- **Lugares vacíos**: en el sitio publicado un bloque sin ninguna foto no sale, y un bloque a medias deja
+  el hueco en blanco. En localhost y en las vistas previas de Netlify (`body.has-review`) los huecos se
+  ven con borde punteado y el formato que hay que sumar.
+- **Video vertical**: el reel de la obra (`video`) va en un marco de teléfono. `verticals` (opcional, lista
+  de `.mp4` o imágenes 9:16) llena el segundo teléfono. Al lado va el resto del texto de la obra o, si
+  tiene un solo párrafo, el historial de exhibición.
+- **Entrada curva**: cada imagen y cada teléfono entran doblados hacia quien mira y se enderezan a medida
+  que suben. Es sólo CSS atado al scroll (`animation-timeline: view()`), sin JavaScript: funciona en
+  Chrome y Safari recientes; en Firefox y con "reducir movimiento" todo está quieto y a la vista. Es una
+  aproximación (inclinación en perspectiva + borde inferior curvo): la curvatura real de Unseen es WebGL.
+  El texto no se anima.
+- Las fotos se recortan según el lugar (4:3, 4:5, 16:10…); un clic abre la foto entera en el visor.
 
 ## El mundo interior (página de prueba)
 `inner-world.html` (y `es/inner-world.html`). Idea de Vicente a partir de
@@ -257,8 +282,8 @@ El ancho de banda es lo que agotó los créditos en octubre de 2026 (20 crédito
 
 ## Convención de assets de proyecto (Studio Projects / Commisions)
 Una carpeta por proyecto dentro de `Asset/Studio Projects/` o `Asset/Commisions/`:
-- **Fotos WebP a 1920×1080**, `quality 85`. Hoy hay 3 por obra; la galería de la ficha admite las que
-  se quieran (lista `photos` en `projects.json`). Una lleva sufijo ` Portada` y va en `cover`.
+- **Fotos WebP a 1920×1080**, `quality 85`. Hoy hay 3 por obra; la ficha tiene lugar para 8 y admite
+  más (lista `photos` en `projects.json`). Una lleva sufijo ` Portada` y va en `cover`.
   Fuentes con otro aspecto → recortar centrado a 16:9 antes de escalar:
   `crop='min(iw,ih*16/9)':'min(ih,iw*9/16)',scale=1920:1080:flags=lanczos`
 - **1 reel MP4 vertical 406×720** (9:16), H.264, **sin audio**, `-crf 30 -preset slow`,
@@ -344,6 +369,27 @@ desactiva. **No** cambiar nameservers a Cloudflare.
 El fluid sim sigue corriendo con auto-emitters en mobile. Los usuarios de Android no pueden tocar el fondo para emitir fluidos (correcto — el dedo es para el scroll).
 
 ## Historial de sesiones (última al tope)
+
+### 2026-11-18 — Fichas de obra: recorrido de imágenes como en Unseen (Vicente)
+
+Rama `rediseno-landing`. Vicente pidió usar la página de proyecto de Unseen como referencia para la
+manera de desplegar la información y de hacer aparecer imágenes y videos: videos verticales como en un
+teléfono, curvatura al aparecer, diagramación más creativa, y lugar para más imágenes que va a pasar.
+Ver "Ficha de obra: el recorrido de imágenes".
+
+- La ficha deja la tarjeta de ficha técnica + concepto + galería en grilla + reel suelto, y pasa a resumen
+  grande con datos al lado y un recorrido de seis bloques.
+- Lugares vacíos marcados sólo en revisión; el segundo teléfono queda libre (campo nuevo `verticals`).
+- Entrada curva sólo con CSS. Las imágenes dobladas se abren más allá del borde: `.pj-flow` lleva
+  `overflow-x: clip` para que no aparezca scroll horizontal.
+- Se quitaron los estilos `.spec`, `.concept`, `.gal` y `.preel` (este último queda sólo como gancho del
+  JS que carga el video cuando ya se ve). Texto nuevo: `pOverview`.
+
+**Verificado en Chrome**: Collective Pulse (tres párrafos) y Neurocosm XR (uno, con historial al lado del
+teléfono); cada bloque, los huecos en revisión y cómo queda sin ellos; teléfono y a sangre a mitad de la
+entrada; el visor de fotos; sin scroll horizontal. En emulación 375×812: bloques apilados, sin desbordes.
+Paquete de publicación sin enlaces rotos.
+**Sin probar**: teléfonos reales, Safari, y Firefox (donde no hay entrada curva).
 
 ### 2026-11-17 — El mundo interior: enjambre por obra y luces que avanzan (Vicente)
 
