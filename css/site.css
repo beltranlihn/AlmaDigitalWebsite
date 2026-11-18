@@ -854,8 +854,12 @@ body.has-review .ftr { padding-bottom: 78px; }   /* que la barra no tape el pie 
 .world { position: relative; }
 .world__list { list-style: none; margin: 0; padding: 0; }
 .world__intro h1 { font-size: clamp(2.5rem, 5.4vw, 4.7rem); margin: 14px 0 18px; }
-/* La parada del estudio: una frase grande, como el resumen de una ficha. */
-.world__story-txt { margin-top: 14px; font-size: clamp(1.3rem, 2.3vw, 2.05rem); font-weight: 300; line-height: 1.34; letter-spacing: -.02em; color: var(--ink); text-wrap: pretty; }
+.world__lead { font-size: clamp(1.06rem, 1.5vw, 1.28rem); line-height: 1.6; max-width: 34em; }
+/* Con 3D la descripción va en la ficha de la ameba del estudio. */
+.world:not(.world--flat) .world__lead { display: none; }
+.world--flat .world__studio { display: none; }
+/* La descripción, dentro de la ficha de vidrio. */
+.world__desc { margin: 12px 0 20px; font-size: clamp(1rem, 1.25vw, 1.12rem); line-height: 1.6; }
 .world__end-txt { margin-top: 14px; font-size: clamp(1.06rem, 1.5vw, 1.28rem); line-height: 1.6; max-width: 30em; }
 .world__proof { margin-top: 26px; }
 /* "Entra al mundo interior": la invitación, sobre la ameba de entrada. */
@@ -874,14 +878,13 @@ body.has-review .ftr { padding-bottom: 78px; }   /* que la barra no tape el pie 
 .world--flat .world__stage { max-width: var(--max); margin: 0 auto; padding: calc(var(--header-h) + clamp(28px, 6vw, 80px)) var(--px) clamp(48px, 8vw, 110px); }
 .world--flat .world__depth, .world--flat .world__canvas, .world--flat .world__hud,
 .world--flat .world__dots { display: none; }
-.world--flat .world__intro { margin-bottom: clamp(22px, 4vw, 40px); }
-.world--flat .world__story { max-width: 46em; margin-bottom: clamp(28px, 5vw, 60px); }
+.world--flat .world__intro { margin-bottom: clamp(28px, 5vw, 60px); }
 .world--flat .world__end { margin-top: clamp(40px, 7vw, 90px); }
 .world--flat .world__list { margin-top: 0; }
 .world--flat .world__stage { display: flex; flex-direction: column; }
 .world--flat .world__end { order: 3; }
 
-.world:not(.world--flat) { height: calc((var(--n) + 3.2) * 100vh); }
+.world:not(.world--flat) { height: calc((var(--n) + 2.2) * 100vh); }
 .world:not(.world--flat) .world__stage { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; }
 .world__stage.is-deep { color: var(--ink-body); font-weight: var(--w-body); }
 /* Lo oscuro de adentro. js/world.js mueve --deep de 0 a 1 al cruzar la ameba de entrada.
@@ -905,13 +908,11 @@ body.has-review .ftr { padding-bottom: 78px; }   /* que la barra no tape el pie 
 .world__canvas canvas { width: 100%; height: 100%; display: block; touch-action: pan-y; }
 /* El texto va sobre el escenario pero deja pasar los clics a las amebas. */
 .world:not(.world--flat) .world__intro,
-.world:not(.world--flat) .world__story,
 .world:not(.world--flat) .world__end,
 .world:not(.world--flat) .world__hud {
   position: absolute; left: var(--px); top: 50%; transform: translateY(-50%); z-index: 1;
   max-width: min(560px, 46vw);
 }
-.world:not(.world--flat) .world__story { max-width: min(640px, 52vw); opacity: 0; visibility: hidden; }
 /* La ficha va del lado contrario a la ameba (js/world.js pone data-side). */
 @media (min-aspect-ratio: 105/100) {
   .world:not(.world--flat) .world__hud[data-side="right"] { left: auto; right: clamp(64px, 7vw, 120px); }
@@ -946,12 +947,11 @@ body.has-review .ftr { padding-bottom: 78px; }   /* que la barra no tape el pie 
 /* Pantallas altas (teléfono): la ameba va arriba y el texto abajo. Mismo corte que usa js/world.js. */
 @media (max-aspect-ratio: 105/100) {
   .world:not(.world--flat) .world__intro,
-  .world:not(.world--flat) .world__story,
   .world:not(.world--flat) .world__end,
   .world:not(.world--flat) .world__hud {
     top: auto; bottom: clamp(22px, 6vh, 64px); transform: none; right: var(--px); max-width: none; width: auto;
   }
-  .world__story-txt { font-size: 1.22rem; }
+  .world__desc { margin: 8px 0 14px; font-size: .98rem; line-height: 1.5; }
   .world__intro h1 { font-size: clamp(1.9rem, 8.4vw, 2.8rem); margin: 10px 0 12px; }
   .world__row { margin-top: 16px; gap: 8px; }
   .world__row .btn { padding-left: 16px; padding-right: 16px; }
@@ -965,7 +965,6 @@ body.has-review .ftr { padding-bottom: 78px; }   /* que la barra no tape el pie 
 /* Con la barra de revisión (localhost y vistas previas) el texto sube para que no lo tape. */
 @media (max-aspect-ratio: 105/100) {
   .has-review .world:not(.world--flat) .world__intro,
-  .has-review .world:not(.world--flat) .world__story,
   .has-review .world:not(.world--flat) .world__end,
   .has-review .world:not(.world--flat) .world__hud { bottom: 84px; }
 }

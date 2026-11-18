@@ -22,7 +22,8 @@
    esas cuatro piezas, en el <head> (que también se sincroniza) o en #alma-data.
    ═══════════════════════════════════════════════════════════════════════ */
 import { readFile, writeFile, mkdir, rm } from 'node:fs/promises';
-import { existsSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
+import { createHash } from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 
 const ROOT = new URL('../', import.meta.url);
@@ -39,6 +40,13 @@ const site = await readJSON('src/site.json');
 const { projects } = await readJSON('src/projects.json');
 const esProjects = await readJSON('src/i18n/projects.es.json', {});
 const studio = await readJSON('src/i18n/studio.json', { about: { en: [], es: [] }, team: [], spinoffs: [] });
+
+/* Versión de cada archivo de estilos y de código: 8 letras que salen de su
+   contenido y van en su dirección (site.css?v=…). Cuando el archivo cambia,
+   cambia la dirección y el navegador lo vuelve a pedir en vez de usar la copia
+   que tenía guardada. Sin esto se veían páginas nuevas con estilos viejos. */
+const vCache = {};
+const v = f => (vCache[f] ??= createHash('md5').update(readFileSync(new URL(f, ROOT))).digest('hex').slice(0, 8));
 
 const LANGS = ['en', 'es'];
 const prefixOf = l => (l === 'en' ? '' : l + '/');
@@ -133,7 +141,8 @@ ${alt}
 /* Analítica: Cloudflare Web Analytics (sin cookies). Token vacío = no carga nada. */
 (function(){var T='${site.analyticsToken}';if(!T)return;var s=document.createElement('script');s.type='module';s.src='https://static.cloudflareinsights.com/beacon.min.js';s.setAttribute('data-cf-beacon',JSON.stringify({token:T}));document.head.appendChild(s);})();
 </script>
-<link rel="stylesheet" href="${c.up}css/site.css">
+<style>@media (prefers-reduced-motion: no-preference){@view-transition{navigation:auto}}</style>
+<link rel="stylesheet" href="${c.up}css/site.css?v=${v('css/site.css')}">
 <!-- En el tema claro las partículas del cursor se tiñen de tinta con un filtro del
      propio documento; va acá porque url(#id) desde un CSS externo no es confiable. -->
 <style>html[data-theme="aura"] .cursor-particle{filter:url(#cursor-ink)}</style>
@@ -232,6 +241,7 @@ function page(c, { title, desc, ogImage, jsonld, current, body, bodyClass, runti
     t: Object.fromEntries(RUNTIME_KEYS.map(k => [k, t[k]])),
     ...(sound ? { sound: { src: sound.src, level: sound.level } } : {}),
     ...(world ? { world: true } : {}),
+    v: { world: v('js/world.js'), particles: v('js/particles.js') },   // los módulos que js/app.js pide después
     ...(runtime || {}),
   };
   return `${head(c, { title, desc, ogImage: ogImage || 'Asset/Web Icons/og-alma-digital.jpg', jsonld, noindex })}
@@ -255,11 +265,11 @@ ${modal(c)}
 </div>
 <script type="application/json" id="alma-data">${JSON.stringify(rt).replace(/</g, '\\u003c')}</script>
 <script>window.__ALMA__=JSON.parse(document.getElementById('alma-data').textContent);</script>
-<script src="${c.up}js/fluid.js"></script>
-<script src="${c.up}js/cursor.js"></script>
-<script src="${c.up}js/ameba.js"></script>${sound ? `
-<script src="${c.up}js/sound.js"></script>` : ''}
-<script src="${c.up}js/app.js"></script>
+<script src="${c.up}js/fluid.js?v=${v('js/fluid.js')}"></script>
+<script src="${c.up}js/cursor.js?v=${v('js/cursor.js')}"></script>
+<script src="${c.up}js/ameba.js?v=${v('js/ameba.js')}"></script>${sound ? `
+<script src="${c.up}js/sound.js?v=${v('js/sound.js')}"></script>` : ''}
+<script src="${c.up}js/app.js?v=${v('js/app.js')}"></script>
 </body>
 </html>
 `;
@@ -425,20 +435,17 @@ function buildWorld(lang) {
         <span class="wcard__t"><b>${esc(p.title)}</b><span>${esc(p.format)}</span></span>
       </a></li>`).join('\n');
 
-  const body = `<section class="world world--flat" data-world aria-labelledby="world-title" style="--n:${works.length}">
+  const body = `<section class="world world--flat" data-world aria-labelledby="world-title" style="--n:${works.length + 1}">
   <div class="world__stage">
     <div class="world__depth" aria-hidden="true"></div>
     <div class="world__canvas" aria-hidden="true"></div>
-    <!-- Primera pantalla: sólo el título (el mismo del landing, site.json → heroTitle). -->
+    <!-- Primera pantalla: sólo el título (el mismo del landing, site.json → heroTitle).
+         La descripción va adentro, en la ameba del estudio; acá queda sólo para
+         cuando no hay 3D. -->
     <div class="world__intro">
       <p class="eyebrow">${esc(t.heroEyebrow)}</p>
       <h1 id="world-title">${em(t.heroTitle)}</h1>
-    </div>
-    <!-- Primera parada, ya adentro: qué hace el estudio y dónde se presentó. -->
-    <div class="world__story" data-w-story>
-      <p class="label">${esc(t.worldStoryLabel)}</p>
-      <p class="world__story-txt">${esc(t.heroLead)}</p>
-      <p class="hero__proof world__proof"><span class="label">${esc(t.heroProof)}</span>${site.proof.map(esc).join(' · ')}</p>
+      <p class="world__lead">${esc(t.heroLead)}</p>
     </div>
     <!-- La invitación va sobre la ameba de entrada. Un clic lleva hasta la primera obra. -->
     <button class="world__invite" type="button" data-w-enter>
@@ -449,7 +456,8 @@ function buildWorld(lang) {
       <p class="label" data-w-count></p>
       <p class="world__name" data-w-title></p>
       <p class="world__fmt" data-w-fmt></p>
-      <a class="btn" data-w-open href="${link(c, `work/${works[0].slug}.html`)}">${esc(t.worldOpen)} <i aria-hidden="true">→</i></a>
+      <p class="world__desc" data-w-desc hidden></p>
+      <a class="btn" data-w-open href="${link(c, 'studio.html')}"><span data-w-cta data-default="${esc(t.worldOpen)}">${esc(t.worldOpen)}</span> <i aria-hidden="true">→</i></a>
     </div>
     <nav class="world__dots" aria-label="${esc(t.worldListLabel)}"></nav>
     <!-- Cierre: el resto de las obras, el estudio y el contacto. -->
@@ -463,6 +471,11 @@ function buildWorld(lang) {
       </div>
     </div>
     <ol class="world__list wgrid" aria-label="${esc(t.worldListLabel)}">
+      <!-- Primera parada: la ameba del estudio, con su descripción. -->
+      <li class="world__studio"><a class="wcard" data-w-item data-kind="studio" href="${link(c, 'studio.html')}" data-cover="${asset(c, 'Asset/Web Icons/og-alma-digital.jpg')}" data-title="Alma Digital" data-format="${esc(t.worldStoryLabel)}" data-desc="${esc(t.heroLead)}" data-cta="${esc(t.worldEndStudio)}" data-form="logo" data-colors="#c99ef9,#f2b8dd,#8fb0ff,#ffffff">
+        <img loading="lazy" decoding="async" width="1200" height="630" src="${asset(c, 'Asset/Web Icons/og-alma-digital.jpg')}" alt="">
+        <span class="wcard__t"><b>Alma Digital</b><span>${esc(t.worldStoryLabel)}</span></span>
+      </a></li>
 ${items}
     </ol>
   </div>

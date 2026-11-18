@@ -6,10 +6,12 @@
 
      · la primera pantalla es sólo el título; se entra por una ameba grande,
        la del logo, que es la puerta;
-     · adentro hay una primera parada con la descripción del estudio, después
-       las obras y al final un cierre (todas las obras, el estudio, contacto);
-     · las amebas están a distinta altura y a los lados, así que la cámara
-       sube, baja, se corre y se ladea al avanzar;
+     · adentro, la primera parada es la ameba del estudio, con su descripción;
+       después vienen las obras y al final un cierre (todas las obras, el
+       estudio, contacto);
+     · las amebas están repartidas en el espacio: a distinta altura, a un lado
+       u otro, más cerca o más lejos, y la cámara gira hacia cada una. Al
+       avanzar sube, baja, se corre, gira y se ladea;
      · adentro está oscuro y cada obra flota dentro de una ameba de vidrio que
        deforma su portada como una gota;
      · el fondo sigue siendo el fluido del sitio, teñido de violeta profundo:
@@ -216,6 +218,14 @@ const FORMS = {
       put(i, Math.cos(a) * r, rnd(-0.03, 0.03), Math.sin(a) * r);
     }
   },
+  /* Anillos de frente, como el icono de Alma (la ameba del estudio). */
+  logo(n, put) {
+    const R = [1.6, 1.85, 2.1, 2.35, 2.6];
+    for (let i = 0; i < n; i++) {
+      const r = R[(Math.random() * R.length) | 0] + rnd(-0.025, 0.025), a = rnd(0, TAU2);
+      put(i, Math.cos(a) * r, rnd(-0.02, 0.02), Math.sin(a) * r);
+    }
+  },
   /* Madeja que no se repite: atractor de Thomas (Neurocosm XR). */
   attractor(n, put) {
     const B = 0.208186;
@@ -267,6 +277,7 @@ const FORMS = {
 };
 /* Cómo se mueve cada forma: giro (rad/s), inclinación, latido, respiración, onda. */
 const FORM_FX = {
+  logo: { spin: 0.1, tilt: [1.45, 0], breath: 0.05 },
   halo: { spin: 0.3, tilt: [1.08, 0.12], breath: 0.05 },
   attractor: { spin: 0.16, tilt: [0.25, 0], breath: 0.03 },
   pulse: { spin: 0.08, tilt: [0.15, 0], beat: 0.11, bpm: 62 },
@@ -390,6 +401,7 @@ export function mount(section, opts) {
   if (!stage || !host || !links.length) return null;
   const hudCount = q('[data-w-count]'), hudTitle = q('[data-w-title]'), hudFmt = q('[data-w-fmt]'), hudOpen = q('a[data-w-open]');
   const n = links.length;
+  const hudDesc = q('[data-w-desc]'), hudCta = q('[data-w-cta]');
 
   const canvas = document.createElement('canvas');
   host.appendChild(canvas);
@@ -432,9 +444,12 @@ export function mount(section, opts) {
     const w = ameba(geoBig, { seed: 2.3 + i * 1.9, wobble: 0.55, a: C.violet, b: C.blue, c: C.lilac });
     w.href = a.href; w.cover = a.getAttribute('data-cover');
     w.title = a.getAttribute('data-title') || ''; w.format = a.getAttribute('data-format') || '';
+    w.kind = a.getAttribute('data-kind') || 'work';        // 'studio': la ameba del estudio, que abre la parada
+    w.desc = a.getAttribute('data-desc') || ''; w.cta = a.getAttribute('data-cta') || '';
     w.asked = false; w.mix = 0; w.mixTo = 0;
     return w;
   });
+  const NW = works.filter((x) => x.kind !== 'studio').length;      // obras de verdad, sin la ameba del estudio
   const palette = [[C.violet, C.pink, C.mist], [C.blue, C.lilac, C.mist], [C.purple, C.pink, C.lilac], [C.blue, C.violet, C.pink]];
   const extras = [];
   for (let i = 0; i < (coarse ? 12 : 30); i++) {
@@ -585,8 +600,7 @@ export function mount(section, opts) {
   /* ── Recorrido ──────────────────────────────────────────────────────
      Tiempos (0…1 del scroll): puerta, una parada por obra, final. Entre dos
      paradas la cámara acelera y frena, así que se detiene frente a cada obra. */
-  const T_DOOR = 0.07, T_STORY = 0.165, T_FIRST = 0.29, T_LAST = 0.84;   // puerta · el estudio · primera y última obra
-  const HS = 0.05;                     // medio ancho de la parada del estudio
+  const T_DOOR = 0.07, T_FIRST = 0.17, T_LAST = 0.86;   // puerta · primera parada (el estudio) · última obra
   const tWork = (i) => (n === 1 ? 0.5 : lerp(T_FIRST, T_LAST, i / (n - 1)));
   const HALF = n === 1 ? 0.2 : (T_LAST - T_FIRST) / (n - 1) / 2;
   let keys = [];                       // [{ t, pos, look }]
@@ -606,30 +620,46 @@ export function mount(section, opts) {
 
     const R = 1.25;
     const D = Math.max(5, wide ? 5.7 : (2 * R) / (0.64 * 2 * TAN * aspect));
-    const [wx, wy] = wide ? at(D, 0.4, 0) : at(D, 0, 0.3);
     formScale = wide ? 1 : clamp((TAN * D * aspect) / 2.7, 0.5, 1);
-    /* arc: cuánto se desvía la cámara a mitad de camino hacia esa parada (la
-       curva del viaje). */
     keys = [
       { t: 0, pos: V(0, 0, d0), look: V(0, 0, 0) },
       { t: T_DOOR, pos: V(dx, dy, 0), look: V(dx * 0.4, dy * 0.4, -10) },
-      { t: T_STORY, pos: V(wide ? -0.9 : 0, 0.7, -6.5), look: V(wide ? 0.6 : 0, 0.2, -17), arc: V(0, 0.5, 0) },
     ];
-    /* Las obras no van en fila: cada una a su altura y a un lado distinto. La
-       cámara se para frente a cada una, así que sube, baja y se corre. En
-       pantallas anchas la ameba queda a la derecha o a la izquierda, y la
-       ficha del lado contrario. */
-    const HEIGHTS = [0.95, -0.85, 0.4, -1.15, 1.05, -0.5];
+    /* Las paradas no van en fila. En cada una la cámara está en otro lugar
+       (más alta o más baja, corrida a un lado) y mira en otra dirección; la
+       ameba se ubica en un punto distinto de la pantalla y a otra distancia.
+       Con eso quedan repartidas de verdad en el espacio, y para ir de una a
+       otra la cámara tiene que subir, bajar, correrse y girar.
+         fx, fy  dónde cae la ameba en pantalla (fracción del medio ancho / alto)
+         dist    qué tan lejos queda (menos = más grande)
+       La ficha va del lado contrario a la ameba. */
+    const COMP = [
+      { fx: 0.42, fy: 0.0, dist: 1.0 },
+      { fx: -0.44, fy: 0.12, dist: 1.02 },
+      { fx: 0.38, fy: -0.2, dist: 0.9 },
+      { fx: -0.36, fy: -0.14, dist: 1.14 },
+      { fx: 0.46, fy: 0.14, dist: 1.06 },
+      { fx: -0.42, fy: 0.0, dist: 0.9 },
+      { fx: 0.36, fy: -0.18, dist: 1.1 },
+    ];
+    const HEIGHTS = [0.3, 1.5, -1.3, 0.7, -1.7, 1.6, -0.8];
     works.forEach((wk, i) => {
-      const side = i % 2 ? -1 : 1;
-      const cx = Math.sin(i * 1.3 + 0.6) * (wide ? 1.6 : 0.35);
-      const cy = HEIGHTS[i % HEIGHTS.length] * (wide ? 1 : 0.55);
-      const z = -17 - i * 10;
-      wk.side = wide ? side : 0;
-      wk.base.set(cx + (wide ? side * wx : 0), cy + (wide ? 0 : wy), z); wk.r = R;
-      keys.push({ t: tWork(i), pos: V(cx, cy, z + D), look: V(cx, cy, z), arc: V(wide ? -side * 0.7 : 0, (i % 2 ? 0.8 : -0.8) * (wide ? 1 : 0.5), 0) });
+      const cmp = COMP[i % COMP.length], side = Math.sign(cmp.fx);
+      const cx = Math.sin(i * 1.3 + 0.6) * (wide ? 2.3 : 0.4);
+      const cy = HEIGHTS[i % HEIGHTS.length] * (wide ? 1 : 0.4);
+      const z = -15 - i * 10;
+      const d = D * (wide ? cmp.dist : 1);
+      const P = V(cx, cy, z + d);
+      /* Hacia dónde mira: gira hacia el lado de la ameba y cabecea un poco. */
+      const yaw = wide ? side * 0.2 : 0, pitch = (cy > 0 ? -1 : 1) * (wide ? 0.07 : 0.03);
+      const f = V(Math.sin(yaw) * Math.cos(pitch), Math.sin(pitch), -Math.cos(yaw) * Math.cos(pitch));
+      const r = V(0, 0, 0).crossVectors(f, UP).normalize(), u = V(0, 0, 0).crossVectors(r, f);
+      const fx = wide ? cmp.fx : 0, fy = wide ? cmp.fy : 0.3;
+      wk.base.copy(P).addScaledVector(f, d).addScaledVector(r, fx * TAN * d * aspect).addScaledVector(u, fy * TAN * d);
+      wk.r = R; wk.side = wide ? side : 0;
+      keys.push({ t: tWork(i), pos: P, look: P.clone().addScaledVector(f, 10), arc: V(wide ? -side * 0.9 : 0, (i % 2 ? 1 : -1) * (wide ? 1.0 : 0.5), 0) });
     });
-    const zc = -17 - (n - 1) * 10 - 17, cr = wide ? 2.5 : 1.5, dc = wide ? 10.5 : 12;
+    const zc = -15 - (n - 1) * 10 - 17, cr = wide ? 2.5 : 1.5, dc = wide ? 10.5 : 12;
     const [cx, cy] = wide ? at(dc, 0.46, 0) : at(dc, 0, 0.4);
     core.base.set(cx, cy, zc); core.r = cr;
     keys.push({ t: 1, pos: V(0, 0, zc + dc), look: V(0, 0, zc) });
@@ -674,7 +704,7 @@ export function mount(section, opts) {
   const tint = document.createElement('div');
   tint.className = 'world-tint'; tint.setAttribute('aria-hidden', 'true');
   if (veil && veil.parentNode) veil.parentNode.insertBefore(tint, veil.nextSibling); else document.body.appendChild(tint);
-  const invite = q('[data-w-enter]'), story = q('[data-w-story]');
+  const invite = q('[data-w-enter]');
 
   /* ── Estado ─────────────────────────────────────────────────────────── */
   const still = reduce;
@@ -712,9 +742,13 @@ export function mount(section, opts) {
     shown = i;
     if (i >= 0) {
       const wk = works[i];
-      if (hudCount) hudCount.textContent = String(i + 1).padStart(2, '0') + ' / ' + String(n).padStart(2, '0');
+      const isStudio = wk.kind === 'studio';
+      /* La ameba del estudio no lleva número ni formato: lleva su descripción. */
+      if (hudCount) hudCount.textContent = isStudio ? wk.format : String(works.slice(0, i + 1).filter((x) => x.kind !== 'studio').length).padStart(2, '0') + ' / ' + String(NW).padStart(2, '0');
       if (hudTitle) hudTitle.textContent = wk.title;
-      if (hudFmt) hudFmt.textContent = wk.format;
+      if (hudFmt) { hudFmt.textContent = isStudio ? '' : wk.format; hudFmt.hidden = isStudio; }
+      if (hudDesc) { hudDesc.textContent = wk.desc; hudDesc.hidden = !wk.desc; }
+      if (hudCta) hudCta.textContent = wk.cta || hudCta.getAttribute('data-default') || '';
       if (hudOpen) hudOpen.href = wk.href;
       if (hud) hud.setAttribute('data-side', wk.side < 0 ? 'right' : 'left');   // del lado contrario a la ameba
     }
@@ -765,7 +799,6 @@ export function mount(section, opts) {
     showWork(index >= 0 ? index : (shown >= 0 ? shown : -1));
     setOpacity(intro, 1 - smooth(0.012, 0.06, ps));
     setOpacity(invite, 1 - smooth(0.012, 0.06, ps));
-    setOpacity(story, entering ? 0 : 1 - smooth(HS * 0.55, HS, Math.abs(ps - T_STORY)));
     setOpacity(hud, entering ? 0 : (index >= 0 ? 1 - smooth(HALF * 0.55, HALF, bestD) : 0));
     setOpacity(end, entering ? 0 : smooth(0.93, 0.985, ps));
     setOpacity(dots, entering ? 0 : deep);
@@ -836,8 +869,9 @@ export function mount(section, opts) {
       wk.mix += (wk.mixTo - wk.mix) * (still ? 1 : 0.06);
       const mine = entering && entering.i === i;
       wk.hov += ((hover === i ? 1 : 0) - wk.hov) * 0.12;      // la que está bajo el cursor se hincha y se agita
-      /* Cada obra aparece recién cuando es la próxima: así no se cruza con el texto de la parada anterior. */
-      const o = place(wk, 1 + 0.05 * wk.hov, 0.7) * smooth(tWork(i) - 0.2, tWork(i) - 0.12, ps);
+      /* Cada ameba aparece recién al salir de la parada anterior: como alternan de lado, la
+         próxima quedaría justo detrás de la ficha de la que se está mirando. */
+      const o = place(wk, 1 + 0.05 * wk.hov, 0.7) * smooth(tWork(i) - 0.1, tWork(i) - 0.04, ps);
       /* Al entrar, la ameba le deja el lugar al derrame y las demás se apagan. */
       wk.u.uOpacity.value = entering ? o * (1 - smooth(mine ? 0.02 : 0, mine ? 0.14 : 0.5, entering.t)) : o;
       wk.mesh.visible = wk.u.uOpacity.value > 0.01;
@@ -910,7 +944,8 @@ export function mount(section, opts) {
   }
   function enter(i) {
     if (entering || i < 0) return;
-    if (still) { if (opts.navigate) opts.navigate(works[i].href); return; }
+    /* La del estudio lleva a una página clara, no a una ficha: no hay derrame que valga. */
+    if (still || works[i].kind === 'studio') { if (opts.navigate) opts.navigate(works[i].href); return; }
     const wk = works[i], lu = liqMat.uniforms, aspect = camera.aspect;
     /* Dónde está la ameba en pantalla y de qué tamaño se ve. */
     tmp.copy(wk.mesh.position).project(camera);
@@ -959,9 +994,9 @@ export function mount(section, opts) {
     if (Math.abs(ps - tWork(i)) > HALF * 0.7) scrollToT(tWork(i)); else enter(i);  // si está lejos, primero se va hasta ella
   }, sig);
   /* "Entra al mundo interior": lleva hasta la primera obra. */
-  if (invite) invite.addEventListener('click', () => scrollToT(T_STORY), sig);
+  if (invite) invite.addEventListener('click', () => scrollToT(tWork(0)), sig);
   /* Flechas izquierda y derecha: parada anterior y siguiente (arriba y abajo siguen siendo el scroll normal). */
-  const STOPS = [0, T_STORY].concat(works.map((_, i) => tWork(i)), [1]);
+  const STOPS = [0].concat(works.map((_, i) => tWork(i)), [1]);
   window.addEventListener('keydown', (e) => {
     if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
     if (e.altKey || e.metaKey || e.ctrlKey || !visible || entering) return;
@@ -985,7 +1020,7 @@ export function mount(section, opts) {
     works.forEach((wk, i) => {
       const b = document.createElement('button');
       b.type = 'button';
-      b.setAttribute('aria-label', String(i + 1).padStart(2, '0') + '. ' + wk.title);
+      b.setAttribute('aria-label', wk.title);
       b.addEventListener('click', () => scrollToT(tWork(i)), sig);
       dots.appendChild(b);
     });

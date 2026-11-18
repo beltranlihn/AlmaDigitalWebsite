@@ -45,10 +45,11 @@ estudio, sus proyectos y equipo con una estética audiovisual interactiva, en in
 ├── robots.txt                 # bots fuera de los videos + bloqueo de scrapers de IA/SEO
 ├── tools/deploy_copy.py       # arma dist/ con sólo lo que la web usa (lo corre Netlify)
 ├── tools/make_share_images.py # imágenes 1200×630 para compartir y el icono del header
+├── tools/serve.py             # servidor local sin caché para revisar el sitio (no se publica)
 ├── netlify.toml               # build: python3 tools/deploy_copy.py dist → publica dist/
 ├── _masters/                  # originales de los archivos recomprimidos (NO se publica)
 ├── prototype/                 # prototipo de Beltrán del que salió esta estructura (NO se publica)
-├── .claude/launch.json        # preview local (python -m http.server 5599)
+├── .claude/launch.json        # preview local (python tools/serve.py 5599)
 └── Asset/                     # imágenes, videos, fuentes. Asset/og/ = imágenes para compartir
 ```
 
@@ -59,7 +60,24 @@ estudio, sus proyectos y equipo con una estética audiovisual interactiva, en in
    - Equipo, spin-offs o el texto "about" → `src/i18n/studio.json`
    - El armado de una página → `src/build.mjs`. El aspecto → `css/site.css`. El comportamiento → `js/app.js`
 2. `node src/build.mjs` (rehace `index.html`, `studio.html`, `work/`, `es/` y `sitemap.xml`).
-3. Probar en local y commitear **fuente y HTML generado juntos**.
+   **También después de tocar sólo `css/` o `js/`**: ver "Archivos con versión".
+3. Probar en local (`python3 tools/serve.py` → `http://localhost:5599`) y commitear **fuente y HTML
+   generado juntos**.
+
+### Archivos con versión (por qué hay que correr el build al cambiar CSS o JS)
+Cada página pide `css/site.css?v=…` y `js/*.js?v=…`, donde el valor sale del contenido del archivo
+(`v()` en `src/build.mjs`). `js/world.js` y `js/particles.js`, que se cargan con `import()`, reciben la
+suya por `window.__ALMA__.v` (`ver()` en `js/app.js`). Así el navegador nunca mezcla una página nueva con
+estilos o código viejos, ni en local ni en el sitio publicado. La contracara: si se cambia un `.css` o un
+`.js` y no se corre el build, las páginas siguen pidiendo la versión anterior.
+
+`tools/serve.py` es el servidor para revisar en local: igual que `python -m http.server`, pero le dice al
+navegador que no guarde nada. Con el servidor común Chrome se quedaba con el CSS viejo durante horas (así
+fue como Vicente vio el mundo interior con el texto sin estilo y las amebas "igual que antes").
+
+El permiso de View Transitions entre documentos (`@view-transition`) va además en un `<style>` dentro del
+`<head>`: si sólo está en `site.css` y la hoja no está en caché, Chrome cancela la transición y deja una
+excepción en la consola en cada carga.
 
 **Agregar una obra:** sumar la entrada en `src/projects.json` (mismo formato que las demás; `formatKey`
 tiene que existir en `site.json → formats`), su traducción en `projects.es.json`, los assets en
@@ -152,16 +170,21 @@ acompaña al bloque de obras del landing: no está en el menú ni en el sitemap 
 - **El recorrido tiene cuatro momentos** (los tiempos están arriba de `layout()` en `js/world.js`):
   1. **La entrada**: sólo el título del estudio (`site.json → heroTitle`), la ameba grande del logo, que
      es la puerta, y sobre ella la invitación "Entra al mundo interior" (un clic lleva a la primera parada).
-  2. **El estudio**: ya adentro, una primera parada con la descripción (`heroLead`) y las credenciales.
+  2. **El estudio**: ya adentro, la primera parada es una **ameba de Alma Digital** (el logo adentro, un
+     anillo de partículas alrededor) con la descripción del estudio (`heroLead`) en su ficha de vidrio y
+     el botón "Conocer el estudio". Es una parada como las de las obras (`data-kind="studio"` en el
+     HTML); un clic en ella abre `studio.html` sin transición líquida.
   3. **Las obras**, una parada cada una.
   4. **El cierre**: ver todas las obras, conocer el estudio y contacto.
-- **Las obras no van en fila**: cada una está a su altura y a un lado distinto, y entre paradas la cámara
-  hace una curva. Por eso al avanzar sube, baja, se corre de costado y se ladea un poco. En pantallas
-  anchas la ameba queda a la derecha o a la izquierda, alternando, y la ficha del lado contrario. Cada
-  obra aparece recién cuando es la próxima, para no cruzarse con el texto de la parada anterior.
+- **Las amebas no van en fila**: cada parada tiene su propio encuadre (`COMP` y `HEIGHTS` en `layout()` de
+  `js/world.js`): lado (derecha o izquierda, alternando), altura en pantalla, distancia (unas se ven
+  grandes y otras más chicas), altura de la cámara y un giro leve hacia el lado de la ameba. Entre
+  paradas la cámara hace una curva: sube, baja, se corre de costado y se ladea. La ficha va siempre del
+  lado contrario a la ameba. Cada ameba aparece recién al salir de la parada anterior; si no, quedaría
+  detrás de la ficha de la que se está mirando. En teléfono todas van centradas arriba, con la ficha abajo.
 - **Adentro**: está oscuro y cada obra flota dentro de una ameba de vidrio que deforma su portada como una
-  gota. A la izquierda, una ficha de vidrio esmerilado con el nombre y el botón; a la derecha, puntos para
-  saltar de obra. Al final, una ameba grande y los botones de siempre.
+  gota. Del lado contrario a la ameba, una ficha de vidrio esmerilado con el nombre y el botón; en el borde
+  derecho, puntos para saltar de parada. Al final, una ameba grande y los botones de siempre.
 - **El líquido del mundo es el fluido del sitio.** Al entrar, el velo claro se retira y una capa violeta
   (`.world-tint`, `mix-blend-mode: multiply`) tiñe el fluido: sus remolinos quedan de fondo, en
   profundidad, y siguen respondiendo al cursor. No se toca `js/fluid.js`. La capa la crea `js/world.js`
@@ -174,7 +197,8 @@ acompaña al bloque de obras del landing: no está en el menú ni en el sitemap 
   destiempo, en una forma que la representa, y se sueltan al seguir. Formas (`FORMS` en `js/world.js`):
   `attractor` madeja (Neurocosm XR), `halo` anillos que respiran (Soul Charger), `strokes` pinceladas
   (Neural Canvas), `pulse` capas que laten de adentro hacia afuera (Collective Pulse), `dome` media
-  esfera de meridianos (Neurocosm Full Dome), `wave` ondas en un plano (Pacha Ibiza). La forma y los
+  esfera de meridianos (Neurocosm Full Dome), `wave` ondas en un plano (Pacha Ibiza), `logo` anillos
+  concéntricos como el icono (la parada del estudio). La forma y los
   colores salen de `site.json → particles` (los de la ficha) o, si la obra no tiene, de `world.forms`.
   Tienen que ser más grandes que el polvo: del mismo tamaño la forma se pierde.
 - **Luces que avanzan**: unos 50 hilos finos alrededor del camino que van al doble de la velocidad de la
@@ -184,7 +208,7 @@ acompaña al bloque de obras del landing: no está en el menú ni en el sitemap 
   partículas; la ameba bajo el cursor se hincha; al avanzar rápido la cámara abre el ángulo y todo se
   agita; un clic en el vacío agita el mundo y suena una nota; las flechas izquierda y derecha saltan de
   parada; la cámara y la puerta respiran cada 6 s.
-- **Scroll real**: la sección mide (obras + 2,2) pantallas y el escenario queda fijo (`position: sticky`)
+- **Scroll real**: la sección mide (obras + 3,2) pantallas y el escenario queda fijo (`position: sticky`)
   mientras se la recorre. No se secuestra la rueda, a diferencia de Mirages: funciona con el dedo y el
   teclado. El avance del scroll (0 a 1) mueve la cámara, que frena frente a cada obra.
 - **Entrar a una obra**: clic en la ameba o en "Entrar a la obra". La ameba se derrama como un líquido
@@ -380,6 +404,28 @@ desactiva. **No** cambiar nameservers a Cloudflare.
 El fluid sim sigue corriendo con auto-emitters en mobile. Los usuarios de Android no pueden tocar el fondo para emitir fluidos (correcto — el dedo es para el scroll).
 
 ## Historial de sesiones (última al tope)
+
+### 2026-11-18 — El mundo interior: ameba del estudio, amebas repartidas y fin del caché viejo (Vicente)
+
+Vicente vio la ronda anterior con el texto del estudio suelto arriba, encima del menú, y las amebas
+"igual que antes". Pidió sacar ese bloque: lo que quería era una ameba de Alma Digital antes de
+Neurocosm XR, con la descripción del estudio, y después las amebas de las obras, que no estén en fila.
+
+- **La causa de lo que vio**: Chrome tenía guardados el CSS y el JavaScript anteriores y los usó con el
+  HTML nuevo. Se arregló de raíz: `tools/serve.py` (servidor local sin caché) y archivos con versión en
+  la URL. Ver "Archivos con versión".
+- **La parada del estudio** dejó de ser un texto y es una ameba más del recorrido, con el logo adentro y
+  su ficha de vidrio (descripción + "Conocer el estudio"). Se quitó el bloque `.world__story`.
+- **Amebas repartidas**: encuadre propio por parada en vez de una regla general (ver la sección del mundo).
+- De paso: el permiso de View Transitions pasó también al `<head>`, y `.claude/launch.json` usa
+  `tools/serve.py`.
+
+**Verificado en Chrome** con los archivos recién versionados: la entrada (sólo título e invitación), la
+ameba del estudio en inglés y español, las seis obras alternando lado, altura y tamaño, el cierre, las
+flechas, clic en la ameba del estudio (abre Studio) y en la de una obra (transición líquida y ficha), y
+"atrás" al mismo punto en los dos casos. Consola sin errores. En emulación 375×812: entrada y parada del
+estudio sin desbordes. Paquete: 47 páginas, 1.545 referencias, ninguna rota.
+**Sin ver**: el movimiento entre paradas más que en cuadros sueltos; teléfonos reales; Safari y Firefox.
 
 ### 2026-11-18 — El mundo interior: menos texto al entrar, una narrativa y más movimiento (Vicente)
 

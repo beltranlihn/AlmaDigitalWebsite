@@ -29,6 +29,8 @@
      la URL de la página, que cambia al navegar. */
   var scriptBase = (document.currentScript && document.currentScript.src) ? document.currentScript.src.replace(/[^\/]*$/, '') : '';
   function CFG() { return window.__ALMA__ || {}; }
+  /* Versión de un módulo que se pide después (la escribe src/build.mjs): así el navegador no usa una copia vieja. */
+  function ver(k) { var x = (CFG().v || {})[k]; return x ? '?v=' + x : ''; }
   function T(k) { var t = CFG().t || {}; return t[k] || ''; }
   function play(el) { var p = el.play(); if (p && p.catch) p.catch(function () {}); }
 
@@ -471,7 +473,7 @@
     var stage = hero && $('.phero__stage', hero);
     if (!stage || !scriptBase) return;
     var mine = life;
-    import(scriptBase + 'particles.js').then(function (m) {
+    import(scriptBase + 'particles.js' + ver('particles')).then(function (m) {
       if (life !== mine || !document.contains(hero)) return;   // ya se navegó a otra página
       var handle = m.mount(stage, {
         formation: hero.getAttribute('data-particles'),
@@ -494,7 +496,7 @@
     var mine = life;
     function flat() { if (document.contains(sec)) sec.classList.add('world--flat'); }
     sec.classList.remove('world--flat');
-    import(scriptBase + 'world.js').then(function (m) {
+    import(scriptBase + 'world.js' + ver('world')).then(function (m) {
       if (life !== mine || !document.contains(sec)) return;     // ya se navegó a otra página
       var handle = m.mount(sec, {
         reduce: reduce,
