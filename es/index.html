@@ -35,13 +35,13 @@
 (function(){var T='ee88c2886dd4410694851f5bfea47a74';if(!T)return;var s=document.createElement('script');s.type='module';s.src='https://static.cloudflareinsights.com/beacon.min.js';s.setAttribute('data-cf-beacon',JSON.stringify({token:T}));document.head.appendChild(s);})();
 </script>
 <style>@media (prefers-reduced-motion: no-preference){@view-transition{navigation:auto}}</style>
-<link rel="stylesheet" href="../css/site.css?v=f4f3c3ce">
+<link rel="stylesheet" href="../css/site.css?v=652b14e6">
 <!-- En el tema claro las partículas del cursor se tiñen de tinta con un filtro del
      propio documento; va acá porque url(#id) desde un CSS externo no es confiable. -->
 <style>html[data-theme="aura"] .cursor-particle{filter:url(#cursor-ink)}</style>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"Organization","name":"Alma Digital Studio","url":"https://almadigitalstudio.com/es/","logo":"https://almadigitalstudio.com/Asset/Web%20Icons/PERFIL%203.png","description":"Alma Digital es un estudio de arte inmersivo y bienestar que crea experiencias multimedia en el cruce entre arte audiovisual, música en vivo, narrativa inmersiva y XR.","email":"vicente@almadigitalstudio.com","sameAs":["https://www.instagram.com/alma.digital.studio/","https://www.linkedin.com/company/almadigitalstudio/","https://open.spotify.com/intl-es/artist/2wHtuSMLUK3lt4ebGX9Kr5?si=sFQtnk_JTIuD7qp1kATiMg"]}</script>
 </head>
-<body class="pg-home">
+<body class="pg-home pg-world">
 <a class="skip" href="#main">Saltar al contenido</a>
 <canvas id="fluid" aria-hidden="true"></canvas>
 <div class="veil" aria-hidden="true"></div>
@@ -61,133 +61,33 @@
   </nav>
 </header>
 <main class="page" id="main">
-<section class="hero" aria-labelledby="hero-title">
-  <div class="hero__txt">
-    <p class="eyebrow">Estudio de arte inmersivo y bienestar</p>
-    <h1 id="hero-title">Somos un estudio de arte <em>inmersivo</em>.</h1>
-    <p class="hero__lead">Creamos experiencias de VR, fulldome, mapping y biofeedback que unen arte, tecnología y ciencia para acompañar el bienestar y la exploración interior.</p>
-    <div class="hero__cta">
-      <a class="btn btn--solid" href="../es/work/">Ver las obras</a>
-      <button class="btn" type="button" data-contact>Comenzar un proyecto</button>
+<section class="world world--flat" data-world aria-labelledby="world-title" style="--n:8">
+  <div class="world__stage">
+    <div class="world__depth" aria-hidden="true"></div>
+    <div class="world__canvas" aria-hidden="true"></div>
+    <!-- Primera pantalla: el título y el logo. La descripción va adentro, en la
+         ameba del estudio; acá queda sólo para cuando no hay 3D. -->
+    <div class="world__intro">
+      <h1 id="world-title">Somos un estudio de arte <em>inmersivo</em>.</h1>
+      <span class="world__logo" role="img" aria-label="Alma Digital" style="-webkit-mask-image:url('../Asset/Logo%20Studio/lockup-alma-digital.webp');mask-image:url('../Asset/Logo%20Studio/lockup-alma-digital.webp')"></span>
+      <p class="world__lead">Creamos experiencias de VR, fulldome, mapping y biofeedback que unen arte, tecnología y ciencia para acompañar el bienestar y la exploración interior.</p>
     </div>
-    <p class="hero__proof"><span class="label">Presentado en y encargado por</span>IDB · EUIPO · Johns Hopkins · New Images Festival · Adidas · LATAM Airlines · Pacha Ibiza</p>
-  </div>
-  <div class="hero__stage">
-    <div class="hero__slot" data-ameba-slot="hero"><noscript><img src="../Asset/Logo%20Studio/Version%202/Logo.webp" alt=""></noscript></div>
-  </div>
-</section>
-
-<section class="manifesto" aria-labelledby="man-label">
-  <div class="manifesto__slot" data-ameba-slot="manifesto"></div>
-  <div>
-    <p class="eyebrow" id="man-label">Lo que nos mueve</p>
-    <p class="manifesto__txt"><span style="--i:0">Diseñamos</span> <span style="--i:1">entornos</span> <span style="--i:2">de</span> <span style="--i:3">nuevos</span> <span style="--i:4">medios</span> <span style="--i:5">que</span> <span style="--i:6">fusionan</span> <span style="--i:7">arte,</span> <span style="--i:8">tecnología,</span> <span style="--i:9">ciencia</span> <span style="--i:10">y</span> <span style="--i:11">espiritualidad,</span> <span style="--i:12">y</span> <span style="--i:13">que</span> <span style="--i:14">favorecen</span> <span style="--i:15">el</span> <span style="--i:16">bienestar</span> <span style="--i:17">y</span> <span style="--i:18">la</span> <span style="--i:19">exploración</span> <span style="--i:20">interior.</span></p>
-    <a class="more" href="../es/studio.html">Conoce el estudio <i aria-hidden="true">→</i></a>
-  </div>
-</section>
-
-<section class="sec disc" aria-labelledby="disc-title">
-  <h2 id="disc-title">Lo que <em>hacemos</em></h2>
-  <div class="idx__body">
-    <div class="list">
-      <a class="row" href="../es/work/?format=vr"
-        data-title="VR / XR" data-format="Piezas de realidad virtual y películas 360°, desde pintura interactiva hasta recorridos guiados con biofeedback."
-        data-cover="../Asset/Studio%20Projects/Neural%20Canvas/3%20Portada.webp" data-video="">
-        <img class="row__thumb" loading="lazy" decoding="async" src="../Asset/Studio%20Projects/Neural%20Canvas/3%20Portada.webp" alt="">
-        <span class="row__name">VR / XR</span>
-        <span class="row__meta">4 obras</span>
-      </a>
-      <a class="row" href="../es/work/?format=installation"
-        data-title="Instalación" data-format="Instalaciones interactivas que responden al cuerpo: pulso, actividad cerebral, respiración y movimiento."
-        data-cover="../Asset/Studio%20Projects/Collective%20Pulse/3%20Portada.webp" data-video="">
-        <img class="row__thumb" loading="lazy" decoding="async" src="../Asset/Studio%20Projects/Collective%20Pulse/3%20Portada.webp" alt="">
-        <span class="row__name">Instalación</span>
-        <span class="row__meta">6 obras</span>
-      </a>
-      <a class="row" href="../es/work/?format=dome"
-        data-title="Domo / 360°" data-format="Experiencias fulldome y 360° para domos y salas inmersivas."
-        data-cover="../Asset/Studio%20Projects/Neurocosm%20Full%20Dome/Foto1%20-%20Portada.webp" data-video="">
-        <img class="row__thumb" loading="lazy" decoding="async" src="../Asset/Studio%20Projects/Neurocosm%20Full%20Dome/Foto1%20-%20Portada.webp" alt="">
-        <span class="row__name">Domo / 360°</span>
-        <span class="row__meta">2 obras</span>
-      </a>
-      <a class="row" href="../es/work/?format=mapping"
-        data-title="Mapping" data-format="Mapping de gran formato sobre arquitectura."
-        data-cover="../Asset/Studio%20Projects/Mapping%20Mediamorfosis/2%20Portada.webp" data-video="">
-        <img class="row__thumb" loading="lazy" decoding="async" src="../Asset/Studio%20Projects/Mapping%20Mediamorfosis/2%20Portada.webp" alt="">
-        <span class="row__name">Mapping</span>
-        <span class="row__meta">1 obra</span>
-      </a>
-      <a class="row" href="../es/work/?format=performance"
-        data-title="Performance" data-format="Performances audiovisuales en vivo y festivales con sonido espacial."
-        data-cover="../Asset/Studio%20Projects/Alma%20Digital%20Fest/3%20Portada.webp" data-video="">
-        <img class="row__thumb" loading="lazy" decoding="async" src="../Asset/Studio%20Projects/Alma%20Digital%20Fest/3%20Portada.webp" alt="">
-        <span class="row__name">Performance</span>
-        <span class="row__meta">3 obras</span>
-      </a>
-      <a class="row" href="../es/work/?format=design"
-        data-title="Diseño inmersivo" data-format="Diseño y visuales inmersivos para eventos, marcas y espacios."
-        data-cover="../Asset/Commisions/Panta%20Rhei/1%20portada.webp" data-video="">
-        <img class="row__thumb" loading="lazy" decoding="async" src="../Asset/Commisions/Panta%20Rhei/1%20portada.webp" alt="">
-        <span class="row__name">Diseño inmersivo</span>
-        <span class="row__meta">3 obras</span>
-      </a>
+    <!-- La invitación va sobre la ameba de entrada. Un clic lleva hasta la primera parada. -->
+    <button class="world__invite" type="button" data-w-enter>
+      <span class="world__invite-t">Entra al mundo <em>interior</em>.</span>
+      <span class="label">Haz scroll para avanzar <i aria-hidden="true">↓</i></span>
+    </button>
+    <div class="world__hud">
+      <p class="label" data-w-count></p>
+      <p class="world__name" data-w-title></p>
+      <p class="world__fmt" data-w-fmt></p>
+      <p class="world__desc" data-w-desc hidden></p>
+      <a class="btn" data-w-open href="../es/studio.html"><span data-w-cta data-default="Entrar a la obra">Entrar a la obra</span> <i aria-hidden="true">→</i></a>
     </div>
-    <div class="preview" aria-hidden="true">
-      <div class="preview__media">
-        <img class="preview__img" alt="">
-        <video class="preview__vid" muted loop playsinline></video>
-      </div>
-      <div class="preview__idle">Pasa por un formato</div>
-      <div class="preview__cap"><h3></h3><p></p></div>
-    </div>
-  </div>
-</section>
-
-<section class="sec" aria-labelledby="sel-title">
-  <div class="sec__head">
-    <h2 id="sel-title">Obras <em>destacadas</em></h2>
-    <a class="more" href="../es/work/">Las 19 obras <i aria-hidden="true">→</i></a>
-  </div>
-  <div class="wgrid wgrid--mosaic">
-    <a class="wcard" href="../es/work/neurocosm-xr.html">
-      <img loading="lazy" decoding="async" width="1920" height="1080" src="../Asset/Studio%20Projects/Neurocosm%20XR%20Installation/1%20Portada.webp" alt="">
-      <video class="wcard__v" muted loop playsinline preload="none" data-src="../Asset/Studio%20Projects/Neurocosm%20XR%20Installation/Neurocosm%20XR%20Reel.MP4" aria-hidden="true" tabindex="-1"></video>
-      <span class="wcard__t"><b>Neurocosm XR</b><span>Instalación interactiva</span></span>
-    </a>
-    <a class="wcard" href="../es/work/soul-charger.html">
-      <img loading="lazy" decoding="async" width="1920" height="1080" src="../Asset/Studio%20Projects/Soul%20Charger/1%20Portada.webp" alt="">
-      <video class="wcard__v" muted loop playsinline preload="none" data-src="../Asset/Studio%20Projects/Soul%20Charger/Soul%20Charger%20Reel.mp4" aria-hidden="true" tabindex="-1"></video>
-      <span class="wcard__t"><b>Soul Charger</b><span>VR interactiva con biofeedback</span></span>
-    </a>
-    <a class="wcard" href="../es/work/neural-canvas.html">
-      <img loading="lazy" decoding="async" width="1920" height="1080" src="../Asset/Studio%20Projects/Neural%20Canvas/3%20Portada.webp" alt="">
-      <video class="wcard__v" muted loop playsinline preload="none" data-src="../Asset/Studio%20Projects/Neural%20Canvas/Neural%20Canvas%20Reel.mp4" aria-hidden="true" tabindex="-1"></video>
-      <span class="wcard__t"><b>Neural Canvas</b><span>Pintura interactiva en VR</span></span>
-    </a>
-    <a class="wcard" href="../es/work/collective-pulse.html">
-      <img loading="lazy" decoding="async" width="1920" height="1080" src="../Asset/Studio%20Projects/Collective%20Pulse/3%20Portada.webp" alt="">
-      <video class="wcard__v" muted loop playsinline preload="none" data-src="../Asset/Studio%20Projects/Collective%20Pulse/Collective%20Pulse%20Reel.mp4" aria-hidden="true" tabindex="-1"></video>
-      <span class="wcard__t"><b>Collective Pulse</b><span>Instalación interactiva de biofeedback</span></span>
-    </a>
-    <a class="wcard" href="../es/work/neurocosm-full-dome.html">
-      <img loading="lazy" decoding="async" width="1920" height="1080" src="../Asset/Studio%20Projects/Neurocosm%20Full%20Dome/Foto1%20-%20Portada.webp" alt="">
-      <video class="wcard__v" muted loop playsinline preload="none" data-src="../Asset/Studio%20Projects/Neurocosm%20Full%20Dome/NeurocosmFullDomeReel.mp4" aria-hidden="true" tabindex="-1"></video>
-      <span class="wcard__t"><b>Neurocosm Full Dome</b><span>Experiencia fulldome</span></span>
-    </a>
-    <a class="wcard" href="../es/work/pacha-ibiza.html">
-      <img loading="lazy" decoding="async" width="1920" height="1080" src="../Asset/Commisions/Pacha/3%20Portada.webp" alt="">
-      <video class="wcard__v" muted loop playsinline preload="none" data-src="../Asset/Commisions/Pacha/Pacha%20Reel.MP4" aria-hidden="true" tabindex="-1"></video>
-      <span class="wcard__t"><b>Pacha Ibiza</b><span>Instalación interactiva</span></span>
-    </a>
-  </div>
-</section>
-
-<section class="sec" id="reel" aria-labelledby="reel-title">
-  <h2 id="reel-title">Reel</h2>
-  <div class="reel" data-reel="click">
-    <!-- El video no se descarga hasta que alguien lo reproduce (ver js/app.js y
-         site.json → reelAutoplayOnView). Con autoplay se bajaba entero en cada visita. -->
+    <nav class="world__dots" aria-label="Obras del recorrido"></nav>
+    <!-- El reel con su póster: lo que se ve sin 3D, y lo que abre "Ver con sonido". -->
+    <div class="world__reel" id="reel">
+      <div class="reel" data-reel="click">
     <video id="reel-video" muted loop playsinline preload="none"
            poster="../Asset/Reel%20Portfolio/Reel%20Poster.webp"
            data-src="../Asset/Reel%20Portfolio/Reel%20Portfolio.mp4"
@@ -195,36 +95,56 @@
            data-poster-mobile="../Asset/Reel%20Portfolio/Reel%20Vertical%20Poster.webp"></video>
     <button class="reel__btn" type="button" data-reel-sound><span class="reel__play" aria-hidden="true"></span>Ver el reel</button>
   </div>
-</section>
-
-<section class="sec creds" aria-labelledby="cl-title">
-  <div class="sec__head">
-    <h2 id="cl-title">Con quién hemos <em>trabajado</em></h2>
-    <button class="creds__pause" type="button" aria-pressed="false" data-pause="Pausar" data-play="Reanudar">Pausar</button>
-  </div>
-  <div class="creds__rows">
-    <div class="marquee">
-      <div class="marquee__track"><span class="marquee__item">IDB · ArtLac Gallery, Washington DC</span><span class="marquee__item">EUIPO, Alicante</span><span class="marquee__item">Johns Hopkins Berman Institute of Bioethics</span><span class="marquee__item">New Images Festival, Paris</span><span class="marquee__item">Museo de Arte Contemporáneo, Santiago</span><span class="marquee__item">Full Dome Festival, Santiago &amp; Montevideo</span><span class="marquee__item">Festival Mediamorfosis, Viña del Mar</span><span class="marquee__item">CRITIC Fest, Santiago</span><span class="marquee__item">Cult VR, Cardiff</span><span class="marquee__item">IDEAL Digital Center, Barcelona</span><span class="marquee__item">Sabda Studio, Barcelona</span></div>
-      <div class="marquee__track" aria-hidden="true"><span class="marquee__item">IDB · ArtLac Gallery, Washington DC</span><span class="marquee__item">EUIPO, Alicante</span><span class="marquee__item">Johns Hopkins Berman Institute of Bioethics</span><span class="marquee__item">New Images Festival, Paris</span><span class="marquee__item">Museo de Arte Contemporáneo, Santiago</span><span class="marquee__item">Full Dome Festival, Santiago &amp; Montevideo</span><span class="marquee__item">Festival Mediamorfosis, Viña del Mar</span><span class="marquee__item">CRITIC Fest, Santiago</span><span class="marquee__item">Cult VR, Cardiff</span><span class="marquee__item">IDEAL Digital Center, Barcelona</span><span class="marquee__item">Sabda Studio, Barcelona</span></div>
     </div>
-    <div class="marquee marquee--rev">
-      <div class="marquee__track"><span class="marquee__item">Adidas Terrex</span><span class="marquee__item">LATAM Airlines</span><span class="marquee__item">Pacha Ibiza</span><span class="marquee__item">EIT Culture &amp; Creativity</span><span class="marquee__item">Ministry of Cultures, Arts &amp; Heritage of Chile</span><span class="marquee__item">my2DROPS</span><span class="marquee__item">Lavinia Next</span></div>
-      <div class="marquee__track" aria-hidden="true"><span class="marquee__item">Adidas Terrex</span><span class="marquee__item">LATAM Airlines</span><span class="marquee__item">Pacha Ibiza</span><span class="marquee__item">EIT Culture &amp; Creativity</span><span class="marquee__item">Ministry of Cultures, Arts &amp; Heritage of Chile</span><span class="marquee__item">my2DROPS</span><span class="marquee__item">Lavinia Next</span></div>
+    <!-- El paso a las obras: en el recorrido aparece entre el reel y la primera ameba. -->
+    <h2 class="world__chapter" data-w-chapter>Obras <em>seleccionadas</em></h2>
+    <!-- Cierre: el resto de las obras, el estudio y el contacto. -->
+    <div class="world__end">
+      <h2>Hay <em>más</em> adentro.</h2>
+      <p class="world__end-txt">Obras seleccionadas entre VR, fulldome, mapping y biofeedback, y el estudio detrás de ellas.</p>
+      <div class="world__row">
+        <a class="btn btn--solid" href="../es/work/">Ver las obras seleccionadas</a>
+        <a class="btn" href="../es/studio.html">Conocer el estudio</a>
+        <button class="btn" type="button" data-contact>Comenzar un proyecto</button>
+      </div>
     </div>
+    <ol class="world__list wgrid" aria-label="Obras del recorrido">
+      <!-- Primera parada: la ameba del estudio, con su descripción. -->
+      <li class="world__only3d"><a class="wcard" data-w-item data-kind="studio" href="../es/studio.html" data-title="Alma Digital" data-format="El estudio" data-desc="Creamos experiencias de VR, fulldome, mapping y biofeedback que unen arte, tecnología y ciencia para acompañar el bienestar y la exploración interior." data-cta="Conocer el estudio" data-form="logo" data-colors="#c99ef9,#8a4ee0,#f2b8dd,#ffffff" data-stage="#2a1c58">
+        <span class="wcard__t"><b>Alma Digital</b><span>El estudio</span></span>
+      </a></li>
+      <!-- Segunda parada: el reel, flotando y en reproducción automática. -->
+      <li class="world__only3d"><a class="wcard" data-w-item data-kind="reel" href="#reel" data-title="Reel" data-cta="Ver con sonido"
+        data-video="../Asset/Reel%20Portfolio/Reel%20Flotante.mp4" data-video-mobile="../Asset/Reel%20Portfolio/Reel%20Flotante%20Vertical.mp4"
+        data-poster="../Asset/Reel%20Portfolio/Reel%20Poster.webp" data-poster-mobile="../Asset/Reel%20Portfolio/Reel%20Vertical%20Poster.webp">
+        <span class="wcard__t"><b>Reel</b></span>
+      </a></li>
+      <li><a class="wcard" data-w-item href="../es/work/neurocosm-xr.html" data-cover="../Asset/Studio%20Projects/Neurocosm%20XR%20Installation/1%20Portada.webp" data-title="Neurocosm XR" data-format="Instalación interactiva" data-form="attractor" data-colors="#6ea8ff,#3d6bff,#b9d2ff,#ffffff,#7a5cf2" data-stage="#05060f">
+        <img loading="lazy" decoding="async" width="1920" height="1080" src="../Asset/Studio%20Projects/Neurocosm%20XR%20Installation/1%20Portada.webp" alt="">
+        <span class="wcard__t"><b>Neurocosm XR</b><span>Instalación interactiva</span></span>
+      </a></li>
+      <li><a class="wcard" data-w-item href="../es/work/soul-charger.html" data-cover="../Asset/Studio%20Projects/Soul%20Charger/1%20Portada.webp" data-title="Soul Charger" data-format="VR interactiva con biofeedback" data-form="halo" data-colors="#ff7a59,#ffb199,#ff4f6d,#ffd6c2,#ffffff" data-stage="#140609">
+        <img loading="lazy" decoding="async" width="1920" height="1080" src="../Asset/Studio%20Projects/Soul%20Charger/1%20Portada.webp" alt="">
+        <span class="wcard__t"><b>Soul Charger</b><span>VR interactiva con biofeedback</span></span>
+      </a></li>
+      <li><a class="wcard" data-w-item href="../es/work/neural-canvas.html" data-cover="../Asset/Studio%20Projects/Neural%20Canvas/3%20Portada.webp" data-title="Neural Canvas" data-format="Pintura interactiva en VR" data-form="strokes" data-colors="#ff8a3d,#ffb469,#3f6bff,#8fb0ff,#ffffff" data-stage="#04052b">
+        <img loading="lazy" decoding="async" width="1920" height="1080" src="../Asset/Studio%20Projects/Neural%20Canvas/3%20Portada.webp" alt="">
+        <span class="wcard__t"><b>Neural Canvas</b><span>Pintura interactiva en VR</span></span>
+      </a></li>
+      <li><a class="wcard" data-w-item href="../es/work/collective-pulse.html" data-cover="../Asset/Studio%20Projects/Collective%20Pulse/3%20Portada.webp" data-title="Collective Pulse" data-format="Instalación interactiva de biofeedback" data-form="pulse" data-colors="#ff8fb1,#ffd166,#7ad7f0,#b48cff,#8ef0c2,#ffffff" data-stage="#0b0a1c">
+        <img loading="lazy" decoding="async" width="1920" height="1080" src="../Asset/Studio%20Projects/Collective%20Pulse/3%20Portada.webp" alt="">
+        <span class="wcard__t"><b>Collective Pulse</b><span>Instalación interactiva de biofeedback</span></span>
+      </a></li>
+      <li><a class="wcard" data-w-item href="../es/work/neurocosm-full-dome.html" data-cover="../Asset/Studio%20Projects/Neurocosm%20Full%20Dome/Foto1%20-%20Portada.webp" data-title="Neurocosm Full Dome" data-format="Experiencia fulldome" data-form="dome" data-colors="#ff5a3c,#ff9a6b,#ffd0b0,#ffffff" data-stage="#1c0707">
+        <img loading="lazy" decoding="async" width="1920" height="1080" src="../Asset/Studio%20Projects/Neurocosm%20Full%20Dome/Foto1%20-%20Portada.webp" alt="">
+        <span class="wcard__t"><b>Neurocosm Full Dome</b><span>Experiencia fulldome</span></span>
+      </a></li>
+      <li><a class="wcard" data-w-item href="../es/work/pacha-ibiza.html" data-cover="../Asset/Commisions/Pacha/3%20Portada.webp" data-title="Pacha Ibiza" data-format="Instalación interactiva" data-form="wave" data-colors="#ff4fa0,#ff8fc8,#b48cff,#ffffff" data-stage="#1d0722">
+        <img loading="lazy" decoding="async" width="1920" height="1080" src="../Asset/Commisions/Pacha/3%20Portada.webp" alt="">
+        <span class="wcard__t"><b>Pacha Ibiza</b><span>Instalación interactiva</span></span>
+      </a></li>
+    </ol>
   </div>
-  <p class="creds__award"><span class="label">Reconocimiento</span>Ganador del Pitch XR en Mediamorfosis Fest Chile</p>
-</section>
-
-<section class="cta" aria-labelledby="cta-title">
-  <div class="cta__txt">
-    <h2 id="cta-title">Creemos algo <em>juntos</em>.</h2>
-    <div class="cta__row">
-      <button class="btn btn--solid" type="button" data-contact data-contact-subject="Encargo">Encargar un proyecto</button>
-      <button class="btn" type="button" data-contact data-contact-subject="Festival o prensa">Festivales y prensa</button>
-    </div>
-    <p class="cta__mail">o escribe a <a href="mailto:vicente@almadigitalstudio.com">vicente@almadigitalstudio.com</a></p>
-  </div>
-  <div class="cta__slot" data-ameba-slot="contact"></div>
 </section>
 </main>
 <footer class="ftr">
@@ -259,12 +179,12 @@
   <img class="ameba__fallback" src="../Asset/Logo%20Studio/Version%202/Logo.webp" alt="" width="1920" height="1080">
   <canvas id="ameba"></canvas>
 </div>
-<script type="application/json" id="alma-data">{"lang":"es","email":"vicente@almadigitalstudio.com","endpoint":"https://formspree.io/f/xkopqoyl","legacy":["soul-charger.html"],"t":{"modalSend":"Enviar mensaje","modalSending":"Enviando…","modalSent":"Enviado","modalOk":"Gracias, tu mensaje fue enviado. Te responderemos pronto.","modalFail":"No se pudo enviar tu mensaje. Inténtalo de nuevo o escribe a","modalFill":"Completa todos los campos.","modalBadEmail":"Ingresa un correo válido.","modalAbout":"Sobre","indexCount":"{n} obras","indexCountOne":"1 obra","reelSound":"Ver con sonido","reelMute":"Silenciar","reelUnmute":"Activar sonido","reelClose":"Cerrar video","lbClose":"Cerrar","lbPrev":"Anterior","lbNext":"Siguiente","lbZoom":"Zoom","lbZoomOut":"Alejar","lbHint":"← → para navegar · Esc para salir","lbLabel":"Galería ampliada","breathStart":"Respira con ella","breathStop":"Detener","breathIn":"Inhala","breathOut":"Exhala","breathEnd":"Gracias por respirar con nosotros."},"sound":{"src":"Asset/Audio/breath-loop.m4a","level":0.55},"world":true,"v":{"world":"08f8d47f","particles":"675fabd0"}}</script>
+<script type="application/json" id="alma-data">{"lang":"es","email":"vicente@almadigitalstudio.com","endpoint":"https://formspree.io/f/xkopqoyl","legacy":["soul-charger.html"],"t":{"modalSend":"Enviar mensaje","modalSending":"Enviando…","modalSent":"Enviado","modalOk":"Gracias, tu mensaje fue enviado. Te responderemos pronto.","modalFail":"No se pudo enviar tu mensaje. Inténtalo de nuevo o escribe a","modalFill":"Completa todos los campos.","modalBadEmail":"Ingresa un correo válido.","modalAbout":"Sobre","indexCount":"{n} obras","indexCountOne":"1 obra","indexAll":"Obras seleccionadas","reelSound":"Ver con sonido","reelMute":"Silenciar","reelUnmute":"Activar sonido","reelClose":"Cerrar video","lbClose":"Cerrar","lbPrev":"Anterior","lbNext":"Siguiente","lbZoom":"Zoom","lbZoomOut":"Alejar","lbHint":"← → para navegar · Esc para salir","lbLabel":"Galería ampliada","breathStart":"Respira con ella","breathStop":"Detener","breathIn":"Inhala","breathOut":"Exhala","breathEnd":"Gracias por respirar con nosotros."},"sound":{"src":"Asset/Audio/breath-loop.m4a","level":0.55},"world":true,"v":{"world":"ae858134","particles":"675fabd0"}}</script>
 <script>window.__ALMA__=JSON.parse(document.getElementById('alma-data').textContent);</script>
 <script src="../js/fluid.js?v=0dbef8cb"></script>
 <script src="../js/cursor.js?v=477b7a02"></script>
 <script src="../js/ameba.js?v=92aeb2f2"></script>
 <script src="../js/sound.js?v=44eb0590"></script>
-<script src="../js/app.js?v=47474e8d"></script>
+<script src="../js/app.js?v=cc1b7b26"></script>
 </body>
 </html>

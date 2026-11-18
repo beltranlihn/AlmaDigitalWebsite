@@ -32,13 +32,19 @@
   "world": {
     "enabled": true,
     "works": [],
+    "reel": {
+      "src": "Asset/Reel Portfolio/Reel Flotante.mp4",
+      "srcMobile": "Asset/Reel Portfolio/Reel Flotante Vertical.mp4"
+    },
     "forms": {
       "neurocosm-full-dome": {
         "formation": "dome",
+        "stage": "#1c0707",
         "colors": ["#ff5a3c", "#ff9a6b", "#ffd0b0", "#ffffff"]
       },
       "pacha-ibiza": {
         "formation": "wave",
+        "stage": "#1d0722",
         "colors": ["#ff4fa0", "#ff8fc8", "#b48cff", "#ffffff"]
       }
     }
@@ -205,7 +211,7 @@
       "reelMute": "Mute",
       "reelUnmute": "Sound on",
       "reelClose": "Close video",
-      "selectedTitle": "Selected *work*",
+      "selectedTitle": "Selected *works*",
       "selectedAll": "All {n} works",
       "clientsTitle": "Who we have *worked with*",
       "clientsInstitutions": "Institutions and festivals",
@@ -227,6 +233,7 @@
       "indexDesc": "Studio projects and commissions by Alma Digital Studio: VR, fulldome, projection mapping, interactive installations and immersive design.",
       "indexCount": "{n} works",
       "indexCountOne": "1 work",
+      "indexAll": "Selected works",
       "filterLine": "Line",
       "filterFormat": "Format",
       "filterAll": "All",
@@ -295,14 +302,12 @@
       "contactFestival": "Festivals and press",
       "contactFestivalSubject": "Festival or press",
       "soundLabel": "Sound",
-      "worldTitleTag": "The inner world — Alma Digital Studio",
-      "worldDesc": "A journey through the main works of Alma Digital Studio: scroll to travel inside.",
       "worldTitle": "Enter the *inner* world.",
       "worldHint": "Scroll to travel",
       "worldOpen": "Enter the work",
       "worldEndTitle": "There is *more* inside.",
-      "worldEndAll": "See all {n} works",
-      "worldEndLead": "{n} works across VR, fulldome, projection mapping and biofeedback, and a studio behind them.",
+      "worldEndAll": "See the selected works",
+      "worldEndLead": "Selected works across VR, fulldome, projection mapping and biofeedback, and the studio behind them.",
       "worldEndStudio": "About the studio",
       "worldStoryLabel": "The studio",
       "worldListLabel": "Works in this journey",
@@ -333,7 +338,7 @@
       "reelMute": "Silenciar",
       "reelUnmute": "Activar sonido",
       "reelClose": "Cerrar video",
-      "selectedTitle": "Obras *destacadas*",
+      "selectedTitle": "Obras *seleccionadas*",
       "selectedAll": "Las {n} obras",
       "clientsTitle": "Con quién hemos *trabajado*",
       "clientsInstitutions": "Instituciones y festivales",
@@ -355,6 +360,7 @@
       "indexDesc": "Obra propia y encargos de Alma Digital Studio: VR, fulldome, mapping, instalaciones interactivas y diseño inmersivo.",
       "indexCount": "{n} obras",
       "indexCountOne": "1 obra",
+      "indexAll": "Obras seleccionadas",
       "filterLine": "Línea",
       "filterFormat": "Formato",
       "filterAll": "Todo",
@@ -423,14 +429,12 @@
       "contactFestival": "Festivales y prensa",
       "contactFestivalSubject": "Festival o prensa",
       "soundLabel": "Sonido",
-      "worldTitleTag": "El mundo interior — Alma Digital Studio",
-      "worldDesc": "Un recorrido por las obras principales de Alma Digital Studio: haz scroll para avanzar hacia adentro.",
       "worldTitle": "Entra al mundo *interior*.",
       "worldHint": "Haz scroll para avanzar",
       "worldOpen": "Entrar a la obra",
       "worldEndTitle": "Hay *más* adentro.",
-      "worldEndAll": "Ver las {n} obras",
-      "worldEndLead": "{n} obras entre VR, fulldome, mapping y biofeedback, y un estudio detrás de ellas.",
+      "worldEndAll": "Ver las obras seleccionadas",
+      "worldEndLead": "Obras seleccionadas entre VR, fulldome, mapping y biofeedback, y el estudio detrás de ellas.",
       "worldEndStudio": "Conocer el estudio",
       "worldStoryLabel": "El estudio",
       "worldListLabel": "Obras del recorrido",

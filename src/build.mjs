@@ -154,7 +154,8 @@ ${jsonld ? `<script type="application/ld+json">${JSON.stringify(jsonld)}</script
    el botón ni el script. */
 const sound = site.sound && site.sound.enabled && site.sound.src ? site.sound : null;
 
-/* El mundo interior: página de prueba (site.json → world). */
+/* El mundo interior es la portada (site.json → world). Con enabled en false
+   la portada vuelve a ser el landing de bloques (buildLanding). */
 const world = site.world && site.world.enabled ? site.world : null;
 
 function header(c, current) {
@@ -230,7 +231,7 @@ function modal(c) {
 }
 
 const RUNTIME_KEYS = ['modalSend', 'modalSending', 'modalSent', 'modalOk', 'modalFail', 'modalFill', 'modalBadEmail',
-  'modalAbout', 'indexCount', 'indexCountOne', 'reelSound', 'reelMute', 'reelUnmute', 'reelClose',
+  'modalAbout', 'indexCount', 'indexCountOne', 'indexAll', 'reelSound', 'reelMute', 'reelUnmute', 'reelClose',
   'lbClose', 'lbPrev', 'lbNext', 'lbZoom', 'lbZoomOut', 'lbHint', 'lbLabel',
   'breathStart', 'breathStop', 'breathIn', 'breathOut', 'breathEnd'];
 
@@ -283,7 +284,45 @@ ${inner}
     <div class="phead__slot" data-ameba-slot="page"></div>
   </header>`;
 
-/* ── Landing ────────────────────────────────────────────────────────────── */
+/* Con quién trabajamos: dos franjas en movimiento y el reconocimiento. Va en
+   Studio (y en el landing de bloques, si se vuelve a él). */
+function credsBlock(c) {
+  const t = c.t;
+  const track = arr => arr.map(x => `<span class="marquee__item">${esc(x)}</span>`).join('');
+  const marquee = (arr, rev) => `    <div class="marquee${rev ? ' marquee--rev' : ''}">
+      <div class="marquee__track">${track(arr)}</div>
+      <div class="marquee__track" aria-hidden="true">${track(arr)}</div>
+    </div>`;
+  return `<section class="sec creds" aria-labelledby="cl-title">
+  <div class="sec__head">
+    <h2 id="cl-title">${em(t.clientsTitle)}</h2>
+    <button class="creds__pause" type="button" aria-pressed="false" data-pause="${esc(t.credsPause)}" data-play="${esc(t.credsPlay)}">${esc(t.credsPause)}</button>
+  </div>
+  <div class="creds__rows">
+${marquee(site.clients.institutions, false)}
+${marquee(site.clients.brands, true)}
+  </div>
+  <p class="creds__award"><span class="label">${esc(t.clientsAward)}</span>${esc(site.clients.award[c.lang])}</p>
+</section>`;
+}
+
+/* El reel del estudio, con el póster: el video se descarga recién al reproducir
+   (ver js/app.js y site.json → reelAutoplayOnView). */
+function reelBlock(c) {
+  const t = c.t;
+  return `<div class="reel" data-reel="${site.reelAutoplayOnView ? 'view' : 'click'}">
+    <video id="reel-video" muted loop playsinline preload="none"
+           poster="${asset(c, 'Asset/Reel Portfolio/Reel Poster.webp')}"
+           data-src="${asset(c, 'Asset/Reel Portfolio/Reel Portfolio.mp4')}"
+           data-src-mobile="${asset(c, 'Asset/Reel Portfolio/Reel Vertical Web.mp4')}"
+           data-poster-mobile="${asset(c, 'Asset/Reel Portfolio/Reel Vertical Poster.webp')}"></video>
+    <button class="reel__btn" type="button" data-reel-sound><span class="reel__play" aria-hidden="true"></span>${esc(site.reelAutoplayOnView ? t.reelSound : t.reelPlay)}</button>
+  </div>`;
+}
+
+/* ── Landing de bloques (EN RESERVA) ──────────────────────────────────────
+   Fue la portada hasta el 2026-11-18. Hoy la portada es el mundo interior
+   (buildWorld); esto sólo se genera si site.json → world.enabled es false. */
 function buildLanding(lang) {
   const c = ctx(lang, 'index.html');
   const t = c.t;
@@ -315,12 +354,6 @@ function buildLanding(lang) {
         <span class="row__meta">${esc(count)}</span>
       </a>`;
   }).join('\n');
-
-  const track = arr => arr.map(x => `<span class="marquee__item">${esc(x)}</span>`).join('');
-  const marquee = (arr, rev) => `    <div class="marquee${rev ? ' marquee--rev' : ''}">
-      <div class="marquee__track">${track(arr)}</div>
-      <div class="marquee__track" aria-hidden="true">${track(arr)}</div>
-    </div>`;
 
   const body = `<section class="hero" aria-labelledby="hero-title">
   <div class="hero__txt">
@@ -381,29 +414,10 @@ ${cards}
 
 <section class="sec" id="reel" aria-labelledby="reel-title">
   <h2 id="reel-title">${esc(t.reelTitle)}</h2>
-  <div class="reel" data-reel="${site.reelAutoplayOnView ? 'view' : 'click'}">
-    <!-- El video no se descarga hasta que alguien lo reproduce (ver js/app.js y
-         site.json → reelAutoplayOnView). Con autoplay se bajaba entero en cada visita. -->
-    <video id="reel-video" muted loop playsinline preload="none"
-           poster="${asset(c, 'Asset/Reel Portfolio/Reel Poster.webp')}"
-           data-src="${asset(c, 'Asset/Reel Portfolio/Reel Portfolio.mp4')}"
-           data-src-mobile="${asset(c, 'Asset/Reel Portfolio/Reel Vertical Web.mp4')}"
-           data-poster-mobile="${asset(c, 'Asset/Reel Portfolio/Reel Vertical Poster.webp')}"></video>
-    <button class="reel__btn" type="button" data-reel-sound><span class="reel__play" aria-hidden="true"></span>${esc(site.reelAutoplayOnView ? t.reelSound : t.reelPlay)}</button>
-  </div>
+  ${reelBlock(c)}
 </section>
 
-<section class="sec creds" aria-labelledby="cl-title">
-  <div class="sec__head">
-    <h2 id="cl-title">${em(t.clientsTitle)}</h2>
-    <button class="creds__pause" type="button" aria-pressed="false" data-pause="${esc(t.credsPause)}" data-play="${esc(t.credsPlay)}">${esc(t.credsPause)}</button>
-  </div>
-  <div class="creds__rows">
-${marquee(site.clients.institutions, false)}
-${marquee(site.clients.brands, true)}
-  </div>
-  <p class="creds__award"><span class="label">${esc(t.clientsAward)}</span>${esc(site.clients.award[lang])}</p>
-</section>
+${credsBlock(c)}
 
 ${contactBand(c)}`;
 
@@ -417,37 +431,50 @@ ${contactBand(c)}`;
   })];
 }
 
-/* ── El mundo interior (PÁGINA DE PRUEBA) ───────────────────────────────────
-   Recorrido en 3D por las obras principales (js/world.js). No está enlazada
-   desde el menú ni va al sitemap, y pide a los buscadores que no la indexen.
-   El HTML trae la lista de obras como tarjetas: es lo que se ve sin JavaScript
-   o si el 3D no arranca (class "world--flat"; js/app.js la quita al montarlo). */
+/* ── El mundo interior: la portada ─────────────────────────────────────────
+   Un recorrido en 3D (js/world.js): la entrada, la ameba del estudio, el reel
+   flotando, el paso a "Obras seleccionadas", una ameba por obra y el cierre.
+   El HTML trae todo eso como una página común (título, reel, lista de obras en
+   tarjetas, botones): es lo que se ve sin JavaScript o si el 3D no arranca
+   (class "world--flat"; js/app.js la quita al montarlo) y lo que leen los
+   buscadores. */
 function buildWorld(lang) {
-  const c = ctx(lang, 'inner-world.html');
+  const c = ctx(lang, 'index.html');
   const t = c.t;
   const slugs = world.works && world.works.length ? world.works : site.featured;
   const works = slugs.map(s => loc(projects.find(p => p.slug === s), lang));
-  /* Forma y colores de las partículas que rodean a cada obra: los de su ficha
-     (site.json → particles) o, si no tiene, los de world.forms. */
+  /* Forma y colores de cada obra: los de su ficha (site.json → particles) o, si
+     no tiene, los de world.forms. Con esos colores se pinta su ameba y se arma
+     el enjambre de partículas que la rodea. */
   const formOf = slug => (world.forms && world.forms[slug]) || (site.particles && site.particles[slug]) || { formation: 'halo', colors: [] };
-  const items = works.map(p => `      <li><a class="wcard" data-w-item href="${link(c, `work/${p.slug}.html`)}" data-cover="${asset(c, p.cover)}" data-title="${esc(p.title)}" data-format="${esc(p.format)}" data-form="${esc(formOf(p.slug).formation)}" data-colors="${esc((formOf(p.slug).colors || []).join(','))}">
+  const items = works.map(p => {
+    const f = formOf(p.slug);
+    return `      <li><a class="wcard" data-w-item href="${link(c, `work/${p.slug}.html`)}" data-cover="${asset(c, p.cover)}" data-title="${esc(p.title)}" data-format="${esc(p.format)}" data-form="${esc(f.formation)}" data-colors="${esc((f.colors || []).join(','))}" data-stage="${esc(f.stage || '')}">
         <img loading="lazy" decoding="async" width="1920" height="1080" src="${asset(c, p.cover)}" alt="">
         <span class="wcard__t"><b>${esc(p.title)}</b><span>${esc(p.format)}</span></span>
-      </a></li>`).join('\n');
+      </a></li>`;
+  }).join('\n');
+  /* El reel flotante (site.json → world.reel): una versión liviana y sin audio
+     que arranca sola al llegar a su parada. Sin esa entrada no hay parada. */
+  const reel = world.reel && world.reel.src ? world.reel : null;
+  /* Tramos del recorrido: uno entre cada par de paradas (estudio, reel, obras)
+     y uno más antes de la primera obra, para el paso a "Obras seleccionadas".
+     El CSS saca de acá el alto de la sección. */
+  const tramos = works.length + (reel ? 1 : 0) + 1;
+  const mask = p => `-webkit-mask-image:url('${asset(c, p)}');mask-image:url('${asset(c, p)}')`;
 
-  const body = `<section class="world world--flat" data-world aria-labelledby="world-title" style="--n:${works.length + 1}">
+  const body = `<section class="world world--flat" data-world aria-labelledby="world-title" style="--n:${tramos}">
   <div class="world__stage">
     <div class="world__depth" aria-hidden="true"></div>
     <div class="world__canvas" aria-hidden="true"></div>
-    <!-- Primera pantalla: sólo el título (el mismo del landing, site.json → heroTitle).
-         La descripción va adentro, en la ameba del estudio; acá queda sólo para
-         cuando no hay 3D. -->
+    <!-- Primera pantalla: el título y el logo. La descripción va adentro, en la
+         ameba del estudio; acá queda sólo para cuando no hay 3D. -->
     <div class="world__intro">
-      <p class="eyebrow">${esc(t.heroEyebrow)}</p>
       <h1 id="world-title">${em(t.heroTitle)}</h1>
+      <span class="world__logo" role="img" aria-label="Alma Digital" style="${mask('Asset/Logo Studio/lockup-alma-digital.webp')}"></span>
       <p class="world__lead">${esc(t.heroLead)}</p>
     </div>
-    <!-- La invitación va sobre la ameba de entrada. Un clic lleva hasta la primera obra. -->
+    <!-- La invitación va sobre la ameba de entrada. Un clic lleva hasta la primera parada. -->
     <button class="world__invite" type="button" data-w-enter>
       <span class="world__invite-t">${em(t.worldTitle)}</span>
       <span class="label">${esc(t.worldHint)} <i aria-hidden="true">↓</i></span>
@@ -459,30 +486,46 @@ function buildWorld(lang) {
       <p class="world__desc" data-w-desc hidden></p>
       <a class="btn" data-w-open href="${link(c, 'studio.html')}"><span data-w-cta data-default="${esc(t.worldOpen)}">${esc(t.worldOpen)}</span> <i aria-hidden="true">→</i></a>
     </div>
-    <nav class="world__dots" aria-label="${esc(t.worldListLabel)}"></nav>
+    <nav class="world__dots" aria-label="${esc(t.worldListLabel)}"></nav>${reel ? `
+    <!-- El reel con su póster: lo que se ve sin 3D, y lo que abre "Ver con sonido". -->
+    <div class="world__reel" id="reel">
+      ${reelBlock(c)}
+    </div>` : ''}
+    <!-- El paso a las obras: en el recorrido aparece entre el reel y la primera ameba. -->
+    <h2 class="world__chapter" data-w-chapter>${em(t.selectedTitle)}</h2>
     <!-- Cierre: el resto de las obras, el estudio y el contacto. -->
     <div class="world__end">
       <h2>${em(t.worldEndTitle)}</h2>
-      <p class="world__end-txt">${esc(fill(t.worldEndLead, { n: projects.length }))}</p>
+      <p class="world__end-txt">${esc(t.worldEndLead)}</p>
       <div class="world__row">
-        <a class="btn btn--solid" href="${link(c, 'work/index.html')}">${esc(fill(t.worldEndAll, { n: projects.length }))}</a>
+        <a class="btn btn--solid" href="${link(c, 'work/index.html')}">${esc(t.worldEndAll)}</a>
         <a class="btn" href="${link(c, 'studio.html')}">${esc(t.worldEndStudio)}</a>
         <button class="btn" type="button" data-contact>${esc(t.heroCtaContact)}</button>
       </div>
     </div>
     <ol class="world__list wgrid" aria-label="${esc(t.worldListLabel)}">
       <!-- Primera parada: la ameba del estudio, con su descripción. -->
-      <li class="world__studio"><a class="wcard" data-w-item data-kind="studio" href="${link(c, 'studio.html')}" data-cover="${asset(c, 'Asset/Web Icons/og-alma-digital.jpg')}" data-title="Alma Digital" data-format="${esc(t.worldStoryLabel)}" data-desc="${esc(t.heroLead)}" data-cta="${esc(t.worldEndStudio)}" data-form="logo" data-colors="#c99ef9,#f2b8dd,#8fb0ff,#ffffff">
-        <img loading="lazy" decoding="async" width="1200" height="630" src="${asset(c, 'Asset/Web Icons/og-alma-digital.jpg')}" alt="">
+      <li class="world__only3d"><a class="wcard" data-w-item data-kind="studio" href="${link(c, 'studio.html')}" data-title="Alma Digital" data-format="${esc(t.worldStoryLabel)}" data-desc="${esc(t.heroLead)}" data-cta="${esc(t.worldEndStudio)}" data-form="logo" data-colors="#c99ef9,#8a4ee0,#f2b8dd,#ffffff" data-stage="#2a1c58">
         <span class="wcard__t"><b>Alma Digital</b><span>${esc(t.worldStoryLabel)}</span></span>
-      </a></li>
+      </a></li>${reel ? `
+      <!-- Segunda parada: el reel, flotando y en reproducción automática. -->
+      <li class="world__only3d"><a class="wcard" data-w-item data-kind="reel" href="#reel" data-title="${esc(t.reelTitle)}" data-cta="${esc(t.reelSound)}"
+        data-video="${asset(c, reel.src)}" data-video-mobile="${asset(c, reel.srcMobile || reel.src)}"
+        data-poster="${asset(c, 'Asset/Reel Portfolio/Reel Poster.webp')}" data-poster-mobile="${asset(c, 'Asset/Reel Portfolio/Reel Vertical Poster.webp')}">
+        <span class="wcard__t"><b>${esc(t.reelTitle)}</b></span>
+      </a></li>` : ''}
 ${items}
     </ol>
   </div>
 </section>`;
 
   return [c.path, page(c, {
-    title: t.worldTitleTag, desc: t.worldDesc, current: '', body, bodyClass: 'pg-world', noindex: true,
+    title: t.siteTitle, desc: t.siteDesc, current: 'home', body, bodyClass: 'pg-home pg-world',
+    jsonld: {
+      '@context': 'https://schema.org', '@type': 'Organization', name: 'Alma Digital Studio',
+      url: abs(lang, 'index.html'), logo: absAsset('Asset/Web Icons/PERFIL 3.png'),
+      description: t.siteDesc, email: site.email, sameAs: site.socials.map(s => s.url),
+    },
   })];
 }
 
@@ -510,7 +553,7 @@ function buildIndex(lang) {
 
   const body = `<div class="idx">
   ${phead(`      <h1>${esc(t.indexTitle)}</h1>
-      <p class="label idx__count" aria-live="polite">${esc(fill(t.indexCount, { n: projects.length }))}</p>`)}
+      <p class="label idx__count" aria-live="polite">${esc(t.indexAll)}</p>`)}
 
   <div class="filters">
 ${group(t.filterLine, 'track', Object.entries(site.tracks).map(([k, v]) => [k, v[lang]]))}
@@ -711,6 +754,8 @@ function buildStudio(lang) {
 ${about.map(x => `    <p>${esc(x)}</p>`).join('\n')}
   </section>
 
+  ${credsBlock(c)}
+
   <section class="sec" aria-labelledby="team-h">
     <h2 id="team-h">${esc(t.studioTeam)}</h2>
     <div class="founders">
@@ -744,8 +789,7 @@ ${contactBand(c)}`;
 /* ── Escritura ──────────────────────────────────────────────────────────── */
 const out = [];
 for (const lang of LANGS) {
-  out.push(buildLanding(lang), buildIndex(lang), buildStudio(lang));
-  if (world) out.push(buildWorld(lang));
+  out.push(world ? buildWorld(lang) : buildLanding(lang), buildIndex(lang), buildStudio(lang));
   projects.forEach((p, i) => out.push(buildProject(p, projects[(i + 1) % projects.length], lang)));
 }
 

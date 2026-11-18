@@ -337,7 +337,8 @@
         if (vis) n++;
       });
       if (empty) empty.hidden = n > 0;
-      if (count) count.textContent = n === 1 ? T('indexCountOne') : T('indexCount').replace('{n}', n);
+      /* Sin filtros no se cuenta: son "obras seleccionadas". Con filtros, cuántas quedan. */
+      if (count) count.textContent = n === rows.length ? T('indexAll') : n === 1 ? T('indexCountOne') : T('indexCount').replace('{n}', n);
       chips.forEach(function (c) { c.setAttribute('aria-pressed', String(state[c.dataset.dim] === c.dataset.val)); });
       if (current && current.hidden) clear();
     }
@@ -486,10 +487,11 @@
     }).catch(function () {});                                   // sin CDN o sin WebGL: queda la foto
   }
 
-  /* ── El mundo interior (página de prueba) ─────────────────────────────
+  /* ── El mundo interior (la portada) ───────────────────────────────────
      js/world.js es un módulo aparte (usa Three.js, como las partículas) y se
-     pide sólo en esa página. El HTML llega como lista de obras (world--flat);
-     acá se arma el escenario y, si el 3D no arranca, se vuelve a la lista. */
+     pide sólo en la portada. El HTML llega como página común (world--flat:
+     título, reel, lista de obras); acá se arma el escenario y, si el 3D no
+     arranca, se vuelve a esa página. */
   function initWorld() {
     var sec = $('[data-world]');
     if (!sec || !scriptBase) return;
@@ -504,6 +506,15 @@
         sound: window.AlmaSound,
         navigate: function (href) {
           try { go(new URL(href, location.href), true); } catch (e) { location.href = href; }
+        },
+        /* "Ver con sonido" en la parada del reel: abre el reel completo a pantalla completa,
+           con el mismo botón que usa la página sin 3D (initReel). En teléfono no hay versión
+           con audio, así que no se ofrece. */
+        reelFull: isMobile ? null : function () {
+          var b = $('[data-reel-sound]', sec);
+          if (!b) return false;
+          b.click();
+          return true;
         },
       });
       if (!handle) { flat(); return; }
@@ -611,6 +622,12 @@
      Devuelve covered (promesa: ya tapa todo), reveal() y cancel(). */
   var WAVE = '<path d="M0 40C120 12 240 12 360 40S600 68 720 40S960 12 1080 40S1320 68 1440 40V80H0Z"/></svg>';
   function isWork(path) { return /\/work\/(?!index\.html$)[^\/]+\.html$/.test(path); }
+  /* La portada, en cualquiera de los dos idiomas (la raíz del sitio sale de dónde está js/). */
+  function isHome(path) {
+    if (!scriptBase) return false;
+    var base = new URL('../', scriptBase).pathname;
+    return path.indexOf(base) === 0 && /^(es\/)?(index\.html)?$/.test(path.slice(base.length));
+  }
   function water(mode) {
     var el = document.createElement('div'), bubbles = '';
     el.className = 'dive dive--' + mode;
@@ -652,12 +669,12 @@
     var token = ++navToken;
     var url = u.pathname + u.search + u.hash;
     closeContact(true);
-    /* "Abajo" es la ficha de una obra y también el interior del mundo de prueba
-       (html.is-under): entre dos lugares de abajo no hay agua. Al volver con
-       "atrás" a ese mundo ya recorrido, tampoco. */
+    /* "Abajo" es la ficha de una obra y también el interior del mundo de la
+       portada (html.is-under): entre dos lugares de abajo no hay agua. Al volver
+       con "atrás" a ese mundo ya recorrido, tampoco. */
     var deep = document.body.classList.contains('pg-project') || root.classList.contains('is-under');
     var deeper = isWork(u.pathname) ||
-      (!push && /\/inner-world\.html$/.test(u.pathname) && (y || 0) > window.innerHeight * 0.6);
+      (!push && CFG().world && isHome(u.pathname) && (y || 0) > window.innerHeight * 0.6);
     var mode = (deep === deeper || reduce || document.hidden || !root.animate) ? '' : (deeper ? 'dive' : 'surface');
     var w = mode ? water(mode) : null;
     if (mode && window.AlmaSound) {
@@ -676,8 +693,8 @@
         }
         teardown();
         swap(html);
-        /* El mundo de prueba llega como lista corta y pasa a ser una sección alta: se arma
-           antes de reponer el scroll, o al volver con "atrás" quedaría más arriba de donde estaba. */
+        /* El mundo llega como página corta y pasa a ser una sección alta: se arma antes de
+           reponer el scroll, o al volver con "atrás" quedaría más arriba de donde estaba. */
         var w3d = scriptBase && $('[data-world]');
         if (w3d) w3d.classList.remove('world--flat');
         currentKey = location.pathname + location.search;
@@ -764,8 +781,7 @@
     bar.className = 'review';
     bar.innerHTML = '<span>Tema</span>' +
       '<button type="button" data-theme-set="aura">Aura</button>' +
-      '<button type="button" data-theme-set="night">Night</button>' +
-      (CFG().world ? '<button type="button" data-review-world>Mundo 3D</button>' : '');
+      '<button type="button" data-theme-set="night">Night</button>';
     document.body.appendChild(bar);
     document.body.classList.add('has-review');
     function sync() {
@@ -774,10 +790,6 @@
     }
     bar.addEventListener('click', function (e) {
       var b = e.target.closest('button'); if (!b) return;
-      if (b.hasAttribute('data-review-world')) {           // acceso a la página de prueba, en el idioma en que se está
-        go(new URL((CFG().lang === 'es' ? '../es/' : '../') + 'inner-world.html', scriptBase), true);
-        return;
-      }
       root.setAttribute('data-theme', b.dataset.themeSet);
       try { sessionStorage.setItem('alma-theme', b.dataset.themeSet); } catch (err) {}
       sync();

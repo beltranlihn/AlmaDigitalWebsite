@@ -12,7 +12,7 @@ estudio, sus proyectos y equipo con una estética audiovisual interactiva, en in
 - Ameba del hero: shader propio en `js/ameba.js` (WebGL 1, sin librerías, ~6 KB).
 - **Three.js** (0.187.0, desde el CDN jsDelivr, 156 KB comprimido) lo usan dos módulos, que se cargan
   sólo en las páginas que los piden: `js/particles.js` (partículas de las obras principales) y
-  `js/world.js` (el mundo interior, página de prueba).
+  `js/world.js` (el mundo interior, que es la portada).
 - Sonido de ambiente: `js/sound.js` (Web Audio, sin librerías). La música es un archivo de 1,8 MB en
   `Asset/Audio/`, que se pide sólo si el visitante enciende el sonido.
 - Google Fonts: Raleway (200, 300, 400, 500). GSAP (`gsap.min.js`) sólo lo usa `soul-charger.html`.
@@ -33,10 +33,9 @@ estudio, sus proyectos y equipo con una estética audiovisual interactiva, en in
 │   ├── ameba.js               # la ameba viva del hero
 │   ├── particles.js           # partículas en la cabecera de las obras principales (Three.js)
 │   ├── sound.js               # música de ambiente, filtro "bajo el agua" y sonidos de transición
-│   ├── world.js               # PRUEBA: recorrido 3D por las obras (Three.js)
+│   ├── world.js               # la portada: recorrido 3D por el estudio, el reel y las obras (Three.js)
 │   └── app.js                 # header, contacto, reel, filtros, lightbox
 ├── index.html, studio.html    # GENERADOS (inglés). No editar a mano
-├── inner-world.html           # GENERADO: PRUEBA del mundo interior (no enlazada, no indexada)
 ├── work/index.html            # GENERADO: índice de obras con filtros
 ├── work/<obra>.html           # GENERADO: una ficha por obra (19)
 ├── es/…                       # GENERADO: lo mismo en español
@@ -112,16 +111,17 @@ Consecuencias:
   soporte, el cambio es inmediato y la ameba se desliza por JavaScript.
 
 ## Páginas
-- **Landing** (`index.html`), siete bloques: hero (titular a dos voces + credenciales + dos botones),
-  manifiesto (una frase grande que se enciende con el scroll), "lo que hacemos" (los seis formatos, con
-  vista previa, que llevan al índice ya filtrado: `work/?format=dome`), seis obras destacadas grandes y
-  alternadas (`site.json → featured`), reel, credenciales en dos franjas en movimiento y contacto con
-  dos caminos (encargos / festivales y prensa).
-- **La ameba** se posa en el `[data-ameba-slot]` que esté más en pantalla: hero, manifiesto y contacto
-  en el landing; a la derecha del título en Obras y Studio; en la esquina de la foto en cada ficha.
+- **Portada** (`index.html`): el mundo interior, un recorrido 3D que se avanza con el scroll. Ver "El
+  mundo interior (la portada)". Reemplazó el 2026-11-18 al landing de siete bloques, que quedó **en
+  reserva**: `buildLanding` sigue en `src/build.mjs` y vuelve a ser la portada con `site.json →
+  world.enabled: false` y un build (no se mantiene: si se vuelve a él, revisarlo).
+- **La ameba** (la de `js/ameba.js`) se posa en el `[data-ameba-slot]` que esté más en pantalla: a la
+  derecha del título en Obras y Studio, en el bloque de contacto y en la esquina de la foto en cada
+  ficha. La portada no tiene slots (sus amebas son las del mundo 3D), así que ahí no se ve.
   Los slots son cajas vacías que sólo reservan el lugar.
 - **Índice de obras** (`work/`): lista filtrable por línea (obra propia / encargos) y formato, con
-  vista previa al pasar el mouse.
+  vista previa al pasar el mouse. Sin filtros el contador dice "Obras seleccionadas" (decisión de
+  Vicente: no hablar de "19 obras"); con filtros, cuántas quedan.
 - **Ficha de obra** (`work/<slug>.html`): portada, resumen con la ficha técnica al lado, un recorrido de
   imágenes y video, créditos, historial de exhibición, botón de consulta y obra siguiente. Ver "Ficha de
   obra: el recorrido de imágenes".
@@ -131,7 +131,8 @@ Consecuencias:
   clic lo dispersa. Para sumar una obra: agregar su entrada en `particles` (`formation`: `attractor`,
   `pulse`, `halo` o `strokes`; `stage`: color del fondo; `colors`) y correr el build. Para sacarla,
   borrar la entrada. Una formación nueva se escribe en `FORMATIONS` de `js/particles.js`.
-- **Studio** (`studio.html`): about, equipo y spin-offs.
+- **Studio** (`studio.html`): about, con quién trabajamos (dos franjas en movimiento, antes en el
+  landing), equipo y spin-offs.
 - **Español**: las mismas páginas bajo `/es/`, con los mismos slugs. Cada página enlaza a su par
   (`hreflang`) y el header tiene el cambio de idioma.
 
@@ -159,32 +160,39 @@ los videos verticales en marco de teléfono y la entrada curva al hacer scroll.
   El texto no se anima.
 - Las fotos se recortan según el lugar (4:3, 4:5, 16:10…); un clic abre la foto entera en el visor.
 
-## El mundo interior (página de prueba)
-`inner-world.html` (y `es/inner-world.html`). Idea de Vicente a partir de
+## El mundo interior (la portada)
+`index.html` (y `es/index.html`). Idea de Vicente a partir de
 [mirages.nrly.fun](https://mirages.nrly.fun/) (Nathan Riley, Unseen Studio): en vez de una lista, se
-**avanza** por un mundo 3D y las obras aparecen en el camino. Es una prueba para decidir si reemplaza o
-acompaña al bloque de obras del landing: no está en el menú ni en el sitemap y lleva `noindex`.
+**avanza** por un mundo 3D y las obras aparecen en el camino. Nació como página de prueba
+(`inner-world.html`) y el 2026-11-18 Vicente decidió que fuera la portada única. **Falta que Beltrán lo
+vea y probarlo en teléfonos reales** (en la portada corren el fluido y el mundo 3D a la vez).
 
-- **Cómo llegar**: `http://localhost:5599/inner-world.html`, o el botón "Mundo 3D" de la barra de revisión
-  (localhost y vistas previas de Netlify).
-- **El recorrido tiene cuatro momentos** (los tiempos están arriba de `layout()` en `js/world.js`):
-  1. **La entrada**: sólo el título del estudio (`site.json → heroTitle`), la ameba grande del logo, que
-     es la puerta, y sobre ella la invitación "Entra al mundo interior" (un clic lleva a la primera parada).
-  2. **El estudio**: ya adentro, la primera parada es una **ameba de Alma Digital** (el logo adentro, un
-     anillo de partículas alrededor) con la descripción del estudio (`heroLead`) en su ficha de vidrio y
-     el botón "Conocer el estudio". Es una parada como las de las obras (`data-kind="studio"` en el
-     HTML); un clic en ella abre `studio.html` sin transición líquida.
-  3. **Las obras**, una parada cada una.
-  4. **El cierre**: ver todas las obras, conocer el estudio y contacto.
+- **El recorrido tiene seis momentos** (los tiempos están arriba de `layout()` en `js/world.js`):
+  1. **La entrada**: el título del estudio (`site.json → heroTitle`) con el logo debajo (`alma ◎ digital`,
+     `Asset/Logo Studio/lockup-alma-digital.webp`, como máscara que toma el color del texto), la ameba
+     grande, que es la puerta, y sobre ella la invitación "Entra al mundo interior". No lleva la línea
+     "Immersive wellness art studio": repetía el título.
+  2. **El estudio**: ya adentro, una **ameba de Alma Digital** con la descripción del estudio (`heroLead`)
+     en su ficha de vidrio y el botón "Conocer el estudio". Un clic en ella abre `studio.html`.
+  3. **El reel**: una pantalla que flota y se reproduce sola, en silencio. Ver "El reel flotante".
+  4. **El paso a las obras**: la cámara atraviesa tres anillos de luz, con la forma del icono, mientras
+     aparece en el centro "Obras seleccionadas" (`site.json → selectedTitle`). Es un tramo, no una
+     parada. El título sólo cambia de opacidad: la tipografía no se mueve.
+  5. **Las obras**, una ameba cada una.
+  6. **El cierre**: las obras seleccionadas, conocer el estudio y contacto.
+- **Las amebas no llevan fotos** (decisión de Vicente, 2026-11-18: deformadas por la gota se veían poco
+  profesionales). Adentro llevan un arte hecho con los colores de la obra, que se mezclan despacio como
+  tinta en agua (`FRAG` en `js/world.js`). Los colores son los de `site.json → particles` (o
+  `world.forms`): los cuatro primeros de `colors` y `stage` para el borde. La portada de la obra aparece
+  recién en la transición líquida.
 - **Las amebas no van en fila**: cada parada tiene su propio encuadre (`COMP` y `HEIGHTS` en `layout()` de
   `js/world.js`): lado (derecha o izquierda, alternando), altura en pantalla, distancia (unas se ven
   grandes y otras más chicas), altura de la cámara y un giro leve hacia el lado de la ameba. Entre
   paradas la cámara hace una curva: sube, baja, se corre de costado y se ladea. La ficha va siempre del
   lado contrario a la ameba. Cada ameba aparece recién al salir de la parada anterior; si no, quedaría
   detrás de la ficha de la que se está mirando. En teléfono todas van centradas arriba, con la ficha abajo.
-- **Adentro**: está oscuro y cada obra flota dentro de una ameba de vidrio que deforma su portada como una
-  gota. Del lado contrario a la ameba, una ficha de vidrio esmerilado con el nombre y el botón; en el borde
-  derecho, puntos para saltar de parada. Al final, una ameba grande y los botones de siempre.
+- **Adentro**: está oscuro. Del lado contrario a cada ameba, una ficha de vidrio esmerilado con el nombre
+  y el botón; en el borde derecho, puntos para saltar de parada. Al final, una ameba grande y los botones.
 - **El líquido del mundo es el fluido del sitio.** Al entrar, el velo claro se retira y una capa violeta
   (`.world-tint`, `mix-blend-mode: multiply`) tiñe el fluido: sus remolinos quedan de fondo, en
   profundidad, y siguen respondiendo al cursor. No se toca `js/fluid.js`. La capa la crea `js/world.js`
@@ -192,8 +200,8 @@ acompaña al bloque de obras del landing: no está en el menú ni en el sitemap 
 - **Detalle**: polvo en suspensión de tres colores que deriva y titila, tres corrientes de partículas en
   hélice que giran alrededor del camino, treinta amebas chicas de fondo y una película iridiscente que se
   arrastra por la superficie de cada ameba, como en una pompa de jabón.
-- **Enjambre por obra**: cada obra tiene unas 560 partículas propias (220 en táctil), en sus colores.
-  Mientras se pasa son una nube suelta; al detenerse frente a la obra se ordenan, en espiral y a
+- **Enjambre por ameba**: cada una tiene unas 560 partículas propias (220 en táctil), en sus colores.
+  Mientras se pasa son una nube suelta; al detenerse frente a ella se ordenan, en espiral y a
   destiempo, en una forma que la representa, y se sueltan al seguir. Formas (`FORMS` en `js/world.js`):
   `attractor` madeja (Neurocosm XR), `halo` anillos que respiran (Soul Charger), `strokes` pinceladas
   (Neural Canvas), `pulse` capas que laten de adentro hacia afuera (Collective Pulse), `dome` media
@@ -204,32 +212,62 @@ acompaña al bloque de obras del landing: no está en el menú ni en el sitemap 
 - **Luces que avanzan**: unos 50 hilos finos alrededor del camino que van al doble de la velocidad de la
   cámara y se estiran al avanzar (en reposo son chispas), y dos luces guía con cola que van por delante:
   siguen al scroll y no a la cámara, así que se adelantan y uno las alcanza. Sólo adentro.
-- **Lo que responde**: el cursor mueve la cámara, corre la portada dentro de cada ameba y aparta las
-  partículas; la ameba bajo el cursor se hincha; al avanzar rápido la cámara abre el ángulo y todo se
-  agita; un clic en el vacío agita el mundo y suena una nota; las flechas izquierda y derecha saltan de
-  parada; la cámara y la puerta respiran cada 6 s.
-- **Scroll real**: la sección mide (obras + 3,2) pantallas y el escenario queda fijo (`position: sticky`)
+- **Lo que responde**: el cursor mueve la cámara, corre el arte dentro de cada ameba, inclina la pantalla
+  del reel y aparta las partículas; la ameba bajo el cursor se hincha; al avanzar rápido la cámara abre
+  el ángulo y todo se agita; un clic en el vacío agita el mundo y suena una nota; las flechas izquierda
+  y derecha saltan de parada; la cámara y la puerta respiran cada 6 s.
+- **Scroll real**: la sección mide (tramos × 0,94 + 3,55) pantallas (`--n` en el HTML son los tramos:
+  obras + estudio + reel; hoy 8, unas 11 pantallas) y el escenario queda fijo (`position: sticky`)
   mientras se la recorre. No se secuestra la rueda, a diferencia de Mirages: funciona con el dedo y el
-  teclado. El avance del scroll (0 a 1) mueve la cámara, que frena frente a cada obra.
+  teclado. El avance del scroll (0 a 1) mueve la cámara, que frena frente a cada parada. `js/world.js`
+  saca los tiempos de cuántas pantallas mide la sección, así que si cambia esa fórmula en el CSS no hay
+  que tocar el JS.
 - **Entrar a una obra**: clic en la ameba o en "Entrar a la obra". La ameba se derrama como un líquido
-  desde donde está hasta cubrir la pantalla (borde ondulado, con brillo de vidrio), la portada pasa de
-  verse como en la gota a verse plana, y al final se acomoda en el encuadre y el degradado de la cabecera
-  de la ficha (`.phero`), que se abre a continuación con la navegación continua: el cambio de página casi
-  no se nota. Dura 1,25 s. Con "atrás" se vuelve al mismo punto del recorrido. Es un shader a pantalla
-  completa (`LIQ_FRAG` en `js/world.js`); **si cambia el alto o el degradado de `.phero` en el CSS, hay
-  que cambiarlos también ahí** (`uHero` y el cálculo de `shade`).
-- **Qué obras**: `site.json → world.works` (lista de slugs); vacío usa `featured`. `world.enabled: false`
-  y un build sacan la página.
+  desde donde está hasta cubrir la pantalla (borde ondulado, con brillo de vidrio). Arranca con los
+  colores de la ameba; adentro va apareciendo la portada, y al final se acomoda en el encuadre y el
+  degradado de la cabecera de la ficha (`.phero`), que se abre a continuación con la navegación
+  continua: el cambio de página casi no se nota. Dura 1,25 s. Con "atrás" se vuelve al mismo punto del
+  recorrido. Es un shader a pantalla completa (`LIQ_FRAG` en `js/world.js`); **si cambia el alto o el
+  degradado de `.phero` en el CSS, hay que cambiarlos también ahí** (`uHero` y el cálculo de `shade`).
+- **Volver a la portada** (el logo del menú) lleva siempre a la entrada, arriba de todo.
+- **Qué obras**: `site.json → world.works` (lista de slugs); vacío usa `featured`.
 - **Cómo está hecho** (`js/world.js`): Three.js con WebGL, canvas transparente sobre el fluido. Cada ameba
-  es una esfera deformada en el shader; la portada se ve adentro usando la normal como lente. Las portadas
-  se piden de a una, cuando uno se acerca. Mirages usa WebGPU; acá se eligió WebGL para que corra en todos
-  los teléfonos.
-- **Sin 3D sirve igual**: el HTML trae las obras como tarjetas (`class="world--flat"`). `js/app.js` quita
-  esa clase al montar el mundo y la repone si Three.js o WebGL fallan. Sin JavaScript queda la lista.
+  es una esfera deformada en el shader. La portada de cada obra se pide recién al detenerse frente a
+  ella, sólo para el derrame. Mirages usa WebGPU; acá se eligió WebGL para que corra en todos los teléfonos.
+- **Sin 3D sirve igual**, y es lo que leen los buscadores: el HTML trae el título, la descripción, el
+  reel con su póster, "Obras seleccionadas" con las obras en tarjetas y los botones
+  (`class="world--flat"`). `js/app.js` quita esa clase al montar el mundo y la repone si Three.js o
+  WebGL fallan. Sin JavaScript queda esa página.
 - **`html.is-under`**: lo pone `js/world.js` mientras se está adentro. Viste de oscuro el header y el pie,
   pasa el cursor a blanco y le dice a la navegación que no hace falta zambullida para entrar a una obra.
-- **Sonido**: la música se filtra al entrar; una nota suave marca la llegada a cada obra (`AlmaSound.chime`).
-- **Textos** (`site.json → t.world*`): borradores, a revisar por el estudio.
+- **Sonido**: la música se filtra al entrar; una nota suave marca la llegada a cada parada (`AlmaSound.chime`).
+- **Textos** (`site.json → t.world*`, `heroTitle`, `heroLead`, `selectedTitle`): borradores, a revisar
+  por el estudio.
+
+### El reel flotante
+Pedido de Vicente (2026-11-18): que después de la ameba del estudio se avance hasta el reel, flotando y
+en reproducción automática, y de ahí a las obras.
+
+- Es un plano con el video dentro del mundo 3D (`screen()` y `REEL_FRAG` en `js/world.js`): puntas
+  redondas, filo de vidrio y un resplandor violeta. Flota, se inclina hacia el cursor y se deshace
+  cuando la cámara avanza hacia él.
+- **No es el reel completo.** Es una versión liviana y **sin audio**, hecha para esto:
+  `Asset/Reel Portfolio/Reel Flotante.mp4` (960×540, 3,6 MB) y `Reel Flotante Vertical.mp4` (480×854,
+  3,2 MB) para pantallas verticales (`site.json → world.reel`). El reel completo (21 MB) no arranca solo
+  nunca.
+- **Se descarga recién al acercarse a su parada**, no al cargar la página, y se pausa al alejarse, con
+  la pestaña oculta o fuera de pantalla. Antes del video se ve su póster. Con "reducir movimiento"
+  queda el póster.
+- **"Ver con sonido"** (el botón, o un clic en la pantalla) abre el reel completo a pantalla completa:
+  es el mismo botón del bloque de reel de la página sin 3D (`initReel` en `js/app.js`; `js/world.js`
+  lo llama por `opts.reelFull`). En teléfono no se ofrece: la versión vertical no tiene audio.
+- **Costo**: cada visita que llega a esa parada baja unos 3,6 MB, es decir **0,07 créditos de Netlify**
+  (1.000 visitas ≈ 72 créditos). Es la excepción consciente a la regla de no poner `autoplay` en videos
+  de más de un par de MB. **Para apagarlo**: borrar `world.reel` de `site.json` y correr el build; la
+  parada desaparece y el recorrido pasa del estudio a las obras.
+- **Para rehacer la versión liviana** desde el reel completo:
+  `ffmpeg -i "Reel Portfolio.mp4" -an -vf scale=960:540:flags=lanczos -c:v libx264 -crf 33 -preset slow -pix_fmt yuv420p -movflags +faststart "Reel Flotante.mp4"`
+  (vertical: desde `Reel Vertical Web.mp4`, `scale=480:854`, `-crf 32`).
 
 ## Sonido e inmersión
 Idea tomada de [unseen.co](https://unseen.co/): el sitio suena, y entrar a una obra es sumergirse.
@@ -300,7 +338,8 @@ El velo existe porque el texto directo sobre el fluido daba un contraste de 1,7:
 ## Reel y videos: cuidado con los créditos
 El ancho de banda es lo que agotó los créditos en octubre de 2026 (20 créditos por GB).
 - **Reel del estudio** (21 MB; 7,5 MB la versión vertical): en modo **clic** (`site.json →
-  reelAutoplayOnView: false`). Se ve el póster y el video se descarga recién al reproducir. En escritorio
+  reelAutoplayOnView: false`). Hoy vive en la portada: es lo que abre "Ver con sonido" en la parada del
+  reel, y el bloque con póster de la página sin 3D. Se ve el póster y el video se descarga recién al reproducir. En escritorio
   abre a pantalla completa con sonido; en el teléfono se reproduce en su lugar y nunca pide la versión
   de escritorio. Antes arrancaba solo al acercarse, pero estaba dos pantallas más abajo; ahora es el
   segundo bloque y con ese criterio lo bajaría casi toda visita (~0,4 créditos cada una).
@@ -308,7 +347,9 @@ El ancho de banda es lo que agotó los créditos en octubre de 2026 (20 crédito
   pantalla y se pausan al salir.
 - **Vista previa del índice**: carga el reel de la obra al pasar el mouse (sólo escritorio).
 - `#sc-trailer` en soul-charger.html: carga diferida como antes.
-- **No poner `autoplay`** en videos de más de un par de MB.
+- **No poner `autoplay`** en videos de más de un par de MB. Única excepción, pedida por Vicente: el reel
+  flotante de la portada, con una versión liviana de 3,6 MB que se pide recién al llegar a su parada
+  (ver "El reel flotante").
 - Compresión de videos de sección: H.264 `-crf 27 -preset slow`, AAC 128k si tienen audio, `+faststart`.
 
 ## Convención de assets de proyecto (Studio Projects / Commisions)
@@ -404,6 +445,36 @@ desactiva. **No** cambiar nameservers a Cloudflare.
 El fluid sim sigue corriendo con auto-emitters en mobile. Los usuarios de Android no pueden tocar el fondo para emitir fluidos (correcto — el dedo es para el scroll).
 
 ## Historial de sesiones (última al tope)
+
+### 2026-11-18 — El mundo 3D pasa a ser la portada, con el reel flotando (Vicente)
+
+Vicente vio el mundo ("funciona bastante bien todo") y pidió siete ajustes. Todos hechos:
+
+- **El mundo 3D es la portada única** (`index.html`): se eliminó `inner-world.html` y el botón "Mundo 3D"
+  de la barra de revisión. El landing de bloques quedó en reserva en el generador (`world.enabled: false`).
+  La portada conserva título, descripción, Open Graph y datos estructurados, y ya no lleva `noindex`.
+- **Reel flotante en reproducción automática** después de la ameba del estudio (era "el cambio principal").
+  Ver "El reel flotante": versión liviana de 3,6 MB que se pide al llegar a su parada.
+- **Paso a las obras**: un tramo propio con tres anillos de luz que se atraviesan y el título "Selected
+  works / Obras seleccionadas" en el centro.
+- **Amebas sin fotos**: arte con la paleta de cada obra. La transición líquida arranca con esos colores
+  y la portada aparece adentro.
+- **Entrada**: se quitó "Immersive wellness art studio" y va el logo debajo del título. Interpretación
+  mía: "el logo" es el lockup `alma ◎ digital`, recortado de `Texto Logo 2.webp` (a confirmar).
+- **"Selected works" en vez de "19 works"**: en el cierre del recorrido y en el contador del índice de obras.
+- **"Who we have worked with"** pasó a Studio, después del texto "about".
+
+**Verificado en Chrome**: la entrada en los dos idiomas, las ocho paradas y el cierre en capturas; el
+reel flotante reproduciéndose (y en pausa al alejarse), el clic que abre el reel completo con sonido y
+Escape que lo cierra y reanuda el flotante; el paso con los anillos y el título; la transición líquida
+en cámara lenta; entrar a una obra y "atrás" al mismo punto; el logo, que vuelve a la entrada; Studio
+con las franjas; el contador del índice con y sin filtros; la página sin 3D. Consola sin errores. En
+emulación 375×812: entrada, estudio, reel vertical, paso, una obra y cierre, sin desbordes. Paquete:
+45 páginas, 1.437 referencias, ninguna rota.
+**Sin ver**: el movimiento continuo (sólo cuadros sueltos), teléfonos reales, Safari y Firefox, y el
+reel flotante en un iPhone (ahí la reproducción automática depende de `muted` + `playsinline`).
+**Para decidir entre los socios**: el costo del reel automático (0,07 créditos por visita que llega) y
+si el landing de bloques se borra del todo.
 
 ### 2026-11-18 — El mundo interior: ameba del estudio, amebas repartidas y fin del caché viejo (Vicente)
 

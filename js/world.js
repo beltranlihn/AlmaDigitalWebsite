@@ -1,44 +1,51 @@
 /* ═══════════════════════════════════════════════════════════════════════════
-   Alma Digital — el mundo interior (PÁGINA DE PRUEBA: inner-world.html)
+   Alma Digital — el mundo interior (la portada: index.html)
 
-   Un recorrido en 3D por las obras principales. Idea tomada de
-   mirages.nrly.fun (Nathan Riley, Unseen Studio), llevada a la marca:
+   Un recorrido en 3D. Idea tomada de mirages.nrly.fun (Nathan Riley, Unseen
+   Studio), llevada a la marca:
 
-     · la primera pantalla es sólo el título; se entra por una ameba grande,
-       la del logo, que es la puerta;
+     · la primera pantalla es sólo el título y el logo; se entra por una ameba
+       grande, que es la puerta;
      · adentro, la primera parada es la ameba del estudio, con su descripción;
-       después vienen las obras y al final un cierre (todas las obras, el
-       estudio, contacto);
+     · la segunda es el reel: una pantalla que flota y se reproduce sola, en
+       silencio (una versión liviana; "Ver con sonido" abre el reel completo);
+     · después, el paso a las obras: la cámara atraviesa tres anillos de luz,
+       como los del icono, mientras aparece "Obras seleccionadas";
+     · una ameba por obra, y al final un cierre (las obras, el estudio, contacto);
      · las amebas están repartidas en el espacio: a distinta altura, a un lado
        u otro, más cerca o más lejos, y la cámara gira hacia cada una. Al
        avanzar sube, baja, se corre, gira y se ladea;
-     · adentro está oscuro y cada obra flota dentro de una ameba de vidrio que
-       deforma su portada como una gota;
+     · adentro está oscuro. Las amebas son de vidrio y llevan adentro un arte
+       hecho con los colores de su obra, que se mezclan como tinta en agua
+       (no llevan fotos: deformadas por la gota se veían poco profesionales);
      · el fondo sigue siendo el fluido del sitio, teñido de violeta profundo:
        sus remolinos son el "líquido" de este mundo y responden al cursor;
      · hay polvo en suspensión y tres corrientes de partículas que giran
        alrededor del camino;
-     · cada obra tiene su enjambre: suelto mientras se pasa, y al detenerse
+     · cada ameba tiene su enjambre: suelto mientras se pasa, y al detenerse
        frente a ella se ordena en una forma propia (anillos, madeja, domo…);
      · al avanzar, unos hilos de luz se adelantan y dos luces con cola van
        por delante, como guías;
      · se avanza con el scroll NORMAL de la página (no se secuestra la rueda):
        la sección es alta y el escenario queda fijo mientras se la recorre;
-     · un clic en una ameba (o en "Entrar a la obra") la derrama como un
-       líquido hasta cubrir la pantalla, y ese líquido se asienta en la
-       cabecera de la ficha, que se abre a continuación.
+     · un clic en la ameba de una obra (o en "Entrar a la obra") la derrama
+       como un líquido hasta cubrir la pantalla; en ese líquido aparece la
+       portada, que se asienta en la cabecera de la ficha, y la ficha se abre.
 
-   Sin esto la página igual sirve: js/app.js deja la lista de obras a la vista
-   si Three.js o WebGL no arrancan, y sin JavaScript queda esa misma lista.
+   Sin esto la página igual sirve: js/app.js deja a la vista el título, el reel
+   con su póster y la lista de obras si Three.js o WebGL no arrancan, y sin
+   JavaScript queda eso mismo.
 
    Three.js llega del CDN (el mismo archivo que usa js/particles.js, así que
-   el navegador lo descarga una sola vez). Las portadas se piden de a una, a
-   medida que uno se acerca. Cuida los recursos como la ameba: resolución
-   limitada, pausa fuera de pantalla o con la pestaña oculta. Con "reducir
-   movimiento" las amebas no ondulan y la cámara no tiene inercia.
+   el navegador lo descarga una sola vez). Cuida los recursos como la ameba:
+   resolución limitada, pausa fuera de pantalla o con la pestaña oculta; el
+   video del reel se pide recién al acercarse a su parada. Con "reducir
+   movimiento" las amebas no ondulan, la cámara no tiene inercia y el reel
+   queda en su póster.
 
    mount(section, opts) → { dispose() } o null.
-   opts: { navigate(href), sound (window.AlmaSound o nada), reduce, coarse }
+   opts: { navigate(href), sound (window.AlmaSound o nada), reduce, coarse,
+           reelFull() → abre el reel completo con sonido; true si lo abrió }
    ═══════════════════════════════════════════════════════════════════════ */
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.187.0/+esm';
 
@@ -76,13 +83,12 @@ const VERT = `
     vP = mv.xyz;
     gl_Position = projectionMatrix * mv;
   }`;
-/* Vidrio: la portada se ve adentro como a través de una gota (la normal hace
-   de lente), con borde claro, un reflejo curvo arriba y algo de iridiscencia.
-   Sin portada es una ameba luminosa, como la del logo. */
+/* Vidrio: borde claro, un reflejo curvo arriba y algo de iridiscencia. Las
+   amebas del recorrido (uArt = 1) llevan adentro un arte con los colores de su
+   obra; las demás son luminosas, como la del logo. */
 const FRAG = `
-  uniform sampler2D uMap;
-  uniform float uHasMap, uOpacity, uTime, uSeed, uFocus, uGlow, uSolid;
-  uniform vec3 uA, uB, uC;
+  uniform float uArt, uOpacity, uTime, uSeed, uFocus, uGlow, uSolid;
+  uniform vec3 uA, uB, uC, uP0, uP1, uP2, uP3, uStage;
   uniform vec2 uLook;
   varying vec3 vN; varying vec3 vP;
   void main() {
@@ -95,11 +101,23 @@ const FRAG = `
     vec3 glow = mix(uA, uB, clamp(g, 0.0, 1.0));
     glow = mix(glow, uC, smoothstep(0.25, 0.95, ndv) * 0.3);
 
-    /* La portada se corre un poco con el cursor, como al mirar dentro de una bola de cristal. */
-    vec3 img = texture2D(uMap, 0.5 + d * 0.5 * (0.74 + 0.26 * r * r) + uLook * (1.0 - r * r)).rgb;
-    img *= mix(1.0, 0.6, smoothstep(0.55, 1.0, r));
-    img *= 0.72 + 0.28 * uFocus;
-    vec3 col = mix(glow, img, uHasMap);
+    /* El arte de adentro: los colores de la obra mezclándose despacio, como tinta
+       en agua. La normal hace de lente (el dibujo se curva con la gota) y todo se
+       corre un poco con el cursor, como al mirar dentro de una bola de cristal.
+       Hacia el borde se hunde en el color de fondo de la obra. */
+    vec2 uv = d * (0.74 + 0.26 * r * r) * 1.5 + uLook * 3.0 * (1.0 - r * r);
+    float t = uTime * 0.16 + uSeed * 3.0;
+    vec2 w = uv + 0.60 * vec2(sin(uv.y * 2.1 + t * 1.3 + uSeed), cos(uv.x * 1.9 - t * 1.1));
+    w += 0.32 * vec2(sin(w.y * 3.7 - t * 0.9 + uSeed * 2.0), cos(w.x * 3.3 + t * 0.7));
+    float f1 = 0.5 + 0.5 * sin(w.x * 2.1 + w.y * 1.3 + t);
+    float f2 = 0.5 + 0.5 * sin(w.y * 2.7 - w.x * 1.5 - t * 0.8 + 2.0);
+    float f3 = 0.5 + 0.5 * sin(length(w + vec2(0.3, -0.2)) * 4.2 - t * 1.4);
+    vec3 art = mix(uP0, uP1, smoothstep(0.2, 0.8, f1));
+    art = mix(art, uP2, smoothstep(0.35, 0.95, f2) * 0.85);
+    art = mix(art, uP3, smoothstep(0.72, 1.0, f3) * 0.6);
+    art = mix(art, uStage, smoothstep(0.3, 1.05, r) * 0.7);
+    art *= 0.8 + 0.2 * uFocus;
+    vec3 col = mix(glow, art, uArt);
 
     /* Película líquida: bandas de color que se arrastran por la superficie, como en una pompa de jabón. */
     float film = 0.5 + 0.5 * sin(d.x * 5.0 + sin(d.y * 6.0 + uTime * 0.45 + uSeed) * 1.6 + uTime * 0.3);
@@ -107,21 +125,47 @@ const FRAG = `
     col = mix(col, vec3(0.93, 0.86, 1.0), fres * 0.55);
     col += irid * (fres * 0.22 + film * smoothstep(0.35, 1.0, r) * 0.1);
     vec3 L1 = normalize(vec3(-0.55, 0.75, 0.6)), L2 = normalize(vec3(0.7, -0.35, 0.5));
-    col += smoothstep(0.62, 0.97, dot(N, L1)) * mix(0.09, 0.22, uHasMap);
-    col += pow(max(dot(N, normalize(L1 + V)), 0.0), 260.0) * mix(0.3, 0.7, uHasMap);
-    col += pow(max(dot(N, normalize(L2 + V)), 0.0), 60.0) * mix(0.08, 0.22, uHasMap);
+    col += smoothstep(0.62, 0.97, dot(N, L1)) * mix(0.09, 0.16, uArt);
+    col += pow(max(dot(N, normalize(L1 + V)), 0.0), 260.0) * mix(0.3, 0.7, uArt);
+    col += pow(max(dot(N, normalize(L2 + V)), 0.0), 60.0) * mix(0.08, 0.2, uArt);
     col += uGlow * vec3(0.55, 0.42, 1.0) * (0.12 + 0.5 * fres);
 
     float soft = mix(0.34, 0.95, fres);
-    float a = mix(mix(soft, 0.94, uSolid), 0.98, uHasMap);
+    float a = mix(mix(soft, 0.94, uSolid), 0.98, uArt);
     gl_FragColor = vec4(col, a * uOpacity);
+  }`;
+
+/* ── El reel: una pantalla que flota ───────────────────────────────────
+   Un plano con el video (antes, su póster), de puntas redondas, con filo de
+   vidrio y un resplandor violeta alrededor que respira. El plano es más grande
+   que el video (uPad) para tener dónde dibujar el resplandor. */
+const REEL_VERT = `
+  varying vec2 vUv;
+  void main() { vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }`;
+const REEL_FRAG = `
+  uniform sampler2D uMap;
+  uniform float uOpacity, uAspect, uHas, uTime, uPad;
+  varying vec2 vUv;
+  void main() {
+    vec2 p = (vUv - 0.5) * (1.0 + 2.0 * uPad);              // de -0,5 a 0,5 es el video
+    vec2 s = vec2(uAspect, 1.0);                            // en altos del video
+    float rad = 0.04 * min(uAspect, 1.0) + 0.012;
+    vec2 qd = abs(p) * s - (s * 0.5 - rad);
+    float d = length(max(qd, 0.0)) + min(max(qd.x, qd.y), 0.0) - rad;   // distancia al borde redondeado
+    float inside = smoothstep(0.004, -0.004, d);
+    vec3 idle = mix(vec3(0.10, 0.07, 0.24), vec3(0.21, 0.14, 0.44), p.y + 0.5);
+    vec3 col = mix(idle, texture2D(uMap, p + 0.5).rgb, uHas);
+    col += vec3(0.93, 0.86, 1.0) * smoothstep(0.011, 0.0, abs(d)) * 0.4;   // filo de vidrio
+    float reach = uPad * min(uAspect, 1.0);
+    float halo = exp(-max(d, 0.0) * 11.0) * 0.42 * smoothstep(reach, reach * 0.3, d) * (0.85 + 0.15 * sin(uTime * 1.0472));
+    gl_FragColor = vec4(mix(vec3(0.58, 0.44, 1.0), col, inside), max(inside, halo) * uOpacity);
   }`;
 
 /* Partículas: polvo que deriva y titila, y corrientes (aFlow) que giran
    alrededor del camino. El cursor las aparta y crecen cuando se avanza rápido. */
 const DUST_VERT = `
   attribute float aSize, aSeed, aTint, aFlow;
-  uniform float uPx, uTime, uBoost, uPush;
+  uniform float uPx, uTime, uBoost, uPush, uDrift;
   uniform vec2 uMouse;
   varying float vFade; varying float vTint;
   void main() {
@@ -131,8 +175,8 @@ const DUST_VERT = `
       p.xy = vec2(p.x * c - p.y * s, p.x * s + p.y * c);
       p.y *= 0.62;
     }
-    p.x += sin(uTime * 0.21 + aSeed * 6.3) * 0.3;
-    p.y += cos(uTime * 0.17 + aSeed * 9.1) * 0.26;
+    p.x += sin(uTime * 0.21 + aSeed * 6.3) * 0.3 * uDrift;
+    p.y += cos(uTime * 0.17 + aSeed * 9.1) * 0.26 * uDrift;
     vec4 mv = modelViewMatrix * vec4(p, 1.0);
     vec4 clip = projectionMatrix * mv;
     vec2 ndc = clip.xy / clip.w, d = ndc - uMouse;
@@ -334,8 +378,8 @@ const WISP_FRAG = `
 
 /* ── El derrame ────────────────────────────────────────────────────────
    Al entrar a una obra, su ameba se vuelve líquido: una mancha que crece desde
-   donde estaba hasta cubrir la pantalla, con el borde ondulando. Adentro, la
-   portada pasa de verse como a través de la gota a verse plana, y al final se
+   donde estaba hasta cubrir la pantalla, con el borde ondulando. Arranca con
+   los colores de la ameba; adentro va apareciendo la portada, y al final se
    acomoda en el encuadre y el degradado que tiene la cabecera de la ficha
    (css: .phero), así el cambio de página casi no se nota. Es un plano a
    pantalla completa, dibujado encima de todo.
@@ -345,8 +389,9 @@ const LIQ_VERT = `
   void main() { vUv = position.xy * 0.5 + 0.5; gl_Position = vec4(position.xy, 0.0, 1.0); }`;
 const LIQ_FRAG = `
   uniform sampler2D uFull;
-  uniform float uT, uTime, uAspect, uR0, uRMax, uHero, uImg, uSeed, uFade;
+  uniform float uT, uTime, uAspect, uR0, uRMax, uHero, uImg, uSeed, uFade, uHasImg;
   uniform vec2 uCenter;
+  uniform vec3 uP0, uP1, uP2;
   varying vec2 vUv;
   /* uv dentro de una caja con ese aspecto → uv de la imagen, como object-fit: cover. */
   vec2 coverUV(vec2 uv, float boxAspect) {
@@ -368,17 +413,17 @@ const LIQ_FRAG = `
     float band = smoothstep(-0.16 - 0.1 * grow, 0.0, edge);     // 0 adentro → 1 en el frente del líquido
     vec2 dir = p / max(d, 1e-4);
 
-    /* Un solo muestreo cuyo encuadre va cambiando (mezclar dos imágenes se veía doble):
-       como en la gota → portada a pantalla completa → encuadre de la cabecera de la ficha. */
-    vec2 q = p / max(R, 1e-4); float rr = min(length(q), 1.0);
-    vec2 lens = 0.5 + q * 0.5 * (0.74 + 0.26 * rr * rr);         // la gota mostraba el cuadrado del centro
-    vec2 dropUV = vec2(0.5 + (lens.x - 0.5) / uImg, lens.y);
+    /* La portada: a pantalla completa → encuadre de la cabecera de la ficha (un solo
+       muestreo cuyo encuadre va cambiando: mezclar dos imágenes se veía doble). */
     vec2 bend = dir * band * band * 0.05 * (1.0 - settle);       // el frente dobla la imagen
     vec2 fullUV = coverUV(vUv - bend, uAspect);
     vec2 box = vec2(vUv.x, (vUv.y - (1.0 - uHero)) / uHero);     // la cabecera de la ficha: la franja de arriba
     vec2 heroUV = coverUV(box, uAspect / uHero);
-    vec2 uv = mix(mix(dropUV, fullUV, smoothstep(0.0, 0.55, uT)), heroUV, settle);
-    vec3 col = texture2D(uFull, uv).rgb;
+    vec3 img = texture2D(uFull, mix(fullUV, heroUV, settle)).rgb;
+    /* El líquido arranca con los colores de la ameba y la portada va apareciendo adentro. */
+    float sw = 0.5 + 0.5 * sin(ang * 2.0 + d * 5.0 - uTime * 1.3 + uSeed);
+    vec3 ink = mix(mix(uP0, uP1, sw), uP2, smoothstep(0.2, 1.0, band) * 0.6);
+    vec3 col = mix(ink, img, smoothstep(0.08, 0.5, uT) * uHasImg);
 
     col = mix(col, vec3(0.93, 0.86, 1.0), pow(band, 5.0) * 0.45 * (1.0 - settle));
     vec3 irid = 0.5 + 0.5 * cos(6.2832 * (band * 0.9 + vec3(0.02, 0.36, 0.62)) + uSeed);
@@ -401,7 +446,14 @@ export function mount(section, opts) {
   if (!stage || !host || !links.length) return null;
   const hudCount = q('[data-w-count]'), hudTitle = q('[data-w-title]'), hudFmt = q('[data-w-fmt]'), hudOpen = q('a[data-w-open]');
   const n = links.length;
-  const hudDesc = q('[data-w-desc]'), hudCta = q('[data-w-cta]');
+  const hudDesc = q('[data-w-desc]'), hudCta = q('[data-w-cta]'), chapter = q('[data-w-chapter]');
+  /* Tramos del recorrido: uno entre cada par de paradas y uno más antes de la
+     primera obra, que es el paso a "Obras seleccionadas". */
+  const kinds = links.map((a) => a.getAttribute('data-kind') || 'work');
+  const FIRST = kinds.indexOf('work');
+  const slot = (i) => i + (FIRST > 0 && i >= FIRST ? 1 : 0);
+  const SLOTS = slot(n - 1);
+  const ZFAR = -(15 + SLOTS * 10 + 40);            // hasta dónde llega el mundo
 
   const canvas = document.createElement('canvas');
   host.appendChild(canvas);
@@ -423,13 +475,17 @@ export function mount(section, opts) {
   blank.needsUpdate = true;
   const disposables = [geoBig, geoSmall, blank];
   function ameba(geo, o) {
+    /* Con paleta (o.pal) lleva el arte de la obra adentro; sin ella es una ameba luminosa. */
+    const pal = o.pal || [C.violet, C.lilac, C.pink, C.mist];
+    const P = (k) => ({ value: new THREE.Vector3(...pal[Math.min(k, pal.length - 1)]) });
     const mat = new THREE.ShaderMaterial({
       vertexShader: VERT, fragmentShader: FRAG, transparent: true,
       uniforms: {
         uTime: { value: 0 }, uSeed: { value: o.seed }, uWobble: { value: o.wobble },
-        uMap: { value: blank }, uHasMap: { value: 0 }, uOpacity: { value: 0 }, uFocus: { value: 0 },
+        uArt: { value: o.pal ? 1 : 0 }, uOpacity: { value: 0 }, uFocus: { value: 0 },
         uGlow: { value: 0 }, uSolid: { value: o.solid || 0 }, uLook: { value: new THREE.Vector2() },
         uA: { value: new THREE.Vector3(...o.a) }, uB: { value: new THREE.Vector3(...o.b) }, uC: { value: new THREE.Vector3(...o.c) },
+        uP0: P(0), uP1: P(1), uP2: P(2), uP3: P(3), uStage: { value: new THREE.Vector3(...(o.stage || [0.10, 0.07, 0.24])) },
       },
     });
     disposables.push(mat);
@@ -438,40 +494,65 @@ export function mount(section, opts) {
     scene.add(mesh);
     return { mesh, u: mat.uniforms, r: 1, base: new THREE.Vector3(), drift: o.drift || 0, seed: o.seed, far: o.far || 30, wob: o.wobble, hov: 0 };
   }
+  /* El reel: un plano con el video. Se orienta y se mide en layout(). */
+  const PAD = 0.2;                     // margen del plano alrededor del video, para el resplandor
+  function screen(a) {
+    const geo = new THREE.PlaneGeometry(1, 1);
+    const mat = new THREE.ShaderMaterial({
+      vertexShader: REEL_VERT, fragmentShader: REEL_FRAG, transparent: true, depthWrite: false,
+      uniforms: { uMap: { value: blank }, uOpacity: { value: 0 }, uAspect: { value: 16 / 9 }, uHas: { value: 0 }, uTime: { value: 0 }, uPad: { value: PAD } },
+    });
+    disposables.push(geo, mat);
+    const mesh = new THREE.Mesh(geo, mat);
+    mesh.frustumCulled = false; mesh.renderOrder = 2; mesh.visible = false;
+    scene.add(mesh);
+    return {
+      mesh, u: mat.uniforms, base: new THREE.Vector3(), quat: new THREE.Quaternion(), r: 1, seed: 0.7, hov: 0,
+      src: a.getAttribute('data-video'), srcMobile: a.getAttribute('data-video-mobile'),
+      poster: a.getAttribute('data-poster'), posterMobile: a.getAttribute('data-poster-mobile'),
+      video: null, playing: false, vertical: false, w: 1, h: 1, has: 0, hasTo: 0, away: false,   // away: el reel completo está abierto encima
+    };
+  }
+  const hex = (c) => { const h = c.trim().replace('#', ''); return [0, 2, 4].map((k) => parseInt(h.substr(k, 2), 16) / 255); };
   const door = ameba(geoBig, { seed: 1.7, wobble: 1, solid: 1, a: C.violet, b: C.pink, c: C.mist });
   const core = ameba(geoBig, { seed: 4.2, wobble: 1, solid: 1, a: C.purple, b: C.lilac, c: C.mist, far: 44 });
+  /* Las paradas, en el orden del HTML: la ameba del estudio, el reel y una ameba por obra. */
   const works = links.map((a, i) => {
-    const w = ameba(geoBig, { seed: 2.3 + i * 1.9, wobble: 0.55, a: C.violet, b: C.blue, c: C.lilac });
-    w.href = a.href; w.cover = a.getAttribute('data-cover');
+    const list = (a.getAttribute('data-colors') || '').split(',').filter(Boolean);
+    const pal = (list.length ? list : ['#c99ef9', '#f2b8dd', '#8fb0ff', '#ffffff']).map(hex);
+    const stage = a.getAttribute('data-stage');
+    const w = kinds[i] === 'reel' ? screen(a)
+      : ameba(geoBig, { seed: 2.3 + i * 1.9, wobble: 0.55, a: C.violet, b: C.blue, c: C.lilac, pal, stage: stage ? hex(stage) : null });
+    w.kind = kinds[i];                                     // 'studio', 'reel' o 'work'
+    w.pal = pal; w.href = a.href; w.cover = a.getAttribute('data-cover') || '';
     w.title = a.getAttribute('data-title') || ''; w.format = a.getAttribute('data-format') || '';
-    w.kind = a.getAttribute('data-kind') || 'work';        // 'studio': la ameba del estudio, que abre la parada
     w.desc = a.getAttribute('data-desc') || ''; w.cta = a.getAttribute('data-cta') || '';
-    w.asked = false; w.mix = 0; w.mixTo = 0;
+    w.asked = false;
     return w;
   });
-  const NW = works.filter((x) => x.kind !== 'studio').length;      // obras de verdad, sin la ameba del estudio
+  const NW = works.filter((x) => x.kind === 'work').length;        // obras de verdad
   const palette = [[C.violet, C.pink, C.mist], [C.blue, C.lilac, C.mist], [C.purple, C.pink, C.lilac], [C.blue, C.violet, C.pink]];
   const extras = [];
   for (let i = 0; i < (coarse ? 12 : 30); i++) {
     const p = palette[i % palette.length];
     const e = ameba(geoSmall, { seed: rnd(0, 20), wobble: 1.15, a: p[0], b: p[1], c: p[2], drift: rnd(0.15, 0.5) });
     const side = i % 2 ? 1 : -1;
-    e.base.set(side * rnd(2.8, 6.6), rnd(-3.6, 3.6), rnd(-6, -96));
+    e.base.set(side * rnd(2.8, 6.6), rnd(-3.6, 3.6), rnd(-6, ZFAR + 12));
     e.r = i % 3 ? rnd(0.08, 0.3) : rnd(0.3, 0.85);       // muchas chicas, unas pocas grandes
     extras.push(e);
   }
 
   /* ── Polvo en suspensión: da la sensación de avanzar ────────────────── */
-  const LOOSE = coarse ? 800 : 2200, FLOW = coarse ? 800 : 2400, DN = LOOSE + FLOW;
+  const LOOSE = coarse ? 800 : 2600, FLOW = coarse ? 800 : 2900, DN = LOOSE + FLOW;
   const dPos = new Float32Array(DN * 3), dSize = new Float32Array(DN), dSeed = new Float32Array(DN);
   const dTint = new Float32Array(DN), dFlow = new Float32Array(DN);
   for (let i = 0; i < DN; i++) {
     dSeed[i] = Math.random(); dTint[i] = Math.random();
     if (i < LOOSE) {                   // polvo suelto
-      dPos[i * 3] = rnd(-8, 8); dPos[i * 3 + 1] = rnd(-4.5, 4.5); dPos[i * 3 + 2] = rnd(4, -104);
+      dPos[i * 3] = rnd(-8, 8); dPos[i * 3 + 1] = rnd(-4.5, 4.5); dPos[i * 3 + 2] = rnd(4, ZFAR);
       dSize[i] = Math.random() < 0.07 ? rnd(2.4, 4.4) : rnd(0.7, 1.7);
     } else {                           // tres corrientes en hélice alrededor del camino
-      const k = i % 3, z = rnd(2, -104), a = z * 0.22 + k * 2.094 + rnd(-0.22, 0.22), rad = 3.3 + k * 0.6 + rnd(-0.4, 0.4);
+      const k = i % 3, z = rnd(2, ZFAR), a = z * 0.22 + k * 2.094 + rnd(-0.22, 0.22), rad = 3.3 + k * 0.6 + rnd(-0.4, 0.4);
       dPos[i * 3] = Math.cos(a) * rad; dPos[i * 3 + 1] = Math.sin(a) * rad; dPos[i * 3 + 2] = z;
       dSize[i] = Math.random() < 0.05 ? rnd(2, 3.2) : rnd(0.7, 1.7); dFlow[i] = 1;
       dTint[i] = clamp(k / 2 + rnd(-0.18, 0.18), 0, 1);     // cada corriente tira a un color
@@ -487,7 +568,7 @@ export function mount(section, opts) {
     vertexShader: DUST_VERT, fragmentShader: DUST_FRAG, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending,
     uniforms: {
       uPx: { value: 4 * dpr }, uDeep: { value: 0 }, uTime: { value: 0 }, uBoost: { value: 0 },
-      uPush: { value: 0 }, uMouse: { value: new THREE.Vector2(9, 9) },
+      uPush: { value: 0 }, uMouse: { value: new THREE.Vector2(9, 9) }, uDrift: { value: 1 },
     },
   });
   const dust = new THREE.Points(dGeo, dMat);
@@ -497,11 +578,10 @@ export function mount(section, opts) {
 
   /* ── Enjambre por obra ───────────────────────────────────────────────── */
   const SN = coarse ? 220 : 560;
-  const hex = (c) => { const h = c.trim().replace('#', ''); return [0, 2, 4].map((k) => parseInt(h.substr(k, 2), 16) / 255); };
   links.forEach((a, i) => {
+    if (kinds[i] === 'reel') return;                       // la pantalla del reel no lleva enjambre
     const kind = a.getAttribute('data-form'), make = FORMS[kind] || FORMS.halo, fx = FORM_FX[kind] || FORM_FX.halo;
-    const list = (a.getAttribute('data-colors') || '').split(',').filter(Boolean);
-    const pal = (list.length ? list : ['#c99ef9', '#f2b8dd', '#8fb0ff', '#ffffff']).map(hex);
+    const pal = works[i].pal;
     const free = new Float32Array(SN * 3), tgt = new Float32Array(SN * 3), col = new Float32Array(SN * 3);
     const seed = new Float32Array(SN), size = new Float32Array(SN);
     make(SN, (j, x, y, z) => { tgt[j * 3] = x; tgt[j * 3 + 1] = y; tgt[j * 3 + 2] = z; });
@@ -532,6 +612,42 @@ export function mount(section, opts) {
     disposables.push(g, m);
     works[i].swarm = { points: pts, u: m.uniforms, form: 0 };
   });
+
+  /* ── El paso a las obras: tres anillos de luz, como los del icono ───────
+     Van sobre el camino, entre la última parada del estudio y la primera obra
+     (layout() los ubica): la cámara los atraviesa mientras aparece el título
+     "Obras seleccionadas". Son puntos, con los mismos shaders del polvo. */
+  let gate = null;
+  if (FIRST > 0) {
+    const RINGS = [3.9, 3.0, 2.15], PER = coarse ? 120 : 250, GN = RINGS.length * PER;
+    const gPos = new Float32Array(GN * 3), gSize = new Float32Array(GN), gSeed = new Float32Array(GN), gTint = new Float32Array(GN);
+    for (let k = 0; k < GN; k++) {
+      const ring = (k / PER) | 0, r = RINGS[ring] + rnd(-0.03, 0.03), a = rnd(0, TAU2), cs = Math.cos(a), sn = Math.sin(a);
+      gPos[k * 3] = Math.sign(cs) * Math.sqrt(Math.abs(cs)) * r;            // superelipse: el cuadrado de puntas redondas del icono
+      gPos[k * 3 + 1] = Math.sign(sn) * Math.sqrt(Math.abs(sn)) * r;
+      gPos[k * 3 + 2] = (1 - ring) * 1.7 + rnd(-0.03, 0.03);               // el más grande, adelante
+      gSize[k] = Math.random() < 0.08 ? rnd(2.6, 3.6) : rnd(1.2, 2.2);
+      gSeed[k] = Math.random(); gTint[k] = clamp(ring / 2 + rnd(-0.12, 0.12), 0, 1);
+    }
+    const gGeo = new THREE.BufferGeometry();
+    gGeo.setAttribute('position', new THREE.BufferAttribute(gPos, 3));
+    gGeo.setAttribute('aSize', new THREE.BufferAttribute(gSize, 1));
+    gGeo.setAttribute('aSeed', new THREE.BufferAttribute(gSeed, 1));
+    gGeo.setAttribute('aTint', new THREE.BufferAttribute(gTint, 1));
+    gGeo.setAttribute('aFlow', new THREE.BufferAttribute(new Float32Array(GN), 1));
+    const gMat = new THREE.ShaderMaterial({
+      vertexShader: DUST_VERT, fragmentShader: DUST_FRAG, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending,
+      uniforms: {
+        uPx: { value: 5 * dpr }, uDeep: { value: 0 }, uTime: { value: 0 }, uBoost: { value: 0 },
+        uPush: { value: 0 }, uMouse: { value: new THREE.Vector2(9, 9) }, uDrift: { value: 0.12 },
+      },
+    });
+    const gPts = new THREE.Points(gGeo, gMat);
+    gPts.frustumCulled = false; gPts.renderOrder = 1; gPts.visible = false;
+    scene.add(gPts);
+    disposables.push(gGeo, gMat);
+    gate = { points: gPts, u: gMat.uniforms };
+  }
 
   /* ── Hilos de luz ────────────────────────────────────────────────────── */
   const SK = coarse ? 22 : 52;
@@ -589,7 +705,8 @@ export function mount(section, opts) {
     uniforms: {
       uFull: { value: blank }, uT: { value: 0 }, uTime: { value: 0 }, uAspect: { value: 1 },
       uR0: { value: 0.2 }, uRMax: { value: 2 }, uHero: { value: 0.78 }, uImg: { value: 16 / 9 }, uSeed: { value: 0 },
-      uFade: { value: 0 }, uCenter: { value: new THREE.Vector2(0.5, 0.5) },
+      uFade: { value: 0 }, uCenter: { value: new THREE.Vector2(0.5, 0.5) }, uHasImg: { value: 0 },
+      uP0: { value: new THREE.Vector3() }, uP1: { value: new THREE.Vector3() }, uP2: { value: new THREE.Vector3() },
     },
   });
   const liquid = new THREE.Mesh(liqGeo, liqMat);
@@ -598,11 +715,15 @@ export function mount(section, opts) {
   disposables.push(liqGeo, liqMat);
 
   /* ── Recorrido ──────────────────────────────────────────────────────
-     Tiempos (0…1 del scroll): puerta, una parada por obra, final. Entre dos
-     paradas la cámara acelera y frena, así que se detiene frente a cada obra. */
-  const T_DOOR = 0.07, T_FIRST = 0.17, T_LAST = 0.86;   // puerta · primera parada (el estudio) · última obra
-  const tWork = (i) => (n === 1 ? 0.5 : lerp(T_FIRST, T_LAST, i / (n - 1)));
-  const HALF = n === 1 ? 0.2 : (T_LAST - T_FIRST) / (n - 1) / 2;
+     Tiempos (0…1 del scroll): la puerta, una parada por ameba o pantalla, el
+     final. Entre dos paradas la cámara acelera y frena, así que se detiene
+     frente a cada una. Los tiempos salen de cuántas pantallas mide la sección
+     (css: .world), para que cada tramo ocupe siempre casi una pantalla. */
+  const SCREENS = Math.max(3, section.offsetHeight / Math.max(1, stage.clientHeight) - 1);
+  const T_FIRST = clamp(1.4 / SCREENS, 0.05, 0.3), T_LAST = 1 - clamp(1.15 / SCREENS, 0.04, 0.3), T_DOOR = T_FIRST * 0.41;
+  const tWork = (i) => (SLOTS === 0 ? 0.5 : lerp(T_FIRST, T_LAST, slot(i) / SLOTS));
+  const HALF = SLOTS === 0 ? 0.2 : (T_LAST - T_FIRST) / SLOTS / 2;       // medio tramo
+  const T_CHAP = FIRST > 0 ? (tWork(FIRST - 1) + tWork(FIRST)) / 2 : -1;  // el paso a las obras
   let keys = [];                       // [{ t, pos, look }]
   let formScale = 1;                   // los enjambres se achican en pantallas angostas
   function layout() {
@@ -643,26 +764,47 @@ export function mount(section, opts) {
       { fx: 0.36, fy: -0.18, dist: 1.1 },
     ];
     const HEIGHTS = [0.3, 1.5, -1.3, 0.7, -1.7, 1.6, -0.8];
+    let k = 0;                         // las amebas alternan de lado; la pantalla del reel va al centro y no cuenta
     works.forEach((wk, i) => {
-      const cmp = COMP[i % COMP.length], side = Math.sign(cmp.fx);
-      const cx = Math.sin(i * 1.3 + 0.6) * (wide ? 2.3 : 0.4);
-      const cy = HEIGHTS[i % HEIGHTS.length] * (wide ? 1 : 0.4);
-      const z = -15 - i * 10;
+      const reel = wk.kind === 'reel';
+      const cmp = reel ? { fx: 0, fy: 0.07, dist: 1.1 } : COMP[k % COMP.length], side = Math.sign(cmp.fx);
+      const cx = reel ? 0 : Math.sin(k * 1.3 + 0.6) * (wide ? 2.3 : 0.4);
+      const cy = (reel ? 0.5 : HEIGHTS[k % HEIGHTS.length]) * (wide ? 1 : 0.4);
+      if (!reel) k++;
+      const z = -15 - slot(i) * 10;
       const d = D * (wide ? cmp.dist : 1);
       const P = V(cx, cy, z + d);
       /* Hacia dónde mira: gira hacia el lado de la ameba y cabecea un poco. */
       const yaw = wide ? side * 0.2 : 0, pitch = (cy > 0 ? -1 : 1) * (wide ? 0.07 : 0.03);
       const f = V(Math.sin(yaw) * Math.cos(pitch), Math.sin(pitch), -Math.cos(yaw) * Math.cos(pitch));
       const r = V(0, 0, 0).crossVectors(f, UP).normalize(), u = V(0, 0, 0).crossVectors(r, f);
-      const fx = wide ? cmp.fx : 0, fy = wide ? cmp.fy : 0.3;
+      const fx = wide ? cmp.fx : 0, fy = wide ? cmp.fy : (reel ? 0.16 : 0.3);
       wk.base.copy(P).addScaledVector(f, d).addScaledVector(r, fx * TAN * d * aspect).addScaledVector(u, fy * TAN * d);
-      wk.r = R; wk.side = wide ? side : 0;
+      if (reel) {
+        /* La pantalla: apaisada, o vertical en teléfono (se decide al pedir el video). Ocupa
+           buena parte del cuadro y mira hacia donde se detiene la cámara. */
+        if (!wk.asked) wk.vertical = !wide;
+        const ar = wk.vertical ? 9 / 16 : 16 / 9;
+        let hh = 2 * TAN * d * (wk.vertical ? 0.64 : 0.6), ww = hh * ar;
+        const maxW = 2 * TAN * d * aspect * (wk.vertical ? 0.84 : 0.7);
+        if (ww > maxW) { ww = maxW; hh = ww / ar; }
+        wk.w = ww; wk.h = hh; wk.u.uAspect.value = ar; wk.r = hh * 0.5; wk.side = 0;
+        wk.mesh.position.copy(wk.base); wk.mesh.lookAt(P); wk.quat.copy(wk.mesh.quaternion);
+      } else { wk.r = R; wk.side = wide ? side : 0; }
       keys.push({ t: tWork(i), pos: P, look: P.clone().addScaledVector(f, 10), arc: V(wide ? -side * 0.9 : 0, (i % 2 ? 1 : -1) * (wide ? 1.0 : 0.5), 0) });
     });
-    const zc = -15 - (n - 1) * 10 - 17, cr = wide ? 2.5 : 1.5, dc = wide ? 10.5 : 12;
+    const zc = -15 - SLOTS * 10 - 17, cr = wide ? 2.5 : 1.5, dc = wide ? 10.5 : 12;
     const [cx, cy] = wide ? at(dc, 0.46, 0) : at(dc, 0, 0.4);
     core.base.set(cx, cy, zc); core.r = cr;
     keys.push({ t: 1, pos: V(0, 0, zc + dc), look: V(0, 0, zc) });
+    /* Los anillos del paso van sobre el camino, de frente a quien llega. */
+    if (gate) {
+      path(T_CHAP, tA, tB); path(T_CHAP - 0.004, tR, tB); path(T_CHAP + 0.004, tU, tB);
+      tmp.copy(tR).sub(tU).normalize();
+      gate.points.position.copy(tA);
+      gate.points.lookAt(tA.x + tmp.x, tA.y + tmp.y, tA.z + tmp.z);
+      gate.points.scale.setScalar(wide ? 1 : clamp(aspect * 1.25, 0.5, 1));
+    }
     if (still) draw(0);
   }
   const camPos = new THREE.Vector3(), camLook = new THREE.Vector3();
@@ -676,24 +818,83 @@ export function mount(section, opts) {
     if (b.arc) P.addScaledVector(b.arc, Math.sin(Math.PI * u));
   }
 
-  /* ── Portadas: se piden cuando uno se acerca ────────────────────────── */
-  const SIZE = coarse ? 512 : 1024;
+  /* ── Portadas: sólo para el derrame, y se piden al detenerse frente a la obra ── */
   function ask(wk) {
     wk.asked = true;
+    if (!wk.cover) return;
     const img = new Image();
     img.decoding = 'async';
-    img.onload = function () {
-      if (disposed) return;
-      const cv = document.createElement('canvas'); cv.width = cv.height = SIZE;
-      const s = Math.min(img.naturalWidth, img.naturalHeight);      // recorte cuadrado del centro
-      cv.getContext('2d').drawImage(img, (img.naturalWidth - s) / 2, (img.naturalHeight - s) / 2, s, s, 0, 0, SIZE, SIZE);
-      const tex = new THREE.CanvasTexture(cv);
-      tex.anisotropy = 4;
-      disposables.push(tex);
-      wk.u.uMap.value = tex; wk.mixTo = 1; wk.img = img;
-      if (still) draw(0);
-    };
+    img.onload = function () { if (!disposed) wk.img = img; };
     img.src = wk.cover;
+  }
+  /* ── El reel: primero el póster y después el video ────────────────────
+     Se pide recién al acercarse a su parada. El video es una versión liviana y
+     sin audio (site.json → world.reel), en silencio y en bucle; con "reducir
+     movimiento" no se pide y queda el póster. */
+  function askReel(wk) {
+    wk.asked = true;
+    const poster = wk.vertical ? (wk.posterMobile || wk.poster) : wk.poster;
+    if (poster) {
+      const img = new Image();
+      img.decoding = 'async';
+      img.onload = function () {
+        if (disposed || wk.playing) return;
+        const tex = new THREE.Texture(img);
+        tex.minFilter = THREE.LinearFilter; tex.generateMipmaps = false; tex.needsUpdate = true;
+        disposables.push(tex);
+        wk.u.uMap.value = tex; wk.hasTo = 1;
+        if (still) draw(0);
+      };
+      img.src = poster;
+    }
+    const src = wk.vertical ? (wk.srcMobile || wk.src) : wk.src;
+    if (still || !src) return;
+    const v = document.createElement('video');
+    v.muted = true; v.defaultMuted = true; v.loop = true; v.playsInline = true; v.preload = 'auto';
+    v.setAttribute('muted', ''); v.setAttribute('playsinline', ''); v.setAttribute('aria-hidden', 'true');
+    v.tabIndex = -1; v.className = 'world__reelvid';
+    v.src = src;
+    host.appendChild(v);
+    v.addEventListener('playing', function () {
+      if (disposed || wk.playing) return;
+      const tex = new THREE.VideoTexture(v);
+      tex.minFilter = tex.magFilter = THREE.LinearFilter; tex.generateMipmaps = false;
+      disposables.push(tex);
+      wk.u.uMap.value = tex; wk.hasTo = 1; wk.playing = true;
+    }, sig);
+    wk.video = v;
+  }
+  /* La pantalla del reel, cuadro a cuadro: aparece al llegar, flota, y se
+     deshace cuando la cámara avanza hacia ella. */
+  function reelFrame(wk, i, tw, deep) {
+    if (!wk.asked && Math.abs(p - tw) < HALF * 2.4 && Math.abs(ps - tw) < HALF * 2.4) askReel(wk);
+    wk.has += (wk.hasTo - wk.has) * (still ? 1 : 0.08);
+    wk.hov += ((hover === i ? 1 : 0) - wk.hov) * 0.12;
+    const o = smooth(tw - HALF * 1.74, tw - HALF * 0.7, ps) * (1 - smooth(tw + HALF * 0.4, tw + HALF * 0.95, ps)) *
+      deep * (entering ? 1 - smooth(0, 0.4, entering.t) : 1);
+    const m = wk.mesh, u = wk.u;
+    u.uOpacity.value = o; u.uHas.value = wk.has; u.uTime.value = still ? 0 : time;
+    m.visible = o > 0.01;
+    if (m.visible) {
+      m.position.copy(wk.base); m.quaternion.copy(wk.quat);
+      if (!still) {
+        m.position.y += Math.sin(time * TAU / 6) * 0.05;                     // sube y baja con la respiración de 6 s
+        m.rotateY(mouse.sx * 0.1 + Math.sin(time * 0.37) * 0.035);          // y se inclina hacia el cursor
+        m.rotateX(-mouse.sy * 0.07 + Math.sin(time * 0.29 + 1.0) * 0.02);
+      }
+      const k = (1 + 2 * PAD) * (1 + 0.02 * wk.hov);
+      m.scale.set(wk.w * k, wk.h * k, 1);
+    }
+    /* Se reproduce sólo mientras se está frente a él, y nunca detrás del reel a pantalla completa. */
+    if (wk.video) {
+      if (wk.away && !document.querySelector('.rf.is-open')) wk.away = false;
+      const want = o > 0.2 && !wk.away && visible && !document.hidden;
+      if (want && wk.video.paused) { const pr = wk.video.play(); if (pr && pr.catch) pr.catch(function () {}); }
+      else if (!want && !wk.video.paused) wk.video.pause();
+    }
+  }
+  function hush() {                    // fuera de pantalla o con la pestaña oculta, el reel no sigue corriendo
+    works.forEach((wk) => { if (wk.video && !wk.video.paused) wk.video.pause(); });
   }
 
   /* ── El fluido del sitio como líquido del mundo ───────────────────────
@@ -741,16 +942,20 @@ export function mount(section, opts) {
     if (i === shown) return;
     shown = i;
     if (i >= 0) {
-      const wk = works[i];
-      const isStudio = wk.kind === 'studio';
-      /* La ameba del estudio no lleva número ni formato: lleva su descripción. */
-      if (hudCount) hudCount.textContent = isStudio ? wk.format : String(works.slice(0, i + 1).filter((x) => x.kind !== 'studio').length).padStart(2, '0') + ' / ' + String(NW).padStart(2, '0');
+      const wk = works[i], isWork = wk.kind === 'work';
+      /* Las obras llevan su número; el estudio, su descripción; el reel, sólo el nombre y el botón. */
+      const num = String(works.slice(0, i + 1).filter((x) => x.kind === 'work').length).padStart(2, '0') + ' / ' + String(NW).padStart(2, '0');
+      if (hudCount) hudCount.textContent = isWork ? num : (wk.kind === 'reel' ? wk.title : wk.format);
       if (hudTitle) hudTitle.textContent = wk.title;
-      if (hudFmt) { hudFmt.textContent = isStudio ? '' : wk.format; hudFmt.hidden = isStudio; }
+      if (hudFmt) { hudFmt.textContent = isWork ? wk.format : ''; hudFmt.hidden = !isWork; }
       if (hudDesc) { hudDesc.textContent = wk.desc; hudDesc.hidden = !wk.desc; }
       if (hudCta) hudCta.textContent = wk.cta || hudCta.getAttribute('data-default') || '';
       if (hudOpen) hudOpen.href = wk.href;
-      if (hud) hud.setAttribute('data-side', wk.side < 0 ? 'right' : 'left');   // del lado contrario a la ameba
+      if (hud) {
+        hud.setAttribute('data-kind', wk.kind);
+        hud.setAttribute('data-side', wk.side < 0 ? 'right' : 'left');   // del lado contrario a la ameba
+        hud.setAttribute('data-sound', opts.reelFull ? '1' : '0');       // en teléfono el reel no tiene audio
+      }
     }
     if (dots) [].forEach.call(dots.children, (b, k) => b.setAttribute('aria-current', k === i ? 'true' : 'false'));
   }
@@ -765,7 +970,7 @@ export function mount(section, opts) {
     pulse *= 0.94;
 
     /* Profundidad: se oscurece al entrar por la puerta. */
-    const deep = smooth(0.02, T_DOOR, ps);
+    const deep = smooth(0.16 / SCREENS, T_DOOR, ps);
     const dq = Math.round(deep * 200) / 200;
     if (dq !== tintO) {
       tintO = dq;
@@ -797,11 +1002,21 @@ export function mount(section, opts) {
       index = near;
     }
     showWork(index >= 0 ? index : (shown >= 0 ? shown : -1));
-    setOpacity(intro, 1 - smooth(0.012, 0.06, ps));
-    setOpacity(invite, 1 - smooth(0.012, 0.06, ps));
+    setOpacity(intro, 1 - smooth(0.1 / SCREENS, 0.49 / SCREENS, ps));
+    setOpacity(invite, 1 - smooth(0.1 / SCREENS, 0.49 / SCREENS, ps));
     setOpacity(hud, entering ? 0 : (index >= 0 ? 1 - smooth(HALF * 0.55, HALF, bestD) : 0));
-    setOpacity(end, entering ? 0 : smooth(0.93, 0.985, ps));
+    setOpacity(end, entering ? 0 : smooth(1 - 0.57 / SCREENS, 1 - 0.12 / SCREENS, ps));
     setOpacity(dots, entering ? 0 : deep);
+    /* El paso a las obras: el título aparece en el medio del tramo, mientras se cruzan los anillos. */
+    const S2 = HALF * 2;
+    if (chapter) setOpacity(chapter, entering || T_CHAP < 0 ? 0 : smooth(T_CHAP - S2 * 0.55, T_CHAP - S2 * 0.2, ps) * (1 - smooth(T_CHAP + S2 * 0.2, T_CHAP + S2 * 0.55, ps)));
+    if (gate) {
+      const gu = gate.u;
+      const go = entering ? 0 : smooth(T_CHAP - S2 * 0.8, T_CHAP - S2 * 0.45, ps) * (1 - smooth(T_CHAP + S2 * 0.3, T_CHAP + S2 * 0.6, ps));
+      gu.uDeep.value = go; gu.uTime.value = still ? 0 : time; gu.uBoost.value = vel * 0.35;
+      gu.uPush.value = push; gu.uMouse.value.set(mouse.sx, mouse.sy);
+      gate.points.visible = go > 0.01;
+    }
 
     /* Cámara. */
     path(ps);
@@ -865,26 +1080,26 @@ export function mount(section, opts) {
     core.mesh.visible = core.u.uOpacity.value > 0.01;
     core.u.uGlow.value = 0.35; core.u.uWobble.value = core.wob * (1 + stir);
     works.forEach((wk, i) => {
-      if (!wk.asked && tWork(i) - ps < HALF * 4.5) ask(wk);
-      wk.mix += (wk.mixTo - wk.mix) * (still ? 1 : 0.06);
+      const tw = tWork(i), off = Math.abs(ps - tw);
+      if (wk.kind === 'reel') { reelFrame(wk, i, tw, deep); return; }
+      if (!wk.asked && off < HALF * 1.2) ask(wk);
       const mine = entering && entering.i === i;
       wk.hov += ((hover === i ? 1 : 0) - wk.hov) * 0.12;      // la que está bajo el cursor se hincha y se agita
       /* Cada ameba aparece recién al salir de la parada anterior: como alternan de lado, la
          próxima quedaría justo detrás de la ficha de la que se está mirando. */
-      const o = place(wk, 1 + 0.05 * wk.hov, 0.7) * smooth(tWork(i) - 0.1, tWork(i) - 0.04, ps);
+      const o = place(wk, 1 + 0.05 * wk.hov, 0.7) * smooth(tw - HALF * 1.74, tw - HALF * 0.7, ps);
       /* Al entrar, la ameba le deja el lugar al derrame y las demás se apagan. */
       wk.u.uOpacity.value = entering ? o * (1 - smooth(mine ? 0.02 : 0, mine ? 0.14 : 0.5, entering.t)) : o;
       wk.mesh.visible = wk.u.uOpacity.value > 0.01;
       /* Su enjambre: se ordena al detenerse frente a la obra y se suelta al seguir. */
       const sw = wk.swarm, su = sw.u;
-      const want = (!entering && Math.abs(ps - tWork(i)) < HALF * 0.5 && vel < 0.3) ? 1 : 0;
+      const want = (!entering && off < HALF * 0.5 && vel < 0.3) ? 1 : 0;
       sw.form = still ? want : sw.form + (want - sw.form) * (1 - Math.exp(-dt * (want ? 1.6 : 4.5)));
       sw.points.position.copy(wk.mesh.position); sw.points.scale.setScalar(formScale);
       su.uForm.value = sw.form * (1 - pulse * 0.7); su.uTime.value = still ? 0 : time;
       su.uOpacity.value = o * deep * (entering ? 1 - smooth(0, 0.35, entering.t) : 1);
       sw.points.visible = su.uOpacity.value > 0.01;
-      wk.u.uHasMap.value = wk.mix;
-      wk.u.uFocus.value = 1 - smooth(HALF * 0.6, HALF * 1.6, Math.abs(ps - tWork(i)));
+      wk.u.uFocus.value = 1 - smooth(HALF * 0.6, HALF * 1.6, off);
       wk.u.uGlow.value = 0.6 * wk.hov;
       wk.u.uLook.value.set(mouse.sx * 0.07, mouse.sy * 0.07);
       wk.u.uWobble.value = wk.wob * (1 + 0.6 * wk.hov + stir);
@@ -929,6 +1144,15 @@ export function mount(section, opts) {
     let bestI = -1, bestT = 1e9;
     works.forEach((wk, i) => {
       if (!wk.mesh.visible || wk.u.uOpacity.value < 0.35) return;
+      if (wk.kind === 'reel') {         // la pantalla: dónde cruza el rayo su plano, y si cae dentro del video
+        tB.set(0, 0, 1).applyQuaternion(wk.mesh.quaternion);
+        const den = tB.dot(ray); if (Math.abs(den) < 1e-4) return;
+        const tr = tmp.copy(wk.mesh.position).sub(camera.position).dot(tB) / den; if (tr < 0 || tr > bestT) return;
+        wk.mesh.worldToLocal(tA.copy(camera.position).addScaledVector(ray, tr));
+        const lim = 0.5 / (1 + 2 * PAD);
+        if (Math.abs(tA.x) < lim && Math.abs(tA.y) < lim) { bestT = tr; bestI = i; }
+        return;
+      }
       tmp.copy(wk.mesh.position).sub(camera.position);
       const tc = tmp.dot(ray); if (tc < 0) return;
       const d2 = tmp.lengthSq() - tc * tc, rr = wk.r * 1.05;
@@ -944,6 +1168,8 @@ export function mount(section, opts) {
   }
   function enter(i) {
     if (entering || i < 0) return;
+    /* El reel: se abre completo y con sonido (js/app.js), y el flotante espera en pausa. */
+    if (works[i].kind === 'reel') { if (opts.reelFull && opts.reelFull()) works[i].away = true; return; }
     /* La del estudio lleva a una página clara, no a una ficha: no hay derrame que valga. */
     if (still || works[i].kind === 'studio') { if (opts.navigate) opts.navigate(works[i].href); return; }
     const wk = works[i], lu = liqMat.uniforms, aspect = camera.aspect;
@@ -960,6 +1186,8 @@ export function mount(section, opts) {
     const vh = Math.max(1, stage.clientHeight);
     lu.uHero.value = clamp(Math.max(420, Math.min(0.78 * vh, 740)) / vh, 0.2, 1);
     lu.uSeed.value = wk.seed;
+    lu.uP0.value.set(...wk.pal[0]); lu.uP1.value.set(...wk.pal[Math.min(1, wk.pal.length - 1)]); lu.uP2.value.set(...wk.pal[Math.min(2, wk.pal.length - 1)]);
+    lu.uHasImg.value = wk.img ? 1 : 0;
     if (wk.img) {
       if (!wk.full) {                  // la portada entera, para el encuadre a pantalla completa
         wk.full = new THREE.Texture(wk.img);
@@ -1010,6 +1238,7 @@ export function mount(section, opts) {
     scrollToT(STOPS[next]);
   }, sig);
   if (hudOpen) hudOpen.addEventListener('click', (e) => {
+    if (shown >= 0 && works[shown].kind === 'reel') { e.preventDefault(); enter(shown); return; }
     if (still || e.metaKey || e.ctrlKey || e.shiftKey || e.button || shown < 0) return;   // en pestaña nueva: enlace normal
     e.preventDefault();
     enter(shown);
@@ -1026,10 +1255,10 @@ export function mount(section, opts) {
     });
   }
   window.addEventListener('scroll', () => { if (still) draw(0); }, { passive: true, signal: ac.signal });
-  document.addEventListener('visibilitychange', kick, sig);
+  document.addEventListener('visibilitychange', () => { if (document.hidden) hush(); kick(); }, sig);
   const ro = ('ResizeObserver' in window) ? new ResizeObserver(layout) : null;
   if (ro) ro.observe(stage); else window.addEventListener('resize', layout, sig);
-  const io = ('IntersectionObserver' in window) ? new IntersectionObserver((en) => { visible = en[0].isIntersecting; if (visible) kick(); }) : null;
+  const io = ('IntersectionObserver' in window) ? new IntersectionObserver((en) => { visible = en[0].isIntersecting; if (visible) kick(); else hush(); }) : null;
   if (io) io.observe(stage);
 
   layout();
@@ -1043,6 +1272,7 @@ export function mount(section, opts) {
       disposed = true;
       if (raf) cancelAnimationFrame(raf);
       ac.abort();
+      works.forEach((wk) => { if (wk.video) { wk.video.pause(); wk.video.removeAttribute('src'); wk.video.load(); wk.video.remove(); } });
       if (ro) ro.disconnect();
       if (io) io.disconnect();
       disposables.forEach((d) => d.dispose());

@@ -846,18 +846,39 @@ body.has-review .ftr { padding-bottom: 78px; }   /* que la barra no tape el pie 
 ::view-transition-old(ameba) { display: none; }
 ::view-transition-new(ameba) { animation: none; }
 
-/* ── El mundo interior (página de prueba: inner-world.html) ────────────────
-   Recorrido en 3D por las obras (js/world.js). La sección es alta y el
-   escenario queda fijo mientras se la recorre: el scroll es el de siempre.
+/* ── El mundo interior: la portada (index.html) ────────────────────────────
+   Recorrido en 3D (js/world.js): la entrada, la ameba del estudio, el reel
+   flotando, el paso a "Obras seleccionadas", una ameba por obra y el cierre.
+   La sección es alta y el escenario queda fijo mientras se la recorre: el
+   scroll es el de siempre.
    Con la clase world--flat (sin JavaScript, sin WebGL o sin CDN) es una página
-   común: el texto y la lista de obras en tarjetas. */
+   común: el título, el reel con su póster y la lista de obras en tarjetas. */
 .world { position: relative; }
 .world__list { list-style: none; margin: 0; padding: 0; }
-.world__intro h1 { font-size: clamp(2.5rem, 5.4vw, 4.7rem); margin: 14px 0 18px; }
-.world__lead { font-size: clamp(1.06rem, 1.5vw, 1.28rem); line-height: 1.6; max-width: 34em; }
-/* Con 3D la descripción va en la ficha de la ameba del estudio. */
-.world:not(.world--flat) .world__lead { display: none; }
-.world--flat .world__studio { display: none; }
+.world__intro h1 { font-size: clamp(2.5rem, 5.4vw, 4.7rem); margin: 0; }
+/* El logo, debajo del título. Es una máscara: toma el color del texto. */
+.world__logo {
+  display: block; width: clamp(150px, 15vw, 210px); aspect-ratio: 681 / 243; margin-top: clamp(18px, 2.6vw, 34px);
+  background: var(--ink);
+  -webkit-mask: center / contain no-repeat; mask: center / contain no-repeat;
+}
+.world__lead { font-size: clamp(1.06rem, 1.5vw, 1.28rem); line-height: 1.6; max-width: 34em; margin-top: 22px; }
+/* Con 3D la descripción va en la ficha de la ameba del estudio, y el reel flota en su parada. */
+.world:not(.world--flat) .world__lead, .world:not(.world--flat) .world__reel { display: none; }
+.world--flat .world__only3d { display: none; }
+.world--flat .world__reel { margin-bottom: clamp(40px, 7vw, 90px); }
+/* "Obras seleccionadas": sin 3D es el título de la lista; en el recorrido
+   aparece en el centro, entre el reel y la primera obra (js/world.js le mueve
+   la opacidad; no se desplaza). */
+.world__chapter { margin-bottom: clamp(20px, 3vw, 36px); }
+.world:not(.world--flat) .world__chapter {
+  position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); z-index: 1; margin: 0;
+  width: min(92vw, 14em); text-align: center; font-size: clamp(2.6rem, 7.4vw, 6.4rem);
+  pointer-events: none; opacity: 0; visibility: hidden;
+  text-shadow: 0 0 60px rgba(13, 11, 34, .55);
+}
+/* El video del reel flotante: sólo alimenta la textura del 3D, no se ve como elemento. */
+.world__reelvid { position: absolute; left: 0; top: 0; width: 2px; height: 2px; opacity: 0; pointer-events: none; }
 /* La descripción, dentro de la ficha de vidrio. */
 .world__desc { margin: 12px 0 20px; font-size: clamp(1rem, 1.25vw, 1.12rem); line-height: 1.6; }
 .world__end-txt { margin-top: 14px; font-size: clamp(1.06rem, 1.5vw, 1.28rem); line-height: 1.6; max-width: 30em; }
@@ -884,7 +905,8 @@ body.has-review .ftr { padding-bottom: 78px; }   /* que la barra no tape el pie 
 .world--flat .world__stage { display: flex; flex-direction: column; }
 .world--flat .world__end { order: 3; }
 
-.world:not(.world--flat) { height: calc((var(--n) + 2.2) * 100vh); }
+/* --n son los tramos del recorrido (src/build.mjs): cada uno ocupa casi una pantalla de scroll. */
+.world:not(.world--flat) { height: calc((var(--n) * .94 + 3.55) * 100vh); }
 .world:not(.world--flat) .world__stage { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; }
 .world__stage.is-deep { color: var(--ink-body); font-weight: var(--w-body); }
 /* Lo oscuro de adentro. js/world.js mueve --deep de 0 a 1 al cruzar la ameba de entrada.
@@ -961,12 +983,24 @@ body.has-review .ftr { padding-bottom: 78px; }   /* que la barra no tape el pie 
   .world:not(.world--flat) .world__hud { padding: 18px 20px 20px; }
   .world__fmt { margin-bottom: 14px; }
   .world:not(.world--flat) .world__dots { top: 34%; right: 4px; }
+  .world__logo { width: 132px; margin-top: 14px; }
 }
+/* En la parada del reel la ficha se reduce a una línea al pie: el nombre y "Ver con sonido".
+   (En el teléfono el reel no tiene audio: queda sólo el nombre.) */
+.world:not(.world--flat) .world__hud[data-kind="reel"] {
+  left: 50%; right: auto; top: auto; bottom: clamp(24px, 6.5vh, 64px); transform: translateX(-50%);
+  width: auto; max-width: none; padding: 0; border: 0; border-radius: 0; background: none; box-shadow: none;
+  -webkit-backdrop-filter: none; backdrop-filter: none;
+  display: flex; align-items: center; gap: 18px; white-space: nowrap;
+}
+.world__hud[data-kind="reel"] .world__name, .world__hud[data-kind="reel"] .world__fmt { display: none; }
+.world__hud[data-kind="reel"][data-sound="0"] .btn { display: none; }
 /* Con la barra de revisión (localhost y vistas previas) el texto sube para que no lo tape. */
 @media (max-aspect-ratio: 105/100) {
   .has-review .world:not(.world--flat) .world__intro,
   .has-review .world:not(.world--flat) .world__end,
-  .has-review .world:not(.world--flat) .world__hud { bottom: 84px; }
+  .has-review .world:not(.world--flat) .world__hud,
+  .has-review .world:not(.world--flat) .world__hud[data-kind="reel"] { bottom: 84px; }
 }
 /* Adentro, el cursor propio pasa a blanco (sólo cambia el color, desde el CSS). */
 html.is-under { --cursor: rgba(255, 255, 255, .5); --cursor-fill: rgba(255, 255, 255, .08); }
