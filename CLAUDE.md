@@ -149,9 +149,16 @@ acompaña al bloque de obras del landing: no está en el menú ni en el sitemap 
 
 - **Cómo llegar**: `http://localhost:5599/inner-world.html`, o el botón "Mundo 3D" de la barra de revisión
   (localhost y vistas previas de Netlify).
-- **La entrada**: a la izquierda, la presentación del estudio, la misma del hero del landing (`site.json →
-  hero*`). A la derecha, la ameba grande del logo, que es la puerta, y sobre ella la invitación "Entra al
-  mundo interior" (`t.worldTitle`): un clic lleva hasta la primera obra.
+- **El recorrido tiene cuatro momentos** (los tiempos están arriba de `layout()` en `js/world.js`):
+  1. **La entrada**: sólo el título del estudio (`site.json → heroTitle`), la ameba grande del logo, que
+     es la puerta, y sobre ella la invitación "Entra al mundo interior" (un clic lleva a la primera parada).
+  2. **El estudio**: ya adentro, una primera parada con la descripción (`heroLead`) y las credenciales.
+  3. **Las obras**, una parada cada una.
+  4. **El cierre**: ver todas las obras, conocer el estudio y contacto.
+- **Las obras no van en fila**: cada una está a su altura y a un lado distinto, y entre paradas la cámara
+  hace una curva. Por eso al avanzar sube, baja, se corre de costado y se ladea un poco. En pantallas
+  anchas la ameba queda a la derecha o a la izquierda, alternando, y la ficha del lado contrario. Cada
+  obra aparece recién cuando es la próxima, para no cruzarse con el texto de la parada anterior.
 - **Adentro**: está oscuro y cada obra flota dentro de una ameba de vidrio que deforma su portada como una
   gota. A la izquierda, una ficha de vidrio esmerilado con el nombre y el botón; a la derecha, puntos para
   saltar de obra. Al final, una ameba grande y los botones de siempre.
@@ -373,6 +380,26 @@ desactiva. **No** cambiar nameservers a Cloudflare.
 El fluid sim sigue corriendo con auto-emitters en mobile. Los usuarios de Android no pueden tocar el fondo para emitir fluidos (correcto — el dedo es para el scroll).
 
 ## Historial de sesiones (última al tope)
+
+### 2026-11-18 — El mundo interior: menos texto al entrar, una narrativa y más movimiento (Vicente)
+
+Pedido de Vicente: que la primera pantalla tenga sólo el título; que al empezar el scroll haya una
+pequeña narrativa antes de las obras, con la descripción del estudio como primera parada; más movimiento
+de elevación y hacia los lados, con las amebas a distinta posición y altura; y al final otra fase con
+las demás obras, el estudio y el contacto.
+
+- La descripción y las credenciales salieron de la entrada y pasaron a una parada propia, adentro.
+- Las obras alternan lado y altura; la cámara curva entre paradas y se ladea al correrse de costado.
+  La ficha de cada obra va del lado contrario a su ameba.
+- El cierre suma un texto y el botón "Conocer el estudio". Textos nuevos: `worldStoryLabel`,
+  `worldEndLead`, `worldEndStudio` (borradores).
+- La sección pasó de (obras + 2,2) a (obras + 3,2) pantallas. Las flechas y la invitación conocen la
+  parada nueva.
+
+**Verificado en Chrome**: los cuatro momentos en capturas, la alternancia de lado en tres obras, la
+invitación y las flechas. En emulación 375×812: la entrada, sin desbordes.
+**Pendiente de Vicente**: habló de 5 obras y el recorrido tiene las 6 destacadas; se le preguntó cuál sacar.
+**Sin ver**: el movimiento en sí (curvas y ladeo) más que en cuadros sueltos; teléfonos reales.
 
 ### 2026-11-18 — Fotos nuevas en cuatro fichas, desde la biblioteca de marketing (Vicente)
 

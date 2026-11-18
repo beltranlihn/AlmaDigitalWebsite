@@ -65,15 +65,15 @@
   <div class="world__stage">
     <div class="world__depth" aria-hidden="true"></div>
     <div class="world__canvas" aria-hidden="true"></div>
-    <!-- La presentación del estudio es la misma del landing (site.json → hero*). -->
+    <!-- Primera pantalla: sólo el título (el mismo del landing, site.json → heroTitle). -->
     <div class="world__intro">
       <p class="eyebrow">Immersive wellness art studio</p>
       <h1 id="world-title">We are an <em>immersive</em> art studio.</h1>
-      <p class="world__lead">We create VR, fulldome, projection mapping and biofeedback experiences that merge art, technology and science to support well-being and inner exploration.</p>
-      <div class="world__row">
-        <a class="btn btn--solid" href="work/">See the work</a>
-        <button class="btn" type="button" data-contact>Start a project</button>
-      </div>
+    </div>
+    <!-- Primera parada, ya adentro: qué hace el estudio y dónde se presentó. -->
+    <div class="world__story" data-w-story>
+      <p class="label">The studio</p>
+      <p class="world__story-txt">We create VR, fulldome, projection mapping and biofeedback experiences that merge art, technology and science to support well-being and inner exploration.</p>
       <p class="hero__proof world__proof"><span class="label">Presented at and commissioned by</span>IDB · EUIPO · Johns Hopkins · New Images Festival · Adidas · LATAM Airlines · Pacha Ibiza</p>
     </div>
     <!-- La invitación va sobre la ameba de entrada. Un clic lleva hasta la primera obra. -->
@@ -88,10 +88,13 @@
       <a class="btn" data-w-open href="work/neurocosm-xr.html">Enter the work <i aria-hidden="true">→</i></a>
     </div>
     <nav class="world__dots" aria-label="Works in this journey"></nav>
+    <!-- Cierre: el resto de las obras, el estudio y el contacto. -->
     <div class="world__end">
       <h2>There is <em>more</em> inside.</h2>
+      <p class="world__end-txt">19 works across VR, fulldome, projection mapping and biofeedback, and a studio behind them.</p>
       <div class="world__row">
         <a class="btn btn--solid" href="work/">See all 19 works</a>
+        <a class="btn" href="studio.html">About the studio</a>
         <button class="btn" type="button" data-contact>Start a project</button>
       </div>
     </div>

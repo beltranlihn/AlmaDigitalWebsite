@@ -429,15 +429,15 @@ function buildWorld(lang) {
   <div class="world__stage">
     <div class="world__depth" aria-hidden="true"></div>
     <div class="world__canvas" aria-hidden="true"></div>
-    <!-- La presentación del estudio es la misma del landing (site.json → hero*). -->
+    <!-- Primera pantalla: sólo el título (el mismo del landing, site.json → heroTitle). -->
     <div class="world__intro">
       <p class="eyebrow">${esc(t.heroEyebrow)}</p>
       <h1 id="world-title">${em(t.heroTitle)}</h1>
-      <p class="world__lead">${esc(t.heroLead)}</p>
-      <div class="world__row">
-        <a class="btn btn--solid" href="${link(c, 'work/index.html')}">${esc(t.heroCtaWork)}</a>
-        <button class="btn" type="button" data-contact>${esc(t.heroCtaContact)}</button>
-      </div>
+    </div>
+    <!-- Primera parada, ya adentro: qué hace el estudio y dónde se presentó. -->
+    <div class="world__story" data-w-story>
+      <p class="label">${esc(t.worldStoryLabel)}</p>
+      <p class="world__story-txt">${esc(t.heroLead)}</p>
       <p class="hero__proof world__proof"><span class="label">${esc(t.heroProof)}</span>${site.proof.map(esc).join(' · ')}</p>
     </div>
     <!-- La invitación va sobre la ameba de entrada. Un clic lleva hasta la primera obra. -->
@@ -452,10 +452,13 @@ function buildWorld(lang) {
       <a class="btn" data-w-open href="${link(c, `work/${works[0].slug}.html`)}">${esc(t.worldOpen)} <i aria-hidden="true">→</i></a>
     </div>
     <nav class="world__dots" aria-label="${esc(t.worldListLabel)}"></nav>
+    <!-- Cierre: el resto de las obras, el estudio y el contacto. -->
     <div class="world__end">
       <h2>${em(t.worldEndTitle)}</h2>
+      <p class="world__end-txt">${esc(fill(t.worldEndLead, { n: projects.length }))}</p>
       <div class="world__row">
         <a class="btn btn--solid" href="${link(c, 'work/index.html')}">${esc(fill(t.worldEndAll, { n: projects.length }))}</a>
+        <a class="btn" href="${link(c, 'studio.html')}">${esc(t.worldEndStudio)}</a>
         <button class="btn" type="button" data-contact>${esc(t.heroCtaContact)}</button>
       </div>
     </div>

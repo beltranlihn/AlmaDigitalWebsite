@@ -302,6 +302,9 @@
       "worldOpen": "Enter the work",
       "worldEndTitle": "There is *more* inside.",
       "worldEndAll": "See all {n} works",
+      "worldEndLead": "{n} works across VR, fulldome, projection mapping and biofeedback, and a studio behind them.",
+      "worldEndStudio": "About the studio",
+      "worldStoryLabel": "The studio",
       "worldListLabel": "Works in this journey",
       "pParticlesHint": "Drag to turn · Click to scatter",
       "pParticlesHintTouch": "Swipe to turn · Tap to scatter"
@@ -427,6 +430,9 @@
       "worldOpen": "Entrar a la obra",
       "worldEndTitle": "Hay *más* adentro.",
       "worldEndAll": "Ver las {n} obras",
+      "worldEndLead": "{n} obras entre VR, fulldome, mapping y biofeedback, y un estudio detrás de ellas.",
+      "worldEndStudio": "Conocer el estudio",
+      "worldStoryLabel": "El estudio",
       "worldListLabel": "Obras del recorrido",
       "pParticlesHint": "Arrastra para girar · Clic para dispersar",
       "pParticlesHintTouch": "Desliza para girar · Toca para dispersar"

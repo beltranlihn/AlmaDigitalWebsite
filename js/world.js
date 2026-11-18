@@ -4,7 +4,12 @@
    Un recorrido en 3D por las obras principales. Idea tomada de
    mirages.nrly.fun (Nathan Riley, Unseen Studio), llevada a la marca:
 
-     · se entra por una ameba grande, la del logo: es la puerta;
+     · la primera pantalla es sólo el título; se entra por una ameba grande,
+       la del logo, que es la puerta;
+     · adentro hay una primera parada con la descripción del estudio, después
+       las obras y al final un cierre (todas las obras, el estudio, contacto);
+     · las amebas están a distinta altura y a los lados, así que la cámara
+       sube, baja, se corre y se ladea al avanzar;
      · adentro está oscuro y cada obra flota dentro de una ameba de vidrio que
        deforma su portada como una gota;
      · el fondo sigue siendo el fluido del sitio, teñido de violeta profundo:
@@ -436,7 +441,7 @@ export function mount(section, opts) {
     const p = palette[i % palette.length];
     const e = ameba(geoSmall, { seed: rnd(0, 20), wobble: 1.15, a: p[0], b: p[1], c: p[2], drift: rnd(0.15, 0.5) });
     const side = i % 2 ? 1 : -1;
-    e.base.set(side * rnd(2.6, 6.2), rnd(-3.2, 3.2), rnd(-6, -74));
+    e.base.set(side * rnd(2.8, 6.6), rnd(-3.6, 3.6), rnd(-6, -96));
     e.r = i % 3 ? rnd(0.08, 0.3) : rnd(0.3, 0.85);       // muchas chicas, unas pocas grandes
     extras.push(e);
   }
@@ -448,10 +453,10 @@ export function mount(section, opts) {
   for (let i = 0; i < DN; i++) {
     dSeed[i] = Math.random(); dTint[i] = Math.random();
     if (i < LOOSE) {                   // polvo suelto
-      dPos[i * 3] = rnd(-8, 8); dPos[i * 3 + 1] = rnd(-4.5, 4.5); dPos[i * 3 + 2] = rnd(4, -86);
+      dPos[i * 3] = rnd(-8, 8); dPos[i * 3 + 1] = rnd(-4.5, 4.5); dPos[i * 3 + 2] = rnd(4, -104);
       dSize[i] = Math.random() < 0.07 ? rnd(2.4, 4.4) : rnd(0.7, 1.7);
     } else {                           // tres corrientes en hélice alrededor del camino
-      const k = i % 3, z = rnd(2, -86), a = z * 0.22 + k * 2.094 + rnd(-0.22, 0.22), rad = 3.3 + k * 0.6 + rnd(-0.4, 0.4);
+      const k = i % 3, z = rnd(2, -104), a = z * 0.22 + k * 2.094 + rnd(-0.22, 0.22), rad = 3.3 + k * 0.6 + rnd(-0.4, 0.4);
       dPos[i * 3] = Math.cos(a) * rad; dPos[i * 3 + 1] = Math.sin(a) * rad; dPos[i * 3 + 2] = z;
       dSize[i] = Math.random() < 0.05 ? rnd(2, 3.2) : rnd(0.7, 1.7); dFlow[i] = 1;
       dTint[i] = clamp(k / 2 + rnd(-0.18, 0.18), 0, 1);     // cada corriente tira a un color
@@ -580,7 +585,8 @@ export function mount(section, opts) {
   /* ── Recorrido ──────────────────────────────────────────────────────
      Tiempos (0…1 del scroll): puerta, una parada por obra, final. Entre dos
      paradas la cámara acelera y frena, así que se detiene frente a cada obra. */
-  const T_DOOR = 0.085, T_FIRST = 0.17, T_LAST = 0.83;
+  const T_DOOR = 0.07, T_STORY = 0.165, T_FIRST = 0.29, T_LAST = 0.84;   // puerta · el estudio · primera y última obra
+  const HS = 0.05;                     // medio ancho de la parada del estudio
   const tWork = (i) => (n === 1 ? 0.5 : lerp(T_FIRST, T_LAST, i / (n - 1)));
   const HALF = n === 1 ? 0.2 : (T_LAST - T_FIRST) / (n - 1) / 2;
   let keys = [];                       // [{ t, pos, look }]
@@ -594,24 +600,36 @@ export function mount(section, opts) {
     /* Dónde cae en pantalla: fx, fy son fracciones del medio ancho/alto visible a la distancia d. */
     const at = (d, fx, fy) => [fx * TAN * d * aspect, fy * TAN * d];
 
-    const d0 = 8.5, dr = wide ? 1.85 : 0.95;
-    const [dx, dy] = wide ? at(d0, 0.5, -0.16) : at(d0, 0, 0.36);
+    const d0 = 8.5, dr = wide ? 1.85 : 1.15;
+    const [dx, dy] = wide ? at(d0, 0.5, -0.16) : at(d0, 0, 0.22);
     door.base.set(dx, dy, 0); door.r = dr;
 
     const R = 1.25;
     const D = Math.max(5, wide ? 5.7 : (2 * R) / (0.64 * 2 * TAN * aspect));
     const [wx, wy] = wide ? at(D, 0.4, 0) : at(D, 0, 0.3);
     formScale = wide ? 1 : clamp((TAN * D * aspect) / 2.7, 0.5, 1);
+    /* arc: cuánto se desvía la cámara a mitad de camino hacia esa parada (la
+       curva del viaje). */
     keys = [
       { t: 0, pos: V(0, 0, d0), look: V(0, 0, 0) },
       { t: T_DOOR, pos: V(dx, dy, 0), look: V(dx * 0.4, dy * 0.4, -10) },
+      { t: T_STORY, pos: V(wide ? -0.9 : 0, 0.7, -6.5), look: V(wide ? 0.6 : 0, 0.2, -17), arc: V(0, 0.5, 0) },
     ];
+    /* Las obras no van en fila: cada una a su altura y a un lado distinto. La
+       cámara se para frente a cada una, así que sube, baja y se corre. En
+       pantallas anchas la ameba queda a la derecha o a la izquierda, y la
+       ficha del lado contrario. */
+    const HEIGHTS = [0.95, -0.85, 0.4, -1.15, 1.05, -0.5];
     works.forEach((wk, i) => {
-      const z = -11 - i * 10, y = Math.sin(i * 1.7) * 0.32;
-      wk.base.set(wx, wy + (wide ? y : y * 0.4), z); wk.r = R;
-      keys.push({ t: tWork(i), pos: V(0, y * 0.5, z + D), look: V(0, y * 0.5, z) });
+      const side = i % 2 ? -1 : 1;
+      const cx = Math.sin(i * 1.3 + 0.6) * (wide ? 1.6 : 0.35);
+      const cy = HEIGHTS[i % HEIGHTS.length] * (wide ? 1 : 0.55);
+      const z = -17 - i * 10;
+      wk.side = wide ? side : 0;
+      wk.base.set(cx + (wide ? side * wx : 0), cy + (wide ? 0 : wy), z); wk.r = R;
+      keys.push({ t: tWork(i), pos: V(cx, cy, z + D), look: V(cx, cy, z), arc: V(wide ? -side * 0.7 : 0, (i % 2 ? 0.8 : -0.8) * (wide ? 1 : 0.5), 0) });
     });
-    const zc = -11 - (n - 1) * 10 - 17, cr = wide ? 2.5 : 1.5, dc = wide ? 10.5 : 12;
+    const zc = -17 - (n - 1) * 10 - 17, cr = wide ? 2.5 : 1.5, dc = wide ? 10.5 : 12;
     const [cx, cy] = wide ? at(dc, 0.46, 0) : at(dc, 0, 0.4);
     core.base.set(cx, cy, zc); core.r = cr;
     keys.push({ t: 1, pos: V(0, 0, zc + dc), look: V(0, 0, zc) });
@@ -623,7 +641,9 @@ export function mount(section, opts) {
     while (k < keys.length - 2 && p > keys[k + 1].t) k++;
     const a = keys[k], b = keys[k + 1];
     const u = smooth(0, 1, (p - a.t) / (b.t - a.t));
-    (outPos || camPos).lerpVectors(a.pos, b.pos, u); (outLook || camLook).lerpVectors(a.look, b.look, u);
+    const P = outPos || camPos;
+    P.lerpVectors(a.pos, b.pos, u); (outLook || camLook).lerpVectors(a.look, b.look, u);
+    if (b.arc) P.addScaledVector(b.arc, Math.sin(Math.PI * u));
   }
 
   /* ── Portadas: se piden cuando uno se acerca ────────────────────────── */
@@ -654,7 +674,7 @@ export function mount(section, opts) {
   const tint = document.createElement('div');
   tint.className = 'world-tint'; tint.setAttribute('aria-hidden', 'true');
   if (veil && veil.parentNode) veil.parentNode.insertBefore(tint, veil.nextSibling); else document.body.appendChild(tint);
-  const invite = q('[data-w-enter]');
+  const invite = q('[data-w-enter]'), story = q('[data-w-story]');
 
   /* ── Estado ─────────────────────────────────────────────────────────── */
   const still = reduce;
@@ -667,6 +687,7 @@ export function mount(section, opts) {
   const tmp = new THREE.Vector3(), ray = new THREE.Vector3();
   const tA = new THREE.Vector3(), tB = new THREE.Vector3(), tR = new THREE.Vector3(), tU = new THREE.Vector3(), UP = new THREE.Vector3(0, 1, 0);
   let dirS = 1;                        // hacia dónde se avanza: 1 adelante, -1 atrás (suavizado)
+  let bank = 0, lastX = null;          // ladeo de la cámara al correrse de costado
 
   function readScroll() {
     const r = section.getBoundingClientRect();
@@ -695,6 +716,7 @@ export function mount(section, opts) {
       if (hudTitle) hudTitle.textContent = wk.title;
       if (hudFmt) hudFmt.textContent = wk.format;
       if (hudOpen) hudOpen.href = wk.href;
+      if (hud) hud.setAttribute('data-side', wk.side < 0 ? 'right' : 'left');   // del lado contrario a la ameba
     }
     if (dots) [].forEach.call(dots.children, (b, k) => b.setAttribute('aria-current', k === i ? 'true' : 'false'));
   }
@@ -743,6 +765,7 @@ export function mount(section, opts) {
     showWork(index >= 0 ? index : (shown >= 0 ? shown : -1));
     setOpacity(intro, 1 - smooth(0.012, 0.06, ps));
     setOpacity(invite, 1 - smooth(0.012, 0.06, ps));
+    setOpacity(story, entering ? 0 : 1 - smooth(HS * 0.55, HS, Math.abs(ps - T_STORY)));
     setOpacity(hud, entering ? 0 : (index >= 0 ? 1 - smooth(HALF * 0.55, HALF, bestD) : 0));
     setOpacity(end, entering ? 0 : smooth(0.93, 0.985, ps));
     setOpacity(dots, entering ? 0 : deep);
@@ -764,6 +787,13 @@ export function mount(section, opts) {
       if (entering.t >= 1 && !entering.done) { entering.done = true; if (opts.navigate) opts.navigate(works[entering.i].href); }
     }
     camera.position.copy(camPos); camera.lookAt(camLook);
+    /* Al correrse de costado la cámara se ladea un poco, como un cuerpo que gira. */
+    if (!still && dt > 0) {
+      const vx = lastX === null ? 0 : (camPos.x - lastX) / dt;
+      bank += (clamp(-vx * 0.05, -0.13, 0.13) - bank) * 0.07;
+      camera.rotateZ(bank);
+    }
+    lastX = camPos.x;
 
     /* Hilos de luz y luces guía: sólo adentro, y se apagan al entrar a una obra. */
     const lights = still ? 0 : deep * (entering ? 1 - smooth(0, 0.4, entering.t) : 1);
@@ -806,7 +836,8 @@ export function mount(section, opts) {
       wk.mix += (wk.mixTo - wk.mix) * (still ? 1 : 0.06);
       const mine = entering && entering.i === i;
       wk.hov += ((hover === i ? 1 : 0) - wk.hov) * 0.12;      // la que está bajo el cursor se hincha y se agita
-      const o = place(wk, 1 + 0.05 * wk.hov, 0.7);
+      /* Cada obra aparece recién cuando es la próxima: así no se cruza con el texto de la parada anterior. */
+      const o = place(wk, 1 + 0.05 * wk.hov, 0.7) * smooth(tWork(i) - 0.2, tWork(i) - 0.12, ps);
       /* Al entrar, la ameba le deja el lugar al derrame y las demás se apagan. */
       wk.u.uOpacity.value = entering ? o * (1 - smooth(mine ? 0.02 : 0, mine ? 0.14 : 0.5, entering.t)) : o;
       wk.mesh.visible = wk.u.uOpacity.value > 0.01;
@@ -928,9 +959,9 @@ export function mount(section, opts) {
     if (Math.abs(ps - tWork(i)) > HALF * 0.7) scrollToT(tWork(i)); else enter(i);  // si está lejos, primero se va hasta ella
   }, sig);
   /* "Entra al mundo interior": lleva hasta la primera obra. */
-  if (invite) invite.addEventListener('click', () => scrollToT(tWork(0)), sig);
+  if (invite) invite.addEventListener('click', () => scrollToT(T_STORY), sig);
   /* Flechas izquierda y derecha: parada anterior y siguiente (arriba y abajo siguen siendo el scroll normal). */
-  const STOPS = [0].concat(works.map((_, i) => tWork(i)), [1]);
+  const STOPS = [0, T_STORY].concat(works.map((_, i) => tWork(i)), [1]);
   window.addEventListener('keydown', (e) => {
     if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
     if (e.altKey || e.metaKey || e.ctrlKey || !visible || entering) return;
