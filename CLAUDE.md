@@ -292,6 +292,10 @@ Una carpeta por proyecto dentro de `Asset/Studio Projects/` o `Asset/Commisions/
   Si el material original es apaisado (16:9), se compone sobre lienzo 406×720 con relleno
   desenfocado del propio plano (`gblur=sigma=26` + `eq=brightness=-0.14:saturation=0.85`).
 - Originales pesados van a `_masters/` (mismo árbol que `Asset/`), no a `Asset/`.
+- **De dónde sale el material nuevo**: de la biblioteca de marketing del estudio, en la Mac de Vicente
+  (`Desktop/ALMA MARKETING/Alma Marketing/05_Biblioteca/`, una carpeta por proyecto). **Antes de sumar
+  algo, leer su `_PERMISOS.md`**: dice qué se puede usar y con qué crédito, y qué fotos tienen pendiente
+  el permiso de una persona o de un fotógrafo. El repo es público y lo que entra a `Asset/` se publica.
 
 ## Deploy (Netlify)
 - Sitio `glowing-sunflower-a7a485` → `almadigitalstudio.com`. **Plan Personal desde 2026-10-20**:
@@ -369,6 +373,41 @@ desactiva. **No** cambiar nameservers a Cloudflare.
 El fluid sim sigue corriendo con auto-emitters en mobile. Los usuarios de Android no pueden tocar el fondo para emitir fluidos (correcto — el dedo es para el scroll).
 
 ## Historial de sesiones (última al tope)
+
+### 2026-11-18 — Fotos nuevas en cuatro fichas, desde la biblioteca de marketing (Vicente)
+
+Vicente pasó `Desktop/ALMA MARKETING/` para llenar los lugares de las fichas. Se usó sólo lo que
+`05_Biblioteca/_PERMISOS.md` marca como propio y libre:
+
+- **Soul Charger**: 5 capturas limpias del registro en VR (`soul-charger/fotos/registro-vr-2456`).
+- **Neurocosm Full Dome**: 5 stills de los másters de cúpula (recorte del centro, sin esquinas negras) y
+  un segundo video vertical de 20 s (`Neurocosm Fulldome UK Reel.mp4`, 972 KB, sin audio).
+- **Neurocosm 360**: 5 stills 16:9 de los visuales.
+- **Pixel Liquido**: 4 fotos de iPhone del estudio.
+
+Esas cuatro fichas quedan con los 8 lugares llenos (Pixel Liquido, 7). Las otras 15 siguen con 3 fotos.
+
+**No se usó, y por qué** (todo según `_PERMISOS.md`): los fotogramas de Latido Común y la foto de Neural
+Canvas tienen pendiente el permiso de las personas que aparecen; las fotos de CULTVR son de Rhys Davies y
+falta confirmar con él; las de "FOTOS JUANO" parecen de un fotógrafo sin crédito confirmado; las de
+Concha y Toro (Live 360) y de ETM (Digital Prana) no dicen quién las hizo; los stills de la inauguración
+de Neurocosm miden 960×540 y muestran invitados reconocibles; todo lo de Pacha.
+
+**Avisos para los socios, que salen de esa misma nota y el sitio hoy no cumple**:
+- **Pacha Ibiza**: la nota dice no mostrarlo ni nombrar al cliente hasta revisar el acuerdo con Gola
+  Studio y el NDA. El sitio lo tiene como obra, entre las destacadas, en las credenciales del hero y en
+  el mundo interior.
+- **Collective Pulse**: exige el texto `Commissioned by the Inter-American Development Bank` en toda
+  pieza. La ficha no lo lleva (`commissionedBy` está vacío).
+- **Neural Canvas**: el contrato con EIT cede la propiedad de los entregables; la nota pide consultarlo
+  antes de presentarlo como obra propia. El sitio lo lista como obra del estudio.
+- **Adidas Terrex**: "consultar", sin permiso localizado.
+
+**Canva**: hay acceso por el conector (se ven las carpetas), pero de las fotos subidas sólo entrega
+miniaturas; a calidad completa sólo se pueden exportar diseños.
+
+**Verificado en Chrome**: la ficha de Neurocosm Full Dome con los dos teléfonos reproduciendo, el dúo y
+el trío llenos y sin huecos. Paquete: 178 archivos de `Asset/`, 1.539 referencias, ninguna rota.
 
 ### 2026-11-18 — Fichas de obra: recorrido de imágenes como en Unseen (Vicente)
 

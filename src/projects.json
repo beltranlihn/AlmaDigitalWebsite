@@ -120,7 +120,12 @@
       "photos": [
         "Asset/Studio Projects/Neurocosm Full Dome/Foto1 - Portada.webp",
         "Asset/Studio Projects/Neurocosm Full Dome/Foto2.webp",
-        "Asset/Studio Projects/Neurocosm Full Dome/Foto3.webp"
+        "Asset/Studio Projects/Neurocosm Full Dome/Foto3.webp",
+        "Asset/Studio Projects/Neurocosm Full Dome/Foto4.webp",
+        "Asset/Studio Projects/Neurocosm Full Dome/Foto5.webp",
+        "Asset/Studio Projects/Neurocosm Full Dome/Foto6.webp",
+        "Asset/Studio Projects/Neurocosm Full Dome/Foto7.webp",
+        "Asset/Studio Projects/Neurocosm Full Dome/Foto8.webp"
       ],
       "desc": "A 45-minute immersive full dome audiovisual performance guiding audiences through a meditative journey. Integrates generative visuals with real-time biometric data from EEG headsets.",
       "commissionedBy": "",
@@ -160,7 +165,10 @@
       ],
       "year": "",
       "press": [],
-      "formatKey": "dome"
+      "formatKey": "dome",
+      "verticals": [
+        "Asset/Studio Projects/Neurocosm Full Dome/Neurocosm Fulldome UK Reel.mp4"
+      ]
     },
     {
       "slug": "mapping-mediamorfosis",
@@ -314,7 +322,12 @@
       "photos": [
         "Asset/Studio Projects/Neurocosm 360/1 Portada.webp",
         "Asset/Studio Projects/Neurocosm 360/2.webp",
-        "Asset/Studio Projects/Neurocosm 360/3.webp"
+        "Asset/Studio Projects/Neurocosm 360/3.webp",
+        "Asset/Studio Projects/Neurocosm 360/4.webp",
+        "Asset/Studio Projects/Neurocosm 360/5.webp",
+        "Asset/Studio Projects/Neurocosm 360/6.webp",
+        "Asset/Studio Projects/Neurocosm 360/7.webp",
+        "Asset/Studio Projects/Neurocosm 360/8.webp"
       ],
       "desc": "Adapts the Neurocosm experience for specialized immersive rooms and VR environments, expanding its reach beyond fixed-dome installations.",
       "commissionedBy": "",
@@ -361,7 +374,11 @@
       "photos": [
         "Asset/Studio Projects/Pixel Liquido/1.webp",
         "Asset/Studio Projects/Pixel Liquido/2 Portada.webp",
-        "Asset/Studio Projects/Pixel Liquido/3.webp"
+        "Asset/Studio Projects/Pixel Liquido/3.webp",
+        "Asset/Studio Projects/Pixel Liquido/4.webp",
+        "Asset/Studio Projects/Pixel Liquido/5.webp",
+        "Asset/Studio Projects/Pixel Liquido/6.webp",
+        "Asset/Studio Projects/Pixel Liquido/7.webp"
       ],
       "desc": "An interactive exhibition exploring the fluid boundaries between digital and physical matter through responsive generative environments.",
       "commissionedBy": "",
@@ -449,7 +466,12 @@
       "photos": [
         "Asset/Studio Projects/Soul Charger/1 Portada.webp",
         "Asset/Studio Projects/Soul Charger/2.webp",
-        "Asset/Studio Projects/Soul Charger/3.webp"
+        "Asset/Studio Projects/Soul Charger/3.webp",
+        "Asset/Studio Projects/Soul Charger/4.webp",
+        "Asset/Studio Projects/Soul Charger/5.webp",
+        "Asset/Studio Projects/Soul Charger/6.webp",
+        "Asset/Studio Projects/Soul Charger/7.webp",
+        "Asset/Studio Projects/Soul Charger/8.webp"
       ],
       "desc": "A 15-minute interactive VR experience merging biofeedback, neuroaesthetics, AI, and applied bioethics into a transformative personal journey. In Collaboration with iDeas Lab, Johns Hopkins University's Berman Institute of Bioethics.",
       "commissionedBy": "",
