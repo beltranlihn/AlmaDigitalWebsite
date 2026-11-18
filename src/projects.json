@@ -82,7 +82,7 @@
         "Asset/Studio Projects/Collective Pulse/web-5.webp"
       ],
       "desc": "Visitors place a finger on a pulse sensor and their heartbeat appears on a large-scale projection as a living organic form, beating at their own rhythm. When several people are read at once, their forms share the same field, drifting toward one another or pulling apart. Nothing is pre-rendered: each form lives only for its session.",
-      "commissionedBy": "",
+      "commissionedBy": "Inter-American Development Bank",
       "presentedAt": [
         "ArtLac Gallery, IDB Bank, Washington DC, USA"
       ],
@@ -114,7 +114,8 @@
       ],
       "year": "",
       "press": [],
-      "formatKey": "installation"
+      "formatKey": "installation",
+      "creditLine": "Commissioned by the Inter-American Development Bank"
     },
     {
       "slug": "neurocosm-full-dome",

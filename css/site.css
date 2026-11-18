@@ -621,6 +621,8 @@ h3.label { font-size: .74rem; font-weight: 500; letter-spacing: .18em; line-heig
 }
 .pj-over__txt { margin-top: 14px; font-size: clamp(1.28rem, 2.2vw, 1.95rem); font-weight: 300; line-height: 1.34; letter-spacing: -.02em; color: var(--ink); text-wrap: pretty; }
 .pj-over .more { margin-top: 24px; }
+/* Un crédito que la obra exige mostrar tal cual (projects.json → creditLine). */
+.pj-over__credit { margin-top: 18px; font-size: 1.02rem; font-style: italic; font-weight: 400; color: var(--ink); letter-spacing: .01em; }
 .pj-meta { margin: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px 28px; }
 .pj-meta div { border-top: 1px solid var(--line); padding-top: 12px; }
 .pj-meta dd { margin: 6px 0 0; font-size: .98rem; line-height: 1.5; color: var(--ink); }
@@ -976,6 +978,9 @@ body.has-review .ftr { padding-bottom: 78px; }   /* que la barra no tape el pie 
 }
 .world__where { margin-top: 12px; font-size: .9rem; line-height: 1.5; color: var(--ink-body); }
 .world__where .label { margin-right: 6px; }
+/* Un crédito que la obra exige mostrar (projects.json → creditLine): también va en el teléfono. */
+.world__credit { margin-top: 10px; font-size: .84rem; line-height: 1.45; color: var(--ink); font-style: italic; }
+.world__credit[hidden] { display: none; }
 .world__hud .btn { margin-top: 20px; }
 .world__end-txt { margin-top: 14px; font-size: clamp(1.06rem, 1.5vw, 1.28rem); line-height: 1.6; max-width: 30em; }
 .world__proof { margin-top: 26px; }

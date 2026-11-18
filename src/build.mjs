@@ -467,7 +467,7 @@ function buildWorld(lang) {
   const items = works.map(p => {
     const f = formOf(p.slug);
     return `      <li><a class="wcard" data-w-item href="${link(c, `work/${p.slug}.html`)}" data-cover="${asset(c, p.cover)}" data-title="${esc(p.title)}" data-format="${esc(p.format)}" data-form="${esc(f.formation)}" data-colors="${esc((f.colors || []).join(','))}" data-stage="${esc(f.stage || '')}"
-        data-desc="${esc(firstSentence(p.desc))}" data-tags="${esc((p.tech || []).slice(0, 4).join('|'))}" data-where="${esc(venues(p.presentedAt || []))}" data-line="${esc(p.track === 'studio' ? t.pStudio : t.pCommission)}"
+        data-desc="${esc(firstSentence(p.desc))}" data-tags="${esc((p.tech || []).slice(0, 4).join('|'))}" data-where="${esc(venues(p.presentedAt || []))}" data-line="${esc(p.track === 'studio' ? t.pStudio : t.pCommission)}" data-credit="${esc(p.creditLine || '')}"
         data-icon="${esc(iconOf(p))}" data-gallery="${esc(galleryOf(p))}">
         <img loading="lazy" decoding="async" width="1920" height="1080" src="${asset(c, p.cover)}" alt="">
         <span class="wcard__t"><b>${esc(p.title)}</b><span>${esc(p.format)}</span></span>
@@ -505,6 +505,7 @@ function buildWorld(lang) {
       <p class="world__desc" data-w-desc hidden></p>
       <ul class="world__tags" data-w-tags hidden></ul>
       <p class="world__where" data-w-where data-label="${esc(t.worldWhere)}" hidden></p>
+      <p class="world__credit" data-w-credit hidden></p>
       <a class="btn" data-w-open href="${link(c, 'studio.html')}"><span data-w-cta data-default="${esc(t.worldOpen)}">${esc(t.worldOpen)}</span> <i aria-hidden="true">→</i></a>
     </div>
     <nav class="world__dots" aria-label="${esc(t.worldListLabel)}"></nav>${reel ? `
@@ -723,7 +724,8 @@ ${cols}
 <section class="pj-over" aria-labelledby="over-h">
   <div class="pj-over__lead">
     <h2 class="label" id="over-h">${esc(t.pOverview)}</h2>
-    <p class="pj-over__txt">${esc(p.body[0] || p.desc)}</p>${legacy ? `
+    <p class="pj-over__txt">${esc(p.body[0] || p.desc)}</p>${p.creditLine ? `
+    <p class="pj-over__credit">${esc(p.creditLine)}</p>` : ''}${legacy ? `
     <a class="more" href="${c.up}${legacy}">${esc(t.pPage)} <i aria-hidden="true">→</i></a>` : ''}
   </div>
   <dl class="pj-meta" aria-label="${esc(t.pSheet)}">

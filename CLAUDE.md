@@ -549,8 +549,11 @@ lo de Pacha y Adidas Terrex (sin permiso); los conceptos hechos con IA de EIT; l
 Carlos Donoso: habría que darle crédito); lo que sólo está en video o en PDF (LPS, MICSUR, Mapping,
 my2DROPS, Alma Digital Fest). Los 13 stills del render de Neurocosm XR que menciona el índice no están en
 la carpeta descargada.
-**Pendiente**: Collective Pulse tiene que llevar el crédito `Commissioned by the Inter-American
-Development Bank` en toda pieza (ver `_PERMISOS.md`) y la ficha todavía no lo dice.
+**Crédito del BID en Collective Pulse** (pedido por `_PERMISOS.md`, aprobado por Vicente el mismo día):
+campo nuevo `creditLine` en `projects.json` (`Commissioned by the Inter-American Development Bank`), que
+sale tal cual, en los dos idiomas, debajo del resumen de la ficha y en la ficha de vidrio de la portada.
+Además `commissionedBy: "Inter-American Development Bank"` en los datos de la ficha. Sin logo del BID.
+Cualquier obra que exija un crédito exacto puede usar `creditLine`.
 
 **Verificado en Chrome**: la ficha de Neurocosm XR (galería y a sangre con las fotos nuevas), las
 galaxias de Neurocosm XR y Collective Pulse, sin imágenes rotas ni errores. Paquete: 45 páginas, 1.487

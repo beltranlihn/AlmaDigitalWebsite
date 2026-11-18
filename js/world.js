@@ -729,7 +729,7 @@ export function mount(section, opts) {
   const hudCount = q('[data-w-count]'), hudTitle = q('[data-w-title]'), hudFmt = q('[data-w-fmt]'), hudOpen = q('a[data-w-open]');
   const n = links.length;
   const hudDesc = q('[data-w-desc]'), hudCta = q('[data-w-cta]'), chapter = q('[data-w-chapter]');
-  const hudTags = q('[data-w-tags]'), hudWhere = q('[data-w-where]');
+  const hudTags = q('[data-w-tags]'), hudWhere = q('[data-w-where]'), hudCredit = q('[data-w-credit]');
   /* Tramos del recorrido: uno entre cada par de paradas y uno más antes de la
      primera obra, que es el paso a "Obras seleccionadas". */
   const kinds = links.map((a) => a.getAttribute('data-kind') || 'work');
@@ -913,6 +913,7 @@ export function mount(section, opts) {
     w.desc = a.getAttribute('data-desc') || ''; w.cta = a.getAttribute('data-cta') || '';
     w.tags = (a.getAttribute('data-tags') || '').split('|').filter(Boolean);
     w.where = a.getAttribute('data-where') || ''; w.line = a.getAttribute('data-line') || '';
+    w.credit = a.getAttribute('data-credit') || '';        // un crédito que la obra exige mostrar (projects.json → creditLine)
     w.asked = false;
     return w;
   });
@@ -1451,6 +1452,7 @@ export function mount(section, opts) {
         }
         hudWhere.hidden = !(isWork && wk.where);
       }
+      if (hudCredit) { hudCredit.textContent = isWork ? wk.credit : ''; hudCredit.hidden = !(isWork && wk.credit); }
       if (hudCta) hudCta.textContent = wk.cta || hudCta.getAttribute('data-default') || '';
       if (hudOpen) hudOpen.href = wk.href;
       if (hud) {
