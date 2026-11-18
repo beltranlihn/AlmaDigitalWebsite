@@ -291,12 +291,21 @@ estudio y la del final siguen igual.
   órbita; al seguir, se abren y la galaxia se apaga. El enjambre de partículas de la obra se ordena en
   dos brazos de espiral sobre el mismo disco. Todo se inclina un poco hacia el cursor. Las amebas de
   fondo se apagan donde se cruzan, en pantalla, con la galaxia.
-- **Los íconos** (`ICONS` en `js/world.js`) están hechos con formas simples de Three.js, en vidrio
-  luminoso (borde que brilla + aristas finas), con los colores de la obra: `headset` casco de VR,
-  `eeg` cabeza con la vincha de electrodos y una onda cerebral, `brush` pincel con una pincelada,
-  `pulse` corazón que late con su electrocardiograma, `dome` domo de meridianos con su anillo, `room`
-  sala inmersiva con una persona adentro, `projector`, `speaker` y `prism` (para lo que no tenga otro).
-  Cuál lleva cada obra: `site.json → world.icons`; sin entrada, uno según el formato.
+- **Los íconos** (`ICONS` en `js/world.js`) están modelados con código: formas de Three.js más
+  `RoundedBoxGeometry` (de los ejemplos oficiales de Three.js, mismo CDN y versión), con materiales
+  físicos (nácar iridiscente, vidrio oscuro, metal pulido, partes que brillan) en los colores de la
+  obra, iluminados por `RoomEnvironment` (un estudio virtual que da reflejos; también de los ejemplos
+  oficiales). Algunos tienen pantallas con las imágenes de la galaxia. `headset` casco de VR con su
+  frente de vidrio y cámaras; `eeg` cabeza de vidrio con el cerebro encendido y la vincha de
+  electrodos; `brush` pincel con una pincelada que lo rodea; `pulse` corazón que late con un
+  electrocardiograma en anillo; `dome` cúpula geodésica con la imagen de la obra proyectada adentro;
+  `room` túnel de pantallas con imágenes de la obra y una persona; `projector`, `speaker` y `prism`.
+  Los que se ven mejor de frente se mecen en vez de girar (`SWING`). Cuál lleva cada obra:
+  `site.json → world.icons`; sin entrada, uno según el formato.
+  Se buscaron modelos 3D hechos (2026-11-18): lo gratis es de estilo low-poly y lo bueno es pago o con
+  licencias que hay que revisar una por una, así que se modelaron. **Si el estudio tiene o arma
+  modelos propios en Blender** (exportados como `.glb`), se pueden usar en lugar de estos con
+  `GLTFLoader`, también de los ejemplos de Three.js.
 - **Las imágenes** no son las fotos originales sino copias chicas (768×432, y 360×640 las verticales):
   `python3 tools/make_world_images.py` toma la portada y las fotos de cada obra seleccionada (hasta 5)
   y, si tiene menos, completa con cuadros de su reel vertical (necesita ffmpeg). Escribe

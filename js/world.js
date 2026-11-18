@@ -48,6 +48,10 @@
            reelFull() → abre el reel completo con sonido; true si lo abrió }
    ═══════════════════════════════════════════════════════════════════════ */
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.187.0/+esm';
+/* Dos piezas de los ejemplos oficiales de Three.js, del mismo CDN y la misma versión:
+   el entorno de estudio que ilumina los íconos y las cajas de puntas redondas. */
+import { RoomEnvironment } from 'https://cdn.jsdelivr.net/npm/three@0.187.0/examples/jsm/environments/RoomEnvironment.js/+esm';
+import { RoundedBoxGeometry } from 'https://cdn.jsdelivr.net/npm/three@0.187.0/examples/jsm/geometries/RoundedBoxGeometry.js/+esm';
 
 const clamp = (x, a, b) => Math.max(a, Math.min(b, x));
 const smooth = (a, b, x) => { const t = clamp((x - a) / (b - a), 0, 1); return t * t * (3 - 2 * t); };
@@ -479,25 +483,14 @@ const CARD_FRAG = `
     col += vec3(0.93, 0.86, 1.0) * smoothstep(0.016, 0.0, abs(d)) * 0.4;
     gl_FragColor = vec4(col, uOpacity * smoothstep(0.004, -0.004, d));
   }`;
-/* Los íconos: vidrio luminoso. La cara brilla en el borde (fresnel) y las
-   aristas son líneas finas, como un holograma. */
-const HOLO_VERT = `
-  varying vec3 vN; varying vec3 vP;
-  void main() {
-    vec4 mv = modelViewMatrix * vec4(position, 1.0);
-    vN = normalize(normalMatrix * normal); vP = mv.xyz;
-    gl_Position = projectionMatrix * mv;
-  }`;
-const HOLO_FRAG = `
-  uniform vec3 uA, uB;
-  uniform float uOpacity, uGlow;
-  varying vec3 vN; varying vec3 vP;
-  void main() {
-    vec3 N = normalize(vN), V = normalize(-vP);
-    float fres = pow(1.0 - abs(dot(N, V)), 2.0);
-    vec3 col = mix(uA, uB, fres) * (0.32 + 1.15 * fres + 0.45 * uGlow);
-    gl_FragColor = vec4(col, (0.13 + 0.87 * fres) * uOpacity);
-  }`;
+/* ── Los íconos 3D ──────────────────────────────────────────────────────
+   Objetos modelados con formas de Three.js (y RoundedBoxGeometry, de sus
+   ejemplos oficiales), con materiales físicos: nácar iridiscente, vidrio
+   oscuro, metal pulido y partes que brillan. Los ilumina un entorno de estudio
+   (RoomEnvironment), así que tienen reflejos de verdad. Algunos llevan
+   pantallas con las imágenes de la obra: las paredes de la sala, el interior
+   del domo. Cada uno recibe M (los materiales de su obra) y S(k), que da una
+   pantalla con la imagen k de la galaxia. makeIcon() los lleva a la misma medida. */
 function roundRect(w, h, r) {
   const s = new THREE.Shape(), x = -w / 2, y = -h / 2;
   s.moveTo(x + r, y); s.lineTo(x + w - r, y); s.quadraticCurveTo(x + w, y, x + w, y + r);
@@ -506,135 +499,222 @@ function roundRect(w, h, r) {
   s.lineTo(x, y + r); s.quadraticCurveTo(x, y, x + r, y);
   return s;
 }
-/* Líneas sueltas (para lo que no es un sólido): pares de puntos. */
-function segs(list) {
+const V3 = (x, y, z) => new THREE.Vector3(x, y, z);
+const V2 = (x, y) => new THREE.Vector2(x, y);
+function put(g, geo, mat, p, r, s) {
+  const m = new THREE.Mesh(geo, mat);
+  if (p) m.position.set(...p);
+  if (r) m.rotation.set(...r);
+  if (s) m.scale.set(...s);
+  g.add(m);
+  return m;
+}
+/* Una banda plana (correa, vincha, pincelada) que sigue una curva: grosor t y alto
+   h, con el alto siempre lo más vertical posible (no depende de cómo gire la curva). */
+function band(pts, t, h, steps) {
+  const curve = new THREE.CatmullRomCurve3(pts), n = steps || 100, UP = V3(0, 1, 0);
+  const P = V3(0, 0, 0), T = V3(0, 0, 0), A = V3(0, 0, 0), B = V3(0, 0, 0), pos = [], idx = [];
+  const corners = [[1, 1], [1, -1], [-1, -1], [-1, 1]];
+  for (let k = 0; k <= n; k++) {
+    curve.getPointAt(k / n, P); curve.getTangentAt(k / n, T);
+    A.copy(UP).addScaledVector(T, -T.dot(UP)).normalize();      // hacia arriba, sin torcerse
+    B.crossVectors(T, A).normalize();                            // de costado: el grosor
+    corners.forEach(([a, b]) => pos.push(P.x + A.x * a * h / 2 + B.x * b * t / 2, P.y + A.y * a * h / 2 + B.y * b * t / 2, P.z + A.z * a * h / 2 + B.z * b * t / 2));
+  }
+  for (let k = 0; k < n; k++) for (let c = 0; c < 4; c++) {
+    const a = k * 4 + c, b = k * 4 + (c + 1) % 4, d = a + 4, e = b + 4;
+    idx.push(a, d, b, b, d, e);
+  }
   const g = new THREE.BufferGeometry();
-  g.setAttribute('position', new THREE.Float32BufferAttribute(list, 3));
+  g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+  g.setIndex(idx);
+  g.computeVertexNormals();
   return g;
 }
-function polyline(pts) {
-  const out = [];
-  for (let i = 0; i < pts.length - 1; i++) out.push(...pts[i], ...pts[i + 1]);
-  return out;
+/* Una barra entre dos puntos (las vigas del domo y los marcos de la sala). */
+function beams(pairs, r, mat) {
+  const geo = new THREE.CylinderGeometry(r, r, 1, 8, 1);
+  const mesh = new THREE.InstancedMesh(geo, mat, pairs.length);
+  const o = new THREE.Object3D(), up = V3(0, 1, 0);
+  pairs.forEach(([a, b], k) => {
+    const d = V3(0, 0, 0).subVectors(b, a);
+    o.position.copy(a).addScaledVector(d, 0.5);
+    o.quaternion.setFromUnitVectors(up, d.clone().normalize());
+    o.scale.set(1, d.length(), 1);
+    o.updateMatrix(); mesh.setMatrixAt(k, o.matrix);
+  });
+  return mesh;
 }
-const V3 = (x, y, z) => new THREE.Vector3(x, y, z);
-/* Cada ícono es una lista de piezas:
-     g       geometría (cara de vidrio; con edge !== false, también sus aristas)
-     line    sólo líneas (pares de puntos)
-     accent  usa el segundo color de la obra
-     p, r, s posición, rotación (Euler) y escala */
 const ICONS = {
-  /* Casco de VR: el visor, los dos lentes por detrás y la correa. */
-  headset() {
-    const visor = new THREE.ExtrudeGeometry(roundRect(1.5, 0.8, 0.32), { depth: 0.42, bevelEnabled: true, bevelSize: 0.08, bevelThickness: 0.08, bevelSegments: 3, curveSegments: 10 });
-    visor.center();
-    return [
-      { g: visor, edge: 40 },
-      { g: new THREE.TorusGeometry(0.2, 0.035, 8, 40), p: [-0.35, 0, -0.32], accent: true, edge: false },
-      { g: new THREE.TorusGeometry(0.2, 0.035, 8, 40), p: [0.35, 0, -0.32], accent: true, edge: false },
-      { g: new THREE.TorusGeometry(0.84, 0.06, 8, 64, Math.PI), p: [0, 0, -0.22], r: [-Math.PI / 2, 0, 0], edge: false },
-      { g: new THREE.TorusGeometry(0.6, 0.045, 8, 40, Math.PI * 0.62), p: [0, 0.32, -0.25], r: [0, Math.PI / 2, Math.PI / 2 - 0.15], edge: false },
-    ];
+  /* Casco de VR: cuerpo de nácar, frente de vidrio negro con sus cámaras, espuma,
+     lentes que brillan, correas planas y la almohadilla de atrás. */
+  headset(M) {
+    const g = new THREE.Group();
+    put(g, new RoundedBoxGeometry(1.5, 0.84, 0.6, 6, 0.27), M.shell);
+    put(g, new RoundedBoxGeometry(1.36, 0.7, 0.08, 5, 0.2), M.glass, [0, 0, 0.29]);
+    [[-0.52, 0.22], [0.52, 0.22], [-0.52, -0.22], [0.52, -0.22]].forEach(([x, y]) => {
+      put(g, new THREE.CircleGeometry(0.05, 24), M.chrome, [x, y, 0.336]);
+      put(g, new THREE.CircleGeometry(0.03, 20), M.glow, [x, y, 0.338]);
+    });
+    put(g, new RoundedBoxGeometry(1.32, 0.68, 0.22, 5, 0.17), M.dark, [0, -0.01, -0.37]);
+    [-0.32, 0.32].forEach((x) => {
+      put(g, new THREE.TorusGeometry(0.17, 0.028, 14, 48), M.chrome, [x, 0, -0.49]);
+      put(g, new THREE.CircleGeometry(0.16, 40), M.glow, [x, 0, -0.486], [0, Math.PI, 0]);
+    });
+    put(g, band([V3(0.74, 0, -0.18), V3(0.93, 0, -0.62), V3(0.62, 0, -1.14), V3(0, 0, -1.3), V3(-0.62, 0, -1.14), V3(-0.93, 0, -0.62), V3(-0.74, 0, -0.18)], 0.055, 0.21), M.dark);
+    put(g, new THREE.TubeGeometry(new THREE.CatmullRomCurve3([V3(0, 0.4, -0.1), V3(0, 0.72, -0.5), V3(0, 0.62, -1.0), V3(0, 0.16, -1.3)]), 60, 0.045, 10, false), M.dark);
+    put(g, new RoundedBoxGeometry(0.54, 0.42, 0.12, 4, 0.05), M.shell, [0, 0.05, -1.33]);
+    g.rotation.y = -0.5;
+    return g;
   },
-  /* Sensor EEG: una cabeza de malla con la vincha de electrodos. */
-  eeg() {
-    const tilt = new THREE.Euler(Math.PI / 2 - 0.28, 0, 0);
-    const parts = [
-      { g: new THREE.IcosahedronGeometry(0.72, 1), edge: 1 },
-      { g: new THREE.TorusGeometry(0.8, 0.06, 10, 72), p: [0, 0.14, 0], r: [tilt.x, 0, 0], accent: true, edge: false },
-    ];
-    for (let k = 0; k < 7; k++) {
-      const a = Math.PI * (0.12 + k * 0.76 / 6), v = V3(Math.cos(a) * 0.8, Math.sin(a) * 0.8, 0).applyEuler(tilt);
-      parts.push({ g: new THREE.SphereGeometry(0.085, 14, 10), p: [v.x, v.y + 0.14, v.z], accent: true, edge: false });
+  /* Sensor EEG: una cabeza de vidrio con el cerebro encendido adentro y la vincha
+     de electrodos en la frente. */
+  eeg(M) {
+    const g = new THREE.Group();
+    const head = new THREE.SphereGeometry(0.8, 56, 40); head.scale(0.84, 1, 0.94);
+    put(g, head, M.ghost, [0, 0.1, 0]);
+    put(g, new THREE.CylinderGeometry(0.27, 0.34, 0.5, 40, 1, true), M.ghost, [0, -0.88, -0.04]);
+    /* El cerebro: una esfera con pliegues y la ranura entre los hemisferios. */
+    const brain = new THREE.SphereGeometry(0.5, 120, 80), pos = brain.attributes.position, v = V3(0, 0, 0);
+    for (let k = 0; k < pos.count; k++) {
+      v.fromBufferAttribute(pos, k).normalize();
+      const fold = Math.sin(v.x * 13 + Math.sin(v.y * 9) * 2.2) * Math.sin(v.y * 12 + Math.sin(v.z * 8) * 2) * Math.sin(v.z * 11 + Math.sin(v.x * 7) * 2);
+      const groove = Math.exp(-Math.pow(v.x / 0.07, 2)) * (v.y > -0.35 ? 1 : 0);
+      const r = 0.5 * (1 + 0.07 * fold - 0.14 * groove);
+      pos.setXYZ(k, v.x * r * 0.92, v.y * r * 0.78, v.z * r * 1.12);
     }
-    /* La onda cerebral, flotando arriba. */
-    const wave = [];
-    for (let k = 0; k <= 60; k++) { const x = -0.9 + k * 0.03; wave.push([x, 1.0 + Math.sin(x * 11) * 0.09 * (1 - Math.abs(x) / 0.9), 0]); }
-    parts.push({ line: segs(polyline(wave)) });
-    return parts;
+    brain.computeVertexNormals();
+    put(g, brain, M.brain, [0, 0.3, 0.02]);
+    /* La vincha: de una oreja a la otra, pasando por la frente. */
+    const arc = [];
+    for (let k = 0; k <= 12; k++) { const a = -1.75 + k * 3.5 / 12; arc.push(V3(Math.sin(a) * 0.71, 0.36 - 0.06 * Math.cos(a), Math.cos(a) * 0.79)); }
+    put(g, band(arc, 0.06, 0.15), M.shell);
+    [-1.75, 1.75].forEach((a) => put(g, new RoundedBoxGeometry(0.12, 0.3, 0.24, 4, 0.05), M.shell, [Math.sin(a) * 0.72, 0.24, Math.cos(a) * 0.8], [0, a, 0]));
+    for (let k = 0; k < 5; k++) {
+      const a = -0.9 + k * 0.45;
+      put(g, new THREE.CylinderGeometry(0.045, 0.045, 0.04, 20), M.chrome, [Math.sin(a) * 0.765, 0.43 - 0.06 * Math.cos(a), Math.cos(a) * 0.855], [Math.PI / 2, 0, -a]);
+      put(g, new THREE.SphereGeometry(0.022, 12, 8), M.glow, [Math.sin(a) * 0.79, 0.43 - 0.06 * Math.cos(a), Math.cos(a) * 0.88]);
+    }
+    return g;
   },
-  /* Pincel: mango, virola, punta, y una pincelada que se enrosca. */
-  brush() {
-    const V2 = (x, y) => new THREE.Vector2(x, y);
-    const tip = new THREE.LatheGeometry([V2(0.0, 0), V2(0.105, 0.02), V2(0.14, 0.17), V2(0.12, 0.37), V2(0.065, 0.52), V2(0.0, 0.62)], 22);
-    const stroke = new THREE.CatmullRomCurve3([V3(0.25, 0.95, 0.1), V3(0.8, 0.6, 0.35), V3(0.95, 0.05, 0.1), V3(0.6, -0.42, -0.25), V3(0.05, -0.55, -0.3), V3(-0.5, -0.3, -0.05), V3(-0.75, 0.15, 0.2)]);
-    return [
-      { g: new THREE.CylinderGeometry(0.09, 0.13, 1.3, 18), p: [0, -0.95, 0], edge: false },
-      { g: new THREE.CylinderGeometry(0.15, 0.15, 0.26, 18), p: [0, -0.2, 0], edge: 30 },
-      { g: tip, p: [0, -0.07, 0], s: [1.45, 1.1, 1.45], edge: false },
-      { g: new THREE.TubeGeometry(stroke, 90, 0.075, 8, false), accent: true, edge: false },
-    ];
+  /* Pincel: mango laqueado, virola de metal con sus anillos, cerdas cargadas de
+     pintura y una pincelada que se enrosca alrededor. */
+  brush(M) {
+    const g = new THREE.Group(), b = new THREE.Group();
+    put(b, new THREE.LatheGeometry([V2(0, -1.35), V2(0.06, -1.34), V2(0.085, -1.15), V2(0.11, -0.62), V2(0.125, -0.28), V2(0.105, -0.05)], 40), M.lacquer);
+    put(b, new THREE.LatheGeometry([V2(0.105, -0.06), V2(0.135, -0.02), V2(0.135, 0.22), V2(0.122, 0.27)], 40), M.chrome);
+    [0.02, 0.07].forEach((y) => put(b, new THREE.TorusGeometry(0.137, 0.012, 8, 40), M.chrome, [0, y, 0], [Math.PI / 2, 0, 0]));
+    put(b, new THREE.LatheGeometry([V2(0.122, 0.26), V2(0.165, 0.4), V2(0.155, 0.6), V2(0.105, 0.8), V2(0.035, 0.97), V2(0, 1.0)], 40), M.bristle);
+    put(b, new THREE.LatheGeometry([V2(0.158, 0.58), V2(0.11, 0.8), V2(0.04, 0.97), V2(0, 1.01)], 40), M.paint, [0, 0, 0], null, [1.04, 1, 1.04]);
+    b.rotation.z = -0.55;
+    g.add(b);
+    /* La pincelada: una cinta ancha que sale de la punta y da una vuelta alrededor. */
+    put(g, band([V3(0.66, 0.78, 0.0), V3(1.05, 0.5, 0.35), V3(0.85, 0.0, 0.75), V3(0.2, -0.3, 0.85), V3(-0.5, -0.2, 0.55), V3(-0.85, 0.2, 0.0), V3(-0.6, 0.55, -0.55), V3(0.0, 0.7, -0.7)], 0.03, 0.2, 140), M.paint);
+    [[0.95, 1.12, 0.1, 0.05], [1.12, 0.78, 0.3, 0.035], [-0.42, 0.78, -0.5, 0.04]].forEach(([x, y, z, r]) => put(g, new THREE.SphereGeometry(r, 16, 12), M.paint, [x, y, z]));
+    return g;
   },
-  /* Sensor de pulso: un corazón y su electrocardiograma. */
-  pulse() {
+  /* Sensor de pulso: un corazón brillante que late, con su electrocardiograma en un
+     anillo de luz que lo rodea. */
+  pulse(M) {
+    const g = new THREE.Group();
     const h = new THREE.Shape();
     h.moveTo(5, 5); h.bezierCurveTo(5, 5, 4, 0, 0, 0); h.bezierCurveTo(-6, 0, -6, 7, -6, 7);
     h.bezierCurveTo(-6, 11, -3, 15.4, 5, 19); h.bezierCurveTo(12, 15.4, 16, 11, 16, 7);
     h.bezierCurveTo(16, 7, 16, 0, 10, 0); h.bezierCurveTo(7, 0, 5, 5, 5, 5);
-    const heart = new THREE.ExtrudeGeometry(h, { depth: 4, bevelEnabled: true, bevelSize: 1.2, bevelThickness: 1.2, bevelSegments: 4, curveSegments: 16 });
-    heart.center(); heart.scale(0.075, -0.075, 0.075);
-    const ecg = [[-1.3, 0, 0.5], [-0.42, 0, 0.5], [-0.3, 0.16, 0.5], [-0.18, -0.08, 0.5], [-0.06, 0.62, 0.5], [0.08, -0.45, 0.5], [0.2, 0.06, 0.5], [0.32, 0, 0.5], [1.3, 0, 0.5]];
-    const path = new THREE.CurvePath();
-    for (let k = 0; k < ecg.length - 1; k++) path.add(new THREE.LineCurve3(V3(...ecg[k]), V3(...ecg[k + 1])));
-    return [
-      { g: heart, edge: 30 },
-      { g: new THREE.TubeGeometry(path, 200, 0.03, 6, false), accent: true, edge: false },
-    ];
-  },
-  /* Domo: media esfera de meridianos y paralelos sobre su anillo, y la luz del proyector adentro. */
-  dome() {
-    const lines = [], M = 14, L = 5;
-    for (let m = 0; m < M; m++) {
-      const ph = m / M * Math.PI * 2, pts = [];
-      for (let k = 0; k <= 16; k++) { const th = k / 16 * Math.PI / 2; pts.push([Math.sin(th) * Math.cos(ph), Math.cos(th), Math.sin(th) * Math.sin(ph)]); }
-      lines.push(...polyline(pts));
+    const heart = new THREE.ExtrudeGeometry(h, { depth: 3.4, bevelEnabled: true, bevelSize: 1.5, bevelThickness: 2.6, bevelSegments: 10, curveSegments: 48 });
+    heart.center(); heart.rotateZ(Math.PI); heart.scale(0.07, 0.07, 0.07);   // girado y no espejado: si no, las caras quedan al revés
+    put(g, heart, M.heart);
+    const ring = [];
+    for (let k = 0; k <= 240; k++) {
+      const a = (k / 240) * Math.PI * 2, ph = (a / (Math.PI * 2)) * 3 % 1;
+      const spike = ph < 0.06 ? Math.sin(ph / 0.06 * Math.PI) * 0.06 : ph < 0.1 ? -Math.sin((ph - 0.06) / 0.04 * Math.PI) * 0.08 : ph < 0.16 ? Math.sin((ph - 0.1) / 0.06 * Math.PI) * 0.42 : ph < 0.21 ? -Math.sin((ph - 0.16) / 0.05 * Math.PI) * 0.2 : 0;
+      ring.push(V3(Math.cos(a) * 1.18, spike, Math.sin(a) * 1.18));
     }
-    for (let l = 1; l <= L; l++) {
-      const th = l / (L + 0.6) * Math.PI / 2, pts = [];
-      for (let k = 0; k <= 48; k++) { const ph = k / 48 * Math.PI * 2; pts.push([Math.sin(th) * Math.cos(ph), Math.cos(th), Math.sin(th) * Math.sin(ph)]); }
-      lines.push(...polyline(pts));
+    put(g, new THREE.TubeGeometry(new THREE.CatmullRomCurve3(ring, true), 480, 0.022, 8, true), M.glow, [0, -0.05, 0], [0.32, 0, 0.1]);
+    return g;
+  },
+  /* Domo: cúpula geodésica de vigas de metal, con la imagen de la obra proyectada
+     adentro, sobre su anillo y su piso. */
+  dome(M, S) {
+    const g = new THREE.Group();
+    const ico = new THREE.IcosahedronGeometry(1, 2), p = ico.attributes.position;
+    const verts = [], key = (v) => v.toArray().map((x) => x.toFixed(3)).join(',');
+    const idx = new Map(), edges = new Set();
+    const vid = (v) => { const kk = key(v); if (!idx.has(kk)) { idx.set(kk, verts.length); verts.push(v.clone()); } return idx.get(kk); };
+    for (let k = 0; k < p.count; k += 3) {
+      const t = [0, 1, 2].map((j) => vid(V3(0, 0, 0).fromBufferAttribute(p, k + j)));
+      [[0, 1], [1, 2], [2, 0]].forEach(([a, b]) => { const e = Math.min(t[a], t[b]) + '-' + Math.max(t[a], t[b]); edges.add(e); });
     }
-    return [
-      { g: new THREE.SphereGeometry(1, 36, 14, 0, Math.PI * 2, 0, Math.PI / 2), edge: false },
-      { line: segs(lines) },
-      { g: new THREE.TorusGeometry(1.02, 0.03, 8, 72), r: [Math.PI / 2, 0, 0], accent: true, edge: false },
-      { g: new THREE.SphereGeometry(0.11, 16, 12), p: [0, 0.12, 0], accent: true, edge: false },
-    ];
+    ico.dispose();
+    const top = (v) => v.y > -0.02;
+    const pairs = [...edges].map((e) => e.split('-').map(Number)).filter(([a, b]) => top(verts[a]) && top(verts[b])).map(([a, b]) => [verts[a], verts[b]]);
+    g.add(beams(pairs, 0.014, M.chrome));
+    const nodes = verts.filter(top);
+    const nm = new THREE.InstancedMesh(new THREE.SphereGeometry(0.03, 10, 8), M.chrome, nodes.length), o = new THREE.Object3D();
+    nodes.forEach((v, k) => { o.position.copy(v); o.updateMatrix(); nm.setMatrixAt(k, o.matrix); });
+    g.add(nm);
+    put(g, new THREE.SphereGeometry(0.975, 64, 24, 0, Math.PI * 2, 0, Math.PI / 2), S(0, THREE.BackSide));
+    put(g, new THREE.TorusGeometry(1.0, 0.03, 12, 96), M.chrome, null, [Math.PI / 2, 0, 0]);
+    put(g, new THREE.CylinderGeometry(1.08, 1.12, 0.06, 72), M.dark, [0, -0.04, 0]);
+    put(g, new THREE.SphereGeometry(0.06, 16, 12), M.glow, [0, 0.08, 0]);
+    g.rotation.x = 0.28;
+    return g;
   },
-  /* Sala inmersiva: dos paredes y el piso, con la grilla de las pantallas, y una persona adentro. */
-  room() {
-    const grid = [], W = 1.6, H = 1.15, Dp = 1.25;
-    for (let k = 1; k < 6; k++) { const x = -W / 2 + k * W / 6; grid.push(x, -H / 2, -Dp / 2, x, H / 2, -Dp / 2); }
-    for (let k = 1; k < 4; k++) { const y = -H / 2 + k * H / 4; grid.push(-W / 2, y, -Dp / 2, W / 2, y, -Dp / 2, -W / 2, y, -Dp / 2, -W / 2, y, Dp / 2); }
-    for (let k = 1; k < 5; k++) { const z = -Dp / 2 + k * Dp / 5; grid.push(-W / 2, -H / 2, z, -W / 2, H / 2, z); }
-    return [
-      { g: new THREE.PlaneGeometry(W, H), p: [0, 0, -Dp / 2], edge: 1 },
-      { g: new THREE.PlaneGeometry(Dp, H), p: [-W / 2, 0, 0], r: [0, Math.PI / 2, 0], edge: 1 },
-      { g: new THREE.PlaneGeometry(W, Dp), p: [0, -H / 2, 0], r: [-Math.PI / 2, 0, 0], edge: 1 },
-      { line: segs(grid) },
-      { g: new THREE.CapsuleGeometry(0.085, 0.34, 6, 12), p: [0.15, -H / 2 + 0.26, 0.12], accent: true, edge: false },
-      { g: new THREE.SphereGeometry(0.085, 14, 10), p: [0.15, -H / 2 + 0.55, 0.12], accent: true, edge: false },
-    ];
+  /* Sala inmersiva: un túnel de pantallas con imágenes de la obra, sus marcos, el
+     piso brillante y una persona adentro con los brazos arriba. */
+  room(M, S) {
+    const g = new THREE.Group(), W = 1.7, H = 1.08, D = 1.3, x = W / 2, y = H / 2, z = D / 2;
+    put(g, new THREE.PlaneGeometry(D, H), S(1), [-x, 0, 0], [0, Math.PI / 2, 0]);
+    put(g, new THREE.PlaneGeometry(D, H), S(2), [x, 0, 0], [0, -Math.PI / 2, 0]);
+    put(g, new THREE.PlaneGeometry(W, H), S(3), [0, 0, -z]);
+    put(g, new THREE.PlaneGeometry(W, D), S(4), [0, y, 0], [Math.PI / 2, 0, 0]);
+    put(g, new THREE.PlaneGeometry(W, D), M.floor, [0, -y, 0], [-Math.PI / 2, 0, 0]);
+    const c = (a, b, cc) => V3(a * x, b * y, cc * z);
+    const frame = [[c(-1, -1, -1), c(1, -1, -1)], [c(-1, 1, -1), c(1, 1, -1)], [c(-1, -1, -1), c(-1, 1, -1)], [c(1, -1, -1), c(1, 1, -1)],
+      [c(-1, -1, 1), c(-1, 1, 1)], [c(1, -1, 1), c(1, 1, 1)], [c(-1, 1, 1), c(1, 1, 1)], [c(-1, -1, 1), c(1, -1, 1)],
+      [c(-1, 1, -1), c(-1, 1, 1)], [c(1, 1, -1), c(1, 1, 1)], [c(-1, -1, -1), c(-1, -1, 1)], [c(1, -1, -1), c(1, -1, 1)]];
+    g.add(beams(frame, 0.016, M.chrome));
+    const man = new THREE.Group(), fy = -y;
+    put(man, new THREE.CapsuleGeometry(0.075, 0.26, 8, 16), M.shell, [0, fy + 0.4, 0]);
+    put(man, new THREE.SphereGeometry(0.075, 20, 14), M.shell, [0, fy + 0.64, 0]);
+    [-1, 1].forEach((sd) => {
+      put(man, new THREE.CapsuleGeometry(0.028, 0.26, 6, 10), M.shell, [sd * 0.13, fy + 0.62, 0], [0, 0, -sd * 0.55]);
+      put(man, new THREE.CapsuleGeometry(0.034, 0.28, 6, 10), M.shell, [sd * 0.045, fy + 0.15, 0]);
+    });
+    man.position.set(0.12, 0, 0.1);
+    g.add(man);
+    g.rotation.x = 0.16;
+    return g;
   },
-  /* Proyector: el cuerpo, el lente y el haz de luz. */
-  projector() {
-    const beam = new THREE.ConeGeometry(0.75, 1.5, 32, 1, true);
-    return [
-      { g: new THREE.BoxGeometry(0.9, 0.46, 0.7), p: [0, 0, -0.6], edge: 30 },
-      { g: new THREE.CylinderGeometry(0.17, 0.2, 0.2, 24), p: [0, 0, -0.17], r: [Math.PI / 2, 0, 0], edge: false },
-      { g: beam, p: [0, 0, 0.68], r: [-Math.PI / 2, 0, 0], accent: true, edge: false },
-    ];
+  /* Proyector: cuerpo de nácar, lente de vidrio y el haz de luz. */
+  projector(M) {
+    const g = new THREE.Group();
+    put(g, new RoundedBoxGeometry(0.95, 0.48, 0.75, 5, 0.1), M.shell, [0, 0, -0.55]);
+    put(g, new THREE.CylinderGeometry(0.19, 0.21, 0.18, 40), M.chrome, [0, 0, -0.1], [Math.PI / 2, 0, 0]);
+    put(g, new THREE.CircleGeometry(0.16, 40), M.glass, [0, 0, -0.005]);
+    put(g, new THREE.ConeGeometry(0.75, 1.5, 48, 1, true), M.beam, [0, 0, 0.74], [-Math.PI / 2, 0, 0]);
+    return g;
   },
-  /* Parlante: el cono y las ondas que salen. */
-  speaker() {
-    const parts = [{ g: new THREE.CylinderGeometry(0.62, 0.62, 0.32, 48), r: [Math.PI / 2, 0, 0], edge: 30 }];
-    [0.46, 0.3, 0.14].forEach((r) => parts.push({ g: new THREE.TorusGeometry(r, 0.025, 8, 48), p: [0, 0, 0.18], accent: true, edge: false }));
-    [0.95, 1.2].forEach((r) => parts.push({ g: new THREE.TorusGeometry(r, 0.02, 6, 48, Math.PI * 0.55), p: [0, 0, 0.18], r: [0, 0, -Math.PI * 0.275], edge: false }));
-    return parts;
+  /* Parlante: caja oscura, cono de nácar y sus anillos de luz. */
+  speaker(M) {
+    const g = new THREE.Group();
+    put(g, new RoundedBoxGeometry(1.0, 1.3, 0.6, 5, 0.1), M.dark, [0, 0, -0.3]);
+    put(g, new THREE.LatheGeometry([V2(0.05, 0.0), V2(0.18, -0.06), V2(0.38, -0.14), V2(0.42, -0.12)], 48), M.shell, [0, -0.15, 0.02], [-Math.PI / 2, 0, 0]);
+    put(g, new THREE.SphereGeometry(0.08, 20, 12), M.chrome, [0, -0.15, 0.04]);
+    put(g, new THREE.TorusGeometry(0.44, 0.02, 10, 60), M.glow, [0, -0.15, 0.03]);
+    put(g, new THREE.TorusGeometry(0.16, 0.015, 10, 40), M.glow, [0, 0.38, 0.03]);
+    return g;
   },
-  /* Prisma: una forma facetada, para lo que no tiene otro ícono. */
-  prism() { return [{ g: new THREE.IcosahedronGeometry(0.9, 0), edge: 1 }]; },
+  /* Prisma: una gema facetada, para lo que no tiene otro ícono. */
+  prism(M) {
+    const g = new THREE.Group();
+    put(g, new THREE.IcosahedronGeometry(0.9, 0), M.shell);
+    put(g, new THREE.IcosahedronGeometry(0.3, 1), M.glow);
+    return g;
+  },
 };
+/* Los íconos que se ven mejor de frente se mecen en vez de girar entero. */
+const SWING = { headset: 0.85, eeg: 0.75, pulse: 0.6, room: 0.55, projector: 0.7, speaker: 0.6 };
 const heartbeat = (t) => { const p = t % 1, a = (p - 0.08) / 0.045, b = (p - 0.30) / 0.06; return Math.exp(-a * a) + 0.55 * Math.exp(-b * b); };
 
 export function mount(section, opts) {
@@ -723,54 +803,82 @@ export function mount(section, opts) {
   const ICON_Y = 0.42;                 // el ícono flota un poco por encima del disco, como un planeta sobre su anillo
   const cardGeo = new THREE.PlaneGeometry(1, 1, 24, 1);
   disposables.push(cardGeo);
-  function makeIcon(kind, matA, matB, lineMat) {
-    const inner = new THREE.Group();
-    (ICONS[kind] || ICONS.prism)().forEach((pt) => {
-      let obj;
-      if (pt.line) obj = new THREE.LineSegments(pt.line, lineMat);
-      else {
-        obj = new THREE.Mesh(pt.g, pt.accent ? matB : matA);
-        if (pt.edge !== false) {
-          const eg = new THREE.EdgesGeometry(pt.g, pt.edge || 28);
-          const e = new THREE.LineSegments(eg, lineMat);
-          e.renderOrder = 3; obj.add(e); disposables.push(eg);
-        }
-      }
-      if (pt.p) obj.position.set(...pt.p);
-      if (pt.r) obj.rotation.set(...pt.r);
-      if (pt.s) obj.scale.set(...pt.s);
-      obj.renderOrder = 3; obj.frustumCulled = false;
-      inner.add(obj);
-      disposables.push(pt.g || pt.line);
+  /* La luz de los íconos: un entorno de estudio (reflejos suaves, sin lámparas
+     que cuidar). Sólo hace falta con las galaxias. Afecta únicamente a los
+     materiales físicos: las amebas, el polvo y las imágenes tienen sus propios shaders. */
+  if (GAL) {
+    const pmrem = new THREE.PMREMGenerator(renderer), room = new RoomEnvironment();
+    const env = pmrem.fromScene(room, 0.04).texture;
+    scene.environment = env;
+    scene.environmentRotation.set(0.25, 0.6, 0);
+    renderer.toneMapping = THREE.NeutralToneMapping;
+    renderer.toneMappingExposure = 1.08;
+    if (room.dispose) room.dispose();
+    pmrem.dispose();
+    disposables.push(env);
+  }
+  function makeIcon(kind, M, S) {
+    const inner = (ICONS[kind] || ICONS.prism)(M, S);
+    inner.traverse((o) => {
+      if (!o.isMesh) return;
+      o.renderOrder = 3; o.frustumCulled = false;
+      disposables.push(o.geometry);
     });
-    /* Todos miden lo mismo: lo más largo, 1,8. */
+    /* Todos miden lo mismo: lo más largo, 1,9. */
     inner.updateMatrixWorld(true);
     const box = new THREE.Box3().setFromObject(inner), size = box.getSize(V3(0, 0, 0)), mid = box.getCenter(V3(0, 0, 0));
-    inner.position.copy(mid).multiplyScalar(-1);
+    const center = new THREE.Group();
+    inner.position.sub(mid);
+    center.add(inner);
     const wrap = new THREE.Group();
-    wrap.add(inner);
-    wrap.userData.fit = 1.8 / Math.max(size.x, size.y, size.z, 0.01);
+    wrap.add(center);
+    wrap.userData.fit = 1.9 / Math.max(size.x, size.y, size.z, 0.01);
     return wrap;
   }
+  const blankSRGB = new THREE.DataTexture(new Uint8Array([40, 30, 90, 255]), 1, 1);
+  blankSRGB.colorSpace = THREE.SRGBColorSpace; blankSRGB.needsUpdate = true;
+  disposables.push(blankSRGB);
   function galaxy(a, i, pal) {
     const k = kinds.slice(0, i).filter((x) => x === 'work').length;     // su lugar entre las obras
     const root = new THREE.Group(), orbit = new THREE.Group();
     root.visible = false; root.add(orbit); scene.add(root);
     const tilt = [0.36 + (k % 2) * 0.1, 0, (k % 2 ? -1 : 1) * 0.12];
     orbit.rotation.set(...tilt);
+    /* Los materiales del ícono, con los colores de la obra. base: la opacidad que
+       tiene cuando la galaxia se ve entera. */
     const lift = (c, w) => c.map((x) => x + (1 - x) * w);            // un color más claro
-    const holo = (A, B) => new THREE.ShaderMaterial({
-      vertexShader: HOLO_VERT, fragmentShader: HOLO_FRAG, transparent: true, depthWrite: false,
-      blending: THREE.AdditiveBlending, side: THREE.DoubleSide,
-      uniforms: { uA: { value: V3(...A) }, uB: { value: V3(...B) }, uOpacity: { value: 0 }, uGlow: { value: 0 } },
-    });
-    const matA = holo(pal[0], lift(pal[0], 0.75)), matB = holo(pal[Math.min(1, pal.length - 1)], lift(pal[Math.min(2, pal.length - 1)], 0.5));
-    const lineMat = new THREE.LineBasicMaterial({ color: new THREE.Color(...lift(pal[0], 0.55)), transparent: true, opacity: 0, blending: THREE.AdditiveBlending, depthWrite: false });
-    disposables.push(matA, matB, lineMat);
+    const deep = (c, w) => c.map((x) => x * w);                       // uno más oscuro
+    const col = (c) => new THREE.Color().setRGB(c[0], c[1], c[2], THREE.SRGBColorSpace);
+    const P0 = pal[0], P1 = pal[Math.min(1, pal.length - 1)], P2 = pal[Math.min(2, pal.length - 1)];
+    const mats = [];
+    const mk = (Ctor, o, base) => { const m = new Ctor({ transparent: true, opacity: 0, ...o }); m.userData.base = base == null ? 1 : base; mats.push(m); disposables.push(m); return m; };
+    const M = {
+      shell: mk(THREE.MeshPhysicalMaterial, { color: col(lift(P0, 0.62)), metalness: 0.1, roughness: 0.2, clearcoat: 1, clearcoatRoughness: 0.08, iridescence: 0.9, iridescenceIOR: 1.35, iridescenceThicknessRange: [160, 640], envMapIntensity: 1.3 }),
+      dark: mk(THREE.MeshPhysicalMaterial, { color: col(deep(P0, 0.22)), metalness: 0.2, roughness: 0.38, clearcoat: 0.6, clearcoatRoughness: 0.25 }),
+      glass: mk(THREE.MeshPhysicalMaterial, { color: col([0.05, 0.035, 0.12]), metalness: 0.55, roughness: 0.05, clearcoat: 1, clearcoatRoughness: 0.02, envMapIntensity: 1.6 }),
+      chrome: mk(THREE.MeshPhysicalMaterial, { color: col(lift(P0, 0.8)), metalness: 1, roughness: 0.14, envMapIntensity: 1.4 }),
+      glow: mk(THREE.MeshBasicMaterial, { color: col(lift(P1, 0.2)), toneMapped: false }),
+      ghost: mk(THREE.MeshPhysicalMaterial, { color: col(lift(P0, 0.78)), metalness: 0, roughness: 0.06, clearcoat: 1, iridescence: 1, iridescenceIOR: 1.3, envMapIntensity: 1.5, depthWrite: false, side: THREE.DoubleSide }, 0.26),
+      brain: mk(THREE.MeshPhysicalMaterial, { color: col(lift(P1, 0.35)), emissive: col(P1), emissiveIntensity: 0.55, roughness: 0.42, clearcoat: 0.6, sheen: 1, sheenColor: col(lift(P2, 0.5)) }),
+      bristle: mk(THREE.MeshPhysicalMaterial, { color: col([0.78, 0.62, 0.45]), roughness: 0.62, sheen: 1, sheenColor: col([1, 0.9, 0.8]) }),
+      paint: mk(THREE.MeshPhysicalMaterial, { color: col(P0), emissive: col(P0), emissiveIntensity: 0.7, roughness: 0.2, clearcoat: 1, side: THREE.DoubleSide }),
+      lacquer: mk(THREE.MeshPhysicalMaterial, { color: col(deep(P2, 0.55)), metalness: 0.15, roughness: 0.18, clearcoat: 1, clearcoatRoughness: 0.05, iridescence: 0.5 }),
+      heart: mk(THREE.MeshPhysicalMaterial, { color: col(P0), emissive: col(deep(P0, 0.9)), emissiveIntensity: 0.45, metalness: 0, roughness: 0.32, clearcoat: 1, clearcoatRoughness: 0.12, iridescence: 0.2, sheen: 0.5, sheenColor: col(lift(P0, 0.5)), envMapIntensity: 0.7 }),
+      floor: mk(THREE.MeshPhysicalMaterial, { color: col([0.04, 0.03, 0.1]), metalness: 0.7, roughness: 0.08, clearcoat: 1, envMapIntensity: 1.2 }),
+      beam: mk(THREE.MeshBasicMaterial, { color: col(lift(P1, 0.3)), blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide, toneMapped: false }, 0.16),
+    };
+    /* Las pantallas: muestran las imágenes de la galaxia (se cargan con ellas). */
+    const screens = [];
+    const S = (j, side) => {
+      const m = mk(THREE.MeshBasicMaterial, { map: blankSRGB, toneMapped: false, side: side || THREE.DoubleSide });
+      screens.push({ mat: m, j });
+      return m;
+    };
     const kind = a.getAttribute('data-icon') || 'prism';
-    const icon = makeIcon(kind, matA, matB, lineMat);
+    const icon = makeIcon(kind, M, S);
     root.add(icon);
     const list = (a.getAttribute('data-gallery') || '').split(',').filter(Boolean).map((x) => { const [src, ar] = x.split('|'); return { src, ar: parseFloat(ar) || 16 / 9 }; });
+    screens.forEach((sc) => { sc.j = list.length ? sc.j % list.length : 0; });
     const cards = list.map((c, j) => {
       const mat = new THREE.ShaderMaterial({
         vertexShader: CARD_VERT, fragmentShader: CARD_FRAG, transparent: true,
@@ -784,7 +892,7 @@ export function mount(section, opts) {
       return { mesh, u: mat.uniforms, src: c.src, w, h: w / c.ar, ang: (j / list.length) * TAU2 + k * 0.9, lift: rnd(-0.3, 0.3), rad: rnd(0.88, 1.08), size: rnd(0.9, 1.12), has: 0, hasTo: 0 };
     });
     return {
-      gal: true, mesh: root, orbit, icon, cards, matA, matB, lineMat, tilt, beat: kind === 'pulse',
+      gal: true, mesh: root, orbit, icon, cards, mats, screens, tilt, beat: kind === 'pulse', swing: SWING[kind] || 0,
       u: { uOpacity: { value: 0 } }, base: new THREE.Vector3(), r: 1, gs: 1, hitR: 3, seed: 2.3 + i * 1.9,
       far: 30, hov: 0, spin: 0, loaded: false,
     };
@@ -1198,7 +1306,7 @@ export function mount(section, opts) {
   const qInv = new THREE.Quaternion();
   function askGallery(wk) {
     wk.loaded = true;
-    wk.cards.forEach((c) => {
+    wk.cards.forEach((c, j) => {
       const img = new Image();
       img.decoding = 'async';
       img.onload = function () {
@@ -1207,6 +1315,15 @@ export function mount(section, opts) {
         tex.anisotropy = 4; tex.needsUpdate = true;
         disposables.push(tex);
         c.u.uMap.value = tex; c.hasTo = 1;
+        /* Las pantallas del ícono que muestran esta imagen (con materiales de Three.js, que
+           necesitan saber que la imagen está en sRGB). */
+        const mine = wk.screens.filter((sc) => sc.j === j);
+        if (mine.length) {
+          const t2 = new THREE.Texture(img);
+          t2.colorSpace = THREE.SRGBColorSpace; t2.anisotropy = 4; t2.needsUpdate = true;
+          disposables.push(t2);
+          mine.forEach((sc) => { sc.mat.map = t2; sc.mat.needsUpdate = true; });
+        }
         if (still) draw(0);
       };
       img.src = c.src;
@@ -1230,14 +1347,13 @@ export function mount(section, opts) {
     root.rotation.set(still ? 0 : -mouse.sy * 0.08, still ? 0 : mouse.sx * 0.22, 0);   // se inclina hacia el cursor
     /* El ícono gira despacio y respira; el corazón, además, late. */
     const ic = wk.icon;
-    ic.rotation.y = still ? 0.6 : time * 0.32 + wk.seed;
-    ic.rotation.x = still ? 0.1 : 0.12 + Math.sin(time * 0.4 + wk.seed) * 0.08;
+    /* Gira entero, o se mece si se ve mejor de frente. */
+    ic.rotation.y = still ? 0.35 : wk.swing ? 0.3 + Math.sin(time * 0.33 + wk.seed) * wk.swing : time * 0.32 + wk.seed;
+    ic.rotation.x = still ? 0.06 : 0.06 + Math.sin(time * 0.4 + wk.seed) * 0.07;
     ic.position.y = ICON_Y + (still ? 0 : Math.sin(time * TAU / 6) * 0.07);
     const beat = wk.beat && !still ? 1 + 0.07 * heartbeat(time * 62 / 60) : 1;
     ic.scale.setScalar(ic.userData.fit * (0.88 + 0.12 * gather) * (1 + 0.06 * wk.hov) * beat);
-    wk.matA.uniforms.uOpacity.value = o; wk.matB.uniforms.uOpacity.value = o;
-    wk.matA.uniforms.uGlow.value = wk.hov; wk.matB.uniforms.uGlow.value = wk.hov;
-    wk.lineMat.opacity = o * 0.62;
+    wk.mats.forEach((m) => { m.opacity = m.userData.base * o; });
     /* Las imágenes: en órbita, siempre de frente a quien mira, con un giro leve según dónde estén. */
     wk.orbit.updateMatrixWorld(true);
     wk.orbit.getWorldQuaternion(qInv); qInv.invert();
