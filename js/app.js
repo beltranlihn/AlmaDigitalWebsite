@@ -465,7 +465,72 @@
     });
   }
 
-  /* ── Partículas en la cabecera de las obras principales ───────────────
+  /* ── Movimiento atado al scroll (fichas de obra) ──────────────────────
+     Cada elemento con data-m recibe dos números en variables CSS, y el CSS
+     decide qué hace con ellos (css/site.css, "Ficha de obra: movimiento"):
+       --in  0 → 1   mientras entra por abajo (las fotos llegan dobladas y se enderezan)
+       --p   1 → -1  mientras cruza la pantalla, 0 en el centro (parallax, giro del teléfono)
+     Además .pj-flow recibe --mx y --my (-1…1), que siguen al cursor e inclinan
+     los objetos 3D. Todo con algo de inercia. Con "reducir movimiento" no se
+     toca nada: las variables quedan en reposo y todo está quieto y a la vista. */
+  function initMotion() {
+    var els = $$('[data-m]');
+    if (!els.length || reduce) return;
+    var flow = $('.pj-flow'), mine = life;
+    var items = els.map(function (el) { return { el: el, top: 0, h: 1, i: 1, p: 0, a: '', b: '', set: false }; });
+    var raf = 0, mx = 0, my = 0, smx = 0, smy = 0, fx = '', fy = '';
+    var clamp = function (x, a, b) { return Math.max(a, Math.min(b, x)); };
+    /* Dónde está cada cosa en la página, medido sin transformaciones: si no, el
+       propio movimiento correría la medida. */
+    function measure() {
+      if (life !== mine) return;
+      root.classList.add('m-measure');
+      var sy = window.scrollY;
+      items.forEach(function (it) { var r = it.el.getBoundingClientRect(); it.top = r.top + sy; it.h = Math.max(1, r.height); });
+      root.classList.remove('m-measure');
+      kick();
+    }
+    function frame() {
+      raf = 0;
+      if (life !== mine) return;
+      var vh = window.innerHeight, sy = window.scrollY, moving = false;
+      items.forEach(function (it) {
+        var y = it.top - sy;
+        if (it.set && (y > vh * 1.5 || y + it.h < -vh * 0.5)) return;      // lejos de la pantalla: queda como está
+        var ti = clamp((vh - y) / (vh * 0.42 + it.h * 0.25), 0, 1);
+        ti = ti * ti * (3 - 2 * ti);
+        var tp = clamp((y + it.h / 2 - vh / 2) / (vh / 2 + it.h / 2), -1, 1);
+        if (!it.set) { it.i = ti; it.p = tp; it.set = true; }               // al cargar no hay viaje
+        else { it.i += (ti - it.i) * 0.16; it.p += (tp - it.p) * 0.16; }
+        if (Math.abs(ti - it.i) > 0.002 || Math.abs(tp - it.p) > 0.002) moving = true; else { it.i = ti; it.p = tp; }
+        var a = it.i.toFixed(3), b = it.p.toFixed(3);
+        if (a !== it.a) { it.a = a; it.el.style.setProperty('--in', a); }
+        if (b !== it.b) { it.b = b; it.el.style.setProperty('--p', b); }
+      });
+      if (flow && fine) {
+        smx += (mx - smx) * 0.08; smy += (my - smy) * 0.08;
+        if (Math.abs(mx - smx) > 0.003 || Math.abs(my - smy) > 0.003) moving = true;
+        var x = smx.toFixed(3), yy = smy.toFixed(3);
+        if (x !== fx) { fx = x; flow.style.setProperty('--mx', x); }
+        if (yy !== fy) { fy = yy; flow.style.setProperty('--my', yy); }
+      }
+      if (moving) raf = requestAnimationFrame(frame);
+    }
+    function kick() { if (!raf) raf = requestAnimationFrame(frame); }
+    on(window, 'scroll', kick, { passive: true });
+    on(window, 'resize', measure, { passive: true });
+    if (fine) on(window, 'pointermove', function (e) {
+      mx = e.clientX / window.innerWidth * 2 - 1; my = e.clientY / window.innerHeight * 2 - 1; kick();
+    }, { passive: true });
+    if (flow && 'ResizeObserver' in window) {           // si la página cambia de alto (una imagen que carga), se vuelve a medir
+      var ro = new ResizeObserver(measure);
+      ro.observe(flow);
+      life.cleanups.push(function () { ro.disconnect(); });
+    }
+    measure();
+  }
+
+  /* ── Partículas en la cabecera de las obras ───────────────────────────
      js/particles.js es un módulo aparte (el único que usa Three.js) y se pide
      sólo en las fichas que lo declaran, así el resto del sitio no lo descarga.
      Al cambiar de página se desmonta para soltar su contexto WebGL. */
@@ -539,7 +604,7 @@
 
   function initPage() {
     life = newLife();
-    initReel(); initProjectReels(); initPalette(); initIndex(); initLightbox(); initCards(); initCreds(); initParticles(); initSound(); initWorld();
+    initReel(); initProjectReels(); initPalette(); initIndex(); initLightbox(); initCards(); initCreds(); initParticles(); initMotion(); initSound(); initWorld();
     if (window.AlmaAmeba && window.AlmaAmeba.showBreath) window.AlmaAmeba.showBreath();
     stuck();
   }

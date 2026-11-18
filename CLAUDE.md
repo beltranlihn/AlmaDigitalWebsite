@@ -125,12 +125,14 @@ Consecuencias:
 - **Ficha de obra** (`work/<slug>.html`): portada, resumen con la ficha técnica al lado, un recorrido de
   imágenes y video, créditos, historial de exhibición, botón de consulta y obra siguiente. Ver "Ficha de
   obra: el recorrido de imágenes".
-- **Partículas en la cabecera** de las obras principales (`site.json → particles`, hoy Neurocosm XR,
-  Collective Pulse, Soul Charger y Neural Canvas): sobre la foto se enciende un campo de puntos con una
-  formación y colores propios de la obra. Se arrastra para girarlo, el cursor aparta las partículas y un
-  clic lo dispersa. Para sumar una obra: agregar su entrada en `particles` (`formation`: `attractor`,
-  `pulse`, `halo` o `strokes`; `stage`: color del fondo; `colors`) y correr el build. Para sacarla,
-  borrar la entrada. Una formación nueva se escribe en `FORMATIONS` de `js/particles.js`.
+- **Cabecera viva en todas las fichas** (`site.json → particles`, las 19 obras desde el 2026-11-18): la
+  portada se mueve despacio (un acercamiento lento y un parallax leve al bajar) y sobre ella se enciende
+  un campo de puntos con una formación y colores propios de la obra. Se arrastra para girarlo, el cursor
+  aparta las partículas y un clic lo dispersa. Cada entrada de `particles` lleva `formation`
+  (`attractor`, `pulse`, `halo`, `strokes`, `dome` o `wave`), `stage` (color del fondo) y `colors`. De
+  ahí salen también los colores de la ameba de la obra en la portada 3D. Las 15 entradas nuevas las
+  armé a partir de los colores de cada portada: **son borradores, a revisar**. Sin entrada, la ficha
+  queda con la foto sola. Una formación nueva se escribe en `FORMATIONS` de `js/particles.js`.
 - **Studio** (`studio.html`): about, con quién trabajamos (dos franjas en movimiento, antes en el
   landing), equipo y spin-offs.
 - **Español**: las mismas páginas bajo `/es/`, con los mismos slugs. Cada página enlaza a su par
@@ -138,27 +140,44 @@ Consecuencias:
 
 ## Ficha de obra: el recorrido de imágenes
 Referencia de Vicente: las páginas de proyecto de [unseen.co](https://unseen.co/projects/blue-marine-foundation/).
-Lo que se tomó: el resumen en letra grande con los datos al lado, los medios que alternan ancho y ritmo,
-los videos verticales en marco de teléfono y la entrada curva al hacer scroll.
+Lo que se tomó: el fondo oscuro, el resumen en letra grande con los datos al lado, la galería de imágenes
+chicas dispersas que se mueven, el teléfono como objeto 3D que gira con el scroll y la entrada curva de
+cada imagen. Segunda vuelta el 2026-11-18, a pedido de Vicente, después de volver a mirar la referencia.
 
-- **El diseño completo tiene 8 lugares para fotos y 2 para video vertical**, en este orden: imagen ancha ·
-  teléfonos + texto · imagen a sangre · dúo escalonado · trío en mosaico · imagen ancha. Lo arma
-  `buildProject` en `src/build.mjs`; el aspecto está en `css/site.css` (`.pj-*`).
-- **Las fotos de `projects.json → photos` van ocupando los lugares en orden** (la portada va al final,
-  porque ya está arriba). Hoy cada obra tiene 3, así que quedan 5 lugares libres. Para sumar fotos basta
-  agregarlas a `photos` y correr el build. Más de 8 siguen en dúos.
-- **Lugares vacíos**: en el sitio publicado un bloque sin ninguna foto no sale, y un bloque a medias deja
-  el hueco en blanco. En localhost y en las vistas previas de Netlify (`body.has-review`) los huecos se
-  ven con borde punteado y el formato que hay que sumar.
-- **Video vertical**: el reel de la obra (`video`) va en un marco de teléfono. `verticals` (opcional, lista
-  de `.mp4` o imágenes 9:16) llena el segundo teléfono. Al lado va el resto del texto de la obra o, si
-  tiene un solo párrafo, el historial de exhibición.
-- **Entrada curva**: cada imagen y cada teléfono entran doblados hacia quien mira y se enderezan a medida
-  que suben. Es sólo CSS atado al scroll (`animation-timeline: view()`), sin JavaScript: funciona en
-  Chrome y Safari recientes; en Firefox y con "reducir movimiento" todo está quieto y a la vista. Es una
-  aproximación (inclinación en perspectiva + borde inferior curvo): la curvatura real de Unseen es WebGL.
-  El texto no se anima.
-- Las fotos se recortan según el lugar (4:3, 4:5, 16:10…); un clic abre la foto entera en el visor.
+- **Fondo oscuro, como el mundo interior**: en las fichas (`body.pg-project`) el velo tiñe el fluido de
+  violeta (`mix-blend-mode: multiply`, el mismo degradado de `.world-tint`) y el contenido, el menú y el
+  pie usan los valores oscuros. Es sólo CSS: no depende de `js/world.js`. Al pasar del mundo 3D o de
+  otra ficha no hay salto de color; desde una página clara, el cambio queda tapado por la zambullida.
+- **El recorrido**, en este orden (lo arma `buildProject` en `src/build.mjs`; el aspecto, `.pj-*` en
+  `css/site.css`): imagen ancha · teléfono 3D con una foto al lado (o dos teléfonos) y el texto ·
+  galería dispersa de 6 imágenes chicas · imagen a sangre. Son 9 lugares para fotos y 2 para video
+  vertical. Más de 9 fotos siguen en dúos.
+- **Qué foto va a cada lugar** (`projects.json → photos`): la primera va al lado del teléfono, la
+  portada y la siguiente a la galería, después la ancha, tres más a la galería, la imagen a sangre y la
+  sexta de la galería. Con las 3 fotos que tienen casi todas las obras: una al lado del teléfono y dos
+  en la galería. Para sumar fotos basta agregarlas a `photos` y correr el build.
+- **`sidePhoto`** (opcional, en `projects.json`): la foto del lado del teléfono se recorta en vertical
+  (4:5). Si ese recorte le queda mal a la primera (un afiche con texto), `sidePhoto` elige otra. Hoy lo
+  usan Neural Canvas y Adidas Terrex.
+- **El teléfono es un objeto 3D** hecho en CSS: una cara con el marco y la pantalla, y ocho capas detrás
+  que le dan canto. Gira mientras cruza la pantalla y se inclina un poco hacia el cursor. Con un solo
+  video vertical (`video`) va un teléfono y la foto al lado, que gira para el otro lado; con `verticals`
+  (opcional, `.mp4` o imagen 9:16) van dos teléfonos. Al lado, el resto del texto de la obra si lo tiene.
+- **Galería dispersa**: tres columnas de imágenes chicas, cada una con otro tamaño y a otra altura, que
+  se sale por la derecha. Las columnas se mueven a distinta velocidad con el scroll. A la izquierda va
+  el historial de exhibición; si la obra no tiene, la galería ocupa todo el ancho. Sale en el sitio
+  publicado con dos fotos o más. En teléfono son dos columnas y una fila.
+- **Movimiento** (`initMotion` en `js/app.js` + "Ficha de obra: movimiento" en `css/site.css`): cada
+  elemento con `data-m` recibe dos variables, `--in` (0 a 1 mientras entra) y `--p` (1 a −1 mientras
+  cruza la pantalla), con algo de inercia; el CSS decide qué hace cada cosa: las fotos entran dobladas
+  y con el borde de abajo curvo, la imagen se desliza dentro de su marco, la imagen a sangre se abre
+  desde más chica, las columnas de la galería van a distinta velocidad, el teléfono gira. Funciona en
+  todos los navegadores (antes era CSS atado al scroll y Firefox quedaba quieto). Con "reducir
+  movimiento" nada se mueve y todo está a la vista. El texto no se anima nunca. Es una aproximación: la
+  curvatura real de Unseen es WebGL.
+- **Lugares vacíos**: en el sitio publicado un bloque sin fotos no sale. En localhost y en las vistas
+  previas de Netlify (`body.has-review`) los huecos se ven con borde punteado y el formato que hay que sumar.
+- Un clic en cualquier foto la abre entera en el visor.
 
 ## El mundo interior (la portada)
 `index.html` (y `es/index.html`). Idea de Vicente a partir de
@@ -305,6 +324,9 @@ Idea tomada de [unseen.co](https://unseen.co/): el sitio suena, y entrar a una o
 - **aura** (por defecto): velo claro sobre el fluido y texto en tinta `#211f6b`. Sigue el sistema de marca.
 - **night**: velo oscuro y texto blanco, como el prototipo.
 
+Aparte del tema, hay dos lugares que son siempre oscuros, "bajo el agua": el interior del mundo 3D de la
+portada y las fichas de obra. Usan los mismos valores que night sobre el fluido teñido de violeta.
+
 Para comparar: `?theme=night` o `?theme=aura` en cualquier URL. En localhost y en las vistas previas de
 Netlify aparece además una barra "Tema" abajo a la izquierda; en el dominio publicado no.
 El velo existe porque el texto directo sobre el fluido daba un contraste de 1,7:1.
@@ -445,6 +467,33 @@ desactiva. **No** cambiar nameservers a Cloudflare.
 El fluid sim sigue corriendo con auto-emitters en mobile. Los usuarios de Android no pueden tocar el fondo para emitir fluidos (correcto — el dedo es para el scroll).
 
 ## Historial de sesiones (última al tope)
+
+### 2026-11-18 — Fichas de obra: fondo oscuro, galería dispersa y teléfono 3D (Vicente)
+
+Vicente pidió volver a mirar la página de proyecto de Unseen y llevar más de ella a las fichas. Ver
+"Ficha de obra: el recorrido de imágenes".
+
+- **Fondo oscuro en todas las fichas**, como el interior del mundo 3D.
+- **Cabecera viva en las 19 obras**: la portada se mueve y todas llevan partículas (antes, cuatro). Dos
+  formaciones nuevas en `js/particles.js`: `dome` y `wave`. Los colores de las 15 obras nuevas salieron
+  de sus portadas (borradores). `world.forms` se fundió en `particles`.
+- **Galería dispersa** de imágenes chicas que se mueven a distinta velocidad, en vez del dúo y el trío.
+- **Teléfono 3D** que gira con el scroll; con un solo video vertical, una foto al lado.
+- **Movimiento al bajar**: un motor chico en `js/app.js` (`initMotion`) reemplaza a las animaciones CSS
+  atadas al scroll; ahora también anda en Firefox.
+- Campo nuevo `sidePhoto` en `projects.json`.
+
+**Verificado en Chrome**: Soul Charger de punta a punta (8 fotos), Neural Canvas (3 fotos, con y sin
+los huecos de revisión), Neurocosm Full Dome (dos teléfonos, galería con historial, cúpula de
+partículas), Collective Pulse (portada clara bajo las partículas, visor de fotos) y Pacha Ibiza
+(ondas); el paso de una ficha a la siguiente, del índice a una ficha y de vuelta a la portada, que
+recupera el fondo claro. Consola sin errores propios. En emulación 375×812: cabecera, teléfono con la
+foto al lado y galería en dos columnas, sin desbordes. Paquete: 45 páginas, 1.437 referencias, ninguna rota.
+**Sin ver**: el movimiento continuo (sólo cuadros sueltos), teléfonos reales, Safari y Firefox, y las
+otras 14 fichas una por una (comparten plantilla; revisé en una hoja de contactos cómo queda recortada
+la foto del lado del teléfono en las 19).
+**Para revisar**: los colores y formaciones de partículas de las 15 obras nuevas, y qué foto va al lado
+del teléfono en cada una.
 
 ### 2026-11-18 — El mundo 3D pasa a ser la portada, con el reel flotando (Vicente)
 

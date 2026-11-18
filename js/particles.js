@@ -154,6 +154,42 @@ const FORMATIONS = {
       },
     };
   },
+
+  /* Media esfera de meridianos y paralelos, como una cúpula. Gira despacio y respira cada 6 s. */
+  dome(n, pos) {
+    const th = new Float32Array(n), ph = new Float32Array(n), jit = new Float32Array(n);
+    for (let i = 0; i < n; i++) {
+      if (Math.random() < 0.55) { ph[i] = ((Math.random() * 16) | 0) / 16 * TAU; th[i] = Math.acos(Math.random()); }
+      else { th[i] = (((Math.random() * 6) | 0) + 1) / 6.6 * Math.PI / 2; ph[i] = rnd(TAU); }
+      jit[i] = rnd(-0.012, 0.012);
+    }
+    return {
+      warm: 1,
+      step(dt, t) {
+        const R = 1.5 * (1 + 0.035 * Math.sin(TAU * t / 6)), turn = t * 0.06;
+        for (let i = 0; i < n; i++) {
+          const k = i * 3, s = Math.sin(th[i]), a = ph[i] + turn, r = R * (1 + jit[i]);
+          pos[k] = r * s * Math.cos(a); pos[k + 1] = r * Math.cos(th[i]) - 0.62; pos[k + 2] = r * s * Math.sin(a);
+        }
+      },
+    };
+  },
+
+  /* Ondas que se abren en un plano, como sonido o como gotas en el agua. */
+  wave(n, pos) {
+    const rad = new Float32Array(n), ang = new Float32Array(n), jit = new Float32Array(n);
+    for (let i = 0; i < n; i++) { rad[i] = 0.12 + Math.sqrt(Math.random()) * 1.75; ang[i] = rnd(TAU); jit[i] = rnd(-0.02, 0.02); }
+    return {
+      warm: 1,
+      step(dt, t) {
+        for (let i = 0; i < n; i++) {
+          const k = i * 3, r = rad[i], a = ang[i] + t * 0.03;
+          const y = 0.2 * Math.sin(r * 6.5 - t * 1.5) * (1 - r / 2.1) + 0.05 * Math.sin(a * 3 + t * 0.7);
+          pos[k] = Math.cos(a) * r; pos[k + 1] = y + jit[i] - 0.1; pos[k + 2] = Math.sin(a) * r;
+        }
+      },
+    };
+  },
 };
 
 const VERT = `
@@ -233,10 +269,10 @@ export function mount(host, opts) {
   group.add(points);
   scene.add(group);
 
-  const baseTilt = opts.formation === 'halo' ? 1.08 : 0.18;
+  const baseTilt = { halo: 1.08, wave: 0.62, dome: 0.3 }[opts.formation] || 0.18;
   /* La madeja y los trazos ocupan todo su volumen; se achican para que entren
      enteros y no pasen por detrás del menú. */
-  const fit = { attractor: 0.74, strokes: 0.78 }[opts.formation] || 1;
+  const fit = { attractor: 0.74, strokes: 0.78, dome: 0.86, wave: 0.9 }[opts.formation] || 1;
   let yaw = 0, pitch = 0, vyaw = 0, vpitch = 0;
   let dragging = false, dragId = null, lx = 0, ly = 0, moved = 0;
   let push = 0, pushT = 0, burst = 0, boost = 0;

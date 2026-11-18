@@ -61,7 +61,8 @@
       ],
       "year": "",
       "press": [],
-      "formatKey": "vr"
+      "formatKey": "vr",
+      "sidePhoto": "Asset/Studio Projects/Neural Canvas/2.webp"
     },
     {
       "slug": "collective-pulse",
@@ -731,7 +732,8 @@
       ],
       "year": "",
       "press": [],
-      "formatKey": "installation"
+      "formatKey": "installation",
+      "sidePhoto": "Asset/Commisions/Adidas Terrex/2.webp"
     },
     {
       "slug": "panta-rhei",

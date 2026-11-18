@@ -35,7 +35,7 @@
 (function(){var T='ee88c2886dd4410694851f5bfea47a74';if(!T)return;var s=document.createElement('script');s.type='module';s.src='https://static.cloudflareinsights.com/beacon.min.js';s.setAttribute('data-cf-beacon',JSON.stringify({token:T}));document.head.appendChild(s);})();
 </script>
 <style>@media (prefers-reduced-motion: no-preference){@view-transition{navigation:auto}}</style>
-<link rel="stylesheet" href="../../css/site.css?v=652b14e6">
+<link rel="stylesheet" href="../../css/site.css?v=7713ab40">
 <!-- En el tema claro las partículas del cursor se tiñen de tinta con un filtro del
      propio documento; va acá porque url(#id) desde un CSS externo no es confiable. -->
 <style>html[data-theme="aura"] .cursor-particle{filter:url(#cursor-ink)}</style>
@@ -61,12 +61,14 @@
   </nav>
 </header>
 <main class="page" id="main">
-<section class="phero">
+<section class="phero phero--live" data-m="hero" data-particles="dome" data-colors="#233ddb,#7a5cf2,#f0a070,#b4beff,#ffffff" style="--stage:#06081c">
   <img class="phero__bg" src="../../Asset/Commisions/LPS/2%20Portada.webp" alt="" width="1920" height="1080" fetchpriority="high">
+  <div class="phero__stage" aria-hidden="true"></div>
   <div class="phero__txt">
     <p class="phero__eyebrow"><a href="../../es/work/">Obras</a> · Encargo</p>
     <h1>LPS</h1>
     <p class="phero__fmt">Visuales inmersivas — 360°</p>
+    <p class="phero__hint" aria-hidden="true"><span class="phero__hint-m">Arrastra para girar · Clic para dispersar</span><span class="phero__hint-t">Desliza para girar · Toca para dispersar</span></p>
   </div>
   <div class="phero__slot" data-ameba-slot="project"></div>
 </section>
@@ -85,38 +87,40 @@
 </section>
 
 <div class="pj-flow">
-  <div class="pj-m pj-m--wide" data-n="1">
-    <figure class="shot"><img loading="lazy" decoding="async" width="1920" height="1080" src="../../Asset/Commisions/LPS/1.webp" alt="LPS, imagen 1"></figure>
+  <div class="pj-m pj-m--wide" data-n="0">
+    <div class="slot" aria-hidden="true"><span>Espacio para imagen<br>horizontal · 1920×1080</span></div>
   </div>
 
-  <section class="pj-m pj-m--phones" data-n="1" aria-label="Reel">
-    <div class="pj-phones">
-      <div class="pj-phone"><div class="pj-phone__screen preel"><img loading="lazy" decoding="async" src="../../Asset/Commisions/LPS/Reel%20LPS.webp" alt="LPS, reel"></div></div>
-      <div class="pj-phone pj-phone--empty slot" aria-hidden="true"><span>Espacio para video vertical<br>9:16 · 406×720</span></div>
-    </div>
-    <div class="pj-side">
-      <h2 class="label">Historial de exhibición</h2>
-      <ul class="plain"><li>IDEAL Digital Center, Barcelona, España</li></ul>
+  <section class="pj-m pj-m--phones pj-m--alone" data-n="2" aria-label="Reel">
+    <div class="pj-stage3d">
+      <div class="pj-phone" data-m="phone"><div class="pj-phone__body"><i style="--i:1"></i><i style="--i:2"></i><i style="--i:3"></i><i style="--i:4"></i><i style="--i:5"></i><i style="--i:6"></i><i style="--i:7"></i><i style="--i:8"></i><div class="pj-phone__screen preel"><img loading="lazy" decoding="async" src="../../Asset/Commisions/LPS/Reel%20LPS.webp" alt="LPS, reel"></div></div></div>
+      <figure class="shot pj-card" data-m="card"><img loading="lazy" decoding="async" width="1920" height="1080" src="../../Asset/Commisions/LPS/1.webp" alt="LPS, imagen 1"></figure>
     </div>
   </section>
 
-  <div class="pj-m pj-m--bleed" data-n="1">
-    <figure class="shot"><img loading="lazy" decoding="async" width="1920" height="1080" src="../../Asset/Commisions/LPS/3.webp" alt="LPS, imagen 2"></figure>
-  </div>
+  <section class="pj-m pj-m--wall" data-n="2" aria-labelledby="wall-h">
+    <div class="pj-wall__txt">
+      <h2 class="label" id="wall-h">Historial de exhibición</h2>
+      <ul class="plain"><li>IDEAL Digital Center, Barcelona, España</li></ul>
+    </div>
+    <div class="pj-wall">
+      <div class="pj-wall__col" data-m="col">
+        <figure class="shot" data-m="tile"><img loading="lazy" decoding="async" width="1920" height="1080" src="../../Asset/Commisions/LPS/2%20Portada.webp" alt="LPS, imagen 2"></figure>
+        <div class="slot" aria-hidden="true"><span>Espacio para imagen<br>1920×1080</span></div>
+      </div>
+      <div class="pj-wall__col" data-m="col">
+        <figure class="shot" data-m="tile"><img loading="lazy" decoding="async" width="1920" height="1080" src="../../Asset/Commisions/LPS/3.webp" alt="LPS, imagen 3"></figure>
+        <div class="slot" aria-hidden="true"><span>Espacio para imagen<br>1920×1080</span></div>
+      </div>
+      <div class="pj-wall__col" data-m="col">
+        <div class="slot" aria-hidden="true"><span>Espacio para imagen<br>1920×1080</span></div>
+        <div class="slot" aria-hidden="true"><span>Espacio para imagen<br>1920×1080</span></div>
+      </div>
+    </div>
+  </section>
 
-  <div class="pj-m pj-m--duo" data-n="1">
-    <figure class="shot"><img loading="lazy" decoding="async" width="1920" height="1080" src="../../Asset/Commisions/LPS/2%20Portada.webp" alt="LPS, imagen 3"></figure>
-    <div class="slot slot--img" aria-hidden="true"><span>Espacio para imagen<br>horizontal · 1920×1080</span></div>
-  </div>
-
-  <div class="pj-m pj-m--trio" data-n="0">
-    <div class="slot slot--img" aria-hidden="true"><span>Espacio para imagen<br>horizontal · 1920×1080</span></div>
-    <div class="slot slot--img" aria-hidden="true"><span>Espacio para imagen<br>horizontal · 1920×1080</span></div>
-    <div class="slot slot--img" aria-hidden="true"><span>Espacio para imagen<br>horizontal · 1920×1080</span></div>
-  </div>
-
-  <div class="pj-m pj-m--wide" data-n="0">
-    <div class="slot slot--img" aria-hidden="true"><span>Espacio para imagen<br>horizontal · 1920×1080</span></div>
+  <div class="pj-m pj-m--bleed" data-n="0">
+    <div class="slot" aria-hidden="true"><span>Espacio para imagen<br>horizontal · 1920×1080</span></div>
   </div>
 </div>
 
@@ -173,12 +177,12 @@
   <img class="ameba__fallback" src="../../Asset/Logo%20Studio/Version%202/Logo.webp" alt="" width="1920" height="1080">
   <canvas id="ameba"></canvas>
 </div>
-<script type="application/json" id="alma-data">{"lang":"es","email":"vicente@almadigitalstudio.com","endpoint":"https://formspree.io/f/xkopqoyl","legacy":["soul-charger.html"],"t":{"modalSend":"Enviar mensaje","modalSending":"Enviando…","modalSent":"Enviado","modalOk":"Gracias, tu mensaje fue enviado. Te responderemos pronto.","modalFail":"No se pudo enviar tu mensaje. Inténtalo de nuevo o escribe a","modalFill":"Completa todos los campos.","modalBadEmail":"Ingresa un correo válido.","modalAbout":"Sobre","indexCount":"{n} obras","indexCountOne":"1 obra","indexAll":"Obras seleccionadas","reelSound":"Ver con sonido","reelMute":"Silenciar","reelUnmute":"Activar sonido","reelClose":"Cerrar video","lbClose":"Cerrar","lbPrev":"Anterior","lbNext":"Siguiente","lbZoom":"Zoom","lbZoomOut":"Alejar","lbHint":"← → para navegar · Esc para salir","lbLabel":"Galería ampliada","breathStart":"Respira con ella","breathStop":"Detener","breathIn":"Inhala","breathOut":"Exhala","breathEnd":"Gracias por respirar con nosotros."},"sound":{"src":"Asset/Audio/breath-loop.m4a","level":0.55},"world":true,"v":{"world":"ae858134","particles":"675fabd0"}}</script>
+<script type="application/json" id="alma-data">{"lang":"es","email":"vicente@almadigitalstudio.com","endpoint":"https://formspree.io/f/xkopqoyl","legacy":["soul-charger.html"],"t":{"modalSend":"Enviar mensaje","modalSending":"Enviando…","modalSent":"Enviado","modalOk":"Gracias, tu mensaje fue enviado. Te responderemos pronto.","modalFail":"No se pudo enviar tu mensaje. Inténtalo de nuevo o escribe a","modalFill":"Completa todos los campos.","modalBadEmail":"Ingresa un correo válido.","modalAbout":"Sobre","indexCount":"{n} obras","indexCountOne":"1 obra","indexAll":"Obras seleccionadas","reelSound":"Ver con sonido","reelMute":"Silenciar","reelUnmute":"Activar sonido","reelClose":"Cerrar video","lbClose":"Cerrar","lbPrev":"Anterior","lbNext":"Siguiente","lbZoom":"Zoom","lbZoomOut":"Alejar","lbHint":"← → para navegar · Esc para salir","lbLabel":"Galería ampliada","breathStart":"Respira con ella","breathStop":"Detener","breathIn":"Inhala","breathOut":"Exhala","breathEnd":"Gracias por respirar con nosotros."},"sound":{"src":"Asset/Audio/breath-loop.m4a","level":0.55},"world":true,"v":{"world":"ae858134","particles":"63bd3f09"}}</script>
 <script>window.__ALMA__=JSON.parse(document.getElementById('alma-data').textContent);</script>
 <script src="../../js/fluid.js?v=0dbef8cb"></script>
 <script src="../../js/cursor.js?v=477b7a02"></script>
 <script src="../../js/ameba.js?v=92aeb2f2"></script>
 <script src="../../js/sound.js?v=44eb0590"></script>
-<script src="../../js/app.js?v=cc1b7b26"></script>
+<script src="../../js/app.js?v=795b7335"></script>
 </body>
 </html>

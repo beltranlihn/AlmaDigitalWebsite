@@ -35,18 +35,6 @@
     "reel": {
       "src": "Asset/Reel Portfolio/Reel Flotante.mp4",
       "srcMobile": "Asset/Reel Portfolio/Reel Flotante Vertical.mp4"
-    },
-    "forms": {
-      "neurocosm-full-dome": {
-        "formation": "dome",
-        "stage": "#1c0707",
-        "colors": ["#ff5a3c", "#ff9a6b", "#ffd0b0", "#ffffff"]
-      },
-      "pacha-ibiza": {
-        "formation": "wave",
-        "stage": "#1d0722",
-        "colors": ["#ff4fa0", "#ff8fc8", "#b48cff", "#ffffff"]
-      }
     }
   },
   "sound": {
@@ -74,6 +62,81 @@
       "formation": "strokes",
       "stage": "#04052b",
       "colors": ["#ff8a3d", "#ffb469", "#3f6bff", "#8fb0ff", "#ffffff"]
+    },
+    "neurocosm-full-dome": {
+      "formation": "dome",
+      "stage": "#1c0707",
+      "colors": ["#ff5a3c", "#ff9a6b", "#ffd0b0", "#ffffff"]
+    },
+    "pacha-ibiza": {
+      "formation": "wave",
+      "stage": "#1d0722",
+      "colors": ["#ff4fa0", "#ff8fc8", "#b48cff", "#ffffff"]
+    },
+    "neurocosm-360": {
+      "formation": "attractor",
+      "stage": "#170609",
+      "colors": ["#db3653", "#ff7a59", "#ffbcc8", "#ffffff", "#7a5cf2"]
+    },
+    "mapping-mediamorfosis": {
+      "formation": "strokes",
+      "stage": "#0a0b1f",
+      "colors": ["#49dbd5", "#a144db", "#71b2db", "#c5fffc", "#ffffff"]
+    },
+    "alma-digital-fest": {
+      "formation": "wave",
+      "stage": "#0e0c1c",
+      "colors": ["#806cdb", "#c99ef9", "#f2b8dd", "#d9d1ff", "#ffffff"]
+    },
+    "pixel-liquido": {
+      "formation": "strokes",
+      "stage": "#060f1c",
+      "colors": ["#2d8bdb", "#446ddb", "#ff7fee", "#b8dfff", "#ffffff"]
+    },
+    "digital-prana": {
+      "formation": "halo",
+      "stage": "#0b081c",
+      "colors": ["#6a4be9", "#9a7bff", "#f2b8dd", "#d0c4ff", "#ffffff"]
+    },
+    "alma-digital-360": {
+      "formation": "wave",
+      "stage": "#170b10",
+      "colors": ["#db5f6e", "#ff9a6b", "#b48cff", "#ffcfd5", "#ffffff"]
+    },
+    "my2drops": {
+      "formation": "wave",
+      "stage": "#080c1c",
+      "colors": ["#4873db", "#62b993", "#7ad7f0", "#c4d6ff", "#ffffff"]
+    },
+    "fashion-show-micsur": {
+      "formation": "strokes",
+      "stage": "#0b1417",
+      "colors": ["#84dbc0", "#5b8def", "#f2b8dd", "#d1fff0", "#ffffff"]
+    },
+    "adidas-terrex": {
+      "formation": "attractor",
+      "stage": "#14110a",
+      "colors": ["#dbd3b1", "#ffb469", "#fff5d1", "#ffffff", "#8a7a55"]
+    },
+    "panta-rhei": {
+      "formation": "strokes",
+      "stage": "#080d1c",
+      "colors": ["#5183db", "#4065db", "#7ad7f0", "#c9dcff", "#ffffff"]
+    },
+    "eit-culture-and-creativity": {
+      "formation": "pulse",
+      "stage": "#170610",
+      "colors": ["#db1752", "#ff8a3d", "#5b8def", "#ffaec7", "#ffffff"]
+    },
+    "latam-airlines": {
+      "formation": "attractor",
+      "stage": "#060a1c",
+      "colors": ["#2a53db", "#db0ca6", "#7943db", "#b7c7ff", "#ffffff"]
+    },
+    "lps": {
+      "formation": "dome",
+      "stage": "#06081c",
+      "colors": ["#233ddb", "#7a5cf2", "#f0a070", "#b4beff", "#ffffff"]
     }
   },
   "legacyPages": {

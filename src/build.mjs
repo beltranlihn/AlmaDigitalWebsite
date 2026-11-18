@@ -597,62 +597,97 @@ function buildProject(raw, rawNext, lang) {
   const metaHtml = meta.map(([k, v, cls]) => `      <div${cls}><dt class="label">${esc(k)}</dt><dd>${esc(v)}</dd></div>`).join('\n');
 
   /* ── Recorrido de imágenes y video ─────────────────────────────────────
-     El diseño completo tiene 8 lugares para fotos y 2 para video vertical:
-       ancha · teléfonos + texto · a sangre · dúo escalonado · trío en mosaico · ancha
-     Las fotos de projects.json los van ocupando en orden (la portada va al
-     final: ya está arriba). Con pocas fotos, los lugares que faltan quedan
-     vacíos: en el sitio publicado es espacio en blanco o el bloque no sale; en
-     localhost y en las vistas previas se ven marcados, para saber qué sumar.
-     Más de 8 fotos siguen en dúos. La aparición curva es sólo CSS. */
-  const order = [...p.photos.filter(x => x !== p.cover), ...p.photos.filter(x => x === p.cover)];
-  let used = 0;
-  const gap = (kind, text) => `    <div class="slot slot--${kind}" aria-hidden="true"><span>${text}</span></div>`;
-  const mod = (type, size) => {
-    const items = [];
-    let real = 0;
-    for (let i = 0; i < size; i++) {
-      const ph = order[used];
-      if (ph) {
-        used++; real++;
-        items.push(`    <figure class="shot"><img loading="lazy" decoding="async" width="1920" height="1080" src="${asset(c, ph)}" alt="${esc(p.title)}, ${esc(t.pImage)} ${used}"></figure>`);
-      } else items.push(gap('img', 'Espacio para imagen<br>horizontal · 1920×1080'));
-    }
-    return `  <div class="pj-m pj-m--${type}" data-n="${real}">\n${items.join('\n')}\n  </div>`;
-  };
+     Referencia: unseen.co/projects/blue-marine-foundation. El diseño completo:
+       imagen ancha · teléfono 3D + foto al lado (o dos teléfonos) + texto ·
+       galería dispersa de 6 imágenes chicas · imagen a sangre
+     Con pocas fotos se llenan primero los lugares que más rinden: la foto al
+     lado del teléfono, dos de la galería, la ancha, tres más de la galería, la
+     imagen a sangre y la sexta de la galería. Los lugares que faltan: en el
+     sitio publicado no salen (un bloque sin fotos se oculta); en localhost y
+     en las vistas previas se ven marcados, para saber qué sumar. Más de 9
+     fotos siguen en dúos.
+     El movimiento (entrada curva, parallax, giro del teléfono) lo pone
+     js/app.js (initMotion) en los elementos con data-m; el aspecto, css/site.css. */
+  /* La primera de la fila es la que va al lado del teléfono, recortada en vertical.
+     Si ese recorte le queda mal (un afiche con texto, por ejemplo), "sidePhoto"
+     en projects.json elige otra. La portada va en la galería. */
+  const side = p.sidePhoto && p.photos.includes(p.sidePhoto) && p.sidePhoto !== p.cover ? p.sidePhoto : null;
+  const others = p.photos.filter(x => x !== p.cover && x !== side);
+  if (side) others.unshift(side);
+  const queue = [...others.slice(0, 1), ...p.photos.filter(x => x === p.cover), ...others.slice(1)];
+  let num = 0;
+  const shot = (ph, cls, m) => `<figure class="shot${cls ? ' ' + cls : ''}" data-m="${m || 'shot'}"><img loading="lazy" decoding="async" width="1920" height="1080" src="${asset(c, ph)}" alt="${esc(p.title)}, ${esc(t.pImage)} ${++num}"></figure>`;
+  const gap = (cls, text) => `<div class="slot${cls ? ' ' + cls : ''}" aria-hidden="true"><span>${text}</span></div>`;
 
-  /* Videos verticales, en marco de teléfono. El primero es el reel de la obra;
-     "verticals" (opcional en projects.json) suma más: .mp4 o imagen 9:16. */
+  /* Videos verticales: el reel de la obra y, si hay, "verticals" (projects.json: .mp4 o imagen 9:16). */
   const verticals = [p.video || p.reelImage, ...(p.verticals || [])].filter(Boolean).slice(0, 2);
-  const phone = v => `      <div class="pj-phone"><div class="pj-phone__screen preel">${/\.mp4$/i.test(v)
+  const pick = { side: null, wide: null, bleed: null, wall: [] };
+  if (verticals.length < 2) pick.side = queue.shift() || null;
+  pick.wall.push(...queue.splice(0, 2));
+  pick.wide = queue.shift() || null;
+  pick.wall.push(...queue.splice(0, 3));
+  pick.bleed = queue.shift() || null;
+  pick.wall.push(...queue.splice(0, 1));
+
+  /* El teléfono es un objeto 3D: una cara con la pantalla y ocho capas detrás
+     que le dan canto. Gira con el scroll. */
+  const edge = Array.from({ length: 8 }, (_, i) => `<i style="--i:${i + 1}"></i>`).join('');
+  const phone = v => `      <div class="pj-phone" data-m="phone"><div class="pj-phone__body">${edge}<div class="pj-phone__screen preel">${/\.mp4$/i.test(v)
     ? `<video muted loop playsinline preload="none" poster="${asset(c, p.cover)}" data-src="${asset(c, v)}"></video>`
-    : `<img loading="lazy" decoding="async" src="${asset(c, v)}" alt="${esc(p.title)}, reel">`}</div></div>`;
-  const phones = [...verticals.map(phone)];
-  while (phones.length < 2) phones.push(`      <div class="pj-phone pj-phone--empty slot" aria-hidden="true"><span>Espacio para video vertical<br>9:16 · 406×720</span></div>`);
-  /* Al lado: el resto del texto si lo hay; si no, dónde se presentó. */
+    : `<img loading="lazy" decoding="async" src="${asset(c, v)}" alt="${esc(p.title)}, reel">`}</div></div></div>`;
+  /* Con un solo video vertical va un teléfono y, al lado, una foto. */
+  const objs = verticals.map(phone);
+  if (!verticals.length) objs.push(`      ${gap('pj-phone', 'Espacio para video vertical<br>9:16 · 406×720')}`);
+  if (verticals.length < 2) objs.push(`      ${pick.side ? shot(pick.side, 'pj-card', 'card') : gap('pj-card', 'Espacio para foto<br>o material · vertical 4:5')}`);
   const rest = p.body.slice(1);
-  const side = rest.length
-    ? `<h2 class="label">${esc(t.pConcept)}</h2>\n${rest.map(x => `      <p>${esc(x)}</p>`).join('\n')}`
-    : (p.presentedAt.length ? `<h2 class="label">${esc(t.pHistory)}</h2>\n      <ul class="plain">${p.presentedAt.map(x => `<li>${esc(x)}</li>`).join('')}</ul>` : '');
-  const historyBelow = rest.length > 0 && p.presentedAt.length > 0;
-  const phonesMod = `  <section class="pj-m pj-m--phones${side ? '' : ' pj-m--alone'}" data-n="${verticals.length}" aria-label="${esc(t.pReel)}">
-    <div class="pj-phones">
-${phones.join('\n')}
-    </div>${side ? `
+  const phonesMod = `  <section class="pj-m pj-m--phones${rest.length ? '' : ' pj-m--alone'}" data-n="${verticals.length + (pick.side ? 1 : 0)}" aria-label="${esc(t.pReel)}">
+    <div class="pj-stage3d">
+${objs.join('\n')}
+    </div>${rest.length ? `
     <div class="pj-side">
-      ${side}
+      <h2 class="label">${esc(t.pConcept)}</h2>
+${rest.map(x => `      <p>${esc(x)}</p>`).join('\n')}
     </div>` : ''}
   </section>`;
 
-  const flow = [mod('wide', 1), phonesMod, mod('bleed', 1), mod('duo', 2), mod('trio', 3), mod('wide', 1)];
-  while (used < order.length) flow.push(mod('duo', 2));
+  /* Galería dispersa: tres columnas de imágenes chicas, de distinto tamaño, que
+     se mueven a distinta velocidad. Al lado, dónde se presentó la obra. Hace
+     falta un mínimo de dos fotos para que salga en el sitio publicado. */
+  const wallOn = pick.wall.length >= 2;
+  const tiles = Array.from({ length: Math.max(6, pick.wall.length) }, (_, i) => pick.wall[i]
+    ? shot(pick.wall[i], '', 'tile') : gap('', 'Espacio para imagen<br>1920×1080'));
+  const cols = [0, 1, 2].map(k => `      <div class="pj-wall__col" data-m="col">
+${tiles.filter((_, i) => i % 3 === k).map(x => `        ${x}`).join('\n')}
+      </div>`).join('\n');
+  const historyInWall = wallOn && p.presentedAt.length > 0;
+  const wallMod = `  <section class="pj-m pj-m--wall${historyInWall ? '' : ' pj-m--wall-solo'}" data-n="${wallOn ? pick.wall.length : 0}" aria-labelledby="wall-h">
+    <div class="pj-wall__txt">
+      <h2 class="label" id="wall-h">${esc(historyInWall ? t.pHistory : t.pGallery)}</h2>${historyInWall ? `
+      <ul class="plain">${p.presentedAt.map(x => `<li>${esc(x)}</li>`).join('')}</ul>` : ''}
+    </div>
+    <div class="pj-wall">
+${cols}
+    </div>
+  </section>`;
+  const historyBelow = !historyInWall && p.presentedAt.length > 0;
+
+  const one = (type, ph) => `  <div class="pj-m pj-m--${type}" data-n="${ph ? 1 : 0}">
+    ${ph ? shot(ph, '', type === 'bleed' ? 'bleed' : 'shot') : gap('', 'Espacio para imagen<br>horizontal · 1920×1080')}
+  </div>`;
+  const flow = [one('wide', pick.wide), phonesMod, wallMod, one('bleed', pick.bleed)];
+  while (queue.length) {
+    const pair = queue.splice(0, 2);
+    flow.push(`  <div class="pj-m pj-m--duo" data-n="${pair.length}">\n${pair.map(x => `    ${shot(x)}`).join('\n')}\n  </div>`);
+  }
 
   const legacy = site.legacyPages[p.slug];
 
-  /* Obras principales (site.json → particles): sobre la foto se enciende un
-     campo de partículas con la formación y los colores de la obra. Lo monta
-     js/app.js con js/particles.js; sin eso, queda la foto como en las demás. */
+  /* Cabecera viva (site.json → particles, hoy las 19 obras): sobre la foto,
+     que se mueve despacio, se enciende un campo de partículas con la formación
+     y los colores de la obra. Lo monta js/app.js con js/particles.js; sin eso
+     (o sin entrada en particles) queda la foto. */
   const live = (site.particles || {})[p.slug];
-  const body = `<section class="phero${live ? ' phero--live' : ''}"${live ? ` data-particles="${esc(live.formation)}" data-colors="${esc(live.colors.join(','))}" style="--stage:${esc(live.stage)}"` : ''}>
+  const body = `<section class="phero${live ? ' phero--live' : ''}" data-m="hero"${live ? ` data-particles="${esc(live.formation)}" data-colors="${esc(live.colors.join(','))}" style="--stage:${esc(live.stage)}"` : ''}>
   <img class="phero__bg" src="${asset(c, p.cover)}" alt="" width="1920" height="1080" fetchpriority="high">${live ? `
   <div class="phero__stage" aria-hidden="true"></div>` : ''}
   <div class="phero__txt">

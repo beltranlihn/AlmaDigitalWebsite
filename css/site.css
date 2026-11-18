@@ -48,10 +48,12 @@
   --em: #4b46d1;                 /* la segunda voz de los títulos (cursiva fina) */
 }
 
-/* Los mismos valores visten lo que queda "bajo el agua" en el mundo interior:
-   el escenario, y el header y el pie mientras se está adentro (html.is-under). */
+/* Los mismos valores visten lo que queda "bajo el agua": el escenario del
+   mundo interior, el header y el pie mientras se está adentro (html.is-under),
+   y las fichas de obra enteras (body.pg-project). */
 :root[data-theme="night"],
-.world__stage.is-deep, html.is-under .hdr, html.is-under .ftr {
+.world__stage.is-deep, html.is-under .hdr, html.is-under .ftr,
+.pg-project .page, .pg-project .hdr, .pg-project .ftr {
   --ink: rgba(255, 255, 255, .95);
   --ink-body: rgba(255, 255, 255, .80);
   --ink-muted: rgba(255, 255, 255, .62);
@@ -558,6 +560,13 @@ h3.label { font-size: .74rem; font-weight: 500; letter-spacing: .18em; line-heig
 /* ── Ficha de obra ─────────────────────────────────────────────────────── */
 .phero { position: relative; height: min(78vh, 740px); min-height: 420px; display: flex; align-items: flex-end; padding: var(--px); overflow: hidden; background: #0c0a18; }
 .phero__bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+/* La portada se mueve: un acercamiento muy lento, y baja un poco más despacio
+   que la página (--p lo pone js/app.js). Arranca sin escala para calzar con la
+   transición que llega desde el mundo o desde el índice. */
+@media (prefers-reduced-motion: no-preference) {
+  .phero__bg { animation: phero-drift 32s ease-in-out infinite alternate; translate: 0 calc((var(--p, -.12) + .12) * -16%); }
+}
+@keyframes phero-drift { from { transform: scale(1); } to { transform: scale(1.13) translate(-1.6%, 1.2%); } }
 .phero::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to top, rgba(8, 7, 24, .9) 0%, rgba(8, 7, 24, .36) 46%, rgba(8, 7, 24, .3) 100%); }
 /* El texto va sobre la foto: siempre blanco, en los dos temas. */
 .phero__txt { position: relative; z-index: 2; max-width: 900px; color: #fff; }
@@ -565,15 +574,16 @@ h3.label { font-size: .74rem; font-weight: 500; letter-spacing: .18em; line-heig
 .phero__eyebrow a { text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 1px; }
 .phero h1 { color: #fff; font-size: clamp(2.3rem, 6.4vw, 5rem); margin-bottom: 12px; }
 .phero__fmt { font-size: 1.02rem; color: rgba(255, 255, 255, .86); }
-/* Obras principales: sobre la foto se enciende un escenario oscuro con el
-   campo de partículas (js/particles.js). Aparece recién cuando ya está
-   dibujando (.is-live); si no llega a montarse, queda la foto. */
+/* Sobre la foto se enciende un escenario oscuro, del color de la obra, con el
+   campo de partículas (js/particles.js). La foto queda de fondo, apagada.
+   Aparece recién cuando ya está dibujando (.is-live); si no llega a montarse,
+   queda la foto. */
 .phero__stage {
   position: absolute; inset: 0; z-index: 1; opacity: 0; transition: opacity 1.4s var(--ease);
   background: var(--stage, #07061a);
   background: linear-gradient(to top, var(--stage, #07061a) 0%,
-    color-mix(in srgb, var(--stage, #07061a) 90%, transparent) 55%,
-    color-mix(in srgb, var(--stage, #07061a) 82%, transparent) 100%);
+    color-mix(in srgb, var(--stage, #07061a) 84%, transparent) 52%,
+    color-mix(in srgb, var(--stage, #07061a) 68%, transparent) 100%);
 }
 .phero.is-live .phero__stage { opacity: 1; }
 /* pan-y: en táctil el scroll vertical pasa de largo y el arrastre horizontal lo gira. */
@@ -598,8 +608,9 @@ h3.label { font-size: .74rem; font-weight: 500; letter-spacing: .18em; line-heig
 .block { padding-top: clamp(46px, 7vw, 78px); }
 /* Una foto de la obra. Un clic la abre en el visor (js/app.js). */
 .shot { position: relative; margin: 0; border-radius: var(--r-md); overflow: hidden; background: #0c0a18; box-shadow: var(--glow); }
-.shot img { display: block; width: 100%; height: 100%; object-fit: cover; aspect-ratio: 16 / 9; transition: transform .8s var(--ease); }
-.shot:hover img { transform: scale(1.035); }
+.shot { cursor: zoom-in; }
+.shot img { display: block; width: 100%; height: 100%; object-fit: cover; aspect-ratio: 16 / 9; transition: scale .8s var(--ease); }
+.shot:hover img { scale: 1.035; }
 
 /* ── Ficha de obra: resumen y ficha técnica ──────────────────────────────
    Referencia: las páginas de proyecto de unseen.co. Arriba, lo que es la obra
@@ -617,43 +628,83 @@ h3.label { font-size: .74rem; font-weight: 500; letter-spacing: .18em; line-heig
 @media (max-width: 860px) { .pj-over { grid-template-columns: minmax(0, 1fr); } }
 
 /* ── Ficha de obra: recorrido de imágenes y video ────────────────────────
-   Bloques que alternan ancho y ritmo (src/build.mjs los arma en este orden):
-   ancha · teléfonos + texto · a sangre · dúo escalonado · trío en mosaico · ancha.
+   Referencia: unseen.co/projects/blue-marine-foundation. Bloques, en este
+   orden (los arma src/build.mjs):
+     imagen ancha · teléfono 3D + foto (o dos teléfonos) + texto ·
+     galería dispersa · imagen a sangre · (dúos, si sobran fotos)
    Si a un bloque le faltan fotos, su lugar queda vacío; si no tiene ninguna,
    no sale. En localhost y en las vistas previas (body.has-review) los lugares
    vacíos se ven marcados con lo que hay que sumar. */
-/* overflow-x: clip: al entrar dobladas, las imágenes se abren más allá del borde y no tienen que agregar scroll horizontal. */
-.pj-flow { display: flex; flex-direction: column; gap: clamp(56px, 9vw, 150px); padding-top: clamp(56px, 8vw, 120px); overflow-x: clip; }
+/* overflow-x: clip: la galería se sale por la derecha y las imágenes entran dobladas; nada de eso tiene que agregar scroll horizontal. */
+.pj-flow { display: flex; flex-direction: column; gap: clamp(64px, 10vw, 170px); padding-top: clamp(56px, 8vw, 120px); overflow-x: clip; }
 .pj-m { width: min(100% - 2 * var(--px), var(--max)); margin: 0 auto; }
 body:not(.has-review) .pj-m[data-n="0"] { display: none; }
 .pj-m--wide { width: min(100% - 2 * var(--px), 1080px); }
 .pj-m--bleed { width: 100%; }
-.pj-m--bleed .shot { border-radius: 0; box-shadow: none; height: clamp(340px, 82vh, 900px); }
+.pj-m--bleed .shot { box-shadow: none; height: clamp(340px, 82vh, 900px); }
 .pj-m--bleed .shot img { aspect-ratio: auto; }
 .pj-m--duo { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); gap: clamp(16px, 2.4vw, 34px); align-items: start; }
-.pj-m--duo > :nth-child(1) img, .pj-m--duo > .slot:nth-child(1) { aspect-ratio: 4 / 3; }
+.pj-m--duo > :nth-child(1) img { aspect-ratio: 4 / 3; }
 .pj-m--duo > :nth-child(2) { margin-top: clamp(40px, 10vw, 150px); }
-.pj-m--duo > :nth-child(2) img, .pj-m--duo > .slot:nth-child(2) { aspect-ratio: 4 / 5; }
-.pj-m--trio { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); gap: clamp(16px, 2.4vw, 34px); }
-.pj-m--trio > :nth-child(1) { grid-row: span 2; }
-.pj-m--trio > :nth-child(1) img { aspect-ratio: auto; }
-.pj-m--trio > :nth-child(n+2) img, .pj-m--trio > .slot:nth-child(n+2) { aspect-ratio: 16 / 10; }
+.pj-m--duo > :nth-child(2) img { aspect-ratio: 4 / 5; }
 
-/* Videos verticales en marco de teléfono, escalonados. El video se pide cuando
-   ya se ve (js/app.js busca ".preel video[data-src]"). */
-.pj-m--phones { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: clamp(32px, 7vw, 120px); align-items: center; }
+/* El teléfono y lo que va a su lado. El video se pide cuando ya se ve
+   (js/app.js busca ".preel video[data-src]"). */
+.pj-m--phones { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: clamp(36px, 7vw, 120px); align-items: center; }
 .pj-m--alone { grid-template-columns: minmax(0, 1fr); justify-items: center; }
-.pj-phones { display: flex; align-items: flex-start; gap: clamp(14px, 2.2vw, 30px); }
+.pj-stage3d { display: flex; align-items: flex-start; gap: clamp(22px, 3.6vw, 60px); }
+/* El teléfono es un objeto: una cara (el marco y la pantalla) y ocho capas
+   detrás, a 2 px una de otra, que le dan canto. Gira con el scroll (--p) y se
+   inclina un poco hacia el cursor (--mx, --my): ver "movimiento", más abajo. */
 .pj-phone {
-  --w: clamp(170px, 19vw, 270px);
-  width: var(--w); aspect-ratio: 9 / 19; flex: none; padding: calc(var(--w) * .035); border-radius: calc(var(--w) * .16);
-  background: #0c0a18; box-shadow: var(--glow), inset 0 0 0 1px rgba(255, 255, 255, .16);
+  --w: clamp(170px, 19vw, 270px); --rest: 17deg; --turn: 30deg; --lean: -2.5deg;
+  width: var(--w); aspect-ratio: 9 / 19; flex: none; perspective: 1300px;
 }
-.pj-phone:nth-child(2) { margin-top: clamp(40px, 7vw, 96px); }
-.pj-phone__screen { width: 100%; height: 100%; border-radius: calc(var(--w) * .125); overflow: hidden; background: #000; }
+.pj-phone__body { position: relative; width: 100%; height: 100%; border-radius: calc(var(--w) * .16); transform-style: preserve-3d; }
+.pj-phone__body::before {                     /* el frente: el marco */
+  content: ''; position: absolute; inset: 0; border-radius: inherit;
+  background: #0c0a18; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .2);
+}
+.pj-phone__body > i {                         /* el canto */
+  position: absolute; inset: 0; border-radius: inherit; transform: translateZ(calc(var(--i) * -2px));
+  background: linear-gradient(90deg, #3b3477, #17133a 22%, #17133a 78%, #3b3477);
+}
+.pj-phone__body > i:last-of-type { background: #0f0c28; box-shadow: 0 34px 90px rgba(6, 5, 22, .6), 0 0 70px rgba(122, 92, 242, .28); }
+.pj-phone__screen {
+  position: absolute; inset: calc(var(--w) * .035); border-radius: calc(var(--w) * .125); overflow: hidden; background: #000;
+  transform: translateZ(1px);
+}
 .pj-phone__screen video, .pj-phone__screen img { display: block; width: 100%; height: 100%; object-fit: cover; }
+/* Lo segundo del escenario (otro teléfono, o la foto) va más abajo y gira al revés. */
+.pj-stage3d > :nth-child(2) { --rest: -19deg; --turn: -28deg; --lean: 2.5deg; margin-top: clamp(40px, 7vw, 100px); }
+/* La foto que acompaña al teléfono: una tarjeta vertical que flota a su lado. */
+.pj-card { width: clamp(200px, 23vw, 340px); flex: none; --rest: -19deg; --turn: -28deg; --lean: 2.5deg; }
+.pj-card img { aspect-ratio: 4 / 5; }
 .pj-side p { max-width: 46ch; font-size: clamp(1.06rem, 1.5vw, 1.22rem); line-height: 1.72; margin-top: 16px; }
-.pj-side .plain { margin-top: 16px; max-width: 520px; }
+
+/* Galería dispersa: tres columnas de imágenes chicas, cada una con otro tamaño
+   y a otra altura, que se sale por la derecha de la pantalla. Las columnas se
+   mueven a distinta velocidad con el scroll. A la izquierda, un texto corto. */
+.pj-m--wall {
+  width: 100%; margin: 0; padding-left: calc(max(0px, (100% - var(--max)) / 2) + var(--px));
+  display: grid; grid-template-columns: minmax(200px, .62fr) minmax(0, 2.4fr); gap: clamp(28px, 5vw, 90px); align-items: center;
+}
+.pj-wall__txt .plain { margin-top: 16px; }
+/* Sin texto para el costado (la obra no tiene historial de exhibición), la galería ocupa todo el ancho. */
+.pj-m--wall-solo { grid-template-columns: minmax(0, 1fr); gap: clamp(20px, 3vw, 36px); }
+.pj-wall { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(18px, 3.2vw, 52px); margin-right: -7vw; align-items: start; }
+.pj-wall__col { display: flex; flex-direction: column; gap: clamp(24px, 4.4vw, 76px); --speed: 5vh; }
+.pj-wall__col:nth-child(2) { padding-top: clamp(34px, 7vw, 110px); --speed: -8vh; }
+.pj-wall__col:nth-child(3) { padding-top: clamp(0px, 2vw, 34px); --speed: 11vh; }
+.pj-wall__col:nth-child(1) > :nth-child(1) img { aspect-ratio: 16 / 10; }
+.pj-wall__col:nth-child(1) > :nth-child(2) { width: 86%; align-self: flex-end; }
+.pj-wall__col:nth-child(1) > :nth-child(2) img { aspect-ratio: 4 / 3; }
+.pj-wall__col:nth-child(2) > :nth-child(1) { width: 84%; }
+.pj-wall__col:nth-child(2) > :nth-child(1) img { aspect-ratio: 3 / 2; }
+.pj-wall__col:nth-child(2) > :nth-child(2) img { aspect-ratio: 1; }
+.pj-wall__col:nth-child(3) > :nth-child(1) img { aspect-ratio: 16 / 9; }
+.pj-wall__col:nth-child(3) > :nth-child(2) { width: 92%; }
+.pj-wall__col:nth-child(3) > :nth-child(2) img { aspect-ratio: 16 / 10; }
 
 /* Lugares vacíos: sólo se ven en revisión. */
 .slot { display: none; }
@@ -664,51 +715,76 @@ body:not(.has-review) .pj-m[data-n="0"] { display: none; }
 }
 .has-review .pj-m--wide .slot { aspect-ratio: 16 / 9; }
 .has-review .pj-m--bleed .slot { height: 46vh; border-radius: 0; border-left: 0; border-right: 0; }
-.has-review .pj-phone.slot { background: var(--glass); box-shadow: none; padding: 16px; }
-body:not(.has-review) .pj-phone.slot { display: none; }
+.has-review .pj-wall .slot { aspect-ratio: 16 / 10; }
+.has-review .slot.pj-card { aspect-ratio: 4 / 5; }
+.has-review .slot.pj-phone { border-radius: calc(var(--w) * .16); }
 
 @media (max-width: 720px) {
   .pj-m--bleed .shot { height: 62vh; }
   .pj-m--duo { grid-template-columns: minmax(0, 1fr); }
   .pj-m--duo > :nth-child(2) { margin-top: 0; width: 78%; margin-left: auto; }
-  .pj-m--trio { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .pj-m--trio > :nth-child(1) { grid-column: 1 / -1; grid-row: auto; }
-  .pj-m--trio > :nth-child(1) img { aspect-ratio: 4 / 3; }
   .pj-m--phones { grid-template-columns: minmax(0, 1fr); justify-items: center; }
-  .pj-phone { --w: min(52vw, 240px); }
-  .has-review .pj-phones .pj-phone { --w: min(40vw, 200px); }
+  .pj-stage3d { gap: 16px; }
+  .pj-phone { --w: min(42vw, 220px); }
+  .pj-card { width: min(40vw, 210px); }
   .pj-side { justify-self: stretch; }
+  .pj-m--wall { grid-template-columns: minmax(0, 1fr); padding: 0 var(--px); }
+  .pj-wall { grid-template-columns: repeat(2, minmax(0, 1fr)); margin-right: 0; gap: 16px; }
+  .pj-wall__col { gap: 16px; --speed: 3vh; }
+  .pj-wall__col:nth-child(2) { --speed: -5vh; }
+  .pj-wall__col:nth-child(3) { grid-column: 1 / -1; flex-direction: row; align-items: flex-start; padding-top: 0; --speed: 0vh; }
+  .pj-wall__col:nth-child(3) > * { flex: 1; width: auto; }
+  .pj-wall__col:nth-child(3) > :nth-child(2) { margin-top: 28px; }
 }
 
-/* Aparición curva: cada imagen y cada teléfono entran doblados hacia quien
-   mira y se enderezan a medida que suben, atados al scroll (sin JavaScript).
-   Sólo donde el navegador lo soporta y sin "reducir movimiento"; en el resto
-   están quietos y a la vista. El texto no se anima nunca. */
-@supports (animation-timeline: view()) {
-  @media (prefers-reduced-motion: no-preference) {
-    .pj-flow .shot, .pj-phone:not(.slot) {
-      transform-origin: 50% 0; will-change: transform;
-      animation: pj-bend linear both; animation-timeline: view(); animation-range: entry 0% entry 100%;
-    }
-    .pj-m--bleed .shot { animation-range: entry 0% entry 75%; }
-    .pj-phone:not(.slot) { animation-name: pj-bend-phone; animation-range: entry 0% cover 32%; }
-    .pj-phone:nth-child(2) { --tilt: 7deg; }
-    /* La imagen a sangre se desliza un poco más lento que la página. */
-    .pj-m--bleed .shot img { animation: pj-drift linear both; animation-timeline: view(); animation-range: cover 0% cover 100%; }
-  }
+/* ── Ficha de obra: movimiento ───────────────────────────────────────────
+   js/app.js (initMotion) le pone a cada elemento con data-m dos números:
+     --in  0 → 1   mientras entra por abajo
+     --p   1 → -1  mientras cruza la pantalla (0 = en el centro)
+   y a .pj-flow, --mx y --my (-1…1), que siguen al cursor. Acá se decide qué
+   hace cada cosa con eso. En reposo valen --in: 1 y --p: 0, así que sin
+   JavaScript o con "reducir movimiento" todo está quieto y a la vista.
+   El texto no se anima nunca. */
+[data-m] { --in: 1; --p: 0; }
+/* Mientras js/app.js mide dónde está cada cosa, nada está transformado. */
+.m-measure [data-m] { transform: none !important; }
+/* Las fotos entran dobladas hacia quien mira, con el borde de abajo curvo, y
+   se enderezan al subir. Adentro, la imagen se desliza más despacio que su marco. */
+.shot[data-m="shot"], .shot[data-m="tile"] {
+  transform-origin: 50% 0; will-change: transform;
+  transform: perspective(1100px) translateY(calc((1 - var(--in)) * 56px)) rotateX(calc((1 - var(--in)) * 27deg)) scale(calc(.95 + .05 * var(--in)));
+  border-bottom-left-radius: calc(var(--r-md) + (1 - var(--in)) * 40%) calc(var(--r-md) + (1 - var(--in)) * 17%);
+  border-bottom-right-radius: calc(var(--r-md) + (1 - var(--in)) * 40%) calc(var(--r-md) + (1 - var(--in)) * 17%);
+  opacity: calc(.12 + .88 * var(--in));
 }
-@keyframes pj-bend {
-  from {
-    transform: perspective(1100px) translateY(40px) rotateX(28deg) scale(.96);
-    border-bottom-left-radius: 46% 20%; border-bottom-right-radius: 46% 20%;
-  }
-  to { transform: perspective(1100px) translateY(0) rotateX(0deg) scale(1); }
+.shot[data-m] img { scale: 1.1; translate: 0 calc(var(--p) * 3.6%); }
+.shot[data-m]:hover img { scale: 1.14; }
+/* La imagen a sangre llega más chica, de puntas redondas, y se abre hasta ocupar todo el ancho. */
+.shot[data-m="bleed"] {
+  will-change: transform;
+  transform: scale(calc(.86 + .14 * var(--in)));
+  border-radius: calc((1 - var(--in)) * 44px);
+  opacity: calc(.2 + .8 * var(--in));
 }
-@keyframes pj-bend-phone {
-  from { transform: perspective(900px) translateY(70px) rotateX(34deg) rotateZ(var(--tilt, -7deg)) scale(.94); }
-  to { transform: perspective(900px) translateY(0) rotateX(0deg) rotateZ(0deg) scale(1); }
+.shot[data-m="bleed"] img { scale: 1.16; translate: 0 calc(var(--p) * 5%); }
+/* Las columnas de la galería van cada una a su velocidad. */
+.pj-wall__col { will-change: transform; transform: translateY(calc(var(--p) * var(--speed))); }
+/* El teléfono y la tarjeta giran mientras cruzan la pantalla, cada uno para su lado. */
+.pj-phone__body, .pj-card {
+  will-change: transform;
+  transform:
+    translateY(calc(var(--p) * -30px + (1 - var(--in)) * 70px))
+    rotateY(calc(var(--rest) + var(--turn) * var(--p) + var(--mx, 0) * 5deg))
+    rotateX(calc(var(--p) * 7deg + (1 - var(--in)) * 16deg + var(--my, 0) * -3deg))
+    rotateZ(calc(var(--lean) * var(--p)));
 }
-@keyframes pj-drift { from { transform: scale(1.14) translateY(-5%); } to { transform: scale(1.14) translateY(5%); } }
+.pj-card { transform-origin: 50% 50%; transform: perspective(1300px) translateY(calc(var(--p) * -22px + (1 - var(--in)) * 70px)) rotateY(calc(var(--rest) + var(--turn) * var(--p) + var(--mx, 0) * 5deg)) rotateX(calc(var(--p) * 7deg + (1 - var(--in)) * 16deg + var(--my, 0) * -3deg)) rotateZ(calc(var(--lean) * var(--p))); opacity: calc(.12 + .88 * var(--in)); }
+.pj-phone { opacity: calc(.12 + .88 * var(--in)); }
+/* Con "reducir movimiento" el teléfono queda de frente. (Sin JavaScript queda girado, quieto.) */
+@media (prefers-reduced-motion: reduce) {
+  .pj-phone, .pj-card { --rest: 0deg; }
+  .shot[data-m] img { scale: 1; }
+}
 
 .cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 34px; }
 .plain li { padding: 11px 0; border-bottom: 1px solid var(--line); font-size: .98rem; line-height: 1.5; }
@@ -1003,9 +1079,20 @@ body.has-review .ftr { padding-bottom: 78px; }   /* que la barra no tape el pie 
   .has-review .world:not(.world--flat) .world__hud[data-kind="reel"] { bottom: 84px; }
 }
 /* Adentro, el cursor propio pasa a blanco (sólo cambia el color, desde el CSS). */
-html.is-under { --cursor: rgba(255, 255, 255, .5); --cursor-fill: rgba(255, 255, 255, .08); }
-html.is-under .cursor-particle { filter: none !important; }
-html.is-under .ftr { background: rgba(13, 11, 34, .95); }
+html.is-under, body.pg-project { --cursor: rgba(255, 255, 255, .5); --cursor-fill: rgba(255, 255, 255, .08); }
+html.is-under .cursor-particle, .pg-project .cursor-particle { filter: none !important; }
+html.is-under .ftr, .pg-project .ftr { background: rgba(13, 11, 34, .95); }
+/* Las fichas de obra están siempre "abajo": el mismo fluido teñido de violeta
+   del mundo interior, sin pasar por js/world.js. El velo hace de tinte. */
+.pg-project .veil {
+  mix-blend-mode: multiply;
+  background: radial-gradient(125% 95% at 62% 4%, #a57af0 0%, #7442b4 34%, #3a216c 68%, #180e36 100%);
+}
+.pg-project .page { background: linear-gradient(to bottom, rgba(20, 14, 52, .16) 0%, rgba(13, 11, 34, .34) 60%, rgba(10, 8, 28, .62) 100%); }
+/* El color del texto se hereda ya resuelto desde <body>: acá se vuelve a leer con los valores oscuros. */
+.pg-project .page, .pg-project .ftr { color: var(--ink-body); font-weight: var(--w-body); }
+/* Si el fluido no arranca (sin WebGL), el fondo igual es oscuro. */
+body.pg-project { background: #1b1240; }
 /* Adentro el menú no lleva fondo: nada corta el escenario. */
 html.is-under .hdr.is-stuck { background: transparent; -webkit-backdrop-filter: none; backdrop-filter: none; box-shadow: none; }
 
