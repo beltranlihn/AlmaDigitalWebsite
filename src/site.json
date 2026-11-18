@@ -32,7 +32,7 @@
   "world": {
     "enabled": true,
     "works": [],
-    "stops": "ameba",
+    "stops": "galaxy",
     "icons": {
       "neurocosm-xr": "eeg",
       "soul-charger": "headset",

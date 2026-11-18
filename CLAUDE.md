@@ -198,9 +198,9 @@ vea y probarlo en teléfonos reales** (en la portada corren el fluido y el mundo
   4. **El paso a las obras**: la cámara atraviesa tres anillos de luz, con la forma del icono, mientras
      aparece en el centro "Obras seleccionadas" (`site.json → selectedTitle`). Es un tramo, no una
      parada. El título sólo cambia de opacidad: la tipografía no se mueve.
-  5. **Las obras**, una ameba cada una.
+  5. **Las obras**, una galaxia cada una (ver "Paradas en galaxia"; antes, una ameba).
   6. **El cierre**: las obras seleccionadas, conocer el estudio y contacto.
-- **Las amebas no llevan fotos** (decisión de Vicente, 2026-11-18: deformadas por la gota se veían poco
+- **Las amebas no llevan fotos** (vale para el modo ameba, hoy en reserva; decisión de Vicente, 2026-11-18: deformadas por la gota se veían poco
   profesionales). Adentro llevan un arte hecho con los colores de la obra, que se mezclan despacio como
   tinta en agua (`FRAG` en `js/world.js`). Los colores son los de `site.json → particles` (o
   `world.forms`): los cuatro primeros de `colors` y `stage` para el borde. La portada de la obra aparece
@@ -248,9 +248,10 @@ vea y probarlo en teléfonos reales** (en la portada corren el fluido y el mundo
      parada). Si uno suelta el scroll cerca de una parada, el navegador termina de llevarlo hasta ella;
      en mitad del camino no hace nada. No es obligatorio: con un movimiento largo se pasa de largo.
   Para quitar el imán: borrar la regla `html.w-snap` del CSS. Para acortar o alargar la pausa: `HOLD`.
-- **Variante de las paradas: ameba o galaxia** (`site.json → world.stops`, hoy `"ameba"`). Ver
-  "Paradas en galaxia". Para comparar, `?paradas=galaxia` o `?paradas=ameba` en la URL, o los botones
-  "Paradas" de la barra de revisión: la elección dura la visita (`sessionStorage`).
+- **Cómo son las paradas de las obras: galaxia** (`site.json → world.stops: "galaxy"`, elegida por
+  Vicente el 2026-11-18). El modo ameba (`"ameba"`) queda en reserva y sigue funcionando. Ver "Paradas
+  en galaxia". Para comparar, `?paradas=ameba` o `?paradas=galaxia` en la URL, o los botones "Paradas"
+  de la barra de revisión: la elección dura la visita (`sessionStorage`).
 - **La ficha de cada obra** dice el número y si es obra propia o encargo, el nombre, el formato, la
   primera oración de la descripción, hasta cuatro etiquetas de tecnología (`tech`) y dónde se presentó
   (las dos primeras sedes de `presentedAt`, recortadas, y "+N" si hay más). En el teléfono la
@@ -277,10 +278,11 @@ vea y probarlo en teléfonos reales** (en la portada corren el fluido y el mundo
 - **Textos** (`site.json → t.world*`, `heroTitle`, `heroLead`, `selectedTitle`): borradores, a revisar
   por el estudio.
 
-### Paradas en galaxia (variante en prueba)
-Idea de Vicente (2026-11-18), para decidir antes de cerrar la estética: que cada obra seleccionada no
-sea una ameba de un color sino una galaxia de 4–5 imágenes suyas en movimiento, un poco 3D, con un
-ícono 3D que la represente. Las amebas del entorno, la del estudio y la del final siguen igual.
+### Paradas en galaxia
+Idea de Vicente (2026-11-18): que cada obra seleccionada no sea una ameba de un color sino una galaxia
+de 4–5 imágenes suyas en movimiento, un poco 3D, con un ícono 3D que la represente. Se probó como
+variante y la eligió el mismo día ("Galaxia"): es la de por defecto. Las amebas del entorno, la del
+estudio y la del final siguen igual.
 
 - **Cómo es** (`galaxy()` y `galaxyFrame()` en `js/world.js`): un disco inclinado de imágenes que
   orbitan despacio alrededor del ícono, que flota un poco por encima como un planeta sobre su anillo.
@@ -303,9 +305,9 @@ sea una ameba de un color sino una galaxia de 4–5 imágenes suyas en movimient
   `projects.json → photos`, correr ese script y después `node src/build.mjs`.
 - **Clic** en cualquier parte de la galaxia: entra a la obra con la transición líquida, que arranca
   desde el ícono.
-- Para dejarla como definitiva: `site.json → world.stops: "galaxy"` y un build. Para descartarla:
-  borrar `world.stops` e `world.icons`, `tools/make_world_images.py`, `src/world-images.json` y
-  `Asset/World/`, y las piezas de la galaxia en `js/world.js`.
+- Para volver a las amebas: `site.json → world.stops: "ameba"` y un build. Si se decide no volver
+  nunca, se puede borrar el modo ameba de las obras en `js/world.js` (el arte de paleta de `FRAG` lo
+  siguen usando la ameba del estudio y las del fondo, así que eso queda).
 
 ### El reel flotante
 Pedido de Vicente (2026-11-18): que después de la ameba del estudio se avance hasta el reel, flotando y
@@ -534,7 +536,8 @@ salir de la portada. Consola sin errores. En emulación 375×812: galaxia arriba
 Paquete: 45 páginas, 1.437 referencias, ninguna rota, con las 30 imágenes nuevas.
 **Sin ver**: el movimiento continuo (sólo cuadros sueltos), teléfonos reales (en la emulación el panel
 frena la animación), Safari y Firefox (el imán de scroll se comporta distinto en cada navegador).
-**Para decidir**: galaxia o ameba; si el imán se siente bien o molesta.
+**Decidido después**: Vicente eligió la galaxia; `world.stops` pasó a `"galaxy"`. **Queda por ver**: si
+el imán del scroll se siente bien o molesta.
 
 ### 2026-11-18 — Fichas de obra: fondo oscuro, galería dispersa y teléfono 3D (Vicente)
 
