@@ -318,6 +318,15 @@ const FORMS = {
       put(i, Math.cos(a) * r, -0.95, Math.sin(a) * r);
     }
   },
+  /* Dos brazos en espiral, como una galaxia (paradas en galaxia). Es un disco
+     redondo: el aplastamiento y la inclinación se los da la matriz de cada obra. */
+  galaxy(n, put) {
+    for (let i = 0; i < n; i++) {
+      const arm = i % 2, u = Math.pow(Math.random(), 0.75), r = 0.85 + u * 2.75;
+      const a = arm * Math.PI + r * 1.3 + rnd(-0.3, 0.3) * (1.25 - u);
+      put(i, Math.cos(a) * r, rnd(-0.07, 0.07) * (1.5 - u), Math.sin(a) * r);
+    }
+  },
 };
 /* Cómo se mueve cada forma: giro (rad/s), inclinación, latido, respiración, onda. */
 const FORM_FX = {
@@ -328,6 +337,7 @@ const FORM_FX = {
   strokes: { spin: 0.2, tilt: [0.2, 0.1] },
   dome: { spin: 0.14, tilt: [0.3, 0], breath: 0.02 },
   wave: { spin: 0.1, tilt: [0.55, 0], wave: 0.13 },
+  galaxy: { spin: 0.07, tilt: [0.36, 0] },
 };
 
 /* ── Luces que avanzan ─────────────────────────────────────────────────
@@ -436,9 +446,201 @@ const LIQ_FRAG = `
     gl_FragColor = vec4(col, inside * (1.0 - below * settle) * uFade);
   }`;
 
+/* ── Paradas en galaxia (variante: site.json → world.stops = "galaxy") ──
+   En vez de una ameba, cada obra es una galaxia: 4 o 5 imágenes suyas que
+   orbitan en un disco inclinado alrededor de un ícono 3D que la representa
+   (un domo, un casco de VR, un sensor…), y un enjambre de partículas que, al
+   detenerse frente a la obra, se ordena en brazos de espiral. */
+
+/* Las imágenes: planos de puntas redondas, apenas curvados (el centro un poco
+   hacia adelante), con filo de vidrio. Las de atrás se ven más apagadas. */
+const CARD_VERT = `
+  uniform float uBend;
+  varying vec2 vUv;
+  void main() {
+    vUv = uv;
+    vec3 p = position;
+    p.z += uBend * (0.25 - p.x * p.x);
+    gl_Position = projectionMatrix * modelViewMatrix * vec4(p, 1.0);
+  }`;
+const CARD_FRAG = `
+  uniform sampler2D uMap;
+  uniform float uOpacity, uHas, uAspect, uFocus;
+  uniform vec3 uTint;
+  varying vec2 vUv;
+  void main() {
+    vec2 s = vec2(uAspect, 1.0), p = (vUv - 0.5) * s;
+    float rad = 0.07;
+    vec2 q = abs(p) - (s * 0.5 - rad);
+    float d = length(max(q, 0.0)) + min(max(q.x, q.y), 0.0) - rad;
+    if (d > 0.004) discard;
+    vec3 col = mix(uTint * 0.45, texture2D(uMap, vUv).rgb, uHas);
+    col *= 0.42 + 0.58 * uFocus;
+    col += vec3(0.93, 0.86, 1.0) * smoothstep(0.016, 0.0, abs(d)) * 0.4;
+    gl_FragColor = vec4(col, uOpacity * smoothstep(0.004, -0.004, d));
+  }`;
+/* Los íconos: vidrio luminoso. La cara brilla en el borde (fresnel) y las
+   aristas son líneas finas, como un holograma. */
+const HOLO_VERT = `
+  varying vec3 vN; varying vec3 vP;
+  void main() {
+    vec4 mv = modelViewMatrix * vec4(position, 1.0);
+    vN = normalize(normalMatrix * normal); vP = mv.xyz;
+    gl_Position = projectionMatrix * mv;
+  }`;
+const HOLO_FRAG = `
+  uniform vec3 uA, uB;
+  uniform float uOpacity, uGlow;
+  varying vec3 vN; varying vec3 vP;
+  void main() {
+    vec3 N = normalize(vN), V = normalize(-vP);
+    float fres = pow(1.0 - abs(dot(N, V)), 2.0);
+    vec3 col = mix(uA, uB, fres) * (0.32 + 1.15 * fres + 0.45 * uGlow);
+    gl_FragColor = vec4(col, (0.13 + 0.87 * fres) * uOpacity);
+  }`;
+function roundRect(w, h, r) {
+  const s = new THREE.Shape(), x = -w / 2, y = -h / 2;
+  s.moveTo(x + r, y); s.lineTo(x + w - r, y); s.quadraticCurveTo(x + w, y, x + w, y + r);
+  s.lineTo(x + w, y + h - r); s.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+  s.lineTo(x + r, y + h); s.quadraticCurveTo(x, y + h, x, y + h - r);
+  s.lineTo(x, y + r); s.quadraticCurveTo(x, y, x + r, y);
+  return s;
+}
+/* Líneas sueltas (para lo que no es un sólido): pares de puntos. */
+function segs(list) {
+  const g = new THREE.BufferGeometry();
+  g.setAttribute('position', new THREE.Float32BufferAttribute(list, 3));
+  return g;
+}
+function polyline(pts) {
+  const out = [];
+  for (let i = 0; i < pts.length - 1; i++) out.push(...pts[i], ...pts[i + 1]);
+  return out;
+}
+const V3 = (x, y, z) => new THREE.Vector3(x, y, z);
+/* Cada ícono es una lista de piezas:
+     g       geometría (cara de vidrio; con edge !== false, también sus aristas)
+     line    sólo líneas (pares de puntos)
+     accent  usa el segundo color de la obra
+     p, r, s posición, rotación (Euler) y escala */
+const ICONS = {
+  /* Casco de VR: el visor, los dos lentes por detrás y la correa. */
+  headset() {
+    const visor = new THREE.ExtrudeGeometry(roundRect(1.5, 0.8, 0.32), { depth: 0.42, bevelEnabled: true, bevelSize: 0.08, bevelThickness: 0.08, bevelSegments: 3, curveSegments: 10 });
+    visor.center();
+    return [
+      { g: visor, edge: 40 },
+      { g: new THREE.TorusGeometry(0.2, 0.035, 8, 40), p: [-0.35, 0, -0.32], accent: true, edge: false },
+      { g: new THREE.TorusGeometry(0.2, 0.035, 8, 40), p: [0.35, 0, -0.32], accent: true, edge: false },
+      { g: new THREE.TorusGeometry(0.84, 0.06, 8, 64, Math.PI), p: [0, 0, -0.22], r: [-Math.PI / 2, 0, 0], edge: false },
+      { g: new THREE.TorusGeometry(0.6, 0.045, 8, 40, Math.PI * 0.62), p: [0, 0.32, -0.25], r: [0, Math.PI / 2, Math.PI / 2 - 0.15], edge: false },
+    ];
+  },
+  /* Sensor EEG: una cabeza de malla con la vincha de electrodos. */
+  eeg() {
+    const tilt = new THREE.Euler(Math.PI / 2 - 0.28, 0, 0);
+    const parts = [
+      { g: new THREE.IcosahedronGeometry(0.72, 1), edge: 1 },
+      { g: new THREE.TorusGeometry(0.8, 0.06, 10, 72), p: [0, 0.14, 0], r: [tilt.x, 0, 0], accent: true, edge: false },
+    ];
+    for (let k = 0; k < 7; k++) {
+      const a = Math.PI * (0.12 + k * 0.76 / 6), v = V3(Math.cos(a) * 0.8, Math.sin(a) * 0.8, 0).applyEuler(tilt);
+      parts.push({ g: new THREE.SphereGeometry(0.085, 14, 10), p: [v.x, v.y + 0.14, v.z], accent: true, edge: false });
+    }
+    /* La onda cerebral, flotando arriba. */
+    const wave = [];
+    for (let k = 0; k <= 60; k++) { const x = -0.9 + k * 0.03; wave.push([x, 1.0 + Math.sin(x * 11) * 0.09 * (1 - Math.abs(x) / 0.9), 0]); }
+    parts.push({ line: segs(polyline(wave)) });
+    return parts;
+  },
+  /* Pincel: mango, virola, punta, y una pincelada que se enrosca. */
+  brush() {
+    const V2 = (x, y) => new THREE.Vector2(x, y);
+    const tip = new THREE.LatheGeometry([V2(0.0, 0), V2(0.105, 0.02), V2(0.14, 0.17), V2(0.12, 0.37), V2(0.065, 0.52), V2(0.0, 0.62)], 22);
+    const stroke = new THREE.CatmullRomCurve3([V3(0.25, 0.95, 0.1), V3(0.8, 0.6, 0.35), V3(0.95, 0.05, 0.1), V3(0.6, -0.42, -0.25), V3(0.05, -0.55, -0.3), V3(-0.5, -0.3, -0.05), V3(-0.75, 0.15, 0.2)]);
+    return [
+      { g: new THREE.CylinderGeometry(0.09, 0.13, 1.3, 18), p: [0, -0.95, 0], edge: false },
+      { g: new THREE.CylinderGeometry(0.15, 0.15, 0.26, 18), p: [0, -0.2, 0], edge: 30 },
+      { g: tip, p: [0, -0.07, 0], s: [1.45, 1.1, 1.45], edge: false },
+      { g: new THREE.TubeGeometry(stroke, 90, 0.075, 8, false), accent: true, edge: false },
+    ];
+  },
+  /* Sensor de pulso: un corazón y su electrocardiograma. */
+  pulse() {
+    const h = new THREE.Shape();
+    h.moveTo(5, 5); h.bezierCurveTo(5, 5, 4, 0, 0, 0); h.bezierCurveTo(-6, 0, -6, 7, -6, 7);
+    h.bezierCurveTo(-6, 11, -3, 15.4, 5, 19); h.bezierCurveTo(12, 15.4, 16, 11, 16, 7);
+    h.bezierCurveTo(16, 7, 16, 0, 10, 0); h.bezierCurveTo(7, 0, 5, 5, 5, 5);
+    const heart = new THREE.ExtrudeGeometry(h, { depth: 4, bevelEnabled: true, bevelSize: 1.2, bevelThickness: 1.2, bevelSegments: 4, curveSegments: 16 });
+    heart.center(); heart.scale(0.075, -0.075, 0.075);
+    const ecg = [[-1.3, 0, 0.5], [-0.42, 0, 0.5], [-0.3, 0.16, 0.5], [-0.18, -0.08, 0.5], [-0.06, 0.62, 0.5], [0.08, -0.45, 0.5], [0.2, 0.06, 0.5], [0.32, 0, 0.5], [1.3, 0, 0.5]];
+    const path = new THREE.CurvePath();
+    for (let k = 0; k < ecg.length - 1; k++) path.add(new THREE.LineCurve3(V3(...ecg[k]), V3(...ecg[k + 1])));
+    return [
+      { g: heart, edge: 30 },
+      { g: new THREE.TubeGeometry(path, 200, 0.03, 6, false), accent: true, edge: false },
+    ];
+  },
+  /* Domo: media esfera de meridianos y paralelos sobre su anillo, y la luz del proyector adentro. */
+  dome() {
+    const lines = [], M = 14, L = 5;
+    for (let m = 0; m < M; m++) {
+      const ph = m / M * Math.PI * 2, pts = [];
+      for (let k = 0; k <= 16; k++) { const th = k / 16 * Math.PI / 2; pts.push([Math.sin(th) * Math.cos(ph), Math.cos(th), Math.sin(th) * Math.sin(ph)]); }
+      lines.push(...polyline(pts));
+    }
+    for (let l = 1; l <= L; l++) {
+      const th = l / (L + 0.6) * Math.PI / 2, pts = [];
+      for (let k = 0; k <= 48; k++) { const ph = k / 48 * Math.PI * 2; pts.push([Math.sin(th) * Math.cos(ph), Math.cos(th), Math.sin(th) * Math.sin(ph)]); }
+      lines.push(...polyline(pts));
+    }
+    return [
+      { g: new THREE.SphereGeometry(1, 36, 14, 0, Math.PI * 2, 0, Math.PI / 2), edge: false },
+      { line: segs(lines) },
+      { g: new THREE.TorusGeometry(1.02, 0.03, 8, 72), r: [Math.PI / 2, 0, 0], accent: true, edge: false },
+      { g: new THREE.SphereGeometry(0.11, 16, 12), p: [0, 0.12, 0], accent: true, edge: false },
+    ];
+  },
+  /* Sala inmersiva: dos paredes y el piso, con la grilla de las pantallas, y una persona adentro. */
+  room() {
+    const grid = [], W = 1.6, H = 1.15, Dp = 1.25;
+    for (let k = 1; k < 6; k++) { const x = -W / 2 + k * W / 6; grid.push(x, -H / 2, -Dp / 2, x, H / 2, -Dp / 2); }
+    for (let k = 1; k < 4; k++) { const y = -H / 2 + k * H / 4; grid.push(-W / 2, y, -Dp / 2, W / 2, y, -Dp / 2, -W / 2, y, -Dp / 2, -W / 2, y, Dp / 2); }
+    for (let k = 1; k < 5; k++) { const z = -Dp / 2 + k * Dp / 5; grid.push(-W / 2, -H / 2, z, -W / 2, H / 2, z); }
+    return [
+      { g: new THREE.PlaneGeometry(W, H), p: [0, 0, -Dp / 2], edge: 1 },
+      { g: new THREE.PlaneGeometry(Dp, H), p: [-W / 2, 0, 0], r: [0, Math.PI / 2, 0], edge: 1 },
+      { g: new THREE.PlaneGeometry(W, Dp), p: [0, -H / 2, 0], r: [-Math.PI / 2, 0, 0], edge: 1 },
+      { line: segs(grid) },
+      { g: new THREE.CapsuleGeometry(0.085, 0.34, 6, 12), p: [0.15, -H / 2 + 0.26, 0.12], accent: true, edge: false },
+      { g: new THREE.SphereGeometry(0.085, 14, 10), p: [0.15, -H / 2 + 0.55, 0.12], accent: true, edge: false },
+    ];
+  },
+  /* Proyector: el cuerpo, el lente y el haz de luz. */
+  projector() {
+    const beam = new THREE.ConeGeometry(0.75, 1.5, 32, 1, true);
+    return [
+      { g: new THREE.BoxGeometry(0.9, 0.46, 0.7), p: [0, 0, -0.6], edge: 30 },
+      { g: new THREE.CylinderGeometry(0.17, 0.2, 0.2, 24), p: [0, 0, -0.17], r: [Math.PI / 2, 0, 0], edge: false },
+      { g: beam, p: [0, 0, 0.68], r: [-Math.PI / 2, 0, 0], accent: true, edge: false },
+    ];
+  },
+  /* Parlante: el cono y las ondas que salen. */
+  speaker() {
+    const parts = [{ g: new THREE.CylinderGeometry(0.62, 0.62, 0.32, 48), r: [Math.PI / 2, 0, 0], edge: 30 }];
+    [0.46, 0.3, 0.14].forEach((r) => parts.push({ g: new THREE.TorusGeometry(r, 0.025, 8, 48), p: [0, 0, 0.18], accent: true, edge: false }));
+    [0.95, 1.2].forEach((r) => parts.push({ g: new THREE.TorusGeometry(r, 0.02, 6, 48, Math.PI * 0.55), p: [0, 0, 0.18], r: [0, 0, -Math.PI * 0.275], edge: false }));
+    return parts;
+  },
+  /* Prisma: una forma facetada, para lo que no tiene otro ícono. */
+  prism() { return [{ g: new THREE.IcosahedronGeometry(0.9, 0), edge: 1 }]; },
+};
+const heartbeat = (t) => { const p = t % 1, a = (p - 0.08) / 0.045, b = (p - 0.30) / 0.06; return Math.exp(-a * a) + 0.55 * Math.exp(-b * b); };
+
 export function mount(section, opts) {
   opts = opts || {};
   const reduce = !!opts.reduce, coarse = !!opts.coarse, sound = opts.sound || null;
+  const GAL = opts.stops === 'galaxy';     // las obras como galaxias de imágenes, en vez de amebas
   const q = (s) => section.querySelector(s);
   const stage = q('.world__stage'), host = q('.world__canvas');
   const intro = q('.world__intro'), hud = q('.world__hud'), end = q('.world__end'), dots = q('.world__dots');
@@ -447,6 +649,7 @@ export function mount(section, opts) {
   const hudCount = q('[data-w-count]'), hudTitle = q('[data-w-title]'), hudFmt = q('[data-w-fmt]'), hudOpen = q('a[data-w-open]');
   const n = links.length;
   const hudDesc = q('[data-w-desc]'), hudCta = q('[data-w-cta]'), chapter = q('[data-w-chapter]');
+  const hudTags = q('[data-w-tags]'), hudWhere = q('[data-w-where]');
   /* Tramos del recorrido: uno entre cada par de paradas y uno más antes de la
      primera obra, que es el paso a "Obras seleccionadas". */
   const kinds = links.map((a) => a.getAttribute('data-kind') || 'work');
@@ -514,6 +717,78 @@ export function mount(section, opts) {
     };
   }
   const hex = (c) => { const h = c.trim().replace('#', ''); return [0, 2, 4].map((k) => parseInt(h.substr(k, 2), 16) / 255); };
+  /* Una galaxia: el ícono al centro y las imágenes en un disco inclinado alrededor.
+     root lleva la posición y la escala; orbit, la inclinación del disco. */
+  const RX = 2.4, RZ = 1.5;            // radios del disco
+  const ICON_Y = 0.42;                 // el ícono flota un poco por encima del disco, como un planeta sobre su anillo
+  const cardGeo = new THREE.PlaneGeometry(1, 1, 24, 1);
+  disposables.push(cardGeo);
+  function makeIcon(kind, matA, matB, lineMat) {
+    const inner = new THREE.Group();
+    (ICONS[kind] || ICONS.prism)().forEach((pt) => {
+      let obj;
+      if (pt.line) obj = new THREE.LineSegments(pt.line, lineMat);
+      else {
+        obj = new THREE.Mesh(pt.g, pt.accent ? matB : matA);
+        if (pt.edge !== false) {
+          const eg = new THREE.EdgesGeometry(pt.g, pt.edge || 28);
+          const e = new THREE.LineSegments(eg, lineMat);
+          e.renderOrder = 3; obj.add(e); disposables.push(eg);
+        }
+      }
+      if (pt.p) obj.position.set(...pt.p);
+      if (pt.r) obj.rotation.set(...pt.r);
+      if (pt.s) obj.scale.set(...pt.s);
+      obj.renderOrder = 3; obj.frustumCulled = false;
+      inner.add(obj);
+      disposables.push(pt.g || pt.line);
+    });
+    /* Todos miden lo mismo: lo más largo, 1,8. */
+    inner.updateMatrixWorld(true);
+    const box = new THREE.Box3().setFromObject(inner), size = box.getSize(V3(0, 0, 0)), mid = box.getCenter(V3(0, 0, 0));
+    inner.position.copy(mid).multiplyScalar(-1);
+    const wrap = new THREE.Group();
+    wrap.add(inner);
+    wrap.userData.fit = 1.8 / Math.max(size.x, size.y, size.z, 0.01);
+    return wrap;
+  }
+  function galaxy(a, i, pal) {
+    const k = kinds.slice(0, i).filter((x) => x === 'work').length;     // su lugar entre las obras
+    const root = new THREE.Group(), orbit = new THREE.Group();
+    root.visible = false; root.add(orbit); scene.add(root);
+    const tilt = [0.36 + (k % 2) * 0.1, 0, (k % 2 ? -1 : 1) * 0.12];
+    orbit.rotation.set(...tilt);
+    const lift = (c, w) => c.map((x) => x + (1 - x) * w);            // un color más claro
+    const holo = (A, B) => new THREE.ShaderMaterial({
+      vertexShader: HOLO_VERT, fragmentShader: HOLO_FRAG, transparent: true, depthWrite: false,
+      blending: THREE.AdditiveBlending, side: THREE.DoubleSide,
+      uniforms: { uA: { value: V3(...A) }, uB: { value: V3(...B) }, uOpacity: { value: 0 }, uGlow: { value: 0 } },
+    });
+    const matA = holo(pal[0], lift(pal[0], 0.75)), matB = holo(pal[Math.min(1, pal.length - 1)], lift(pal[Math.min(2, pal.length - 1)], 0.5));
+    const lineMat = new THREE.LineBasicMaterial({ color: new THREE.Color(...lift(pal[0], 0.55)), transparent: true, opacity: 0, blending: THREE.AdditiveBlending, depthWrite: false });
+    disposables.push(matA, matB, lineMat);
+    const kind = a.getAttribute('data-icon') || 'prism';
+    const icon = makeIcon(kind, matA, matB, lineMat);
+    root.add(icon);
+    const list = (a.getAttribute('data-gallery') || '').split(',').filter(Boolean).map((x) => { const [src, ar] = x.split('|'); return { src, ar: parseFloat(ar) || 16 / 9 }; });
+    const cards = list.map((c, j) => {
+      const mat = new THREE.ShaderMaterial({
+        vertexShader: CARD_VERT, fragmentShader: CARD_FRAG, transparent: true,
+        uniforms: { uMap: { value: blank }, uHas: { value: 0 }, uOpacity: { value: 0 }, uAspect: { value: c.ar }, uFocus: { value: 1 }, uBend: { value: 0.1 }, uTint: { value: V3(...pal[0]) } },
+      });
+      disposables.push(mat);
+      const mesh = new THREE.Mesh(cardGeo, mat);
+      mesh.renderOrder = 2; mesh.frustumCulled = false;
+      orbit.add(mesh);
+      const w = c.ar >= 1 ? 1.42 : 0.64;
+      return { mesh, u: mat.uniforms, src: c.src, w, h: w / c.ar, ang: (j / list.length) * TAU2 + k * 0.9, lift: rnd(-0.3, 0.3), rad: rnd(0.88, 1.08), size: rnd(0.9, 1.12), has: 0, hasTo: 0 };
+    });
+    return {
+      gal: true, mesh: root, orbit, icon, cards, matA, matB, lineMat, tilt, beat: kind === 'pulse',
+      u: { uOpacity: { value: 0 } }, base: new THREE.Vector3(), r: 1, gs: 1, hitR: 3, seed: 2.3 + i * 1.9,
+      far: 30, hov: 0, spin: 0, loaded: false,
+    };
+  }
   const door = ameba(geoBig, { seed: 1.7, wobble: 1, solid: 1, a: C.violet, b: C.pink, c: C.mist });
   const core = ameba(geoBig, { seed: 4.2, wobble: 1, solid: 1, a: C.purple, b: C.lilac, c: C.mist, far: 44 });
   /* Las paradas, en el orden del HTML: la ameba del estudio, el reel y una ameba por obra. */
@@ -522,11 +797,14 @@ export function mount(section, opts) {
     const pal = (list.length ? list : ['#c99ef9', '#f2b8dd', '#8fb0ff', '#ffffff']).map(hex);
     const stage = a.getAttribute('data-stage');
     const w = kinds[i] === 'reel' ? screen(a)
+      : (GAL && kinds[i] === 'work') ? galaxy(a, i, pal)
       : ameba(geoBig, { seed: 2.3 + i * 1.9, wobble: 0.55, a: C.violet, b: C.blue, c: C.lilac, pal, stage: stage ? hex(stage) : null });
     w.kind = kinds[i];                                     // 'studio', 'reel' o 'work'
     w.pal = pal; w.href = a.href; w.cover = a.getAttribute('data-cover') || '';
     w.title = a.getAttribute('data-title') || ''; w.format = a.getAttribute('data-format') || '';
     w.desc = a.getAttribute('data-desc') || ''; w.cta = a.getAttribute('data-cta') || '';
+    w.tags = (a.getAttribute('data-tags') || '').split('|').filter(Boolean);
+    w.where = a.getAttribute('data-where') || ''; w.line = a.getAttribute('data-line') || '';
     w.asked = false;
     return w;
   });
@@ -580,7 +858,7 @@ export function mount(section, opts) {
   const SN = coarse ? 220 : 560;
   links.forEach((a, i) => {
     if (kinds[i] === 'reel') return;                       // la pantalla del reel no lleva enjambre
-    const kind = a.getAttribute('data-form'), make = FORMS[kind] || FORMS.halo, fx = FORM_FX[kind] || FORM_FX.halo;
+    const kind = works[i].gal ? 'galaxy' : a.getAttribute('data-form'), make = FORMS[kind] || FORMS.halo, fx = FORM_FX[kind] || FORM_FX.halo;
     const pal = works[i].pal;
     const free = new Float32Array(SN * 3), tgt = new Float32Array(SN * 3), col = new Float32Array(SN * 3);
     const seed = new Float32Array(SN), size = new Float32Array(SN);
@@ -597,7 +875,9 @@ export function mount(section, opts) {
     g.setAttribute('aColor', new THREE.BufferAttribute(col, 3));
     g.setAttribute('aSeed', new THREE.BufferAttribute(seed, 1));
     g.setAttribute('aSize', new THREE.BufferAttribute(size, 1));
-    const tilt = new THREE.Matrix3().setFromMatrix4(new THREE.Matrix4().makeRotationFromEuler(new THREE.Euler(fx.tilt[0], 0, fx.tilt[1])));
+    const tilt = works[i].gal
+      ? new THREE.Matrix3().setFromMatrix4(new THREE.Matrix4().makeRotationFromEuler(new THREE.Euler(...works[i].tilt)).multiply(new THREE.Matrix4().makeScale(1, 1, RZ / RX)))
+      : new THREE.Matrix3().setFromMatrix4(new THREE.Matrix4().makeRotationFromEuler(new THREE.Euler(fx.tilt[0], 0, fx.tilt[1])));
     const m = new THREE.ShaderMaterial({
       vertexShader: SWARM_VERT, fragmentShader: SWARM_FRAG, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending,
       uniforms: {
@@ -724,6 +1004,12 @@ export function mount(section, opts) {
   const tWork = (i) => (SLOTS === 0 ? 0.5 : lerp(T_FIRST, T_LAST, slot(i) / SLOTS));
   const HALF = SLOTS === 0 ? 0.2 : (T_LAST - T_FIRST) / SLOTS / 2;       // medio tramo
   const T_CHAP = FIRST > 0 ? (tWork(FIRST - 1) + tWork(FIRST)) / 2 : -1;  // el paso a las obras
+  /* En cada parada la cámara se queda quieta durante un tramo del scroll (HOLD
+     antes y después), así cuesta un poco más pasar a la siguiente. Además el
+     navegador "imanta" el scroll a cada parada cuando uno suelta cerca de ella
+     (scroll-snap de proximidad: css, html.w-snap). */
+  const HOLD = HALF * 0.46;
+  const STOPS = [0].concat(links.map((_, i) => tWork(i)), [1]);
   let keys = [];                       // [{ t, pos, look }]
   let formScale = 1;                   // los enjambres se achican en pantallas angostas
   function layout() {
@@ -772,13 +1058,15 @@ export function mount(section, opts) {
       const cy = (reel ? 0.5 : HEIGHTS[k % HEIGHTS.length]) * (wide ? 1 : 0.4);
       if (!reel) k++;
       const z = -15 - slot(i) * 10;
-      const d = D * (wide ? cmp.dist : 1);
+      /* La galaxia es más ancha que una ameba: se mira desde un poco más lejos. */
+      const d = D * (wide ? cmp.dist : 1) * (wk.gal && wide ? 1.3 : 1);
       const P = V(cx, cy, z + d);
       /* Hacia dónde mira: gira hacia el lado de la ameba y cabecea un poco. */
       const yaw = wide ? side * 0.2 : 0, pitch = (cy > 0 ? -1 : 1) * (wide ? 0.07 : 0.03);
       const f = V(Math.sin(yaw) * Math.cos(pitch), Math.sin(pitch), -Math.cos(yaw) * Math.cos(pitch));
       const r = V(0, 0, 0).crossVectors(f, UP).normalize(), u = V(0, 0, 0).crossVectors(r, f);
-      const fx = wide ? cmp.fx : 0, fy = wide ? cmp.fy : (reel ? 0.16 : 0.3);
+      /* La galaxia va un poco más hacia el centro que la ameba: si no, sus imágenes se salen por el borde. */
+      const fx = wide ? cmp.fx * (wk.gal ? 0.86 : 1) : 0, fy = wide ? cmp.fy : (reel ? 0.16 : wk.gal ? 0.24 : 0.3);
       wk.base.copy(P).addScaledVector(f, d).addScaledVector(r, fx * TAN * d * aspect).addScaledVector(u, fy * TAN * d);
       if (reel) {
         /* La pantalla: apaisada, o vertical en teléfono (se decide al pedir el video). Ocupa
@@ -790,9 +1078,18 @@ export function mount(section, opts) {
         if (ww > maxW) { ww = maxW; hh = ww / ar; }
         wk.w = ww; wk.h = hh; wk.u.uAspect.value = ar; wk.r = hh * 0.5; wk.side = 0;
         wk.mesh.position.copy(wk.base); wk.mesh.lookAt(P); wk.quat.copy(wk.mesh.quaternion);
+      } else if (wk.gal) {
+        /* En pantallas angostas la galaxia se achica hasta entrar a lo ancho. */
+        const halfW = TAN * d * aspect;
+        wk.gs = wide ? 1 : clamp((1.08 * halfW) / (RX + 0.9), 0.35, 1);   // en teléfono las imágenes de los lados pueden asomarse un poco fuera
+        wk.r = 0.9 * wk.gs; wk.hitR = (RX + 0.55) * wk.gs; wk.side = wide ? side : 0;
       } else { wk.r = R; wk.side = wide ? side : 0; }
-      keys.push({ t: tWork(i), pos: P, look: P.clone().addScaledVector(f, 10), arc: V(wide ? -side * 0.9 : 0, (i % 2 ? 1 : -1) * (wide ? 1.0 : 0.5), 0) });
+      keys.push({ t: tWork(i), hold: HOLD, pos: P, look: P.clone().addScaledVector(f, 10), arc: V(wide ? -side * 0.9 : 0, (i % 2 ? 1 : -1) * (wide ? 1.0 : 0.5), 0) });
     });
+    /* Los imanes del scroll: uno por parada, a la altura exacta de la página en que
+       la cámara llega a ella. */
+    const total = Math.max(1, section.offsetHeight - stage.clientHeight);
+    snaps.forEach((el, k) => { el.style.top = Math.round(STOPS[k] * total) + 'px'; });
     const zc = -15 - SLOTS * 10 - 17, cr = wide ? 2.5 : 1.5, dc = wide ? 10.5 : 12;
     const [cx, cy] = wide ? at(dc, 0.46, 0) : at(dc, 0, 0.4);
     core.base.set(cx, cy, zc); core.r = cr;
@@ -812,7 +1109,8 @@ export function mount(section, opts) {
     let k = 0;
     while (k < keys.length - 2 && p > keys[k + 1].t) k++;
     const a = keys[k], b = keys[k + 1];
-    const u = smooth(0, 1, (p - a.t) / (b.t - a.t));
+    const t0 = a.t + (a.hold || 0), t1 = b.t - (b.hold || 0);                // quieta mientras dura la pausa de cada parada
+    const u = t1 > t0 ? smooth(t0, t1, p) : (p < b.t ? 0 : 1);
     const P = outPos || camPos;
     P.lerpVectors(a.pos, b.pos, u); (outLook || camLook).lerpVectors(a.look, b.look, u);
     if (b.arc) P.addScaledVector(b.arc, Math.sin(Math.PI * u));
@@ -893,6 +1191,72 @@ export function mount(section, opts) {
       else if (!want && !wk.video.paused) wk.video.pause();
     }
   }
+  /* ── La galaxia, cuadro a cuadro ──────────────────────────────────────
+     Aparece al salir de la parada anterior, con las imágenes abiertas, que se
+     juntan en su órbita al llegar; al seguir, se abren y se apaga. Las
+     imágenes se piden recién al acercarse. */
+  const qInv = new THREE.Quaternion();
+  function askGallery(wk) {
+    wk.loaded = true;
+    wk.cards.forEach((c) => {
+      const img = new Image();
+      img.decoding = 'async';
+      img.onload = function () {
+        if (disposed) return;
+        const tex = new THREE.Texture(img);
+        tex.anisotropy = 4; tex.needsUpdate = true;
+        disposables.push(tex);
+        c.u.uMap.value = tex; c.hasTo = 1;
+        if (still) draw(0);
+      };
+      img.src = c.src;
+    });
+  }
+  function galaxyFrame(wk, i, tw, dt, mine) {
+    if (!wk.loaded && Math.abs(p - tw) < HALF * 2.4) askGallery(wk);
+    const root = wk.mesh;
+    root.position.copy(wk.base);
+    const dist = camera.position.distanceTo(root.position);
+    let o = smooth(tw - HALF * 1.74, tw - HALF * 0.7, ps) * (1 - smooth(tw + HALF * 0.55, tw + HALF * 1.1, ps)) * smooth(wk.far, wk.far * 0.55, dist);
+    if (entering) o *= 1 - smooth(mine ? 0.02 : 0, mine ? 0.16 : 0.5, entering.t);
+    wk.u.uOpacity.value = o;
+    root.visible = o > 0.01;
+    if (!root.visible) return o;
+    /* Las imágenes se juntan al llegar y se abren al irse. */
+    const gather = smooth(tw - HALF * 1.6, tw - HALF * 0.3, ps) * (1 - smooth(tw + HALF * 0.3, tw + HALF * 1.1, ps));
+    const spread = 1 + 0.85 * (1 - gather);
+    if (!still) wk.spin += dt * (0.07 + vel * 0.3 + wk.hov * 0.05);
+    root.scale.setScalar(wk.gs * (1 + 0.04 * wk.hov));
+    root.rotation.set(still ? 0 : -mouse.sy * 0.08, still ? 0 : mouse.sx * 0.22, 0);   // se inclina hacia el cursor
+    /* El ícono gira despacio y respira; el corazón, además, late. */
+    const ic = wk.icon;
+    ic.rotation.y = still ? 0.6 : time * 0.32 + wk.seed;
+    ic.rotation.x = still ? 0.1 : 0.12 + Math.sin(time * 0.4 + wk.seed) * 0.08;
+    ic.position.y = ICON_Y + (still ? 0 : Math.sin(time * TAU / 6) * 0.07);
+    const beat = wk.beat && !still ? 1 + 0.07 * heartbeat(time * 62 / 60) : 1;
+    ic.scale.setScalar(ic.userData.fit * (0.88 + 0.12 * gather) * (1 + 0.06 * wk.hov) * beat);
+    wk.matA.uniforms.uOpacity.value = o; wk.matB.uniforms.uOpacity.value = o;
+    wk.matA.uniforms.uGlow.value = wk.hov; wk.matB.uniforms.uGlow.value = wk.hov;
+    wk.lineMat.opacity = o * 0.62;
+    /* Las imágenes: en órbita, siempre de frente a quien mira, con un giro leve según dónde estén. */
+    wk.orbit.updateMatrixWorld(true);
+    wk.orbit.getWorldQuaternion(qInv); qInv.invert();
+    wk.cards.forEach((c, j) => {
+      const a = c.ang + wk.spin, R = c.rad * spread * (1 + 0.05 * wk.hov);
+      c.mesh.position.set(Math.cos(a) * RX * R, c.lift + (still ? 0 : Math.sin(time * 0.5 + j * 1.7) * 0.06), Math.sin(a) * RZ * R);
+      c.mesh.quaternion.copy(qInv).multiply(camera.quaternion);
+      c.mesh.rotateY(-Math.cos(a) * 0.32);
+      c.mesh.scale.set(c.w * c.size, c.h * c.size, 1);
+      c.has += (c.hasTo - c.has) * (still ? 1 : 0.08);
+      const front = 0.5 + 0.5 * Math.sin(a);                         // 1 adelante, 0 atrás
+      /* La que pasa justo por delante del ícono se aclara un poco, para no taparlo. */
+      const veilIcon = smooth(0.55, 0.95, front) * (1 - smooth(0.2, 0.55, Math.abs(Math.cos(a))));
+      c.u.uHas.value = c.has;
+      c.u.uFocus.value = 0.5 + 0.5 * front;
+      c.u.uOpacity.value = o * (0.55 + 0.45 * front) * (0.4 + 0.6 * gather) * (1 - 0.5 * veilIcon);
+    });
+    return o;
+  }
   function hush() {                    // fuera de pantalla o con la pestaña oculta, el reel no sigue corriendo
     works.forEach((wk) => { if (wk.video && !wk.video.paused) wk.video.pause(); });
   }
@@ -906,6 +1270,13 @@ export function mount(section, opts) {
   tint.className = 'world-tint'; tint.setAttribute('aria-hidden', 'true');
   if (veil && veil.parentNode) veil.parentNode.insertBefore(tint, veil.nextSibling); else document.body.appendChild(tint);
   const invite = q('[data-w-enter]');
+  const snaps = STOPS.map(() => {
+    const el = document.createElement('div');
+    el.className = 'world__snap'; el.setAttribute('aria-hidden', 'true');
+    section.appendChild(el);
+    return el;
+  });
+  document.documentElement.classList.add('w-snap');
 
   /* ── Estado ─────────────────────────────────────────────────────────── */
   const still = reduce;
@@ -945,10 +1316,25 @@ export function mount(section, opts) {
       const wk = works[i], isWork = wk.kind === 'work';
       /* Las obras llevan su número; el estudio, su descripción; el reel, sólo el nombre y el botón. */
       const num = String(works.slice(0, i + 1).filter((x) => x.kind === 'work').length).padStart(2, '0') + ' / ' + String(NW).padStart(2, '0');
-      if (hudCount) hudCount.textContent = isWork ? num : (wk.kind === 'reel' ? wk.title : wk.format);
+      if (hudCount) hudCount.textContent = isWork ? num + (wk.line ? ' · ' + wk.line : '') : (wk.kind === 'reel' ? wk.title : wk.format);
       if (hudTitle) hudTitle.textContent = wk.title;
       if (hudFmt) { hudFmt.textContent = isWork ? wk.format : ''; hudFmt.hidden = !isWork; }
       if (hudDesc) { hudDesc.textContent = wk.desc; hudDesc.hidden = !wk.desc; }
+      /* Las obras suman la tecnología y dónde se presentaron. */
+      if (hudTags) {
+        hudTags.textContent = '';
+        (isWork ? wk.tags : []).forEach((tg) => { const li = document.createElement('li'); li.textContent = tg; hudTags.appendChild(li); });
+        hudTags.hidden = !hudTags.children.length;
+      }
+      if (hudWhere) {
+        hudWhere.textContent = '';
+        if (isWork && wk.where) {
+          const lb = document.createElement('span');
+          lb.className = 'label'; lb.textContent = hudWhere.getAttribute('data-label') || '';
+          hudWhere.append(lb, ' ', wk.where);
+        }
+        hudWhere.hidden = !(isWork && wk.where);
+      }
       if (hudCta) hudCta.textContent = wk.cta || hudCta.getAttribute('data-default') || '';
       if (hudOpen) hudOpen.href = wk.href;
       if (hud) {
@@ -1085,28 +1471,53 @@ export function mount(section, opts) {
       if (!wk.asked && off < HALF * 1.2) ask(wk);
       const mine = entering && entering.i === i;
       wk.hov += ((hover === i ? 1 : 0) - wk.hov) * 0.12;      // la que está bajo el cursor se hincha y se agita
-      /* Cada ameba aparece recién al salir de la parada anterior: como alternan de lado, la
-         próxima quedaría justo detrás de la ficha de la que se está mirando. */
-      const o = place(wk, 1 + 0.05 * wk.hov, 0.7) * smooth(tw - HALF * 1.74, tw - HALF * 0.7, ps);
-      /* Al entrar, la ameba le deja el lugar al derrame y las demás se apagan. */
-      wk.u.uOpacity.value = entering ? o * (1 - smooth(mine ? 0.02 : 0, mine ? 0.14 : 0.5, entering.t)) : o;
-      wk.mesh.visible = wk.u.uOpacity.value > 0.01;
+      let o;
+      if (wk.gal) o = galaxyFrame(wk, i, tw, dt, mine);
+      else {
+        /* Cada ameba aparece recién al salir de la parada anterior: como alternan de lado, la
+           próxima quedaría justo detrás de la ficha de la que se está mirando. */
+        o = place(wk, 1 + 0.05 * wk.hov, 0.7) * smooth(tw - HALF * 1.74, tw - HALF * 0.7, ps);
+        /* Al entrar, la ameba le deja el lugar al derrame y las demás se apagan. */
+        wk.u.uOpacity.value = entering ? o * (1 - smooth(mine ? 0.02 : 0, mine ? 0.14 : 0.5, entering.t)) : o;
+        wk.mesh.visible = wk.u.uOpacity.value > 0.01;
+      }
       /* Su enjambre: se ordena al detenerse frente a la obra y se suelta al seguir. */
       const sw = wk.swarm, su = sw.u;
       const want = (!entering && off < HALF * 0.5 && vel < 0.3) ? 1 : 0;
       sw.form = still ? want : sw.form + (want - sw.form) * (1 - Math.exp(-dt * (want ? 1.6 : 4.5)));
-      sw.points.position.copy(wk.mesh.position); sw.points.scale.setScalar(formScale);
+      sw.points.position.copy(wk.mesh.position); sw.points.scale.setScalar(wk.gal ? wk.gs : formScale);
       su.uForm.value = sw.form * (1 - pulse * 0.7); su.uTime.value = still ? 0 : time;
       su.uOpacity.value = o * deep * (entering ? 1 - smooth(0, 0.35, entering.t) : 1);
       sw.points.visible = su.uOpacity.value > 0.01;
+      if (wk.gal) return;
       wk.u.uFocus.value = 1 - smooth(HALF * 0.6, HALF * 1.6, off);
       wk.u.uGlow.value = 0.6 * wk.hov;
       wk.u.uLook.value.set(mouse.sx * 0.07, mouse.sy * 0.07);
       wk.u.uWobble.value = wk.wob * (1 + 0.6 * wk.hov + stir);
     });
+    /* Las amebas de fondo se apagan donde se cruzan, en pantalla, con la galaxia que se está
+       mirando (si están delante de ella o a su altura): si no, le pasan por encima. */
+    const gals = [];
+    if (GAL) works.forEach((wk) => {
+      if (!wk.gal || !wk.mesh.visible) return;
+      const depth = -tmp.copy(wk.mesh.position).applyMatrix4(camera.matrixWorldInverse).z;
+      if (depth <= 0.5) return;
+      tmp.copy(wk.mesh.position).project(camera);
+      gals.push({ x: tmp.x * camera.aspect, y: tmp.y, depth, rad: ((RX + 1.1) * wk.gs) / (depth * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2))) });
+    });
     extras.forEach((e) => {
       e.u.uWobble.value = e.wob * (1 + stir);
-      e.u.uOpacity.value = place(e, 1, 1) * deep * (entering ? 1 - entering.t : 1);
+      const o = place(e, 1, 1);
+      let room = 1;
+      if (gals.length && o > 0.01) {
+        const depth = -tmp.copy(e.mesh.position).applyMatrix4(camera.matrixWorldInverse).z;
+        tmp.copy(e.mesh.position).project(camera);
+        gals.forEach((g) => {
+          if (depth > g.depth + RX) return;                         // muy por detrás de la galaxia: no molesta
+          room = Math.min(room, smooth(g.rad * 0.95, g.rad * 1.65, Math.hypot(tmp.x * camera.aspect - g.x, tmp.y - g.y)));
+        });
+      }
+      e.u.uOpacity.value = o * deep * room * (entering ? 1 - entering.t : 1);
       e.mesh.visible = e.u.uOpacity.value > 0.01;
     });
     renderer.render(scene, camera);
@@ -1155,7 +1566,7 @@ export function mount(section, opts) {
       }
       tmp.copy(wk.mesh.position).sub(camera.position);
       const tc = tmp.dot(ray); if (tc < 0) return;
-      const d2 = tmp.lengthSq() - tc * tc, rr = wk.r * 1.05;
+      const d2 = tmp.lengthSq() - tc * tc, rr = wk.gal ? wk.hitR : wk.r * 1.05;
       if (d2 < rr * rr && tc < bestT) { bestT = tc; bestI = i; }
     });
     return bestI;
@@ -1224,7 +1635,6 @@ export function mount(section, opts) {
   /* "Entra al mundo interior": lleva hasta la primera obra. */
   if (invite) invite.addEventListener('click', () => scrollToT(tWork(0)), sig);
   /* Flechas izquierda y derecha: parada anterior y siguiente (arriba y abajo siguen siendo el scroll normal). */
-  const STOPS = [0].concat(works.map((_, i) => tWork(i)), [1]);
   window.addEventListener('keydown', (e) => {
     if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
     if (e.altKey || e.metaKey || e.ctrlKey || !visible || entering) return;
@@ -1281,6 +1691,8 @@ export function mount(section, opts) {
       canvas.remove();
       if (dots) dots.textContent = '';
       tint.remove();
+      snaps.forEach((el) => el.remove());
+      document.documentElement.classList.remove('w-snap');
       if (veil) veil.style.opacity = '';
       document.documentElement.classList.remove('is-under');
     },

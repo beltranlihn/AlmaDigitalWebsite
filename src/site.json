@@ -32,6 +32,15 @@
   "world": {
     "enabled": true,
     "works": [],
+    "stops": "ameba",
+    "icons": {
+      "neurocosm-xr": "eeg",
+      "soul-charger": "headset",
+      "neural-canvas": "brush",
+      "collective-pulse": "pulse",
+      "neurocosm-full-dome": "dome",
+      "pacha-ibiza": "room"
+    },
     "reel": {
       "src": "Asset/Reel Portfolio/Reel Flotante.mp4",
       "srcMobile": "Asset/Reel Portfolio/Reel Flotante Vertical.mp4"
@@ -374,6 +383,7 @@
       "worldEndStudio": "About the studio",
       "worldStoryLabel": "The studio",
       "worldListLabel": "Works in this journey",
+      "worldWhere": "Presented at",
       "pParticlesHint": "Drag to turn · Click to scatter",
       "pParticlesHintTouch": "Swipe to turn · Tap to scatter"
     },
@@ -501,6 +511,7 @@
       "worldEndStudio": "Conocer el estudio",
       "worldStoryLabel": "El estudio",
       "worldListLabel": "Obras del recorrido",
+      "worldWhere": "Presentada en",
       "pParticlesHint": "Arrastra para girar · Clic para dispersar",
       "pParticlesHintTouch": "Desliza para girar · Toca para dispersar"
     }

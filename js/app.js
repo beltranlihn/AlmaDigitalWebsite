@@ -557,6 +557,16 @@
      pide sólo en la portada. El HTML llega como página común (world--flat:
      título, reel, lista de obras); acá se arma el escenario y, si el 3D no
      arranca, se vuelve a esa página. */
+  /* Cómo son las paradas de las obras: "ameba" o "galaxy" (fotos en órbita + ícono 3D).
+     Manda site.json → world.stops; para comparar, ?paradas=galaxia o ?paradas=ameba en
+     la URL, o los botones de la barra de revisión, lo cambian durante la visita. */
+  function stopsMode(sec) {
+    var q = null, s = null;
+    try { q = new URLSearchParams(location.search).get('paradas'); } catch (e) {}
+    if (q === 'galaxia' || q === 'galaxy') q = 'galaxy'; else if (q !== 'ameba') q = null;
+    try { if (q) sessionStorage.setItem('alma-paradas', q); s = sessionStorage.getItem('alma-paradas'); } catch (e) {}
+    return q || s || (sec && sec.getAttribute('data-stops')) || 'ameba';
+  }
   function initWorld() {
     var sec = $('[data-world]');
     if (!sec || !scriptBase) return;
@@ -566,6 +576,7 @@
     import(scriptBase + 'world.js' + ver('world')).then(function (m) {
       if (life !== mine || !document.contains(sec)) return;     // ya se navegó a otra página
       var handle = m.mount(sec, {
+        stops: stopsMode(sec),
         reduce: reduce,
         coarse: window.matchMedia('(pointer: coarse)').matches,
         sound: window.AlmaSound,
@@ -846,15 +857,29 @@
     bar.className = 'review';
     bar.innerHTML = '<span>Tema</span>' +
       '<button type="button" data-theme-set="aura">Aura</button>' +
-      '<button type="button" data-theme-set="night">Night</button>';
+      '<button type="button" data-theme-set="night">Night</button>' +
+      (CFG().world ? '<span class="review__sep">Paradas</span><button type="button" data-stops-set="ameba">Ameba</button><button type="button" data-stops-set="galaxy">Galaxia</button>' : '');
     document.body.appendChild(bar);
     document.body.classList.add('has-review');
     function sync() {
       var cur = root.getAttribute('data-theme') || 'aura';
       $$('button[data-theme-set]', bar).forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.themeSet === cur)); });
+      var st = stopsMode($('[data-world]'));
+      $$('button[data-stops-set]', bar).forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.stopsSet === st)); });
     }
     bar.addEventListener('click', function (e) {
       var b = e.target.closest('button'); if (!b) return;
+      if (b.hasAttribute('data-stops-set')) {              // la variante de las paradas: vale para toda la visita
+        try { sessionStorage.setItem('alma-paradas', b.dataset.stopsSet); } catch (err) {}
+        if ($('[data-world]')) {                           // se vuelve a armar el mundo ahí mismo, en el mismo punto del recorrido
+          var here = new URL(location.href);
+          here.searchParams.delete('paradas');             // si no, la URL volvería a mandar
+          history.replaceState(history.state, '', here.pathname + here.search + here.hash);
+          go(here, false, window.scrollY);
+        }
+        sync();
+        return;
+      }
       root.setAttribute('data-theme', b.dataset.themeSet);
       try { sessionStorage.setItem('alma-theme', b.dataset.themeSet); } catch (err) {}
       sync();

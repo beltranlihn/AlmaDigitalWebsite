@@ -901,6 +901,16 @@ body:not(.has-review) .pj-m[data-n="0"] { display: none; }
 }
 .review button { padding: 5px 12px; border-radius: 999px; border: 1px solid var(--line); font-size: .76rem; letter-spacing: .06em; }
 .review button[aria-pressed="true"] { background: var(--chip-on-bg); color: var(--chip-on-fg); border-color: transparent; }
+.review__sep { margin-left: 8px; padding-left: 12px; border-left: 1px solid var(--line); }
+/* En pantallas angostas la barra pasa a dos líneas en vez de salirse por el borde. */
+@media (max-width: 520px) {
+  .review { flex-wrap: wrap; max-width: calc(100vw - 28px); border-radius: 22px; row-gap: 6px; }
+  .review__sep { margin-left: 0; padding-left: 0; border-left: 0; }
+  .has-review .world:not(.world--flat) .world__intro,
+  .has-review .world:not(.world--flat) .world__end,
+  .has-review .world:not(.world--flat) .world__hud,
+  .has-review .world:not(.world--flat) .world__hud[data-kind="reel"] { bottom: 108px; }
+}
 body.has-review .ftr { padding-bottom: 78px; }   /* que la barra no tape el pie */
 
 /* ── Transición entre páginas ───────────────────────────────────────────
@@ -956,7 +966,17 @@ body.has-review .ftr { padding-bottom: 78px; }   /* que la barra no tape el pie 
 /* El video del reel flotante: sólo alimenta la textura del 3D, no se ve como elemento. */
 .world__reelvid { position: absolute; left: 0; top: 0; width: 2px; height: 2px; opacity: 0; pointer-events: none; }
 /* La descripción, dentro de la ficha de vidrio. */
-.world__desc { margin: 12px 0 20px; font-size: clamp(1rem, 1.25vw, 1.12rem); line-height: 1.6; }
+.world__desc { margin: 12px 0 0; font-size: clamp(.98rem, 1.15vw, 1.06rem); line-height: 1.58; }
+/* La tecnología (etiquetas) y dónde se presentó la obra. */
+.world__tags { list-style: none; margin: 14px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px; }
+.world__tags[hidden], .world__where[hidden] { display: none; }
+.world__tags li {
+  padding: 4px 10px; border-radius: 999px; border: 1px solid rgba(255, 255, 255, .26);
+  font-size: .66rem; font-weight: 500; letter-spacing: .12em; text-transform: uppercase; color: var(--ink);
+}
+.world__where { margin-top: 12px; font-size: .9rem; line-height: 1.5; color: var(--ink-body); }
+.world__where .label { margin-right: 6px; }
+.world__hud .btn { margin-top: 20px; }
 .world__end-txt { margin-top: 14px; font-size: clamp(1.06rem, 1.5vw, 1.28rem); line-height: 1.6; max-width: 30em; }
 .world__proof { margin-top: 26px; }
 /* "Entra al mundo interior": la invitación, sobre la ameba de entrada. */
@@ -981,8 +1001,13 @@ body.has-review .ftr { padding-bottom: 78px; }   /* que la barra no tape el pie 
 .world--flat .world__stage { display: flex; flex-direction: column; }
 .world--flat .world__end { order: 3; }
 
-/* --n son los tramos del recorrido (src/build.mjs): cada uno ocupa casi una pantalla de scroll. */
-.world:not(.world--flat) { height: calc((var(--n) * .94 + 3.55) * 100vh); }
+/* --n son los tramos del recorrido (src/build.mjs): cada uno ocupa 1,3 pantallas de scroll,
+   de las que casi la mitad son la pausa frente a cada parada (js/world.js, HOLD). */
+.world:not(.world--flat) { height: calc((var(--n) * 1.3 + 3.55) * 100vh); }
+/* Imanes del scroll: uno por parada (los pone js/world.js). Con "proximidad" el
+   navegador sólo acomoda el scroll si uno lo suelta cerca de una parada. */
+html.w-snap { scroll-snap-type: y proximity; }
+.world__snap { position: absolute; left: 0; width: 1px; height: 1px; scroll-snap-align: start; pointer-events: none; }
 .world:not(.world--flat) .world__stage { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; }
 .world__stage.is-deep { color: var(--ink-body); font-weight: var(--w-body); }
 /* Lo oscuro de adentro. js/world.js mueve --deep de 0 a 1 al cruzar la ameba de entrada.
@@ -1020,14 +1045,14 @@ body.has-review .ftr { padding-bottom: 78px; }   /* que la barra no tape el pie 
 .world:not(.world--flat) .world__end, .world:not(.world--flat) .world__hud { opacity: 0; visibility: hidden; }
 /* La ficha de cada obra: vidrio esmerilado. Lo que pasa por detrás se ve borroso. */
 .world:not(.world--flat) .world__hud {
-  width: min(400px, 40vw); padding: 24px 26px 26px; border-radius: var(--r-lg);
+  width: min(420px, 40vw); padding: 24px 26px 26px; border-radius: var(--r-lg);
   background: linear-gradient(140deg, rgba(255, 255, 255, .17), rgba(255, 255, 255, .05) 60%);
   border: 1px solid rgba(255, 255, 255, .2);
   -webkit-backdrop-filter: blur(20px) saturate(170%); backdrop-filter: blur(20px) saturate(170%);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, .38), inset 0 -18px 30px -22px rgba(201, 158, 249, .5), 0 24px 70px rgba(8, 6, 28, .4);
 }
 .world__name { font-size: clamp(1.7rem, 3vw, 2.6rem); font-weight: 200; letter-spacing: -.03em; line-height: 1.08; color: var(--ink); margin: 10px 0 6px; text-wrap: balance; }
-.world__fmt { margin-bottom: 20px; }
+.world__fmt { margin: 0; }
 .world__hud .btn i { font-style: normal; }
 .world:not(.world--flat) .world__dots {
   position: absolute; right: clamp(8px, 1.8vw, 24px); top: 50%; transform: translateY(-50%); z-index: 1;
@@ -1049,7 +1074,14 @@ body.has-review .ftr { padding-bottom: 78px; }   /* que la barra no tape el pie 
   .world:not(.world--flat) .world__hud {
     top: auto; bottom: clamp(22px, 6vh, 64px); transform: none; right: var(--px); max-width: none; width: auto;
   }
-  .world__desc { margin: 8px 0 14px; font-size: .98rem; line-height: 1.5; }
+  .world__desc { margin: 8px 0 0; font-size: .94rem; line-height: 1.48; }
+  /* En el teléfono la ficha va abajo y no puede crecer mucho: la descripción, en tres líneas,
+     las etiquetas en una sola fila y sin "presentada en". */
+  .world__hud[data-kind="work"] .world__desc { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+  .world__tags { flex-wrap: nowrap; overflow: hidden; margin-top: 10px; -webkit-mask-image: linear-gradient(to right, #000 85%, transparent); mask-image: linear-gradient(to right, #000 85%, transparent); }
+  .world__tags li { flex: none; }
+  .world__where { display: none; }
+  .world__hud .btn { margin-top: 14px; }
   .world__intro h1 { font-size: clamp(1.9rem, 8.4vw, 2.8rem); margin: 10px 0 12px; }
   .world__row { margin-top: 16px; gap: 8px; }
   .world__row .btn { padding-left: 16px; padding-right: 16px; }
@@ -1057,7 +1089,7 @@ body.has-review .ftr { padding-bottom: 78px; }   /* que la barra no tape el pie 
   .world:not(.world--flat) .world__invite { left: 50%; top: 74px; width: calc(100% - 2 * var(--px)); }
   .world__invite-t { font-size: 1.45rem; margin-bottom: 6px; }
   .world:not(.world--flat) .world__hud { padding: 18px 20px 20px; }
-  .world__fmt { margin-bottom: 14px; }
+  .world__fmt { margin: 0; }
   .world:not(.world--flat) .world__dots { top: 34%; right: 4px; }
   .world__logo { width: 132px; margin-top: 14px; }
 }

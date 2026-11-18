@@ -44,6 +44,7 @@ estudio, sus proyectos y equipo con una estética audiovisual interactiva, en in
 ├── robots.txt                 # bots fuera de los videos + bloqueo de scrapers de IA/SEO
 ├── tools/deploy_copy.py       # arma dist/ con sólo lo que la web usa (lo corre Netlify)
 ├── tools/make_share_images.py # imágenes 1200×630 para compartir y el icono del header
+├── tools/make_world_images.py # imágenes chicas para las galaxias de la portada (Asset/World/ + src/world-images.json)
 ├── tools/serve.py             # servidor local sin caché para revisar el sitio (no se publica)
 ├── netlify.toml               # build: python3 tools/deploy_copy.py dist → publica dist/
 ├── _masters/                  # originales de los archivos recomprimidos (NO se publica)
@@ -235,12 +236,25 @@ vea y probarlo en teléfonos reales** (en la portada corren el fluido y el mundo
   del reel y aparta las partículas; la ameba bajo el cursor se hincha; al avanzar rápido la cámara abre
   el ángulo y todo se agita; un clic en el vacío agita el mundo y suena una nota; las flechas izquierda
   y derecha saltan de parada; la cámara y la puerta respiran cada 6 s.
-- **Scroll real**: la sección mide (tramos × 0,94 + 3,55) pantallas (`--n` en el HTML son los tramos:
-  obras + estudio + reel; hoy 8, unas 11 pantallas) y el escenario queda fijo (`position: sticky`)
+- **Scroll real**: la sección mide (tramos × 1,3 + 3,55) pantallas (`--n` en el HTML son los tramos:
+  obras + estudio + reel; hoy 8, unas 14 pantallas) y el escenario queda fijo (`position: sticky`)
   mientras se la recorre. No se secuestra la rueda, a diferencia de Mirages: funciona con el dedo y el
-  teclado. El avance del scroll (0 a 1) mueve la cámara, que frena frente a cada parada. `js/world.js`
-  saca los tiempos de cuántas pantallas mide la sección, así que si cambia esa fórmula en el CSS no hay
-  que tocar el JS.
+  teclado. El avance del scroll (0 a 1) mueve la cámara. `js/world.js` saca los tiempos de cuántas
+  pantallas mide la sección, así que si cambia esa fórmula en el CSS no hay que tocar el JS.
+- **Cada parada frena** (pedido de Vicente: "es muy fácil pasarse al siguiente proyecto"). Dos cosas:
+  1. **Pausa**: frente a cada parada la cámara se queda quieta durante casi la mitad del tramo de
+     scroll (`HOLD` en `js/world.js`, unos 230 px antes y después en una pantalla de 760 px de alto).
+  2. **Imán**: un `scroll-snap` de proximidad (`html.w-snap`, con un marcador `.world__snap` por
+     parada). Si uno suelta el scroll cerca de una parada, el navegador termina de llevarlo hasta ella;
+     en mitad del camino no hace nada. No es obligatorio: con un movimiento largo se pasa de largo.
+  Para quitar el imán: borrar la regla `html.w-snap` del CSS. Para acortar o alargar la pausa: `HOLD`.
+- **Variante de las paradas: ameba o galaxia** (`site.json → world.stops`, hoy `"ameba"`). Ver
+  "Paradas en galaxia". Para comparar, `?paradas=galaxia` o `?paradas=ameba` en la URL, o los botones
+  "Paradas" de la barra de revisión: la elección dura la visita (`sessionStorage`).
+- **La ficha de cada obra** dice el número y si es obra propia o encargo, el nombre, el formato, la
+  primera oración de la descripción, hasta cuatro etiquetas de tecnología (`tech`) y dónde se presentó
+  (las dos primeras sedes de `presentedAt`, recortadas, y "+N" si hay más). En el teléfono la
+  descripción va en tres líneas, las etiquetas en una fila y no sale "presentada en".
 - **Entrar a una obra**: clic en la ameba o en "Entrar a la obra". La ameba se derrama como un líquido
   desde donde está hasta cubrir la pantalla (borde ondulado, con brillo de vidrio). Arranca con los
   colores de la ameba; adentro va apareciendo la portada, y al final se acomoda en el encuadre y el
@@ -262,6 +276,36 @@ vea y probarlo en teléfonos reales** (en la portada corren el fluido y el mundo
 - **Sonido**: la música se filtra al entrar; una nota suave marca la llegada a cada parada (`AlmaSound.chime`).
 - **Textos** (`site.json → t.world*`, `heroTitle`, `heroLead`, `selectedTitle`): borradores, a revisar
   por el estudio.
+
+### Paradas en galaxia (variante en prueba)
+Idea de Vicente (2026-11-18), para decidir antes de cerrar la estética: que cada obra seleccionada no
+sea una ameba de un color sino una galaxia de 4–5 imágenes suyas en movimiento, un poco 3D, con un
+ícono 3D que la represente. Las amebas del entorno, la del estudio y la del final siguen igual.
+
+- **Cómo es** (`galaxy()` y `galaxyFrame()` en `js/world.js`): un disco inclinado de imágenes que
+  orbitan despacio alrededor del ícono, que flota un poco por encima como un planeta sobre su anillo.
+  Las imágenes miran siempre a quien mira, apenas curvadas, con puntas redondas; las de atrás se ven
+  más apagadas y la que pasa delante del ícono se aclara. Al llegar, las imágenes se juntan en su
+  órbita; al seguir, se abren y la galaxia se apaga. El enjambre de partículas de la obra se ordena en
+  dos brazos de espiral sobre el mismo disco. Todo se inclina un poco hacia el cursor. Las amebas de
+  fondo se apagan donde se cruzan, en pantalla, con la galaxia.
+- **Los íconos** (`ICONS` en `js/world.js`) están hechos con formas simples de Three.js, en vidrio
+  luminoso (borde que brilla + aristas finas), con los colores de la obra: `headset` casco de VR,
+  `eeg` cabeza con la vincha de electrodos y una onda cerebral, `brush` pincel con una pincelada,
+  `pulse` corazón que late con su electrocardiograma, `dome` domo de meridianos con su anillo, `room`
+  sala inmersiva con una persona adentro, `projector`, `speaker` y `prism` (para lo que no tenga otro).
+  Cuál lleva cada obra: `site.json → world.icons`; sin entrada, uno según el formato.
+- **Las imágenes** no son las fotos originales sino copias chicas (768×432, y 360×640 las verticales):
+  `python3 tools/make_world_images.py` toma la portada y las fotos de cada obra seleccionada (hasta 5)
+  y, si tiene menos, completa con cuadros de su reel vertical (necesita ffmpeg). Escribe
+  `Asset/World/<obra>/` y la lista en `src/world-images.json`. Hoy son 790 KB para las seis obras, y se
+  piden recién al acercarse a cada una. **Cuando lleguen las fotos nuevas de las obras**: sumarlas a
+  `projects.json → photos`, correr ese script y después `node src/build.mjs`.
+- **Clic** en cualquier parte de la galaxia: entra a la obra con la transición líquida, que arranca
+  desde el ícono.
+- Para dejarla como definitiva: `site.json → world.stops: "galaxy"` y un build. Para descartarla:
+  borrar `world.stops` e `world.icons`, `tools/make_world_images.py`, `src/world-images.json` y
+  `Asset/World/`, y las piezas de la galaxia en `js/world.js`.
 
 ### El reel flotante
 Pedido de Vicente (2026-11-18): que después de la ameba del estudio se avance hasta el reel, flotando y
@@ -467,6 +511,30 @@ desactiva. **No** cambiar nameservers a Cloudflare.
 El fluid sim sigue corriendo con auto-emitters en mobile. Los usuarios de Android no pueden tocar el fondo para emitir fluidos (correcto — el dedo es para el scroll).
 
 ## Historial de sesiones (última al tope)
+
+### 2026-11-18 — Portada 3D: paradas en galaxia (prueba), fichas con más datos y pausa en cada obra (Vicente)
+
+Tres pedidos de Vicente sobre el recorrido de la portada:
+
+- **Probar una alternativa a las amebas** antes de cerrar la estética: cada obra como una galaxia de
+  4–5 imágenes en movimiento con un ícono 3D (domo, casco de VR, sensor…). Hecha como **variante**,
+  sin reemplazar a las amebas: se elige con `site.json → world.stops`, `?paradas=galaxia` o los botones
+  de la barra de revisión. Ver "Paradas en galaxia". Script nuevo `tools/make_world_images.py`.
+- **Más información en la ficha de cada obra**: obra propia o encargo, la primera oración de la
+  descripción, la tecnología y dónde se presentó. Texto nuevo: `worldWhere`.
+- **Que cueste más pasar a la siguiente obra**: pausa de la cámara en cada parada y un imán de scroll
+  de proximidad. El recorrido es más largo (cada tramo, 1,3 pantallas en vez de 0,94).
+
+**Verificado en Chrome**: las seis galaxias en capturas (ícono, imágenes, enjambre, ficha); la
+transición líquida desde una galaxia, en cámara lenta, hasta la ficha; "atrás" vuelve al mismo punto
+con la galaxia; el cambio Ameba / Galaxia desde la barra, en el mismo punto y sin acumular canvas;
+el modo ameba en español con la ficha nueva; la pausa y el imán con la rueda (3 pasos desde una parada:
+la cámara casi no se mueve; 5 pasos más: el scroll termina en la obra siguiente); que el imán se apaga al
+salir de la portada. Consola sin errores. En emulación 375×812: galaxia arriba y ficha abajo, sin desbordes.
+Paquete: 45 páginas, 1.437 referencias, ninguna rota, con las 30 imágenes nuevas.
+**Sin ver**: el movimiento continuo (sólo cuadros sueltos), teléfonos reales (en la emulación el panel
+frena la animación), Safari y Firefox (el imán de scroll se comporta distinto en cada navegador).
+**Para decidir**: galaxia o ameba; si el imán se siente bien o molesta.
 
 ### 2026-11-18 — Fichas de obra: fondo oscuro, galería dispersa y teléfono 3D (Vicente)
 

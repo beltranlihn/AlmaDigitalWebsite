@@ -35,7 +35,7 @@
 (function(){var T='ee88c2886dd4410694851f5bfea47a74';if(!T)return;var s=document.createElement('script');s.type='module';s.src='https://static.cloudflareinsights.com/beacon.min.js';s.setAttribute('data-cf-beacon',JSON.stringify({token:T}));document.head.appendChild(s);})();
 </script>
 <style>@media (prefers-reduced-motion: no-preference){@view-transition{navigation:auto}}</style>
-<link rel="stylesheet" href="../css/site.css?v=7713ab40">
+<link rel="stylesheet" href="../css/site.css?v=2a6b9b91">
 <!-- En el tema claro las partículas del cursor se tiñen de tinta con un filtro del
      propio documento; va acá porque url(#id) desde un CSS externo no es confiable. -->
 <style>html[data-theme="aura"] .cursor-particle{filter:url(#cursor-ink)}</style>
@@ -61,7 +61,7 @@
   </nav>
 </header>
 <main class="page" id="main">
-<section class="world world--flat" data-world aria-labelledby="world-title" style="--n:8">
+<section class="world world--flat" data-world data-stops="ameba" aria-labelledby="world-title" style="--n:8">
   <div class="world__stage">
     <div class="world__depth" aria-hidden="true"></div>
     <div class="world__canvas" aria-hidden="true"></div>
@@ -82,6 +82,8 @@
       <p class="world__name" data-w-title></p>
       <p class="world__fmt" data-w-fmt></p>
       <p class="world__desc" data-w-desc hidden></p>
+      <ul class="world__tags" data-w-tags hidden></ul>
+      <p class="world__where" data-w-where data-label="Presentada en" hidden></p>
       <a class="btn" data-w-open href="../es/studio.html"><span data-w-cta data-default="Entrar a la obra">Entrar a la obra</span> <i aria-hidden="true">→</i></a>
     </div>
     <nav class="world__dots" aria-label="Obras del recorrido"></nav>
@@ -119,27 +121,39 @@
         data-poster="../Asset/Reel%20Portfolio/Reel%20Poster.webp" data-poster-mobile="../Asset/Reel%20Portfolio/Reel%20Vertical%20Poster.webp">
         <span class="wcard__t"><b>Reel</b></span>
       </a></li>
-      <li><a class="wcard" data-w-item href="../es/work/neurocosm-xr.html" data-cover="../Asset/Studio%20Projects/Neurocosm%20XR%20Installation/1%20Portada.webp" data-title="Neurocosm XR" data-format="Instalación interactiva" data-form="attractor" data-colors="#6ea8ff,#3d6bff,#b9d2ff,#ffffff,#7a5cf2" data-stage="#05060f">
+      <li><a class="wcard" data-w-item href="../es/work/neurocosm-xr.html" data-cover="../Asset/Studio%20Projects/Neurocosm%20XR%20Installation/1%20Portada.webp" data-title="Neurocosm XR" data-format="Instalación interactiva" data-form="attractor" data-colors="#6ea8ff,#3d6bff,#b9d2ff,#ffffff,#7a5cf2" data-stage="#05060f"
+        data-desc="Una instalación interactiva de biofeedback que, mediante cascos EEG, traduce la actividad neuronal en campos visuales generativos proyectados en tiempo real." data-tags="EEG|Dolby Atmos|Biofeedback|Visuales generativas" data-where="ArtLac Gallery, Washington, DC · CRITIC Fest, Santiago, Chile, 2024 +2" data-line="Obra propia"
+        data-icon="eeg" data-gallery="../Asset/World/Neurocosm%20XR/1.webp|1.778,../Asset/World/Neurocosm%20XR/2.webp|1.778,../Asset/World/Neurocosm%20XR/3.webp|1.778,../Asset/World/Neurocosm%20XR/reel-1.webp|0.563,../Asset/World/Neurocosm%20XR/reel-2.webp|0.563">
         <img loading="lazy" decoding="async" width="1920" height="1080" src="../Asset/Studio%20Projects/Neurocosm%20XR%20Installation/1%20Portada.webp" alt="">
         <span class="wcard__t"><b>Neurocosm XR</b><span>Instalación interactiva</span></span>
       </a></li>
-      <li><a class="wcard" data-w-item href="../es/work/soul-charger.html" data-cover="../Asset/Studio%20Projects/Soul%20Charger/1%20Portada.webp" data-title="Soul Charger" data-format="VR interactiva con biofeedback" data-form="halo" data-colors="#ff7a59,#ffb199,#ff4f6d,#ffd6c2,#ffffff" data-stage="#140609">
+      <li><a class="wcard" data-w-item href="../es/work/soul-charger.html" data-cover="../Asset/Studio%20Projects/Soul%20Charger/1%20Portada.webp" data-title="Soul Charger" data-format="VR interactiva con biofeedback" data-form="halo" data-colors="#ff7a59,#ffb199,#ff4f6d,#ffd6c2,#ffffff" data-stage="#140609"
+        data-desc="Una experiencia interactiva de VR de 15 minutos que integra biofeedback, neuroestética, IA y bioética aplicada en un viaje personal transformador." data-tags="Dolby Atmos|VR|Biofeedback|IA" data-where="" data-line="Obra propia"
+        data-icon="headset" data-gallery="../Asset/World/Soul%20Charger/1.webp|1.778,../Asset/World/Soul%20Charger/2.webp|1.778,../Asset/World/Soul%20Charger/3.webp|1.778,../Asset/World/Soul%20Charger/4.webp|1.778,../Asset/World/Soul%20Charger/5.webp|1.778">
         <img loading="lazy" decoding="async" width="1920" height="1080" src="../Asset/Studio%20Projects/Soul%20Charger/1%20Portada.webp" alt="">
         <span class="wcard__t"><b>Soul Charger</b><span>VR interactiva con biofeedback</span></span>
       </a></li>
-      <li><a class="wcard" data-w-item href="../es/work/neural-canvas.html" data-cover="../Asset/Studio%20Projects/Neural%20Canvas/3%20Portada.webp" data-title="Neural Canvas" data-format="Pintura interactiva en VR" data-form="strokes" data-colors="#ff8a3d,#ffb469,#3f6bff,#8fb0ff,#ffffff" data-stage="#04052b">
+      <li><a class="wcard" data-w-item href="../es/work/neural-canvas.html" data-cover="../Asset/Studio%20Projects/Neural%20Canvas/3%20Portada.webp" data-title="Neural Canvas" data-format="Pintura interactiva en VR" data-form="strokes" data-colors="#ff8a3d,#ffb469,#3f6bff,#8fb0ff,#ffffff" data-stage="#04052b"
+        data-desc="Una experiencia de pintura interactiva en VR en la que cada participante pinta libremente durante dos minutos mientras un sensor EEG registra su estado de calma e incorpora la actividad cerebral al propio gesto creativo." data-tags="EEG|VR|Biofeedback" data-where="EUIPO, Alicante, España" data-line="Obra propia"
+        data-icon="brush" data-gallery="../Asset/World/Neural%20Canvas/1.webp|1.778,../Asset/World/Neural%20Canvas/2.webp|1.778,../Asset/World/Neural%20Canvas/3.webp|1.778,../Asset/World/Neural%20Canvas/reel-1.webp|0.563,../Asset/World/Neural%20Canvas/reel-2.webp|0.563">
         <img loading="lazy" decoding="async" width="1920" height="1080" src="../Asset/Studio%20Projects/Neural%20Canvas/3%20Portada.webp" alt="">
         <span class="wcard__t"><b>Neural Canvas</b><span>Pintura interactiva en VR</span></span>
       </a></li>
-      <li><a class="wcard" data-w-item href="../es/work/collective-pulse.html" data-cover="../Asset/Studio%20Projects/Collective%20Pulse/3%20Portada.webp" data-title="Collective Pulse" data-format="Instalación interactiva de biofeedback" data-form="pulse" data-colors="#ff8fb1,#ffd166,#7ad7f0,#b48cff,#8ef0c2,#ffffff" data-stage="#0b0a1c">
+      <li><a class="wcard" data-w-item href="../es/work/collective-pulse.html" data-cover="../Asset/Studio%20Projects/Collective%20Pulse/3%20Portada.webp" data-title="Collective Pulse" data-format="Instalación interactiva de biofeedback" data-form="pulse" data-colors="#ff8fb1,#ffd166,#7ad7f0,#b48cff,#8ef0c2,#ffffff" data-stage="#0b0a1c"
+        data-desc="Los visitantes apoyan un dedo en un sensor de pulso y su latido aparece en una proyección de gran escala como una forma orgánica viva que late a su propio ritmo." data-tags="Biofeedback|Tiempo real|Sensor de pulso" data-where="ArtLac Gallery, IDB Bank, Washington DC, EE. UU." data-line="Obra propia"
+        data-icon="pulse" data-gallery="../Asset/World/Collective%20Pulse/1.webp|1.778,../Asset/World/Collective%20Pulse/2.webp|1.778,../Asset/World/Collective%20Pulse/3.webp|1.778,../Asset/World/Collective%20Pulse/reel-1.webp|0.563,../Asset/World/Collective%20Pulse/reel-2.webp|0.563">
         <img loading="lazy" decoding="async" width="1920" height="1080" src="../Asset/Studio%20Projects/Collective%20Pulse/3%20Portada.webp" alt="">
         <span class="wcard__t"><b>Collective Pulse</b><span>Instalación interactiva de biofeedback</span></span>
       </a></li>
-      <li><a class="wcard" data-w-item href="../es/work/neurocosm-full-dome.html" data-cover="../Asset/Studio%20Projects/Neurocosm%20Full%20Dome/Foto1%20-%20Portada.webp" data-title="Neurocosm Full Dome" data-format="Experiencia fulldome" data-form="dome" data-colors="#ff5a3c,#ff9a6b,#ffd0b0,#ffffff" data-stage="#1c0707">
+      <li><a class="wcard" data-w-item href="../es/work/neurocosm-full-dome.html" data-cover="../Asset/Studio%20Projects/Neurocosm%20Full%20Dome/Foto1%20-%20Portada.webp" data-title="Neurocosm Full Dome" data-format="Experiencia fulldome" data-form="dome" data-colors="#ff5a3c,#ff9a6b,#ffd0b0,#ffffff" data-stage="#1c0707"
+        data-desc="Una performance audiovisual inmersiva en fulldome, de 45 minutos, que guía al público por un viaje meditativo." data-tags="EEG|Dolby Atmos|Biofeedback|Visuales generativas" data-where="Cult VR, Cardiff, Gales · The Market Hall, Plymouth, Inglaterra +2" data-line="Obra propia"
+        data-icon="dome" data-gallery="../Asset/World/Neurocosm%20Full%20Dome/1.webp|1.778,../Asset/World/Neurocosm%20Full%20Dome/2.webp|1.778,../Asset/World/Neurocosm%20Full%20Dome/3.webp|1.778,../Asset/World/Neurocosm%20Full%20Dome/4.webp|1.778,../Asset/World/Neurocosm%20Full%20Dome/5.webp|1.778">
         <img loading="lazy" decoding="async" width="1920" height="1080" src="../Asset/Studio%20Projects/Neurocosm%20Full%20Dome/Foto1%20-%20Portada.webp" alt="">
         <span class="wcard__t"><b>Neurocosm Full Dome</b><span>Experiencia fulldome</span></span>
       </a></li>
-      <li><a class="wcard" data-w-item href="../es/work/pacha-ibiza.html" data-cover="../Asset/Commisions/Pacha/3%20Portada.webp" data-title="Pacha Ibiza" data-format="Instalación interactiva" data-form="wave" data-colors="#ff4fa0,#ff8fc8,#b48cff,#ffffff" data-stage="#1d0722">
+      <li><a class="wcard" data-w-item href="../es/work/pacha-ibiza.html" data-cover="../Asset/Commisions/Pacha/3%20Portada.webp" data-title="Pacha Ibiza" data-format="Instalación interactiva" data-form="wave" data-colors="#ff4fa0,#ff8fc8,#b48cff,#ffffff" data-stage="#1d0722"
+        data-desc="Una serie de instalaciones interactivas para la temporada de verano de Pacha Ibiza, que transformó un túnel LED de 10 metros en un entorno inmersivo y reactivo." data-tags="Projection mapping|Motion tracking|Depth mapping" data-where="" data-line="Encargo"
+        data-icon="room" data-gallery="../Asset/World/Pacha%20Ibiza/1.webp|1.778,../Asset/World/Pacha%20Ibiza/2.webp|1.778,../Asset/World/Pacha%20Ibiza/3.webp|1.778,../Asset/World/Pacha%20Ibiza/reel-1.webp|0.563,../Asset/World/Pacha%20Ibiza/reel-2.webp|0.563">
         <img loading="lazy" decoding="async" width="1920" height="1080" src="../Asset/Commisions/Pacha/3%20Portada.webp" alt="">
         <span class="wcard__t"><b>Pacha Ibiza</b><span>Instalación interactiva</span></span>
       </a></li>
@@ -179,12 +193,12 @@
   <img class="ameba__fallback" src="../Asset/Logo%20Studio/Version%202/Logo.webp" alt="" width="1920" height="1080">
   <canvas id="ameba"></canvas>
 </div>
-<script type="application/json" id="alma-data">{"lang":"es","email":"vicente@almadigitalstudio.com","endpoint":"https://formspree.io/f/xkopqoyl","legacy":["soul-charger.html"],"t":{"modalSend":"Enviar mensaje","modalSending":"Enviando…","modalSent":"Enviado","modalOk":"Gracias, tu mensaje fue enviado. Te responderemos pronto.","modalFail":"No se pudo enviar tu mensaje. Inténtalo de nuevo o escribe a","modalFill":"Completa todos los campos.","modalBadEmail":"Ingresa un correo válido.","modalAbout":"Sobre","indexCount":"{n} obras","indexCountOne":"1 obra","indexAll":"Obras seleccionadas","reelSound":"Ver con sonido","reelMute":"Silenciar","reelUnmute":"Activar sonido","reelClose":"Cerrar video","lbClose":"Cerrar","lbPrev":"Anterior","lbNext":"Siguiente","lbZoom":"Zoom","lbZoomOut":"Alejar","lbHint":"← → para navegar · Esc para salir","lbLabel":"Galería ampliada","breathStart":"Respira con ella","breathStop":"Detener","breathIn":"Inhala","breathOut":"Exhala","breathEnd":"Gracias por respirar con nosotros."},"sound":{"src":"Asset/Audio/breath-loop.m4a","level":0.55},"world":true,"v":{"world":"ae858134","particles":"63bd3f09"}}</script>
+<script type="application/json" id="alma-data">{"lang":"es","email":"vicente@almadigitalstudio.com","endpoint":"https://formspree.io/f/xkopqoyl","legacy":["soul-charger.html"],"t":{"modalSend":"Enviar mensaje","modalSending":"Enviando…","modalSent":"Enviado","modalOk":"Gracias, tu mensaje fue enviado. Te responderemos pronto.","modalFail":"No se pudo enviar tu mensaje. Inténtalo de nuevo o escribe a","modalFill":"Completa todos los campos.","modalBadEmail":"Ingresa un correo válido.","modalAbout":"Sobre","indexCount":"{n} obras","indexCountOne":"1 obra","indexAll":"Obras seleccionadas","reelSound":"Ver con sonido","reelMute":"Silenciar","reelUnmute":"Activar sonido","reelClose":"Cerrar video","lbClose":"Cerrar","lbPrev":"Anterior","lbNext":"Siguiente","lbZoom":"Zoom","lbZoomOut":"Alejar","lbHint":"← → para navegar · Esc para salir","lbLabel":"Galería ampliada","breathStart":"Respira con ella","breathStop":"Detener","breathIn":"Inhala","breathOut":"Exhala","breathEnd":"Gracias por respirar con nosotros."},"sound":{"src":"Asset/Audio/breath-loop.m4a","level":0.55},"world":{"stops":"ameba"},"v":{"world":"8658097f","particles":"63bd3f09"}}</script>
 <script>window.__ALMA__=JSON.parse(document.getElementById('alma-data').textContent);</script>
 <script src="../js/fluid.js?v=0dbef8cb"></script>
 <script src="../js/cursor.js?v=477b7a02"></script>
 <script src="../js/ameba.js?v=92aeb2f2"></script>
 <script src="../js/sound.js?v=44eb0590"></script>
-<script src="../js/app.js?v=795b7335"></script>
+<script src="../js/app.js?v=d133561a"></script>
 </body>
 </html>

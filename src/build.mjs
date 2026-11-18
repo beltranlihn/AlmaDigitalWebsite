@@ -39,6 +39,8 @@ const readJSON = async (p, fallback) => {
 const site = await readJSON('src/site.json');
 const { projects } = await readJSON('src/projects.json');
 const esProjects = await readJSON('src/i18n/projects.es.json', {});
+/* Imágenes livianas para las galaxias de la portada (tools/make_world_images.py). */
+const worldImages = await readJSON('src/world-images.json', {});
 const studio = await readJSON('src/i18n/studio.json', { about: { en: [], es: [] }, team: [], spinoffs: [] });
 
 /* Versión de cada archivo de estilos y de código: 8 letras que salen de su
@@ -241,7 +243,7 @@ function page(c, { title, desc, ogImage, jsonld, current, body, bodyClass, runti
     lang: c.lang, email: site.email, endpoint: site.formspree, legacy: Object.values(site.legacyPages),
     t: Object.fromEntries(RUNTIME_KEYS.map(k => [k, t[k]])),
     ...(sound ? { sound: { src: sound.src, level: sound.level } } : {}),
-    ...(world ? { world: true } : {}),
+    ...(world ? { world: { stops: world.stops || 'ameba' } } : {}),
     v: { world: v('js/world.js'), particles: v('js/particles.js') },   // los módulos que js/app.js pide después
     ...(runtime || {}),
   };
@@ -447,9 +449,26 @@ function buildWorld(lang) {
      no tiene, los de world.forms. Con esos colores se pinta su ameba y se arma
      el enjambre de partículas que la rodea. */
   const formOf = slug => (world.forms && world.forms[slug]) || (site.particles && site.particles[slug]) || { formation: 'halo', colors: [] };
+  /* Para la variante "galaxia" (site.json → world.stops): el ícono 3D de cada obra
+     (world.icons, o uno según el formato) y las 4–5 imágenes que orbitan alrededor. */
+  const ICON_BY_FORMAT = { vr: 'headset', dome: 'dome', mapping: 'projector', installation: 'room', performance: 'speaker', design: 'prism' };
+  const iconOf = p => (world.icons && world.icons[p.slug]) || ICON_BY_FORMAT[p.formatKey] || 'prism';
+  const galleryOf = p => (worldImages[p.slug] && worldImages[p.slug].length
+    ? worldImages[p.slug].map(x => ({ src: x.src, ar: x.w / x.h }))
+    : [p.cover, ...p.photos.filter(x => x !== p.cover)].slice(0, 5).map(src => ({ src, ar: 16 / 9 })))
+    .map(x => `${asset(c, x.src)}|${x.ar.toFixed(3)}`).join(',');
+  /* Lo que dice la ficha de vidrio de cada obra: la primera oración de la
+     descripción, la tecnología y dónde se presentó. */
+  const firstSentence = s => (String(s || '').match(/^.*?[.!?](?=\s|$)/) || [s])[0];
+  const venues = list => {
+    const short = list.map(x => x.split(' — ')[0].split(' (')[0].trim());
+    return short.slice(0, 2).join(' · ') + (short.length > 2 ? ` +${short.length - 2}` : '');
+  };
   const items = works.map(p => {
     const f = formOf(p.slug);
-    return `      <li><a class="wcard" data-w-item href="${link(c, `work/${p.slug}.html`)}" data-cover="${asset(c, p.cover)}" data-title="${esc(p.title)}" data-format="${esc(p.format)}" data-form="${esc(f.formation)}" data-colors="${esc((f.colors || []).join(','))}" data-stage="${esc(f.stage || '')}">
+    return `      <li><a class="wcard" data-w-item href="${link(c, `work/${p.slug}.html`)}" data-cover="${asset(c, p.cover)}" data-title="${esc(p.title)}" data-format="${esc(p.format)}" data-form="${esc(f.formation)}" data-colors="${esc((f.colors || []).join(','))}" data-stage="${esc(f.stage || '')}"
+        data-desc="${esc(firstSentence(p.desc))}" data-tags="${esc((p.tech || []).slice(0, 4).join('|'))}" data-where="${esc(venues(p.presentedAt || []))}" data-line="${esc(p.track === 'studio' ? t.pStudio : t.pCommission)}"
+        data-icon="${esc(iconOf(p))}" data-gallery="${esc(galleryOf(p))}">
         <img loading="lazy" decoding="async" width="1920" height="1080" src="${asset(c, p.cover)}" alt="">
         <span class="wcard__t"><b>${esc(p.title)}</b><span>${esc(p.format)}</span></span>
       </a></li>`;
@@ -463,7 +482,7 @@ function buildWorld(lang) {
   const tramos = works.length + (reel ? 1 : 0) + 1;
   const mask = p => `-webkit-mask-image:url('${asset(c, p)}');mask-image:url('${asset(c, p)}')`;
 
-  const body = `<section class="world world--flat" data-world aria-labelledby="world-title" style="--n:${tramos}">
+  const body = `<section class="world world--flat" data-world data-stops="${esc(world.stops || 'ameba')}" aria-labelledby="world-title" style="--n:${tramos}">
   <div class="world__stage">
     <div class="world__depth" aria-hidden="true"></div>
     <div class="world__canvas" aria-hidden="true"></div>
@@ -484,6 +503,8 @@ function buildWorld(lang) {
       <p class="world__name" data-w-title></p>
       <p class="world__fmt" data-w-fmt></p>
       <p class="world__desc" data-w-desc hidden></p>
+      <ul class="world__tags" data-w-tags hidden></ul>
+      <p class="world__where" data-w-where data-label="${esc(t.worldWhere)}" hidden></p>
       <a class="btn" data-w-open href="${link(c, 'studio.html')}"><span data-w-cta data-default="${esc(t.worldOpen)}">${esc(t.worldOpen)}</span> <i aria-hidden="true">→</i></a>
     </div>
     <nav class="world__dots" aria-label="${esc(t.worldListLabel)}"></nav>${reel ? `
