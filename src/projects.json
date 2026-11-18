@@ -74,7 +74,12 @@
       "photos": [
         "Asset/Studio Projects/Collective Pulse/1.webp",
         "Asset/Studio Projects/Collective Pulse/2.webp",
-        "Asset/Studio Projects/Collective Pulse/3 Portada.webp"
+        "Asset/Studio Projects/Collective Pulse/3 Portada.webp",
+        "Asset/Studio Projects/Collective Pulse/web-1.webp",
+        "Asset/Studio Projects/Collective Pulse/web-2.webp",
+        "Asset/Studio Projects/Collective Pulse/web-3.webp",
+        "Asset/Studio Projects/Collective Pulse/web-4.webp",
+        "Asset/Studio Projects/Collective Pulse/web-5.webp"
       ],
       "desc": "Visitors place a finger on a pulse sensor and their heartbeat appears on a large-scale projection as a living organic form, beating at their own rhythm. When several people are read at once, their forms share the same field, drifting toward one another or pulling apart. Nothing is pre-rendered: each form lives only for its session.",
       "commissionedBy": "",
@@ -126,7 +131,10 @@
         "Asset/Studio Projects/Neurocosm Full Dome/Foto5.webp",
         "Asset/Studio Projects/Neurocosm Full Dome/Foto6.webp",
         "Asset/Studio Projects/Neurocosm Full Dome/Foto7.webp",
-        "Asset/Studio Projects/Neurocosm Full Dome/Foto8.webp"
+        "Asset/Studio Projects/Neurocosm Full Dome/Foto8.webp",
+        "Asset/Studio Projects/Neurocosm Full Dome/web-1.webp",
+        "Asset/Studio Projects/Neurocosm Full Dome/web-2.webp",
+        "Asset/Studio Projects/Neurocosm Full Dome/web-3.webp"
       ],
       "desc": "A 45-minute immersive full dome audiovisual performance guiding audiences through a meditative journey. Integrates generative visuals with real-time biometric data from EEG headsets.",
       "commissionedBy": "",
@@ -225,7 +233,13 @@
       "photos": [
         "Asset/Studio Projects/Neurocosm XR Installation/1 Portada.webp",
         "Asset/Studio Projects/Neurocosm XR Installation/2.webp",
-        "Asset/Studio Projects/Neurocosm XR Installation/3.webp"
+        "Asset/Studio Projects/Neurocosm XR Installation/3.webp",
+        "Asset/Studio Projects/Neurocosm XR Installation/web-1.webp",
+        "Asset/Studio Projects/Neurocosm XR Installation/web-2.webp",
+        "Asset/Studio Projects/Neurocosm XR Installation/web-3.webp",
+        "Asset/Studio Projects/Neurocosm XR Installation/web-4.webp",
+        "Asset/Studio Projects/Neurocosm XR Installation/web-5.webp",
+        "Asset/Studio Projects/Neurocosm XR Installation/web-6.webp"
       ],
       "desc": "An interactive biofeedback installation translating neural activity via EEG headsets into generative visual fields projected in real time.",
       "commissionedBy": "",
@@ -379,7 +393,9 @@
         "Asset/Studio Projects/Pixel Liquido/4.webp",
         "Asset/Studio Projects/Pixel Liquido/5.webp",
         "Asset/Studio Projects/Pixel Liquido/6.webp",
-        "Asset/Studio Projects/Pixel Liquido/7.webp"
+        "Asset/Studio Projects/Pixel Liquido/7.webp",
+        "Asset/Studio Projects/Pixel Liquido/web-1.webp",
+        "Asset/Studio Projects/Pixel Liquido/web-2.webp"
       ],
       "desc": "An interactive exhibition exploring the fluid boundaries between digital and physical matter through responsive generative environments.",
       "commissionedBy": "",
@@ -466,13 +482,16 @@
       "video": "Asset/Studio Projects/Soul Charger/Soul Charger Reel.mp4",
       "photos": [
         "Asset/Studio Projects/Soul Charger/1 Portada.webp",
-        "Asset/Studio Projects/Soul Charger/2.webp",
-        "Asset/Studio Projects/Soul Charger/3.webp",
         "Asset/Studio Projects/Soul Charger/4.webp",
+        "Asset/Studio Projects/Soul Charger/web-1.webp",
         "Asset/Studio Projects/Soul Charger/5.webp",
-        "Asset/Studio Projects/Soul Charger/6.webp",
+        "Asset/Studio Projects/Soul Charger/web-2.webp",
+        "Asset/Studio Projects/Soul Charger/web-3.webp",
+        "Asset/Studio Projects/Soul Charger/8.webp",
+        "Asset/Studio Projects/Soul Charger/web-4.webp",
         "Asset/Studio Projects/Soul Charger/7.webp",
-        "Asset/Studio Projects/Soul Charger/8.webp"
+        "Asset/Studio Projects/Soul Charger/6.webp",
+        "Asset/Studio Projects/Soul Charger/web-5.webp"
       ],
       "desc": "A 15-minute interactive VR experience merging biofeedback, neuroaesthetics, AI, and applied bioethics into a transformative personal journey. In Collaboration with iDeas Lab, Johns Hopkins University's Berman Institute of Bioethics.",
       "commissionedBy": "",
@@ -745,7 +764,13 @@
       "photos": [
         "Asset/Commisions/Panta Rhei/1 portada.webp",
         "Asset/Commisions/Panta Rhei/1.webp",
-        "Asset/Commisions/Panta Rhei/2.webp"
+        "Asset/Commisions/Panta Rhei/2.webp",
+        "Asset/Commisions/Panta Rhei/web-1.webp",
+        "Asset/Commisions/Panta Rhei/web-2.webp",
+        "Asset/Commisions/Panta Rhei/web-3.webp",
+        "Asset/Commisions/Panta Rhei/web-4.webp",
+        "Asset/Commisions/Panta Rhei/web-5.webp",
+        "Asset/Commisions/Panta Rhei/web-6.webp"
       ],
       "desc": "An immersive experience exploring how climate change is affecting our oceans, combining scientific data, 360° visuals, and surround sound to raise environmental awareness. Part of an educational initiative with the Government of Catalonia, featuring seasonal transformations generated from real ocean data.",
       "commissionedBy": "Sabda Studio",

@@ -565,7 +565,7 @@
     try { q = new URLSearchParams(location.search).get('paradas'); } catch (e) {}
     if (q === 'galaxia' || q === 'galaxy') q = 'galaxy'; else if (q !== 'ameba') q = null;
     try { if (q) sessionStorage.setItem('alma-paradas', q); s = sessionStorage.getItem('alma-paradas'); } catch (e) {}
-    return q || s || (sec && sec.getAttribute('data-stops')) || 'ameba';
+    return q || s || (sec && sec.getAttribute('data-stops')) || ((CFG().world || {}).stops) || 'ameba';
   }
   function initWorld() {
     var sec = $('[data-world]');

@@ -523,6 +523,39 @@ El fluid sim sigue corriendo con auto-emitters en mobile. Los usuarios de Androi
 
 ## Historial de sesiones (última al tope)
 
+### 2026-11-18 — Fotos nuevas en seis fichas, desde Alma Marketing y la descarga de Canva (Vicente)
+
+Vicente pasó `Desktop/ALMA MARKETING/` y la carpeta `05_Biblioteca/web-canva-2026-11/` (lo que bajó de
+Canva, ordenado por obra) y pidió elegir las mejores y de mejor calidad. Se leyó antes `_PERMISOS.md`.
+Las fotos nuevas se llaman `web-N.webp` (1920×1080, q85, recorte centrado) y se sumaron a `photos`:
+
+- **Neurocosm XR** (3 → 9): seis fotos de la instalación (`neurocosm/fotos/instalacion-experience`),
+  sólo siluetas de espaldas frente a las proyecciones; a una se le recortó una marca de agua.
+- **Soul Charger** (8 → 11): cinco capturas del recorrido en VR a 2560×1440 (`playthrough`); el orden se
+  rehízo y salieron de la lista dos capturas más flojas (`2.webp`, `3.webp`, quedan en la carpeta).
+- **Collective Pulse** (3 → 8): cinco pantallas de la app y de la proyección, sin personas.
+- **Neurocosm Full Dome** (8 → 11): tres fotos de iPhone de la función en Plymouth (`IMG_1417`,
+  `IMG_1472`, `IMG_3918`; sin autor en los metadatos, iPhone del equipo).
+- **Panta Rhei** (3 → 9): seis renders de la sala de Sabda.
+- **Pixel Líquido** (7 → 9): dos fotogramas del video de registro.
+- Las galaxias de la portada se rehicieron (`tools/make_world_images.py`): Neurocosm XR y Collective
+  Pulse ya no usan cuadros del reel.
+
+**No se usó, y por qué** (según `_PERMISOS.md` y el `INDICE.md` de la descarga): las fotos de CULTVR
+(© Rhys Davies, falta confirmar con él) y las de Plymouth en baja resolución (fotógrafo sin confirmar);
+las de Fixiona (Alma Digital 360 y eSoul: autor sin confirmar); las de la EUIPO (Neural Canvas: personas
+reconocibles y la propiedad de EIT); los stills verticales de "INSTALLATION REEL" (caras reconocibles);
+lo de Pacha y Adidas Terrex (sin permiso); los conceptos hechos con IA de EIT; las fotos de LATAM (son de
+Carlos Donoso: habría que darle crédito); lo que sólo está en video o en PDF (LPS, MICSUR, Mapping,
+my2DROPS, Alma Digital Fest). Los 13 stills del render de Neurocosm XR que menciona el índice no están en
+la carpeta descargada.
+**Pendiente**: Collective Pulse tiene que llevar el crédito `Commissioned by the Inter-American
+Development Bank` en toda pieza (ver `_PERMISOS.md`) y la ficha todavía no lo dice.
+
+**Verificado en Chrome**: la ficha de Neurocosm XR (galería y a sangre con las fotos nuevas), las
+galaxias de Neurocosm XR y Collective Pulse, sin imágenes rotas ni errores. Paquete: 45 páginas, 1.487
+referencias, ninguna rota.
+
 ### 2026-11-18 — Portada 3D: paradas en galaxia (prueba), fichas con más datos y pausa en cada obra (Vicente)
 
 Tres pedidos de Vicente sobre el recorrido de la portada:

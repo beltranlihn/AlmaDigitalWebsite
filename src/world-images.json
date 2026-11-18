@@ -16,14 +16,14 @@
       "h": 432
     },
     {
-      "src": "Asset/World/Neurocosm XR/reel-1.webp",
-      "w": 360,
-      "h": 640
+      "src": "Asset/World/Neurocosm XR/4.webp",
+      "w": 768,
+      "h": 432
     },
     {
-      "src": "Asset/World/Neurocosm XR/reel-2.webp",
-      "w": 360,
-      "h": 640
+      "src": "Asset/World/Neurocosm XR/5.webp",
+      "w": 768,
+      "h": 432
     }
   ],
   "soul-charger": [
@@ -97,14 +97,14 @@
       "h": 432
     },
     {
-      "src": "Asset/World/Collective Pulse/reel-1.webp",
-      "w": 360,
-      "h": 640
+      "src": "Asset/World/Collective Pulse/4.webp",
+      "w": 768,
+      "h": 432
     },
     {
-      "src": "Asset/World/Collective Pulse/reel-2.webp",
-      "w": 360,
-      "h": 640
+      "src": "Asset/World/Collective Pulse/5.webp",
+      "w": 768,
+      "h": 432
     }
   ],
   "neurocosm-full-dome": [
