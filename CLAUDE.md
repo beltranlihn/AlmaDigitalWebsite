@@ -22,7 +22,7 @@ estudio, sus proyectos y equipo con una estética audiovisual interactiva, en in
 ├── src/                       # FUENTE del sitio (no se publica)
 │   ├── build.mjs              # generador: plantillas de todas las páginas
 │   ├── site.json              # textos de interfaz EN/ES, hero, clientes, destacados, ajustes
-│   ├── projects.json          # las 19 obras (inglés): textos, créditos, sedes, tecnología
+│   ├── projects.json          # las 20 obras (inglés): textos, créditos, sedes, tecnología
 │   └── i18n/
 │       ├── projects.es.json   # las obras en español
 │       └── studio.json        # about, equipo y spin-offs en los dos idiomas
@@ -37,7 +37,7 @@ estudio, sus proyectos y equipo con una estética audiovisual interactiva, en in
 │   └── app.js                 # header, contacto, reel, filtros, lightbox
 ├── index.html, studio.html    # GENERADOS (inglés). No editar a mano
 ├── work/index.html            # GENERADO: índice de obras con filtros
-├── work/<obra>.html           # GENERADO: una ficha por obra (19)
+├── work/<obra>.html           # GENERADO: una ficha por obra (20)
 ├── es/…                       # GENERADO: lo mismo en español
 ├── sitemap.xml                # GENERADO
 ├── soul-charger.html          # página dedicada a Soul Charger (a mano, ~3400 líneas, sólo inglés)
@@ -83,7 +83,14 @@ excepción en la consola en cada carga.
 tiene que existir en `site.json → formats`), su traducción en `projects.es.json`, los assets en
 `Asset/Studio Projects/` o `Asset/Commisions/`, correr `python3 tools/make_share_images.py` (imagen para
 compartir) y `node src/build.mjs`. Si falta la traducción, la ficha en español sale en inglés y el
-generador lo avisa.
+generador lo avisa. Si la obra entra a las seleccionadas (`site.json → featured`), correr además
+`python3 tools/make_world_images.py` (su galaxia) y elegirle ícono en `world.icons`.
+
+**Un formato nuevo** (como `software`, que se sumó con VEATION): la etiqueta en `site.json → formats`,
+la frase en `formatsDesc`, el nombre en `projects.json → meta.formats` y, en `src/build.mjs`, el ícono
+por defecto en `ICON_BY_FORMAT`. El filtro del índice aparece solo.
+**`website`** (opcional, en `projects.json`): un sitio propio de la obra. Sale como enlace bajo el
+resumen de la ficha (hoy sólo VEATION, a veation.com).
 
 ## Navegación continua (leer antes de tocar `js/app.js` o las plantillas)
 Cada página es un HTML completo: sirve sola, se indexa sola y funciona sin JavaScript. Pero al navegar
@@ -126,11 +133,11 @@ Consecuencias:
 - **Ficha de obra** (`work/<slug>.html`): portada, resumen con la ficha técnica al lado, un recorrido de
   imágenes y video, créditos, historial de exhibición, botón de consulta y obra siguiente. Ver "Ficha de
   obra: el recorrido de imágenes".
-- **Cabecera viva en todas las fichas** (`site.json → particles`, las 19 obras desde el 2026-11-18): la
+- **Cabecera viva en todas las fichas** (`site.json → particles`, las 20 obras desde el 2026-11-18): la
   portada se mueve despacio (un acercamiento lento y un parallax leve al bajar) y sobre ella se enciende
   un campo de puntos con una formación y colores propios de la obra. Se arrastra para girarlo, el cursor
   aparta las partículas y un clic lo dispersa. Cada entrada de `particles` lleva `formation`
-  (`attractor`, `pulse`, `halo`, `strokes`, `dome` o `wave`), `stage` (color del fondo) y `colors`. De
+  (`attractor`, `pulse`, `halo`, `strokes`, `dome`, `wave` o `grid`), `stage` (color del fondo) y `colors`. De
   ahí salen también los colores de la ameba de la obra en la portada 3D. Las 15 entradas nuevas las
   armé a partir de los colores de cada portada: **son borradores, a revisar**. Sin entrada, la ficha
   queda con la foto sola. Una formación nueva se escribe en `FORMATIONS` de `js/particles.js`.
@@ -299,7 +306,9 @@ estudio y la del final siguen igual.
   frente de vidrio y cámaras; `eeg` cabeza de vidrio con el cerebro encendido y la vincha de
   electrodos; `brush` pincel con una pincelada que lo rodea; `pulse` corazón que late con un
   electrocardiograma en anillo; `dome` cúpula geodésica con la imagen de la obra proyectada adentro;
-  `room` túnel de pantallas con imágenes de la obra y una persona; `projector`, `speaker` y `prism`.
+  `room` túnel de pantallas con imágenes de la obra y una persona; `editor` notebook de grafito con
+  el editor en pantalla y la cúpula en alambre encima, con el cenit en ámbar (VEATION); `projector`,
+  `speaker` y `prism`. `brush` ya no lo usa ninguna obra seleccionada desde que salió Neural Canvas.
   Los que se ven mejor de frente se mecen en vez de girar (`SWING`). Cuál lleva cada obra:
   `site.json → world.icons`; sin entrada, uno según el formato.
   Se buscaron modelos 3D hechos (2026-11-18): lo gratis es de estilo low-poly y lo bueno es pago o con
@@ -522,6 +531,46 @@ desactiva. **No** cambiar nameservers a Cloudflare.
 El fluid sim sigue corriendo con auto-emitters en mobile. Los usuarios de Android no pueden tocar el fondo para emitir fluidos (correcto — el dedo es para el scroll).
 
 ## Historial de sesiones (última al tope)
+
+### 2026-11-19 — VEATION entra al sitio, con el formato nuevo Software, y reemplaza a Neural Canvas en la selección (Vicente)
+
+Pedido de Vicente: sumar VEATION (el editor de video inmersivo del estudio) como obra, con una categoría
+nueva "Software", y ponerla en la primera selección en lugar de Neural Canvas. Material en
+`~/Desktop/VEATION/` (sus notas: `CLAUDE.md`, `estado-web-para-socio.md`, `Marketing/LEEME.md`).
+
+- **La ficha** (`work/veation.html` y `es/work/veation.html`): primera del índice, obra propia, 2026.
+  Ocho capturas reales del editor (`Marketing/Capturas/`, 3840×2160 → 1920×1080) con Rito en el domo y en
+  la sala 360, y dos reels de la serie de Veation en los teléfonos (`VEATION-01` presentación y
+  `VEATION-02` fulldome, a 406×720 sin audio: 0,9 y 1,2 MB). Enlace a veation.com bajo el resumen
+  (campo nuevo `website`). Datos estructurados `SoftwareApplication` en vez de `CreativeWork`.
+- **Formato nuevo `software`** ("Software" en los dos idiomas), con su filtro en el índice.
+- **Cabecera**: formación nueva `grid` en `js/particles.js`, la rejilla de domo de la marca VEATION
+  (anillos, radios, marcas del borde y el cenit), con una línea que la recorre como el cabezal de
+  reproducción. Colores: grises, un ámbar escaso y el azul y violeta de Rito.
+- **Portada**: VEATION ocupa el tercer lugar de la selección; su galaxia lleva las capturas y el ícono
+  nuevo `editor`. Se borró `Asset/World/Neural Canvas/` (ya no se usaba). Neural Canvas sigue en el
+  índice con su ficha.
+- **Textos**: salen de lo que las notas de Veation dan por publicable (`Marketing/Redes/Instagram/TEXTOS.md`
+  y la web veation.com) y, lo de Rito en CULTVR y FulldomeUK, de la propuesta al EIT
+  (`EIT-2026/PROPUESTA.md`). **No se afirma** lo que esas notas piden no publicar todavía: 8K,
+  Syphon, sistemas operativos, precio, fecha de salida, "el primer editor", NDI.
+
+**No se usó, y por qué**: las fotos de CULTVR (`250808_CULTVR_*`, de Rhys Davies, sin confirmar) y
+las `IMG_8224–8226` (CULTVR, gente reconocible, autor sin confirmar); la grabación de pantalla y la
+captura de septiembre (`Record Edit Dome.MP4`, `Screenshot…`, y el `reel.mp4` de veation.com) porque
+muestran el nombre viejo "Immersive Studio Pro"; `hongos domo.mp4` (autor y lugar sin confirmar);
+`IMG_7929` (sala 360 de iPhone: no se sabe si la pieza se hizo en VEATION); `VEATION-10` (nombra NDI);
+el tráiler de Barcelona XR Lab (voz y música de ElevenLabs, falta confirmar la licencia).
+**Para confirmar entre los socios**: los créditos (Vicente en dirección creativa, Beltrán en dirección
+técnica y desarrollo, tomados de la propuesta al EIT), si se nombra Reel 360 para Barcelona XR Lab
+como obra hecha en VEATION, y los colores de la cabecera.
+
+**Verificado en Chrome**: la ficha en inglés de punta a punta (cabecera con la rejilla, resumen con el
+enlace, teléfonos reproduciendo, galería con el historial, imagen a sangre, créditos), la galaxia de
+VEATION en la portada con el ícono nuevo, la entrada a la obra desde la galaxia y el índice en español
+filtrado por Software. Consola sin errores. En emulación 375×812: la ficha en español, sin desbordes.
+Paquete: 47 páginas, 1.426 referencias locales, ninguna rota.
+**Sin ver**: el movimiento continuo, teléfonos reales, Safari y Firefox.
 
 ### 2026-11-18 — Fotos nuevas en seis fichas, desde Alma Marketing y la descarga de Canva (Vicente)
 

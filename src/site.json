@@ -21,7 +21,7 @@
   "featured": [
     "neurocosm-xr",
     "soul-charger",
-    "neural-canvas",
+    "veation",
     "collective-pulse",
     "neurocosm-full-dome",
     "pacha-ibiza"
@@ -36,7 +36,7 @@
     "icons": {
       "neurocosm-xr": "eeg",
       "soul-charger": "headset",
-      "neural-canvas": "brush",
+      "veation": "editor",
       "collective-pulse": "pulse",
       "neurocosm-full-dome": "dome",
       "pacha-ibiza": "room"
@@ -52,100 +52,225 @@
     "level": 0.55
   },
   "particles": {
+    "veation": {
+      "formation": "grid",
+      "stage": "#0e0e12",
+      "colors": [
+        "#e0e0e0",
+        "#e5b567",
+        "#7f8cff",
+        "#c77de6",
+        "#e0e0e0",
+        "#a9a9b8"
+      ]
+    },
     "neurocosm-xr": {
       "formation": "attractor",
       "stage": "#05060f",
-      "colors": ["#6ea8ff", "#3d6bff", "#b9d2ff", "#ffffff", "#7a5cf2"]
+      "colors": [
+        "#6ea8ff",
+        "#3d6bff",
+        "#b9d2ff",
+        "#ffffff",
+        "#7a5cf2"
+      ]
     },
     "collective-pulse": {
       "formation": "pulse",
       "stage": "#0b0a1c",
-      "colors": ["#ff8fb1", "#ffd166", "#7ad7f0", "#b48cff", "#8ef0c2", "#ffffff"]
+      "colors": [
+        "#ff8fb1",
+        "#ffd166",
+        "#7ad7f0",
+        "#b48cff",
+        "#8ef0c2",
+        "#ffffff"
+      ]
     },
     "soul-charger": {
       "formation": "halo",
       "stage": "#140609",
-      "colors": ["#ff7a59", "#ffb199", "#ff4f6d", "#ffd6c2", "#ffffff"]
+      "colors": [
+        "#ff7a59",
+        "#ffb199",
+        "#ff4f6d",
+        "#ffd6c2",
+        "#ffffff"
+      ]
     },
     "neural-canvas": {
       "formation": "strokes",
       "stage": "#04052b",
-      "colors": ["#ff8a3d", "#ffb469", "#3f6bff", "#8fb0ff", "#ffffff"]
+      "colors": [
+        "#ff8a3d",
+        "#ffb469",
+        "#3f6bff",
+        "#8fb0ff",
+        "#ffffff"
+      ]
     },
     "neurocosm-full-dome": {
       "formation": "dome",
       "stage": "#1c0707",
-      "colors": ["#ff5a3c", "#ff9a6b", "#ffd0b0", "#ffffff"]
+      "colors": [
+        "#ff5a3c",
+        "#ff9a6b",
+        "#ffd0b0",
+        "#ffffff"
+      ]
     },
     "pacha-ibiza": {
       "formation": "wave",
       "stage": "#1d0722",
-      "colors": ["#ff4fa0", "#ff8fc8", "#b48cff", "#ffffff"]
+      "colors": [
+        "#ff4fa0",
+        "#ff8fc8",
+        "#b48cff",
+        "#ffffff"
+      ]
     },
     "neurocosm-360": {
       "formation": "attractor",
       "stage": "#170609",
-      "colors": ["#db3653", "#ff7a59", "#ffbcc8", "#ffffff", "#7a5cf2"]
+      "colors": [
+        "#db3653",
+        "#ff7a59",
+        "#ffbcc8",
+        "#ffffff",
+        "#7a5cf2"
+      ]
     },
     "mapping-mediamorfosis": {
       "formation": "strokes",
       "stage": "#0a0b1f",
-      "colors": ["#49dbd5", "#a144db", "#71b2db", "#c5fffc", "#ffffff"]
+      "colors": [
+        "#49dbd5",
+        "#a144db",
+        "#71b2db",
+        "#c5fffc",
+        "#ffffff"
+      ]
     },
     "alma-digital-fest": {
       "formation": "wave",
       "stage": "#0e0c1c",
-      "colors": ["#806cdb", "#c99ef9", "#f2b8dd", "#d9d1ff", "#ffffff"]
+      "colors": [
+        "#806cdb",
+        "#c99ef9",
+        "#f2b8dd",
+        "#d9d1ff",
+        "#ffffff"
+      ]
     },
     "pixel-liquido": {
       "formation": "strokes",
       "stage": "#060f1c",
-      "colors": ["#2d8bdb", "#446ddb", "#ff7fee", "#b8dfff", "#ffffff"]
+      "colors": [
+        "#2d8bdb",
+        "#446ddb",
+        "#ff7fee",
+        "#b8dfff",
+        "#ffffff"
+      ]
     },
     "digital-prana": {
       "formation": "halo",
       "stage": "#0b081c",
-      "colors": ["#6a4be9", "#9a7bff", "#f2b8dd", "#d0c4ff", "#ffffff"]
+      "colors": [
+        "#6a4be9",
+        "#9a7bff",
+        "#f2b8dd",
+        "#d0c4ff",
+        "#ffffff"
+      ]
     },
     "alma-digital-360": {
       "formation": "wave",
       "stage": "#170b10",
-      "colors": ["#db5f6e", "#ff9a6b", "#b48cff", "#ffcfd5", "#ffffff"]
+      "colors": [
+        "#db5f6e",
+        "#ff9a6b",
+        "#b48cff",
+        "#ffcfd5",
+        "#ffffff"
+      ]
     },
     "my2drops": {
       "formation": "wave",
       "stage": "#080c1c",
-      "colors": ["#4873db", "#62b993", "#7ad7f0", "#c4d6ff", "#ffffff"]
+      "colors": [
+        "#4873db",
+        "#62b993",
+        "#7ad7f0",
+        "#c4d6ff",
+        "#ffffff"
+      ]
     },
     "fashion-show-micsur": {
       "formation": "strokes",
       "stage": "#0b1417",
-      "colors": ["#84dbc0", "#5b8def", "#f2b8dd", "#d1fff0", "#ffffff"]
+      "colors": [
+        "#84dbc0",
+        "#5b8def",
+        "#f2b8dd",
+        "#d1fff0",
+        "#ffffff"
+      ]
     },
     "adidas-terrex": {
       "formation": "attractor",
       "stage": "#14110a",
-      "colors": ["#dbd3b1", "#ffb469", "#fff5d1", "#ffffff", "#8a7a55"]
+      "colors": [
+        "#dbd3b1",
+        "#ffb469",
+        "#fff5d1",
+        "#ffffff",
+        "#8a7a55"
+      ]
     },
     "panta-rhei": {
       "formation": "strokes",
       "stage": "#080d1c",
-      "colors": ["#5183db", "#4065db", "#7ad7f0", "#c9dcff", "#ffffff"]
+      "colors": [
+        "#5183db",
+        "#4065db",
+        "#7ad7f0",
+        "#c9dcff",
+        "#ffffff"
+      ]
     },
     "eit-culture-and-creativity": {
       "formation": "pulse",
       "stage": "#170610",
-      "colors": ["#db1752", "#ff8a3d", "#5b8def", "#ffaec7", "#ffffff"]
+      "colors": [
+        "#db1752",
+        "#ff8a3d",
+        "#5b8def",
+        "#ffaec7",
+        "#ffffff"
+      ]
     },
     "latam-airlines": {
       "formation": "attractor",
       "stage": "#060a1c",
-      "colors": ["#2a53db", "#db0ca6", "#7943db", "#b7c7ff", "#ffffff"]
+      "colors": [
+        "#2a53db",
+        "#db0ca6",
+        "#7943db",
+        "#b7c7ff",
+        "#ffffff"
+      ]
     },
     "lps": {
       "formation": "dome",
       "stage": "#06081c",
-      "colors": ["#233ddb", "#7a5cf2", "#f0a070", "#b4beff", "#ffffff"]
+      "colors": [
+        "#233ddb",
+        "#7a5cf2",
+        "#f0a070",
+        "#b4beff",
+        "#ffffff"
+      ]
     }
   },
   "legacyPages": {
@@ -175,6 +300,10 @@
     "design": {
       "en": "Immersive design",
       "es": "Diseño inmersivo"
+    },
+    "software": {
+      "en": "Software",
+      "es": "Software"
     }
   },
   "tracks": {
@@ -211,6 +340,10 @@
     "design": {
       "en": "Immersive design and visuals for events, brands and venues.",
       "es": "Diseño y visuales inmersivos para eventos, marcas y espacios."
+    },
+    "software": {
+      "en": "Tools we build for immersive creation, born from our own work in domes and 360 rooms.",
+      "es": "Herramientas que creamos para la creación inmersiva, nacidas de nuestro propio trabajo en domos y salas 360."
     }
   },
   "techEn": {
@@ -219,7 +352,10 @@
     "Visuales generativas": "Generative visuals",
     "IA": "AI",
     "Sonido inmersivo": "Immersive sound",
-    "Sensores de movimiento": "Motion sensors"
+    "Sensores de movimiento": "Motion sensors",
+    "Sala 360": "360 room",
+    "Efectos GPU": "GPU effects",
+    "Audiorreactivo": "Audio-reactive"
   },
   "proof": [
     "IDB",

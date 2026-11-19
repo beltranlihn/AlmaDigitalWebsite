@@ -451,7 +451,7 @@ function buildWorld(lang) {
   const formOf = slug => (world.forms && world.forms[slug]) || (site.particles && site.particles[slug]) || { formation: 'halo', colors: [] };
   /* Para la variante "galaxia" (site.json → world.stops): el ícono 3D de cada obra
      (world.icons, o uno según el formato) y las 4–5 imágenes que orbitan alrededor. */
-  const ICON_BY_FORMAT = { vr: 'headset', dome: 'dome', mapping: 'projector', installation: 'room', performance: 'speaker', design: 'prism' };
+  const ICON_BY_FORMAT = { vr: 'headset', dome: 'dome', mapping: 'projector', installation: 'room', performance: 'speaker', design: 'prism', software: 'editor' };
   const iconOf = p => (world.icons && world.icons[p.slug]) || ICON_BY_FORMAT[p.formatKey] || 'prism';
   const galleryOf = p => (worldImages[p.slug] && worldImages[p.slug].length
     ? worldImages[p.slug].map(x => ({ src: x.src, ar: x.w / x.h }))
@@ -725,7 +725,8 @@ ${cols}
   <div class="pj-over__lead">
     <h2 class="label" id="over-h">${esc(t.pOverview)}</h2>
     <p class="pj-over__txt">${esc(p.body[0] || p.desc)}</p>${p.creditLine ? `
-    <p class="pj-over__credit">${esc(p.creditLine)}</p>` : ''}${legacy ? `
+    <p class="pj-over__credit">${esc(p.creditLine)}</p>` : ''}${p.website ? `
+    <a class="more" href="${esc(p.website)}" target="_blank" rel="noopener">${esc(p.website.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, ''))} <i aria-hidden="true">↗</i></a>` : ''}${legacy ? `
     <a class="more" href="${c.up}${legacy}">${esc(t.pPage)} <i aria-hidden="true">→</i></a>` : ''}
   </div>
   <dl class="pj-meta" aria-label="${esc(t.pSheet)}">
@@ -766,10 +767,14 @@ ${flow.join('\n\n')}
     title: `${p.title} — Alma Digital Studio`, desc: clip(p.desc, 165), ogImage: ogFor(p.slug),
     current: 'work', body, bodyClass: 'pg-project',
     runtime: site.perProjectPalette ? { palette: p.palette, back: p.back } : null,
+    /* Una obra es CreativeWork; un programa (formatKey software), SoftwareApplication. */
     jsonld: {
-      '@context': 'https://schema.org', '@type': 'CreativeWork', name: p.title, description: p.desc,
+      '@context': 'https://schema.org', name: p.title, description: p.desc,
       url: abs(lang, c.rel), image: absAsset(ogFor(p.slug)), inLanguage: lang, genre: p.format,
       creator: { '@type': 'Organization', name: 'Alma Digital Studio', url: site.origin + '/' },
+      ...(p.formatKey === 'software'
+        ? { '@type': 'SoftwareApplication', applicationCategory: 'MultimediaApplication', ...(p.website ? { sameAs: p.website } : {}) }
+        : { '@type': 'CreativeWork' }),
     },
   })];
 }

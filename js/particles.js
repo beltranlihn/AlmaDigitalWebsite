@@ -12,8 +12,11 @@
      pulse      organismos que laten, cada uno a su ritmo         Collective Pulse
      halo       anillos concéntricos que respiran cada 6 s        Soul Charger
      strokes    trazos que fluyen como pinceladas                 Neural Canvas
+     dome       media esfera de meridianos y paralelos            Neurocosm Full Dome
+     wave       ondas que se abren en un plano                    Pacha Ibiza
+     grid       rejilla de domo con el cabezal que la recorre     VEATION
 
-   ÚNICA PIEZA DEL SITIO QUE USA THREE.JS. Es un módulo ES que js/app.js carga
+   Junto con js/world.js, es lo único del sitio que usa Three.js. Es un módulo ES que js/app.js carga
    con import() sólo en las fichas que lo piden, así que el resto del sitio no
    lo descarga. Three.js viene de jsDelivr con la versión fijada (unos 155 KB
    comprimidos, que el navegador guarda en caché). Si el CDN no responde o
@@ -175,6 +178,35 @@ const FORMATIONS = {
     };
   },
 
+  /* Rejilla de domo (el domemaster de VEATION): anillos y radios de un círculo, marcas
+     en el borde y el cenit encendido en el centro. Gira despacio y una línea, como el
+     cabezal de reproducción, la recorre: levanta los puntos a su paso y los deja bajar. */
+  grid(n, pos) {
+    const RINGS = [0.3, 0.6, 0.9, 1.2, 1.5], SPOKES = 24;
+    const rad = new Float32Array(n), ang = new Float32Array(n), jit = new Float32Array(n);
+    for (let i = 0; i < n; i++) {
+      const u = Math.random();
+      if (u < 0.05) { rad[i] = 0.07 * Math.sqrt(Math.random()); ang[i] = rnd(TAU); }
+      else if (u < 0.5) { rad[i] = RINGS[(Math.random() * RINGS.length) | 0]; ang[i] = rnd(TAU); }
+      else if (u < 0.9) { ang[i] = (((Math.random() * SPOKES) | 0) / SPOKES) * TAU; rad[i] = 0.12 + Math.random() * 1.38; }
+      else { ang[i] = (((Math.random() * 72) | 0) / 72) * TAU; rad[i] = 1.53 + Math.random() * (Math.random() < 0.2 ? 0.14 : 0.06); }
+      jit[i] = rnd(-0.012, 0.012);
+    }
+    return {
+      warm: 1,
+      step(dt, t) {
+        const turn = t * 0.05, sweep = t * 0.45, breath = 1 + 0.03 * Math.sin(TAU * t / 6);
+        for (let i = 0; i < n; i++) {
+          const k = i * 3, a = ang[i] + turn, R = (rad[i] + jit[i]) * breath;
+          let d = (sweep - a) % TAU;
+          if (d < 0) d += TAU;
+          const lift = 0.16 * Math.exp(-d * 2.2) * Math.min(1, rad[i] / 0.3);
+          pos[k] = Math.cos(a) * R; pos[k + 1] = lift + jit[i]; pos[k + 2] = Math.sin(a) * R;
+        }
+      },
+    };
+  },
+
   /* Ondas que se abren en un plano, como sonido o como gotas en el agua. */
   wave(n, pos) {
     const rad = new Float32Array(n), ang = new Float32Array(n), jit = new Float32Array(n);
@@ -269,10 +301,10 @@ export function mount(host, opts) {
   group.add(points);
   scene.add(group);
 
-  const baseTilt = { halo: 1.08, wave: 0.62, dome: 0.3 }[opts.formation] || 0.18;
+  const baseTilt = { halo: 1.08, wave: 0.62, dome: 0.3, grid: 1.02 }[opts.formation] || 0.18;
   /* La madeja y los trazos ocupan todo su volumen; se achican para que entren
      enteros y no pasen por detrás del menú. */
-  const fit = { attractor: 0.74, strokes: 0.78, dome: 0.86, wave: 0.9 }[opts.formation] || 1;
+  const fit = { attractor: 0.74, strokes: 0.78, dome: 0.86, wave: 0.9, grid: 0.92 }[opts.formation] || 1;
   let yaw = 0, pitch = 0, vyaw = 0, vpitch = 0;
   let dragging = false, dragId = null, lx = 0, ly = 0, moved = 0;
   let push = 0, pushT = 0, burst = 0, boost = 0;

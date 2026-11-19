@@ -712,9 +712,34 @@ const ICONS = {
     put(g, new THREE.IcosahedronGeometry(0.3, 1), M.glow);
     return g;
   },
+  /* Editor (software, hoy VEATION): una notebook de grafito con el editor en pantalla
+     y, flotando arriba, la cúpula en alambre fino (meridianos y paralelos) con el
+     cenit encendido en ámbar, como el punto del símbolo de VEATION. */
+  editor(M, S) {
+    const g = new THREE.Group(), W = 1.76, H = 1.04, D = 1.04;
+    put(g, new RoundedBoxGeometry(W, 0.05, D, 4, 0.02), M.dark, [0, -0.025, 0]);
+    put(g, new RoundedBoxGeometry(W - 0.26, 0.012, 0.5, 2, 0.005), M.glass, [0, 0.004, -0.17]);
+    put(g, new RoundedBoxGeometry(0.5, 0.01, 0.28, 2, 0.004), M.glass, [0, 0.003, 0.3]);
+    const hinge = new THREE.Group();
+    hinge.position.set(0, 0.02, -D / 2 + 0.02);
+    hinge.rotation.x = -0.22;
+    g.add(hinge);
+    put(hinge, new RoundedBoxGeometry(W, H, 0.05, 4, 0.025), M.dark, [0, H / 2, 0]);
+    put(hinge, new RoundedBoxGeometry(W - 0.05, H - 0.05, 0.01, 3, 0.012), M.glass, [0, H / 2, 0.024]);
+    put(hinge, new THREE.PlaneGeometry(W - 0.12, H - 0.12), S(0, THREE.FrontSide), [0, H / 2, 0.031]);
+    const dome = new THREE.Group(), R = 0.5, wire = 0.0055;
+    for (let k = 0; k < 4; k++) put(dome, new THREE.TorusGeometry(R, wire, 6, 56, Math.PI), M.chrome, null, [0, (k * Math.PI) / 4, 0]);
+    [0.42, 0.9].forEach((lat) => put(dome, new THREE.TorusGeometry(R * Math.cos(lat), wire, 6, 64), M.chrome, [0, R * Math.sin(lat), 0], [Math.PI / 2, 0, 0]));
+    put(dome, new THREE.TorusGeometry(R, 0.015, 10, 80), M.chrome, null, [Math.PI / 2, 0, 0]);
+    put(dome, new THREE.SphereGeometry(R * 0.985, 48, 16, 0, Math.PI * 2, 0, Math.PI / 2), M.ghost);
+    put(dome, new THREE.SphereGeometry(0.05, 18, 14), M.glow, [0, R + 0.01, 0]);
+    dome.position.set(0, 1.2, -0.62);
+    g.add(dome);
+    return g;
+  },
 };
 /* Los íconos que se ven mejor de frente se mecen en vez de girar entero. */
-const SWING = { headset: 0.85, eeg: 0.75, pulse: 0.6, room: 0.55, projector: 0.7, speaker: 0.6 };
+const SWING = { headset: 0.85, eeg: 0.75, pulse: 0.6, room: 0.55, projector: 0.7, speaker: 0.6, editor: 0.6 };
 const heartbeat = (t) => { const p = t % 1, a = (p - 0.08) / 0.045, b = (p - 0.30) / 0.06; return Math.exp(-a * a) + 0.55 * Math.exp(-b * b); };
 
 export function mount(section, opts) {
