@@ -561,9 +561,10 @@ captura de septiembre (`Record Edit Dome.MP4`, `Screenshot…`, y el `reel.mp4` 
 muestran el nombre viejo "Immersive Studio Pro"; `hongos domo.mp4` (autor y lugar sin confirmar);
 `IMG_7929` (sala 360 de iPhone: no se sabe si la pieza se hizo en VEATION); `VEATION-10` (nombra NDI);
 el tráiler de Barcelona XR Lab (voz y música de ElevenLabs, falta confirmar la licencia).
-**Para confirmar entre los socios**: los créditos (Vicente en dirección creativa, Beltrán en dirección
-técnica y desarrollo, tomados de la propuesta al EIT), si se nombra Reel 360 para Barcelona XR Lab
-como obra hecha en VEATION, y los colores de la cabecera.
+**Créditos**: sólo "Created by: Alma Digital Studio" / "Creación: Alma Digital Studio", sin nombres
+(decisión de Vicente, el mismo día).
+**Para confirmar entre los socios**: si se nombra Reel 360 para Barcelona XR Lab como obra hecha en
+VEATION, y los colores de la cabecera.
 
 **Verificado en Chrome**: la ficha en inglés de punta a punta (cabecera con la rejilla, resumen con el
 enlace, teléfonos reproduciendo, galería con el historial, imagen a sangre, créditos), la galaxia de
