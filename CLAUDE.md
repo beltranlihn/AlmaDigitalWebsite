@@ -22,7 +22,7 @@ estudio, sus proyectos y equipo con una estética audiovisual interactiva, en in
 ├── src/                       # FUENTE del sitio (no se publica)
 │   ├── build.mjs              # generador: plantillas de todas las páginas
 │   ├── site.json              # textos de interfaz EN/ES, hero, clientes, destacados, ajustes
-│   ├── projects.json          # las 20 obras (inglés): textos, créditos, sedes, tecnología
+│   ├── projects.json          # las 22 obras y spin-offs (inglés): textos, créditos, sedes, tecnología
 │   └── i18n/
 │       ├── projects.es.json   # las obras en español
 │       └── studio.json        # about, equipo y spin-offs en los dos idiomas
@@ -37,7 +37,7 @@ estudio, sus proyectos y equipo con una estética audiovisual interactiva, en in
 │   └── app.js                 # header, contacto, reel, filtros, lightbox
 ├── index.html, studio.html    # GENERADOS (inglés). No editar a mano
 ├── work/index.html            # GENERADO: índice de obras con filtros
-├── work/<obra>.html           # GENERADO: una ficha por obra (20)
+├── work/<obra>.html           # GENERADO: una ficha por obra o spin-off (22)
 ├── es/…                       # GENERADO: lo mismo en español
 ├── sitemap.xml                # GENERADO
 ├── soul-charger.html          # página dedicada a Soul Charger (a mano, ~3400 líneas, sólo inglés)
@@ -89,8 +89,13 @@ generador lo avisa. Si la obra entra a las seleccionadas (`site.json → feature
 **Un formato nuevo** (como `software`, que se sumó con VEATION): la etiqueta en `site.json → formats`,
 la frase en `formatsDesc`, el nombre en `projects.json → meta.formats` y, en `src/build.mjs`, el ícono
 por defecto en `ICON_BY_FORMAT`. El filtro del índice aparece solo.
+**Spin-offs** (hoy Rito Digital y Digital Sanctuaries): son fichas como las demás, con `track:
+"spinoff"` (la línea "Spin-offs" del índice y "Spin-off" en la ficha). Para que salgan en la portada,
+su slug va en `site.json → world.spinoffs` (no en `featured`): tienen su propio paso después de las obras.
+**`photoCredits`** (opcional, en `projects.json`): `{ "ruta de la foto": "@autor" }`. El crédito sale
+sobre la foto ("Photo @autor" / "Foto @autor"). Lo usa Rito Digital, cuyo press kit lo exige por foto.
 **`website`** (opcional, en `projects.json`): un sitio propio de la obra. Sale como enlace bajo el
-resumen de la ficha (hoy sólo VEATION, a veation.com).
+resumen de la ficha (VEATION, Rito Digital y Digital Sanctuaries).
 
 ## Navegación continua (leer antes de tocar `js/app.js` o las plantillas)
 Cada página es un HTML completo: sirve sola, se indexa sola y funciona sin JavaScript. Pero al navegar
@@ -127,7 +132,7 @@ Consecuencias:
   derecha del título en Obras y Studio, en el bloque de contacto y en la esquina de la foto en cada
   ficha. La portada no tiene slots (sus amebas son las del mundo 3D), así que ahí no se ve.
   Los slots son cajas vacías que sólo reservan el lugar.
-- **Índice de obras** (`work/`): lista filtrable por línea (obra propia / encargos) y formato, con
+- **Índice de obras** (`work/`): lista filtrable por línea (obra propia / encargos / spin-offs) y formato, con
   vista previa al pasar el mouse. Sin filtros el contador dice "Obras seleccionadas" (decisión de
   Vicente: no hablar de "19 obras"); con filtros, cuántas quedan.
 - **Ficha de obra** (`work/<slug>.html`): portada, resumen con la ficha técnica al lado, un recorrido de
@@ -206,7 +211,12 @@ vea y probarlo en teléfonos reales** (en la portada corren el fluido y el mundo
      aparece en el centro "Obras seleccionadas" (`site.json → selectedTitle`). Es un tramo, no una
      parada. El título sólo cambia de opacidad: la tipografía no se mueve.
   5. **Las obras**, una galaxia cada una (ver "Paradas en galaxia"; antes, una ameba).
-  6. **El cierre**: las obras seleccionadas, conocer el estudio y contacto.
+  6. **Los spin-offs** (desde el 2026-11-20): un segundo paso con anillos y el título "Studio
+     spin-offs" (`site.json → spinTitle`), y una galaxia para cada uno (`world.spinoffs`, hoy Rito
+     Digital y Digital Sanctuaries). Su ficha de vidrio dice "Spin-off" en vez del número de obra.
+     Sin 3D van en la misma lista que las obras.
+  7. **El cierre**: las obras seleccionadas, conocer el estudio y contacto. La ameba del final aparece
+     recién al dejar la última parada.
 - **Las amebas no llevan fotos** (vale para el modo ameba, hoy en reserva; decisión de Vicente, 2026-11-18: deformadas por la gota se veían poco
   profesionales). Adentro llevan un arte hecho con los colores de la obra, que se mezclan despacio como
   tinta en agua (`FRAG` en `js/world.js`). Los colores son los de `site.json → particles` (o
@@ -273,7 +283,9 @@ vea y probarlo en teléfonos reales** (en la portada corren el fluido y el mundo
   recorrido. Es un shader a pantalla completa (`LIQ_FRAG` en `js/world.js`); **si cambia el alto o el
   degradado de `.phero` en el CSS, hay que cambiarlos también ahí** (`uHero` y el cálculo de `shade`).
 - **Volver a la portada** (el logo del menú) lleva siempre a la entrada, arriba de todo.
-- **Qué obras**: `site.json → world.works` (lista de slugs); vacío usa `featured`.
+- **Qué obras**: `site.json → world.works` (lista de slugs); vacío usa `featured`. Los spin-offs, en
+  `world.spinoffs`. Los pasos de capítulo (`CHAPS` y `gates` en `js/world.js`) salen solos: uno antes
+  de la primera obra y otro antes del primer spin-off.
 - **Cómo está hecho** (`js/world.js`): Three.js con WebGL, canvas transparente sobre el fluido. Cada ameba
   es una esfera deformada en el shader. La portada de cada obra se pide recién al detenerse frente a
   ella, sólo para el derrame. Mirages usa WebGPU; acá se eligió WebGL para que corra en todos los teléfonos.
@@ -542,6 +554,47 @@ desactiva. **No** cambiar nameservers a Cloudflare.
 El fluid sim sigue corriendo con auto-emitters en mobile. Los usuarios de Android no pueden tocar el fondo para emitir fluidos (correcto — el dedo es para el scroll).
 
 ## Historial de sesiones (última al tope)
+
+### 2026-11-20 — Rito Digital y Digital Sanctuaries entran como spin-offs (Vicente)
+
+Pedido de Vicente: sumar Rito Digital y Digital Sanctuaries como spin-offs. Se le recomendó no meterlos
+en las seis obras seleccionadas sino darles un capítulo propio al final del recorrido, con su ficha y
+el enlace a su sitio, y lo aprobó. Material: `~/Desktop/RITO DIGITAL MASTER/MARKETING/` (y su copia en
+la biblioteca de Alma Marketing) y `~/Desktop/DIGITAL SANCTUARIES/`.
+
+- **Dos fichas nuevas** (`work/rito-digital.html`, `work/digital-sanctuaries.html` y en español), línea
+  nueva **Spin-offs** en el índice. Rito: formato Performance; Digital Sanctuaries: VR / XR.
+- **Portada**: después de Pacha Ibiza, un paso "Studio spin-offs" con sus anillos y dos galaxias. La
+  ameba del final ya no se ve de lejos detrás de la última ficha.
+- **Rito Digital**: ocho fotos. Cinco cuadros del film (`04_OBRA/Stills Film`, de los primeros 50
+  minutos: nada del final, del botón de apagado, de la cuarta pared ni del Espejo del Alma) y tres fotos
+  del Festival of Consciousness (Barcelona, julio 2026), cada una con su crédito sobre la foto
+  (@aliciaganesha, @thelighttrace), como pide el `CREDITS.txt` del press kit. Teléfonos: el reel
+  fulldome de CULTVR y el aftermovie de FOC (sin audio, 1,9 MB cada uno). Textos con la skill
+  `voz-rito`, en capa ficha (el boilerplate aprobado), sin contar la trama. Créditos según su canon:
+  "A work by Alma Digital Studio · Direction, music and visuals: Vicente Manzano · Beltrán Lihn".
+  Partículas `pulse` en rojo, crema y cobre.
+- **Digital Sanctuaries**: nueve fotos de iPhone del equipo, de Barcelona Design Week 2026 y de Inner
+  Canvas (Barcelona, noviembre 2026), y el resumen de Design Week en el teléfono (0,6 MB). Textos con la
+  skill `voz-sanctuaries` (capa llana primero, sin promesas de salud). Partículas `halo` (anillos que
+  respiran) en los tonos de su marca.
+- Campo nuevo `photoCredits` y textos nuevos `pSpinoff`, `pPhoto`, `spinTitle`.
+
+**No se usó, y por qué**: las fotos de CULTVR de Rito (© Rhys Davies: `_PERMISOS.md` pide confirmar con
+él) y la de FulldomeUK (crédito sin confirmar); las fotos de multitud de FOC con caras reconocibles; el
+tráiler de Digital Sanctuaries y las imágenes del deck (hechos con IA o renders: la nota pide no
+mostrarlos como registro); las fotos de "juano" en Design Week (fotógrafo sin crédito confirmado); lo
+de Neural Canvas en la EUIPO; la mención de Washington como piloto y la de Johns Hopkins (la voz de
+Digital Sanctuaries y `_PERMISOS.md` lo piden).
+**A revisar**: en Inner Canvas y Design Week aparecen participantes, casi todos con el casco puesto o de
+espaldas; si el evento de Inner Canvas fue para una empresa, confirmar que se puede mostrar. Los
+colores de partículas de los dos.
+
+**Verificado en Chrome**: el paso "Studio spin-offs" y las dos galaxias; las dos fichas de punta a punta
+(cabecera, resumen con el enlace a su sitio, teléfonos reproduciendo, galería con los créditos sobre las
+fotos, créditos), en inglés y español; el índice filtrado por Spin-offs (`?line=spinoff`). Consola sin
+errores. Paquete: 51 páginas, 1.584 referencias locales, ninguna rota.
+**Sin ver**: teléfonos (en tamaño y reales), Safari y Firefox, el movimiento continuo.
 
 ### 2026-11-20 — Galaxias con la ameba de la obra al centro, en vez del ícono (Vicente)
 

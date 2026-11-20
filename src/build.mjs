@@ -99,6 +99,8 @@ function loc(p, lang) {
     presentedAt: same(e.presentedAt, p.presentedAt) ? e.presentedAt : (p.presentedAt || []),
   };
 }
+/* Cómo se nombra la línea de una obra: obra propia, encargo o spin-off. */
+const trackLabel = (p, t) => ({ studio: t.pStudio, commission: t.pCommission, spinoff: t.pSpinoff })[p.track] || t.pStudio;
 const ogFor = slug => {
   const f = `Asset/og/${slug}.jpg`;
   return existsSync(fileURLToPath(new URL(f, ROOT))) ? f : 'Asset/Web Icons/og-alma-digital.jpg';
@@ -464,22 +466,25 @@ function buildWorld(lang) {
     const short = list.map(x => x.split(' — ')[0].split(' (')[0].trim());
     return short.slice(0, 2).join(' · ') + (short.length > 2 ? ` +${short.length - 2}` : '');
   };
-  const items = works.map(p => {
+  /* Los spin-offs (world.spinoffs) van después de las obras, con su propio paso. */
+  const spins = (world.spinoffs || []).map(s => projects.find(p => p.slug === s)).filter(Boolean).map(p => loc(p, lang));
+  const card = (p, kind) => {
     const f = formOf(p.slug);
-    return `      <li><a class="wcard" data-w-item href="${link(c, `work/${p.slug}.html`)}" data-cover="${asset(c, p.cover)}" data-title="${esc(p.title)}" data-format="${esc(p.format)}" data-form="${esc(f.formation)}" data-colors="${esc((f.colors || []).join(','))}" data-stage="${esc(f.stage || '')}"
-        data-desc="${esc(firstSentence(p.desc))}" data-tags="${esc((p.tech || []).slice(0, 4).join('|'))}" data-where="${esc(venues(p.presentedAt || []))}" data-line="${esc(p.track === 'studio' ? t.pStudio : t.pCommission)}" data-credit="${esc(p.creditLine || '')}"
+    return `      <li><a class="wcard" data-w-item${kind ? ` data-kind="${kind}"` : ''} href="${link(c, `work/${p.slug}.html`)}" data-cover="${asset(c, p.cover)}" data-title="${esc(p.title)}" data-format="${esc(p.format)}" data-form="${esc(f.formation)}" data-colors="${esc((f.colors || []).join(','))}" data-stage="${esc(f.stage || '')}"
+        data-desc="${esc(firstSentence(p.desc))}" data-tags="${esc((p.tech || []).slice(0, 4).join('|'))}" data-where="${esc(venues(p.presentedAt || []))}" data-line="${esc(trackLabel(p, t))}" data-credit="${esc(p.creditLine || '')}"
         data-icon="${esc(iconOf(p))}" data-gallery="${esc(galleryOf(p))}">
         <img loading="lazy" decoding="async" width="1920" height="1080" src="${asset(c, p.cover)}" alt="">
         <span class="wcard__t"><b>${esc(p.title)}</b><span>${esc(p.format)}</span></span>
       </a></li>`;
-  }).join('\n');
+  };
+  const items = [...works.map(p => card(p)), ...spins.map(p => card(p, 'spin'))].join('\n');
   /* El reel flotante (site.json → world.reel): una versión liviana y sin audio
      que arranca sola al llegar a su parada. Sin esa entrada no hay parada. */
   const reel = world.reel && world.reel.src ? world.reel : null;
   /* Tramos del recorrido: uno entre cada par de paradas (estudio, reel, obras)
      y uno más antes de la primera obra, para el paso a "Obras seleccionadas".
      El CSS saca de acá el alto de la sección. */
-  const tramos = works.length + (reel ? 1 : 0) + 1;
+  const tramos = works.length + (reel ? 1 : 0) + 1 + (spins.length ? spins.length + 1 : 0);
   const mask = p => `-webkit-mask-image:url('${asset(c, p)}');mask-image:url('${asset(c, p)}')`;
 
   const body = `<section class="world world--flat" data-world data-stops="${esc(world.stops || 'ameba')}" aria-labelledby="world-title" style="--n:${tramos}">
@@ -514,7 +519,9 @@ function buildWorld(lang) {
       ${reelBlock(c)}
     </div>` : ''}
     <!-- El paso a las obras: en el recorrido aparece entre el reel y la primera ameba. -->
-    <h2 class="world__chapter" data-w-chapter>${em(t.selectedTitle)}</h2>
+    <h2 class="world__chapter" data-w-chapter="work">${em(t.selectedTitle)}</h2>${spins.length ? `
+    <!-- El paso a los spin-offs: después de la última obra. -->
+    <h2 class="world__chapter" data-w-chapter="spin">${em(t.spinTitle)}</h2>` : ''}
     <!-- Cierre: el resto de las obras, el estudio y el contacto. -->
     <div class="world__end">
       <h2>${em(t.worldEndTitle)}</h2>
@@ -608,7 +615,7 @@ function buildProject(raw, rawNext, lang) {
   const p = loc(raw, lang), next = loc(rawNext, lang);
   const c = ctx(lang, `work/${p.slug}.html`);
   const t = c.t;
-  const track = p.track === 'studio' ? t.pStudio : t.pCommission;
+  const track = trackLabel(p, t);
 
   /* Ficha técnica, al lado del resumen. Las sedes no van acá: están en el
      historial de exhibición. */
@@ -638,7 +645,9 @@ function buildProject(raw, rawNext, lang) {
   if (side) others.unshift(side);
   const queue = [...others.slice(0, 1), ...p.photos.filter(x => x === p.cover), ...others.slice(1)];
   let num = 0;
-  const shot = (ph, cls, m) => `<figure class="shot${cls ? ' ' + cls : ''}" data-m="${m || 'shot'}"><img loading="lazy" decoding="async" width="1920" height="1080" src="${asset(c, ph)}" alt="${esc(p.title)}, ${esc(t.pImage)} ${++num}"></figure>`;
+  /* photoCredits (projects.json, opcional): el crédito que exige una foto, sobre la foto misma. */
+  const credit = ph => (p.photoCredits || {})[ph];
+  const shot = (ph, cls, m) => `<figure class="shot${cls ? ' ' + cls : ''}" data-m="${m || 'shot'}"><img loading="lazy" decoding="async" width="1920" height="1080" src="${asset(c, ph)}" alt="${esc(p.title)}, ${esc(t.pImage)} ${++num}">${credit(ph) ? `<figcaption class="shot__credit">${esc(t.pPhoto)} ${esc(credit(ph))}</figcaption>` : ''}</figure>`;
   const gap = (cls, text) => `<div class="slot${cls ? ' ' + cls : ''}" aria-hidden="true"><span>${text}</span></div>`;
 
   /* Videos verticales: el reel de la obra y, si hay, "verticals" (projects.json: .mp4 o imagen 9:16). */

@@ -301,5 +301,42 @@
     "presentedAt": [
       "IDEAL Digital Center, Barcelona, España"
     ]
+  },
+  "rito-digital": {
+    "format": "Concert-film",
+    "desc": "Un concert-film de 60 minutos de Alma Digital Studio: animación de stop-motion realista y techno ceremonial en ocho canciones. Se estrenó en FOC — The Festival of Consciousness, Barcelona, en 2026.",
+    "body": [
+      "Rito Digital es un concert-film de 60 minutos —prólogo y ocho canciones— creado por Alma Digital Studio. Se estrenó en FOC — The Festival of Consciousness, CCIB Barcelona, en julio de 2026, y existe también en versión fulldome y en show en vivo.",
+      "Donzio atraviesa dos mundos, del Sistema al Rito, y en el camino se cruza con las familias de seres que lo habitan. Está animado en stop-motion realista: marionetas-criatura de silicona táctil en un mundo retrofuturista patinado, con profundidad de diorama, simetría ritual y grano de 35 mm, compuesto con imagen generativa dirigida cuadro a cuadro. La música es techno ceremonial con procesamiento vocal experimental.",
+      "La versión fulldome se estrenó en CULTVR Lab, Cardiff, en septiembre de 2026, y volvió a ese domo en octubre para FulldomeUK.",
+      "Ocho canciones y una procesión."
+    ],
+    "credits": [
+      "Una obra de Alma Digital Studio",
+      "Dirección, música y visuales: Vicente Manzano · Beltrán Lihn",
+      "Fotografía, FOC Barcelona 2026: @aliciaganesha · @thelighttrace"
+    ],
+    "presentedAt": [
+      "The Festival of Consciousness (FOC), CCIB Barcelona, julio de 2026 — estreno",
+      "CULTVR Lab, Cardiff, Gales, septiembre de 2026 — estreno fulldome",
+      "FulldomeUK 2026, CULTVR Lab, Cardiff, Gales"
+    ]
+  },
+  "digital-sanctuaries": {
+    "format": "Bienestar inmersivo en VR",
+    "desc": "Salas de bienestar inmersivo en VR para hoteles, oficinas e instituciones. Sesiones guiadas de respiración, descanso y foco, de 3 a 15 minutos, en una sala que responde al estado fisiológico de quien está dentro.",
+    "body": [
+      "Digital Sanctuaries diseña e instala salas de bienestar en VR para hoteles, oficinas e instituciones. Sesiones guiadas de respiración, descanso y foco, de 3 a 15 minutos, en una sala que responde al estado fisiológico de quien está dentro. Un spin-off de Alma Digital Studio.",
+      "La sala se instala una vez y las experiencias se licencian, con contenido nuevo cada temporada. Cada sesión es corta a propósito: cabe entre dos reuniones o alrededor de un check-in, y permite que una sala reciba a mucha gente en un día.",
+      "El contenido lo firma un estudio de arte inmersivo, y el catálogo desciende de su propia obra, empezando por Soul Charger. En Barcelona se ha mostrado en la Barcelona Design Week y con Inner Canvas, dibujo 3D en realidad virtual para eventos de empresa.",
+      "Quince minutos en los que nada te pide nada."
+    ],
+    "credits": [
+      "Creación: Alma Digital Studio"
+    ],
+    "presentedAt": [
+      "Barcelona Design Week 2026",
+      "Inner Canvas — Barcelona, noviembre de 2026"
+    ]
   }
 }

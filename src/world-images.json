@@ -160,5 +160,59 @@
       "w": 360,
       "h": 640
     }
+  ],
+  "rito-digital": [
+    {
+      "src": "Asset/World/Rito Digital/1.webp",
+      "w": 768,
+      "h": 432
+    },
+    {
+      "src": "Asset/World/Rito Digital/2.webp",
+      "w": 768,
+      "h": 432
+    },
+    {
+      "src": "Asset/World/Rito Digital/3.webp",
+      "w": 768,
+      "h": 432
+    },
+    {
+      "src": "Asset/World/Rito Digital/4.webp",
+      "w": 768,
+      "h": 432
+    },
+    {
+      "src": "Asset/World/Rito Digital/5.webp",
+      "w": 768,
+      "h": 432
+    }
+  ],
+  "digital-sanctuaries": [
+    {
+      "src": "Asset/World/Digital Sanctuaries/1.webp",
+      "w": 768,
+      "h": 432
+    },
+    {
+      "src": "Asset/World/Digital Sanctuaries/2.webp",
+      "w": 768,
+      "h": 432
+    },
+    {
+      "src": "Asset/World/Digital Sanctuaries/3.webp",
+      "w": 768,
+      "h": 432
+    },
+    {
+      "src": "Asset/World/Digital Sanctuaries/4.webp",
+      "w": 768,
+      "h": 432
+    },
+    {
+      "src": "Asset/World/Digital Sanctuaries/5.webp",
+      "w": 768,
+      "h": 432
+    }
   ]
 }

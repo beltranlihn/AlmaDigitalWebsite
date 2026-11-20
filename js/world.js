@@ -756,13 +756,17 @@ export function mount(section, opts) {
   if (!stage || !host || !links.length) return null;
   const hudCount = q('[data-w-count]'), hudTitle = q('[data-w-title]'), hudFmt = q('[data-w-fmt]'), hudOpen = q('a[data-w-open]');
   const n = links.length;
-  const hudDesc = q('[data-w-desc]'), hudCta = q('[data-w-cta]'), chapter = q('[data-w-chapter]');
+  const hudDesc = q('[data-w-desc]'), hudCta = q('[data-w-cta]');
   const hudTags = q('[data-w-tags]'), hudWhere = q('[data-w-where]'), hudCredit = q('[data-w-credit]');
   /* Tramos del recorrido: uno entre cada par de paradas y uno más antes de la
      primera obra, que es el paso a "Obras seleccionadas". */
   const kinds = links.map((a) => a.getAttribute('data-kind') || 'work');
+  const WORKY = (k) => k === 'work' || k === 'spin';      // las obras y los spin-offs se recorren igual
   const FIRST = kinds.indexOf('work');
-  const slot = (i) => i + (FIRST > 0 && i >= FIRST ? 1 : 0);
+  /* Capítulos: "Obras seleccionadas" antes de la primera obra y "Spin-offs" antes del
+     primer spin-off. Cada uno suma un tramo de paso, con sus anillos y su título. */
+  const CHAPS = [['work', FIRST], ['spin', kinds.indexOf('spin')]].filter(([, at]) => at > 0);
+  const slot = (i) => i + CHAPS.filter(([, at]) => i >= at).length;
   const SLOTS = slot(n - 1);
   const ZFAR = -(15 + SLOTS * 10 + 40);            // hasta dónde llega el mundo
 
@@ -868,7 +872,7 @@ export function mount(section, opts) {
   blankSRGB.colorSpace = THREE.SRGBColorSpace; blankSRGB.needsUpdate = true;
   disposables.push(blankSRGB);
   function galaxy(a, i, pal) {
-    const k = kinds.slice(0, i).filter((x) => x === 'work').length;     // su lugar entre las obras
+    const k = kinds.slice(0, i).filter(WORKY).length;      // su lugar entre las obras
     const root = new THREE.Group(), orbit = new THREE.Group();
     root.visible = false; root.add(orbit); scene.add(root);
     const tilt = [0.36 + (k % 2) * 0.1, 0, (k % 2 ? -1 : 1) * 0.12];
@@ -943,9 +947,9 @@ export function mount(section, opts) {
     const pal = (list.length ? list : ['#c99ef9', '#f2b8dd', '#8fb0ff', '#ffffff']).map(hex);
     const stage = a.getAttribute('data-stage');
     const w = kinds[i] === 'reel' ? screen(a)
-      : (GAL && kinds[i] === 'work') ? galaxy(a, i, pal)
+      : (GAL && WORKY(kinds[i])) ? galaxy(a, i, pal)
       : ameba(geoBig, { seed: 2.3 + i * 1.9, wobble: 0.55, a: C.violet, b: C.blue, c: C.lilac, pal, stage: stage ? hex(stage) : null });
-    w.kind = kinds[i];                                     // 'studio', 'reel' o 'work'
+    w.kind = kinds[i];                                     // 'studio', 'reel', 'work' o 'spin'
     w.pal = pal; w.href = a.href; w.cover = a.getAttribute('data-cover') || '';
     w.title = a.getAttribute('data-title') || ''; w.format = a.getAttribute('data-format') || '';
     w.desc = a.getAttribute('data-desc') || ''; w.cta = a.getAttribute('data-cta') || '';
@@ -1040,12 +1044,11 @@ export function mount(section, opts) {
     works[i].swarm = { points: pts, u: m.uniforms, form: 0 };
   });
 
-  /* ── El paso a las obras: tres anillos de luz, como los del icono ───────
-     Van sobre el camino, entre la última parada del estudio y la primera obra
+  /* ── Los pasos de capítulo: tres anillos de luz, como los del icono ─────
+     Van sobre el camino, antes de la primera obra y antes del primer spin-off
      (layout() los ubica): la cámara los atraviesa mientras aparece el título
-     "Obras seleccionadas". Son puntos, con los mismos shaders del polvo. */
-  let gate = null;
-  if (FIRST > 0) {
+     ("Obras seleccionadas", "Spin-offs"). Son puntos, con los mismos shaders del polvo. */
+  function makeGate() {
     const RINGS = [3.9, 3.0, 2.15], PER = coarse ? 120 : 250, GN = RINGS.length * PER;
     const gPos = new Float32Array(GN * 3), gSize = new Float32Array(GN), gSeed = new Float32Array(GN), gTint = new Float32Array(GN);
     for (let k = 0; k < GN; k++) {
@@ -1073,8 +1076,10 @@ export function mount(section, opts) {
     gPts.frustumCulled = false; gPts.renderOrder = 1; gPts.visible = false;
     scene.add(gPts);
     disposables.push(gGeo, gMat);
-    gate = { points: gPts, u: gMat.uniforms };
+    return { points: gPts, u: gMat.uniforms };
   }
+  /* Uno por capítulo, con su título (el h2 [data-w-chapter="work"|"spin"] del HTML). */
+  const gates = CHAPS.map(([key, at]) => Object.assign({ key, at, t: -1, title: q(`[data-w-chapter="${key}"]`) || (key === 'work' ? q('[data-w-chapter]') : null) }, makeGate()));
 
   /* ── Hilos de luz ────────────────────────────────────────────────────── */
   const SK = coarse ? 22 : 52;
@@ -1150,7 +1155,7 @@ export function mount(section, opts) {
   const T_FIRST = clamp(1.4 / SCREENS, 0.05, 0.3), T_LAST = 1 - clamp(1.15 / SCREENS, 0.04, 0.3), T_DOOR = T_FIRST * 0.41;
   const tWork = (i) => (SLOTS === 0 ? 0.5 : lerp(T_FIRST, T_LAST, slot(i) / SLOTS));
   const HALF = SLOTS === 0 ? 0.2 : (T_LAST - T_FIRST) / SLOTS / 2;       // medio tramo
-  const T_CHAP = FIRST > 0 ? (tWork(FIRST - 1) + tWork(FIRST)) / 2 : -1;  // el paso a las obras
+  gates.forEach((g) => { g.t = (tWork(g.at - 1) + tWork(g.at)) / 2; });   // el medio de cada paso
   /* En cada parada la cámara se queda quieta durante un tramo del scroll (HOLD
      antes y después), así cuesta un poco más pasar a la siguiente. Además el
      navegador "imanta" el scroll a cada parada cuando uno suelta cerca de ella
@@ -1242,13 +1247,13 @@ export function mount(section, opts) {
     core.base.set(cx, cy, zc); core.r = cr;
     keys.push({ t: 1, pos: V(0, 0, zc + dc), look: V(0, 0, zc) });
     /* Los anillos del paso van sobre el camino, de frente a quien llega. */
-    if (gate) {
-      path(T_CHAP, tA, tB); path(T_CHAP - 0.004, tR, tB); path(T_CHAP + 0.004, tU, tB);
+    gates.forEach((g) => {
+      path(g.t, tA, tB); path(g.t - 0.004, tR, tB); path(g.t + 0.004, tU, tB);
       tmp.copy(tR).sub(tU).normalize();
-      gate.points.position.copy(tA);
-      gate.points.lookAt(tA.x + tmp.x, tA.y + tmp.y, tA.z + tmp.z);
-      gate.points.scale.setScalar(wide ? 1 : clamp(aspect * 1.25, 0.5, 1));
-    }
+      g.points.position.copy(tA);
+      g.points.lookAt(tA.x + tmp.x, tA.y + tmp.y, tA.z + tmp.z);
+      g.points.scale.setScalar(wide ? 1 : clamp(aspect * 1.25, 0.5, 1));
+    });
     if (still) draw(0);
   }
   const camPos = new THREE.Vector3(), camLook = new THREE.Vector3();
@@ -1482,10 +1487,11 @@ export function mount(section, opts) {
     if (i === shown) return;
     shown = i;
     if (i >= 0) {
-      const wk = works[i], isWork = wk.kind === 'work';
-      /* Las obras llevan su número; el estudio, su descripción; el reel, sólo el nombre y el botón. */
+      const wk = works[i], isWork = WORKY(wk.kind);
+      /* Las obras llevan su número; los spin-offs, sólo "Spin-off"; el estudio, su descripción;
+         el reel, sólo el nombre y el botón. */
       const num = String(works.slice(0, i + 1).filter((x) => x.kind === 'work').length).padStart(2, '0') + ' / ' + String(NW).padStart(2, '0');
-      if (hudCount) hudCount.textContent = isWork ? num + (wk.line ? ' · ' + wk.line : '') : (wk.kind === 'reel' ? wk.title : wk.format);
+      if (hudCount) hudCount.textContent = wk.kind === 'spin' ? wk.line : isWork ? num + (wk.line ? ' · ' + wk.line : '') : (wk.kind === 'reel' ? wk.title : wk.format);
       if (hudTitle) hudTitle.textContent = wk.title;
       if (hudFmt) { hudFmt.textContent = isWork ? wk.format : ''; hudFmt.hidden = !isWork; }
       if (hudDesc) { hudDesc.textContent = wk.desc; hudDesc.hidden = !wk.desc; }
@@ -1565,14 +1571,15 @@ export function mount(section, opts) {
     setOpacity(dots, entering ? 0 : deep);
     /* El paso a las obras: el título aparece en el medio del tramo, mientras se cruzan los anillos. */
     const S2 = HALF * 2;
-    if (chapter) setOpacity(chapter, entering || T_CHAP < 0 ? 0 : smooth(T_CHAP - S2 * 0.55, T_CHAP - S2 * 0.2, ps) * (1 - smooth(T_CHAP + S2 * 0.2, T_CHAP + S2 * 0.55, ps)));
-    if (gate) {
+    gates.forEach((gate) => {
+      const T = gate.t;
+      if (gate.title) setOpacity(gate.title, entering ? 0 : smooth(T - S2 * 0.55, T - S2 * 0.2, ps) * (1 - smooth(T + S2 * 0.2, T + S2 * 0.55, ps)));
       const gu = gate.u;
-      const go = entering ? 0 : smooth(T_CHAP - S2 * 0.8, T_CHAP - S2 * 0.45, ps) * (1 - smooth(T_CHAP + S2 * 0.3, T_CHAP + S2 * 0.6, ps));
+      const go = entering ? 0 : smooth(T - S2 * 0.8, T - S2 * 0.45, ps) * (1 - smooth(T + S2 * 0.3, T + S2 * 0.6, ps));
       gu.uDeep.value = go; gu.uTime.value = still ? 0 : time; gu.uBoost.value = vel * 0.35;
       gu.uPush.value = push; gu.uMouse.value.set(mouse.sx, mouse.sy);
       gate.points.visible = go > 0.01;
-    }
+    });
 
     /* Cámara. */
     path(ps);
@@ -1632,7 +1639,9 @@ export function mount(section, opts) {
     door.u.uWobble.value = door.wob * (1 + stir);
     door.u.uOpacity.value = place(door, still ? 1 : 1 + 0.03 * Math.sin(time * TAU / 6), 1) * (1 - smooth(T_DOOR * 0.72, T_DOOR, ps));
     door.mesh.visible = door.u.uOpacity.value > 0.01;
-    core.u.uOpacity.value = place(core, 1, 0.8);
+    /* La ameba del final aparece recién al dejar la última parada: antes se veía de lejos,
+       detrás de la galaxia o de la ficha de vidrio de la última obra. */
+    core.u.uOpacity.value = place(core, 1, 0.8) * smooth(tWork(n - 1) + HALF * 0.3, tWork(n - 1) + HALF * 1.1, ps);
     core.mesh.visible = core.u.uOpacity.value > 0.01;
     core.u.uGlow.value = 0.35; core.u.uWobble.value = core.wob * (1 + stir);
     works.forEach((wk, i) => {
@@ -1687,7 +1696,7 @@ export function mount(section, opts) {
       });
       return room;
     };
-    /* La ameba del final se ve de lejos desde la última obra: también le deja lugar. */
+    /* La ameba del final, si ya asoma, también le deja lugar a la galaxia. */
     if (core.mesh.visible && gals.length) {
       core.u.uOpacity.value *= roomOf(core.mesh);
       core.mesh.visible = core.u.uOpacity.value > 0.01;

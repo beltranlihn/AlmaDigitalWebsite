@@ -44,7 +44,11 @@
     "reel": {
       "src": "Asset/Reel Portfolio/Reel Flotante.mp4",
       "srcMobile": "Asset/Reel Portfolio/Reel Flotante Vertical.mp4"
-    }
+    },
+    "spinoffs": [
+      "rito-digital",
+      "digital-sanctuaries"
+    ]
   },
   "sound": {
     "enabled": true,
@@ -271,6 +275,28 @@
         "#b4beff",
         "#ffffff"
       ]
+    },
+    "rito-digital": {
+      "formation": "pulse",
+      "stage": "#120607",
+      "colors": [
+        "#d4281f",
+        "#efe7dc",
+        "#b8642e",
+        "#ff6a3d",
+        "#7a1410"
+      ]
+    },
+    "digital-sanctuaries": {
+      "formation": "halo",
+      "stage": "#0a0a09",
+      "colors": [
+        "#f2f0ec",
+        "#8e8d88",
+        "#6b4fd1",
+        "#e8a33d",
+        "#f2f0ec"
+      ]
     }
   },
   "legacyPages": {
@@ -314,6 +340,10 @@
     "commission": {
       "en": "Commissions",
       "es": "Encargos"
+    },
+    "spinoff": {
+      "en": "Spin-offs",
+      "es": "Spin-offs"
     }
   },
   "formatsDesc": {
@@ -355,7 +385,10 @@
     "Sensores de movimiento": "Motion sensors",
     "Sala 360": "360 room",
     "Efectos GPU": "GPU effects",
-    "Audiorreactivo": "Audio-reactive"
+    "Audiorreactivo": "Audio-reactive",
+    "Set en vivo": "Live set",
+    "Sonido espacial": "Spatial sound",
+    "Respiración guiada": "Guided breathing"
   },
   "proof": [
     "IDB",
@@ -521,7 +554,10 @@
       "worldListLabel": "Works in this journey",
       "worldWhere": "Presented at",
       "pParticlesHint": "Drag to turn · Click to scatter",
-      "pParticlesHintTouch": "Swipe to turn · Tap to scatter"
+      "pParticlesHintTouch": "Swipe to turn · Tap to scatter",
+      "pSpinoff": "Spin-off",
+      "pPhoto": "Photo",
+      "spinTitle": "Studio *spin-offs*"
     },
     "es": {
       "langName": "Español",
@@ -649,7 +685,10 @@
       "worldListLabel": "Obras del recorrido",
       "worldWhere": "Presentada en",
       "pParticlesHint": "Arrastra para girar · Clic para dispersar",
-      "pParticlesHintTouch": "Desliza para girar · Toca para dispersar"
+      "pParticlesHintTouch": "Desliza para girar · Toca para dispersar",
+      "pSpinoff": "Spin-off",
+      "pPhoto": "Foto",
+      "spinTitle": "Spin-offs *del estudio*"
     }
   }
 }

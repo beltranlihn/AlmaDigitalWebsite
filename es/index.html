@@ -35,7 +35,7 @@
 (function(){var T='ee88c2886dd4410694851f5bfea47a74';if(!T)return;var s=document.createElement('script');s.type='module';s.src='https://static.cloudflareinsights.com/beacon.min.js';s.setAttribute('data-cf-beacon',JSON.stringify({token:T}));document.head.appendChild(s);})();
 </script>
 <style>@media (prefers-reduced-motion: no-preference){@view-transition{navigation:auto}}</style>
-<link rel="stylesheet" href="../css/site.css?v=ed784393">
+<link rel="stylesheet" href="../css/site.css?v=1145d175">
 <!-- En el tema claro las partículas del cursor se tiñen de tinta con un filtro del
      propio documento; va acá porque url(#id) desde un CSS externo no es confiable. -->
 <style>html[data-theme="aura"] .cursor-particle{filter:url(#cursor-ink)}</style>
@@ -61,7 +61,7 @@
   </nav>
 </header>
 <main class="page" id="main">
-<section class="world world--flat" data-world data-stops="galaxy" aria-labelledby="world-title" style="--n:8">
+<section class="world world--flat" data-world data-stops="galaxy" aria-labelledby="world-title" style="--n:11">
   <div class="world__stage">
     <div class="world__depth" aria-hidden="true"></div>
     <div class="world__canvas" aria-hidden="true"></div>
@@ -100,7 +100,9 @@
   </div>
     </div>
     <!-- El paso a las obras: en el recorrido aparece entre el reel y la primera ameba. -->
-    <h2 class="world__chapter" data-w-chapter>Obras <em>seleccionadas</em></h2>
+    <h2 class="world__chapter" data-w-chapter="work">Obras <em>seleccionadas</em></h2>
+    <!-- El paso a los spin-offs: después de la última obra. -->
+    <h2 class="world__chapter" data-w-chapter="spin">Spin-offs <em>del estudio</em></h2>
     <!-- Cierre: el resto de las obras, el estudio y el contacto. -->
     <div class="world__end">
       <h2>Hay <em>más</em> adentro.</h2>
@@ -158,6 +160,18 @@
         <img loading="lazy" decoding="async" width="1920" height="1080" src="../Asset/Commisions/Pacha/3%20Portada.webp" alt="">
         <span class="wcard__t"><b>Pacha Ibiza</b><span>Instalación interactiva</span></span>
       </a></li>
+      <li><a class="wcard" data-w-item data-kind="spin" href="../es/work/rito-digital.html" data-cover="../Asset/Studio%20Projects/Rito%20Digital/2%20Portada.webp" data-title="Rito Digital" data-format="Concert-film" data-form="pulse" data-colors="#d4281f,#efe7dc,#b8642e,#ff6a3d,#7a1410" data-stage="#120607"
+        data-desc="Un concert-film de 60 minutos de Alma Digital Studio: animación de stop-motion realista y techno ceremonial en ocho canciones." data-tags="Fulldome|Stop-motion|Set en vivo|Sonido espacial" data-where="The Festival of Consciousness · CULTVR Lab, Cardiff, Gales, septiembre de 2026 +1" data-line="Spin-off" data-credit=""
+        data-icon="speaker" data-gallery="../Asset/World/Rito%20Digital/1.webp|1.778,../Asset/World/Rito%20Digital/2.webp|1.778,../Asset/World/Rito%20Digital/3.webp|1.778,../Asset/World/Rito%20Digital/4.webp|1.778,../Asset/World/Rito%20Digital/5.webp|1.778">
+        <img loading="lazy" decoding="async" width="1920" height="1080" src="../Asset/Studio%20Projects/Rito%20Digital/2%20Portada.webp" alt="">
+        <span class="wcard__t"><b>Rito Digital</b><span>Concert-film</span></span>
+      </a></li>
+      <li><a class="wcard" data-w-item data-kind="spin" href="../es/work/digital-sanctuaries.html" data-cover="../Asset/Studio%20Projects/Digital%20Sanctuaries/2%20Portada.webp" data-title="Digital Sanctuaries" data-format="Bienestar inmersivo en VR" data-form="halo" data-colors="#f2f0ec,#8e8d88,#6b4fd1,#e8a33d,#f2f0ec" data-stage="#0a0a09"
+        data-desc="Salas de bienestar inmersivo en VR para hoteles, oficinas e instituciones." data-tags="VR|Biofeedback|Respiración guiada|Sonido espacial" data-where="Barcelona Design Week 2026 · Inner Canvas" data-line="Spin-off" data-credit=""
+        data-icon="headset" data-gallery="../Asset/World/Digital%20Sanctuaries/1.webp|1.778,../Asset/World/Digital%20Sanctuaries/2.webp|1.778,../Asset/World/Digital%20Sanctuaries/3.webp|1.778,../Asset/World/Digital%20Sanctuaries/4.webp|1.778,../Asset/World/Digital%20Sanctuaries/5.webp|1.778">
+        <img loading="lazy" decoding="async" width="1920" height="1080" src="../Asset/Studio%20Projects/Digital%20Sanctuaries/2%20Portada.webp" alt="">
+        <span class="wcard__t"><b>Digital Sanctuaries</b><span>Bienestar inmersivo en VR</span></span>
+      </a></li>
     </ol>
   </div>
 </section>
@@ -194,7 +208,7 @@
   <img class="ameba__fallback" src="../Asset/Logo%20Studio/Version%202/Logo.webp" alt="" width="1920" height="1080">
   <canvas id="ameba"></canvas>
 </div>
-<script type="application/json" id="alma-data">{"lang":"es","email":"vicente@almadigitalstudio.com","endpoint":"https://formspree.io/f/xkopqoyl","legacy":["soul-charger.html"],"t":{"modalSend":"Enviar mensaje","modalSending":"Enviando…","modalSent":"Enviado","modalOk":"Gracias, tu mensaje fue enviado. Te responderemos pronto.","modalFail":"No se pudo enviar tu mensaje. Inténtalo de nuevo o escribe a","modalFill":"Completa todos los campos.","modalBadEmail":"Ingresa un correo válido.","modalAbout":"Sobre","indexCount":"{n} obras","indexCountOne":"1 obra","indexAll":"Obras seleccionadas","reelSound":"Ver con sonido","reelMute":"Silenciar","reelUnmute":"Activar sonido","reelClose":"Cerrar video","lbClose":"Cerrar","lbPrev":"Anterior","lbNext":"Siguiente","lbZoom":"Zoom","lbZoomOut":"Alejar","lbHint":"← → para navegar · Esc para salir","lbLabel":"Galería ampliada","breathStart":"Respira con ella","breathStop":"Detener","breathIn":"Inhala","breathOut":"Exhala","breathEnd":"Gracias por respirar con nosotros."},"sound":{"src":"Asset/Audio/breath-loop.m4a","level":0.55},"world":{"stops":"galaxy"},"v":{"world":"870f767a","particles":"5d416c7a"}}</script>
+<script type="application/json" id="alma-data">{"lang":"es","email":"vicente@almadigitalstudio.com","endpoint":"https://formspree.io/f/xkopqoyl","legacy":["soul-charger.html"],"t":{"modalSend":"Enviar mensaje","modalSending":"Enviando…","modalSent":"Enviado","modalOk":"Gracias, tu mensaje fue enviado. Te responderemos pronto.","modalFail":"No se pudo enviar tu mensaje. Inténtalo de nuevo o escribe a","modalFill":"Completa todos los campos.","modalBadEmail":"Ingresa un correo válido.","modalAbout":"Sobre","indexCount":"{n} obras","indexCountOne":"1 obra","indexAll":"Obras seleccionadas","reelSound":"Ver con sonido","reelMute":"Silenciar","reelUnmute":"Activar sonido","reelClose":"Cerrar video","lbClose":"Cerrar","lbPrev":"Anterior","lbNext":"Siguiente","lbZoom":"Zoom","lbZoomOut":"Alejar","lbHint":"← → para navegar · Esc para salir","lbLabel":"Galería ampliada","breathStart":"Respira con ella","breathStop":"Detener","breathIn":"Inhala","breathOut":"Exhala","breathEnd":"Gracias por respirar con nosotros."},"sound":{"src":"Asset/Audio/breath-loop.m4a","level":0.55},"world":{"stops":"galaxy"},"v":{"world":"5008a7bb","particles":"5d416c7a"}}</script>
 <script>window.__ALMA__=JSON.parse(document.getElementById('alma-data').textContent);</script>
 <script src="../js/fluid.js?v=0dbef8cb"></script>
 <script src="../js/cursor.js?v=477b7a02"></script>

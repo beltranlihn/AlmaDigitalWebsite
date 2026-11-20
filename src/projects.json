@@ -982,6 +982,128 @@
       "press": [],
       "formatKey": "dome",
       "reelImage": "Asset/Commisions/LPS/Reel LPS.webp"
+    },
+    {
+      "slug": "rito-digital",
+      "title": "Rito Digital",
+      "format": "Concert film",
+      "track": "spinoff",
+      "cover": "Asset/Studio Projects/Rito Digital/2 Portada.webp",
+      "video": "Asset/Studio Projects/Rito Digital/Rito Digital Reel Fulldome.mp4",
+      "photos": [
+        "Asset/Studio Projects/Rito Digital/1.webp",
+        "Asset/Studio Projects/Rito Digital/2 Portada.webp",
+        "Asset/Studio Projects/Rito Digital/3.webp",
+        "Asset/Studio Projects/Rito Digital/4.webp",
+        "Asset/Studio Projects/Rito Digital/5.webp",
+        "Asset/Studio Projects/Rito Digital/6.webp",
+        "Asset/Studio Projects/Rito Digital/7.webp",
+        "Asset/Studio Projects/Rito Digital/8.webp"
+      ],
+      "desc": "A 60-minute concert film by Alma Digital Studio: realistic stop-motion animation and ceremonial techno across eight songs. It premiered at FOC — The Festival of Consciousness, Barcelona, in 2026.",
+      "commissionedBy": "",
+      "presentedAt": [
+        "The Festival of Consciousness (FOC), CCIB Barcelona, July 2026 — premiere",
+        "CULTVR Lab, Cardiff, Wales, September 2026 — fulldome premiere",
+        "FulldomeUK 2026, CULTVR Lab, Cardiff, Wales"
+      ],
+      "credits": [
+        "A work by Alma Digital Studio",
+        "Direction, music and visuals: Vicente Manzano · Beltrán Lihn",
+        "Photography, FOC Barcelona 2026: @aliciaganesha · @thelighttrace"
+      ],
+      "palette": [
+        "#0b0505",
+        "#0b0505",
+        "#1a0807",
+        "#7a1410",
+        "#d4281f",
+        "#b8642e",
+        "#ff6a3d",
+        "#efe7dc",
+        "#7a1410"
+      ],
+      "back": "#2a0d0b",
+      "body": [
+        "Rito Digital is a 60-minute concert film —a prologue and eight songs— created by Alma Digital Studio. It premiered at FOC — The Festival of Consciousness, CCIB Barcelona, in July 2026, and also exists as a fulldome version and a live show.",
+        "Donzio crosses two worlds, from the System to the Rite, meeting the families of beings that inhabit them. It is animated in realistic stop-motion: tactile silicone creature-puppets in a weathered retrofuturist world, with diorama depth, ritual symmetry and 35mm grain, composed with generative imagery directed frame by frame. The score is ceremonial techno with experimental vocal processing.",
+        "The fulldome version premiered at CULTVR Lab in Cardiff in September 2026 and returned to the same dome for FulldomeUK in October.",
+        "Eight songs and a procession."
+      ],
+      "tech": [
+        "Fulldome",
+        "Stop-motion",
+        "Set en vivo",
+        "Sonido espacial"
+      ],
+      "year": "2026",
+      "press": [],
+      "formatKey": "performance",
+      "verticals": [
+        "Asset/Studio Projects/Rito Digital/Rito Digital Aftermovie FOC.mp4"
+      ],
+      "website": "https://www.ritodigital.com",
+      "photoCredits": {
+        "Asset/Studio Projects/Rito Digital/1.webp": "@aliciaganesha",
+        "Asset/Studio Projects/Rito Digital/5.webp": "@thelighttrace",
+        "Asset/Studio Projects/Rito Digital/8.webp": "@thelighttrace"
+      }
+    },
+    {
+      "slug": "digital-sanctuaries",
+      "title": "Digital Sanctuaries",
+      "format": "Immersive wellbeing in VR",
+      "track": "spinoff",
+      "cover": "Asset/Studio Projects/Digital Sanctuaries/2 Portada.webp",
+      "video": "Asset/Studio Projects/Digital Sanctuaries/Digital Sanctuaries Reel.mp4",
+      "photos": [
+        "Asset/Studio Projects/Digital Sanctuaries/1.webp",
+        "Asset/Studio Projects/Digital Sanctuaries/2 Portada.webp",
+        "Asset/Studio Projects/Digital Sanctuaries/3.webp",
+        "Asset/Studio Projects/Digital Sanctuaries/4.webp",
+        "Asset/Studio Projects/Digital Sanctuaries/5.webp",
+        "Asset/Studio Projects/Digital Sanctuaries/6.webp",
+        "Asset/Studio Projects/Digital Sanctuaries/7.webp",
+        "Asset/Studio Projects/Digital Sanctuaries/8.webp",
+        "Asset/Studio Projects/Digital Sanctuaries/9.webp"
+      ],
+      "desc": "Immersive wellbeing rooms in VR for hotels, offices and institutions. Guided breathing, rest and focus sessions, from 3 to 15 minutes, in a room that responds to the physiological state of whoever is inside.",
+      "commissionedBy": "",
+      "presentedAt": [
+        "Barcelona Design Week 2026",
+        "Inner Canvas — Barcelona, November 2026"
+      ],
+      "credits": [
+        "Created by: Alma Digital Studio"
+      ],
+      "palette": [
+        "#0a0a09",
+        "#0a0a09",
+        "#161614",
+        "#3a3936",
+        "#6b4fd1",
+        "#8e8d88",
+        "#e8a33d",
+        "#f2f0ec",
+        "#3a3936"
+      ],
+      "back": "#1c1b19",
+      "body": [
+        "Digital Sanctuaries designs and installs VR wellbeing rooms for hotels, offices and institutions. Guided breathing, rest and focus sessions, from 3 to 15 minutes, in a room that responds to the physiological state of whoever is inside. A spin-off of Alma Digital Studio.",
+        "The room is installed once and the experiences are licensed, with new content every season. Each session is short by design: it fits between two meetings or around a check-in, and lets one room welcome many people in a day.",
+        "The content is made by an immersive art studio, and the catalogue descends from the studio's own work, beginning with Soul Charger. In Barcelona it has been shown at Barcelona Design Week and with Inner Canvas, 3D drawing in VR for company events.",
+        "Fifteen minutes in which nothing asks anything of you."
+      ],
+      "tech": [
+        "VR",
+        "Biofeedback",
+        "Respiración guiada",
+        "Sonido espacial"
+      ],
+      "year": "",
+      "press": [],
+      "formatKey": "vr",
+      "website": "https://www.almadigitalsanctuaries.com"
     }
   ]
 }

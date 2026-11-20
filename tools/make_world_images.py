@@ -14,7 +14,8 @@ imágenes que orbitan alrededor de un ícono 3D. No se usan las fotos originales
 
 Escribe Asset/World/<obra>/ y la lista en src/world-images.json, que lee
 src/build.mjs. Volver a correrlo cuando cambien las fotos de una obra
-seleccionada (site.json → world.works, o featured si está vacío), y después
+seleccionada (site.json → world.works, o featured si está vacío) o spin-off
+(world.spinoffs), y después
 `node src/build.mjs`.
 
 Requiere Pillow. No se publica (tools/deploy_copy.py sólo copia lo que la web usa).
@@ -78,6 +79,7 @@ def main():
     site = json.load(open('src/site.json', encoding='utf-8'))
     projects = {p['slug']: p for p in json.load(open('src/projects.json', encoding='utf-8'))['projects']}
     slugs = (site.get('world') or {}).get('works') or site['featured']
+    slugs = slugs + [s for s in (site.get('world') or {}).get('spinoffs', []) if s not in slugs]   # y los spin-offs del recorrido
     out = {}
     for slug in slugs:
         p = projects[slug]
