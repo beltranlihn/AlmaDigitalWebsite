@@ -745,7 +745,10 @@ const heartbeat = (t) => { const p = t % 1, a = (p - 0.08) / 0.045, b = (p - 0.3
 export function mount(section, opts) {
   opts = opts || {};
   const reduce = !!opts.reduce, coarse = !!opts.coarse, sound = opts.sound || null;
-  const GAL = opts.stops === 'galaxy';     // las obras como galaxias de imágenes, en vez de amebas
+  /* Las paradas de las obras: "ameba" (una ameba sola), "galaxy" (fotos en órbita alrededor
+     de la ameba de la obra) o "icons" (fotos en órbita alrededor de un ícono 3D). */
+  const GAL = opts.stops === 'galaxy' || opts.stops === 'icons';
+  const ICONIC = opts.stops === 'icons';
   const q = (s) => section.querySelector(s);
   const stage = q('.world__stage'), host = q('.world__canvas');
   const intro = q('.world__intro'), hud = q('.world__hud'), end = q('.world__end'), dots = q('.world__dots');
@@ -822,16 +825,17 @@ export function mount(section, opts) {
     };
   }
   const hex = (c) => { const h = c.trim().replace('#', ''); return [0, 2, 4].map((k) => parseInt(h.substr(k, 2), 16) / 255); };
-  /* Una galaxia: el ícono al centro y las imágenes en un disco inclinado alrededor.
-     root lleva la posición y la escala; orbit, la inclinación del disco. */
+  /* Una galaxia: la ameba de la obra (o un ícono 3D) al centro y las imágenes en un disco
+     inclinado alrededor. root lleva la posición y la escala; orbit, la inclinación del disco. */
   const RX = 2.4, RZ = 1.5;            // radios del disco
   const ICON_Y = 0.42;                 // el ícono flota un poco por encima del disco, como un planeta sobre su anillo
+  const BLOB_R = 0.95, BLOB_Y = 0.28;  // la ameba del centro: su radio y su altura sobre el disco
   const cardGeo = new THREE.PlaneGeometry(1, 1, 24, 1);
   disposables.push(cardGeo);
   /* La luz de los íconos: un entorno de estudio (reflejos suaves, sin lámparas
      que cuidar). Sólo hace falta con las galaxias. Afecta únicamente a los
      materiales físicos: las amebas, el polvo y las imágenes tienen sus propios shaders. */
-  if (GAL) {
+  if (ICONIC) {
     const pmrem = new THREE.PMREMGenerator(renderer), room = new RoomEnvironment();
     const env = pmrem.fromScene(room, 0.04).texture;
     scene.environment = env;
@@ -877,7 +881,7 @@ export function mount(section, opts) {
     const P0 = pal[0], P1 = pal[Math.min(1, pal.length - 1)], P2 = pal[Math.min(2, pal.length - 1)];
     const mats = [];
     const mk = (Ctor, o, base) => { const m = new Ctor({ transparent: true, opacity: 0, ...o }); m.userData.base = base == null ? 1 : base; mats.push(m); disposables.push(m); return m; };
-    const M = {
+    const M = !ICONIC ? null : {                           // sólo hacen falta para el ícono
       shell: mk(THREE.MeshPhysicalMaterial, { color: col(lift(P0, 0.62)), metalness: 0.1, roughness: 0.2, clearcoat: 1, clearcoatRoughness: 0.08, iridescence: 0.9, iridescenceIOR: 1.35, iridescenceThicknessRange: [160, 640], envMapIntensity: 1.3 }),
       dark: mk(THREE.MeshPhysicalMaterial, { color: col(deep(P0, 0.22)), metalness: 0.2, roughness: 0.38, clearcoat: 0.6, clearcoatRoughness: 0.25 }),
       glass: mk(THREE.MeshPhysicalMaterial, { color: col([0.05, 0.035, 0.12]), metalness: 0.55, roughness: 0.05, clearcoat: 1, clearcoatRoughness: 0.02, envMapIntensity: 1.6 }),
@@ -899,9 +903,18 @@ export function mount(section, opts) {
       screens.push({ mat: m, j });
       return m;
     };
-    const kind = a.getAttribute('data-icon') || 'prism';
-    const icon = makeIcon(kind, M, S);
-    root.add(icon);
+    /* Al centro: la ameba de la obra, con el arte de sus colores, o su ícono 3D. */
+    const kind = ICONIC ? a.getAttribute('data-icon') || 'prism' : '';
+    const icon = ICONIC ? makeIcon(kind, M, S) : null;
+    let blob = null;
+    if (icon) root.add(icon);
+    else {
+      const stage = a.getAttribute('data-stage');
+      blob = ameba(geoBig, { seed: 2.3 + i * 1.9, wobble: 0.55, a: C.violet, b: C.blue, c: C.lilac, pal, stage: stage ? hex(stage) : null });
+      scene.remove(blob.mesh);
+      blob.mesh.renderOrder = 1;                           // antes que las imágenes: las de atrás quedan tapadas
+      root.add(blob.mesh);
+    }
     const list = (a.getAttribute('data-gallery') || '').split(',').filter(Boolean).map((x) => { const [src, ar] = x.split('|'); return { src, ar: parseFloat(ar) || 16 / 9 }; });
     screens.forEach((sc) => { sc.j = list.length ? sc.j % list.length : 0; });
     const cards = list.map((c, j) => {
@@ -917,7 +930,7 @@ export function mount(section, opts) {
       return { mesh, u: mat.uniforms, src: c.src, w, h: w / c.ar, ang: (j / list.length) * TAU2 + k * 0.9, lift: rnd(-0.3, 0.3), rad: rnd(0.88, 1.08), size: rnd(0.9, 1.12), has: 0, hasTo: 0 };
     });
     return {
-      gal: true, mesh: root, orbit, icon, cards, mats, screens, tilt, beat: kind === 'pulse', swing: SWING[kind] || 0,
+      gal: true, mesh: root, orbit, icon, blob, cards, mats, screens, tilt, beat: kind === 'pulse', swing: SWING[kind] || 0,
       u: { uOpacity: { value: 0 } }, base: new THREE.Vector3(), r: 1, gs: 1, hitR: 3, seed: 2.3 + i * 1.9,
       far: 30, hov: 0, spin: 0, loaded: false,
     };
@@ -1216,7 +1229,7 @@ export function mount(section, opts) {
         /* En pantallas angostas la galaxia se achica hasta entrar a lo ancho. */
         const halfW = TAN * d * aspect;
         wk.gs = wide ? 1 : clamp((1.08 * halfW) / (RX + 0.9), 0.35, 1);   // en teléfono las imágenes de los lados pueden asomarse un poco fuera
-        wk.r = 0.9 * wk.gs; wk.hitR = (RX + 0.55) * wk.gs; wk.side = wide ? side : 0;
+        wk.r = (wk.blob ? BLOB_R : 0.9) * wk.gs; wk.hitR = (RX + 0.55) * wk.gs; wk.side = wide ? side : 0;
       } else { wk.r = R; wk.side = wide ? side : 0; }
       keys.push({ t: tWork(i), hold: HOLD, pos: P, look: P.clone().addScaledVector(f, 10), arc: V(wide ? -side * 0.9 : 0, (i % 2 ? 1 : -1) * (wide ? 1.0 : 0.5), 0) });
     });
@@ -1371,15 +1384,29 @@ export function mount(section, opts) {
     if (!still) wk.spin += dt * (0.07 + vel * 0.3 + wk.hov * 0.05);
     root.scale.setScalar(wk.gs * (1 + 0.04 * wk.hov));
     root.rotation.set(still ? 0 : -mouse.sy * 0.08, still ? 0 : mouse.sx * 0.22, 0);   // se inclina hacia el cursor
-    /* El ícono gira despacio y respira; el corazón, además, late. */
-    const ic = wk.icon;
-    /* Gira entero, o se mece si se ve mejor de frente. */
-    ic.rotation.y = still ? 0.35 : wk.swing ? 0.3 + Math.sin(time * 0.33 + wk.seed) * wk.swing : time * 0.32 + wk.seed;
-    ic.rotation.x = still ? 0.06 : 0.06 + Math.sin(time * 0.4 + wk.seed) * 0.07;
-    ic.position.y = ICON_Y + (still ? 0 : Math.sin(time * TAU / 6) * 0.07);
-    const beat = wk.beat && !still ? 1 + 0.07 * heartbeat(time * 62 / 60) : 1;
-    ic.scale.setScalar(ic.userData.fit * (0.88 + 0.12 * gather) * (1 + 0.06 * wk.hov) * beat);
-    wk.mats.forEach((m) => { m.opacity = m.userData.base * o; });
+    if (wk.icon) {
+      /* El ícono gira despacio y respira; el corazón, además, late. */
+      const ic = wk.icon;
+      /* Gira entero, o se mece si se ve mejor de frente. */
+      ic.rotation.y = still ? 0.35 : wk.swing ? 0.3 + Math.sin(time * 0.33 + wk.seed) * wk.swing : time * 0.32 + wk.seed;
+      ic.rotation.x = still ? 0.06 : 0.06 + Math.sin(time * 0.4 + wk.seed) * 0.07;
+      ic.position.y = ICON_Y + (still ? 0 : Math.sin(time * TAU / 6) * 0.07);
+      const beat = wk.beat && !still ? 1 + 0.07 * heartbeat(time * 62 / 60) : 1;
+      ic.scale.setScalar(ic.userData.fit * (0.88 + 0.12 * gather) * (1 + 0.06 * wk.hov) * beat);
+      wk.mats.forEach((m) => { m.opacity = m.userData.base * o; });
+    } else {
+      /* La ameba de la obra: respira cada 6 s, se hincha bajo el cursor y se agita al avanzar
+         rápido, como las del modo ameba. Su arte se enfoca al llegar. */
+      const b = wk.blob, bu = b.u;
+      b.mesh.position.set(0, BLOB_Y + (still ? 0 : Math.sin(time * TAU / 6) * 0.06), 0);
+      b.mesh.scale.setScalar(BLOB_R * (0.9 + 0.1 * gather) * (1 + 0.06 * wk.hov) * (still ? 1 : 1 + 0.025 * Math.sin(time * TAU / 6)));
+      bu.uTime.value = still ? b.seed : time * 0.7;
+      bu.uOpacity.value = o;
+      bu.uFocus.value = gather;
+      bu.uGlow.value = 0.6 * wk.hov;
+      bu.uLook.value.set(mouse.sx * 0.07, mouse.sy * 0.07);
+      bu.uWobble.value = b.wob * (1 + 0.6 * wk.hov + vel * 0.8 + pulse * 0.5);
+    }
     /* Las imágenes: en órbita, siempre de frente a quien mira, con un giro leve según dónde estén. */
     wk.orbit.updateMatrixWorld(true);
     wk.orbit.getWorldQuaternion(qInv); qInv.invert();
@@ -1391,7 +1418,7 @@ export function mount(section, opts) {
       c.mesh.scale.set(c.w * c.size, c.h * c.size, 1);
       c.has += (c.hasTo - c.has) * (still ? 1 : 0.08);
       const front = 0.5 + 0.5 * Math.sin(a);                         // 1 adelante, 0 atrás
-      /* La que pasa justo por delante del ícono se aclara un poco, para no taparlo. */
+      /* La que pasa justo por delante del centro (la ameba o el ícono) se aclara un poco, para no taparlo. */
       const veilIcon = smooth(0.55, 0.95, front) * (1 - smooth(0.2, 0.55, Math.abs(Math.cos(a))));
       c.u.uHas.value = c.has;
       c.u.uFocus.value = 0.5 + 0.5 * front;
@@ -1639,7 +1666,8 @@ export function mount(section, opts) {
       wk.u.uWobble.value = wk.wob * (1 + 0.6 * wk.hov + stir);
     });
     /* Las amebas de fondo se apagan donde se cruzan, en pantalla, con la galaxia que se está
-       mirando (si están delante de ella o a su altura): si no, le pasan por encima. */
+       mirando: si no, le pasan por encima o se confunden con la ameba del centro. Con un ícono
+       al centro, sólo las que están delante o a su altura. */
     const gals = [];
     if (GAL) works.forEach((wk) => {
       if (!wk.gal || !wk.mesh.visible) return;
@@ -1648,18 +1676,26 @@ export function mount(section, opts) {
       tmp.copy(wk.mesh.position).project(camera);
       gals.push({ x: tmp.x * camera.aspect, y: tmp.y, depth, rad: ((RX + 1.1) * wk.gs) / (depth * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2))) });
     });
+    const roomOf = (m) => {
+      let room = 1;
+      if (!gals.length) return room;
+      const depth = -tmp.copy(m.position).applyMatrix4(camera.matrixWorldInverse).z;
+      tmp.copy(m.position).project(camera);
+      gals.forEach((g) => {
+        if (ICONIC && depth > g.depth + RX) return;                // muy por detrás de un ícono no molesta; de una ameba, sí (se confundirían)
+        room = Math.min(room, smooth(g.rad * 0.95, g.rad * 1.65, Math.hypot(tmp.x * camera.aspect - g.x, tmp.y - g.y)));
+      });
+      return room;
+    };
+    /* La ameba del final se ve de lejos desde la última obra: también le deja lugar. */
+    if (core.mesh.visible && gals.length) {
+      core.u.uOpacity.value *= roomOf(core.mesh);
+      core.mesh.visible = core.u.uOpacity.value > 0.01;
+    }
     extras.forEach((e) => {
       e.u.uWobble.value = e.wob * (1 + stir);
       const o = place(e, 1, 1);
-      let room = 1;
-      if (gals.length && o > 0.01) {
-        const depth = -tmp.copy(e.mesh.position).applyMatrix4(camera.matrixWorldInverse).z;
-        tmp.copy(e.mesh.position).project(camera);
-        gals.forEach((g) => {
-          if (depth > g.depth + RX) return;                         // muy por detrás de la galaxia: no molesta
-          room = Math.min(room, smooth(g.rad * 0.95, g.rad * 1.65, Math.hypot(tmp.x * camera.aspect - g.x, tmp.y - g.y)));
-        });
-      }
+      const room = o > 0.01 ? roomOf(e.mesh) : 1;
       e.u.uOpacity.value = o * deep * room * (entering ? 1 - entering.t : 1);
       e.mesh.visible = e.u.uOpacity.value > 0.01;
     });
@@ -1727,10 +1763,11 @@ export function mount(section, opts) {
     /* La del estudio lleva a una página clara, no a una ficha: no hay derrame que valga. */
     if (still || works[i].kind === 'studio') { if (opts.navigate) opts.navigate(works[i].href); return; }
     const wk = works[i], lu = liqMat.uniforms, aspect = camera.aspect;
-    /* Dónde está la ameba en pantalla y de qué tamaño se ve. */
-    tmp.copy(wk.mesh.position).project(camera);
+    /* Dónde está la ameba en pantalla y de qué tamaño se ve (en una galaxia, la de su centro). */
+    const from = wk.blob ? wk.blob.mesh.getWorldPosition(new THREE.Vector3()) : wk.mesh.position;
+    tmp.copy(from).project(camera);
     const cx = tmp.x * 0.5 + 0.5, cy = tmp.y * 0.5 + 0.5;
-    const depth = -tmp.copy(wk.mesh.position).applyMatrix4(camera.matrixWorldInverse).z;
+    const depth = -tmp.copy(from).applyMatrix4(camera.matrixWorldInverse).z;
     lu.uCenter.value.set(cx, cy);
     lu.uR0.value = (0.5 * wk.r) / (Math.max(0.5, depth) * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)));
     let far = 0;                       // hasta la esquina más lejana, con margen por el borde ondulado

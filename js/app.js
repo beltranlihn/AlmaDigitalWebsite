@@ -557,13 +557,14 @@
      pide sólo en la portada. El HTML llega como página común (world--flat:
      título, reel, lista de obras); acá se arma el escenario y, si el 3D no
      arranca, se vuelve a esa página. */
-  /* Cómo son las paradas de las obras: "ameba" o "galaxy" (fotos en órbita + ícono 3D).
-     Manda site.json → world.stops; para comparar, ?paradas=galaxia o ?paradas=ameba en
-     la URL, o los botones de la barra de revisión, lo cambian durante la visita. */
+  /* Cómo son las paradas de las obras: "ameba" (la ameba sola), "galaxy" (fotos en órbita
+     alrededor de la ameba) o "icons" (fotos en órbita alrededor de un ícono 3D).
+     Manda site.json → world.stops; para comparar, ?paradas=ameba, ?paradas=galaxia o
+     ?paradas=iconos en la URL, o los botones de la barra de revisión, lo cambian durante la visita. */
   function stopsMode(sec) {
     var q = null, s = null;
     try { q = new URLSearchParams(location.search).get('paradas'); } catch (e) {}
-    if (q === 'galaxia' || q === 'galaxy') q = 'galaxy'; else if (q !== 'ameba') q = null;
+    if (q === 'galaxia' || q === 'galaxy') q = 'galaxy'; else if (q === 'iconos' || q === 'icons') q = 'icons'; else if (q !== 'ameba') q = null;
     try { if (q) sessionStorage.setItem('alma-paradas', q); s = sessionStorage.getItem('alma-paradas'); } catch (e) {}
     return q || s || (sec && sec.getAttribute('data-stops')) || ((CFG().world || {}).stops) || 'ameba';
   }
@@ -858,7 +859,7 @@
     bar.innerHTML = '<span>Tema</span>' +
       '<button type="button" data-theme-set="aura">Aura</button>' +
       '<button type="button" data-theme-set="night">Night</button>' +
-      (CFG().world ? '<span class="review__sep">Paradas</span><button type="button" data-stops-set="ameba">Ameba</button><button type="button" data-stops-set="galaxy">Galaxia</button>' : '');
+      (CFG().world ? '<span class="review__sep">Paradas</span><button type="button" data-stops-set="ameba">Ameba</button><button type="button" data-stops-set="galaxy">Galaxia</button><button type="button" data-stops-set="icons">Íconos</button>' : '');
     document.body.appendChild(bar);
     document.body.classList.add('has-review');
     function sync() {

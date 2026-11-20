@@ -256,9 +256,11 @@ vea y probarlo en teléfonos reales** (en la portada corren el fluido y el mundo
      en mitad del camino no hace nada. No es obligatorio: con un movimiento largo se pasa de largo.
   Para quitar el imán: borrar la regla `html.w-snap` del CSS. Para acortar o alargar la pausa: `HOLD`.
 - **Cómo son las paradas de las obras: galaxia** (`site.json → world.stops: "galaxy"`, elegida por
-  Vicente el 2026-11-18). El modo ameba (`"ameba"`) queda en reserva y sigue funcionando. Ver "Paradas
-  en galaxia". Para comparar, `?paradas=ameba` o `?paradas=galaxia` en la URL, o los botones "Paradas"
-  de la barra de revisión: la elección dura la visita (`sessionStorage`).
+  Vicente el 2026-11-18): las fotos de la obra en órbita alrededor de su ameba (desde el 2026-11-20;
+  antes, alrededor de un ícono 3D). Quedan en reserva, y siguen funcionando, `"ameba"` (la ameba sola)
+  e `"icons"` (la galaxia con el ícono 3D al centro). Ver "Paradas en galaxia". Para comparar,
+  `?paradas=ameba`, `?paradas=galaxia` o `?paradas=iconos` en la URL, o los botones "Paradas" de la
+  barra de revisión (Ameba · Galaxia · Íconos): la elección dura la visita (`sessionStorage`).
 - **La ficha de cada obra** dice el número y si es obra propia o encargo, el nombre, el formato, la
   primera oración de la descripción, hasta cuatro etiquetas de tecnología (`tech`) y dónde se presentó
   (las dos primeras sedes de `presentedAt`, recortadas, y "+N" si hay más). En el teléfono la
@@ -289,7 +291,16 @@ vea y probarlo en teléfonos reales** (en la portada corren el fluido y el mundo
 Idea de Vicente (2026-11-18): que cada obra seleccionada no sea una ameba de un color sino una galaxia
 de 4–5 imágenes suyas en movimiento, un poco 3D, con un ícono 3D que la represente. Se probó como
 variante y la eligió el mismo día ("Galaxia"): es la de por defecto. Las amebas del entorno, la del
-estudio y la del final siguen igual.
+estudio y la del final siguen igual. El 2026-11-20 pidió probar la ameba de cada obra en lugar del
+ícono ("a ver cómo funciona ameba + fotos"): es lo que muestra ahora "Galaxia"; los íconos quedan en
+"Íconos" (`world.stops: "icons"`).
+
+- **Al centro, la ameba de la obra** (`blob` en `galaxy()`): la misma del modo ameba, con el arte de
+  los colores de la obra (`site.json → particles`), un poco más chica (`BLOB_R`) y apenas por encima del
+  disco (`BLOB_Y`). Respira cada 6 s, se hincha bajo el cursor, se agita al avanzar rápido y su arte
+  se enfoca al llegar. Tapa las imágenes que pasan por detrás. La transición líquida sale de ella.
+  Con la ameba al centro, las amebas de fondo **y la del final** se apagan cerca de la galaxia aunque
+  estén detrás (con el ícono sólo las de delante): si no, se confunden con la de la obra.
 
 - **Cómo es** (`galaxy()` y `galaxyFrame()` en `js/world.js`): un disco inclinado de imágenes que
   orbitan despacio alrededor del ícono, que flota un poco por encima como un planeta sobre su anillo.
@@ -322,7 +333,7 @@ estudio y la del final siguen igual.
   piden recién al acercarse a cada una. **Cuando lleguen las fotos nuevas de las obras**: sumarlas a
   `projects.json → photos`, correr ese script y después `node src/build.mjs`.
 - **Clic** en cualquier parte de la galaxia: entra a la obra con la transición líquida, que arranca
-  desde el ícono.
+  desde la ameba del centro (o desde el ícono).
 - Para volver a las amebas: `site.json → world.stops: "ameba"` y un build. Si se decide no volver
   nunca, se puede borrar el modo ameba de las obras en `js/world.js` (el arte de paleta de `FRAG` lo
   siguen usando la ameba del estudio y las del fondo, así que eso queda).
@@ -531,6 +542,27 @@ desactiva. **No** cambiar nameservers a Cloudflare.
 El fluid sim sigue corriendo con auto-emitters en mobile. Los usuarios de Android no pueden tocar el fondo para emitir fluidos (correcto — el dedo es para el scroll).
 
 ## Historial de sesiones (última al tope)
+
+### 2026-11-20 — Galaxias con la ameba de la obra al centro, en vez del ícono (Vicente)
+
+Pedido de Vicente: en la versión galaxia, cambiar los íconos 3D por las amebas, "a ver cómo funciona
+ameba + fotos". Ver "Paradas en galaxia".
+
+- `"galaxy"` lleva ahora la ameba de cada obra al centro de su galaxia, con el arte de sus colores; la
+  transición líquida sale de ella. Los íconos no se borraron: son la opción `"icons"`, con su botón
+  "Íconos" en la barra de revisión y `?paradas=iconos`. Con la ameba no se arma el entorno de luz de
+  los íconos (`RoomEnvironment`) ni sus materiales.
+- Las amebas de fondo y la del final se apagan cerca de la galaxia aunque estén detrás: en Pacha
+  Ibiza, la del final quedaba al lado de la de la obra y parecían dos.
+
+**Verificado en Chrome**: las seis galaxias con su ameba (Neurocosm XR, Soul Charger, VEATION,
+Neurocosm Full Dome y Pacha Ibiza en capturas), en inglés y español; el botón "Íconos", que vuelve a
+armar el mundo con los íconos en el mismo punto; la entrada a Soul Charger, con el derrame saliendo de
+la ameba hasta la ficha; el cierre con su ameba entera. Consola sin errores.
+**Sin ver**: el tamaño de teléfono (el panel integrado frena la animación y la ventana de Chrome no se
+dejó achicar), el movimiento continuo, teléfonos reales, Safari y Firefox.
+**Para decidir**: si queda la ameba o vuelven los íconos. Si queda la ameba para siempre, se pueden
+borrar `ICONS` y su entorno de luz de `js/world.js` (dos imports de Three.js menos).
 
 ### 2026-11-19 — VEATION entra al sitio, con el formato nuevo Software, y reemplaza a Neural Canvas en la selección (Vicente)
 
