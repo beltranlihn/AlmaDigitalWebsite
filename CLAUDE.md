@@ -292,8 +292,8 @@ Idea de Vicente (2026-11-18): que cada obra seleccionada no sea una ameba de un 
 de 4–5 imágenes suyas en movimiento, un poco 3D, con un ícono 3D que la represente. Se probó como
 variante y la eligió el mismo día ("Galaxia"): es la de por defecto. Las amebas del entorno, la del
 estudio y la del final siguen igual. El 2026-11-20 pidió probar la ameba de cada obra en lugar del
-ícono ("a ver cómo funciona ameba + fotos"): es lo que muestra ahora "Galaxia"; los íconos quedan en
-"Íconos" (`world.stops: "icons"`).
+ícono ("a ver cómo funciona ameba + fotos") y se quedó con ella: es lo que muestra ahora "Galaxia";
+los íconos quedan en reserva en "Íconos" (`world.stops: "icons"`).
 
 - **Al centro, la ameba de la obra** (`blob` en `galaxy()`): la misma del modo ameba, con el arte de
   los colores de la obra (`site.json → particles`), un poco más chica (`BLOB_R`) y apenas por encima del
@@ -561,8 +561,9 @@ armar el mundo con los íconos en el mismo punto; la entrada a Soul Charger, con
 la ameba hasta la ficha; el cierre con su ameba entera. Consola sin errores.
 **Sin ver**: el tamaño de teléfono (el panel integrado frena la animación y la ventana de Chrome no se
 dejó achicar), el movimiento continuo, teléfonos reales, Safari y Firefox.
-**Para decidir**: si queda la ameba o vuelven los íconos. Si queda la ameba para siempre, se pueden
-borrar `ICONS` y su entorno de luz de `js/world.js` (dos imports de Three.js menos).
+**Decidido el mismo día**: Vicente se quedó con la ameba. Los íconos quedan en reserva (`"icons"`),
+como el modo ameba. Si se decide no volver nunca a ellos, se pueden borrar `ICONS`, `makeIcon` y su
+entorno de luz de `js/world.js` (dos imports de Three.js menos).
 
 ### 2026-11-19 — VEATION entra al sitio, con el formato nuevo Software, y reemplaza a Neural Canvas en la selección (Vicente)
 
