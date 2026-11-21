@@ -72,6 +72,18 @@
         "en": "Software",
         "es": "Software"
       }
+    },
+    "forms": {
+      "digital-sanctuaries": {
+        "formation": "halo",
+        "stage": "#0a0a09",
+        "colors": [
+          "#f2f0ec",
+          "#8e8d88",
+          "#3e7bd6",
+          "#f2f0ec"
+        ]
+      }
     }
   },
   "sound": {
@@ -309,17 +321,6 @@
         "#b8642e",
         "#ff6a3d",
         "#7a1410"
-      ]
-    },
-    "digital-sanctuaries": {
-      "formation": "halo",
-      "stage": "#0a0a09",
-      "colors": [
-        "#f2f0ec",
-        "#8e8d88",
-        "#6b4fd1",
-        "#e8a33d",
-        "#f2f0ec"
       ]
     }
   },
@@ -582,7 +583,8 @@
       "pSpinoff": "Spin-off",
       "pPhoto": "Photo",
       "spinTitle": "Studio *spin-offs*",
-      "pVisit": "Visit"
+      "pVisit": "Visit",
+      "pCatalogue": "The catalogue"
     },
     "es": {
       "langName": "Español",
@@ -714,7 +716,8 @@
       "pSpinoff": "Spin-off",
       "pPhoto": "Foto",
       "spinTitle": "Spin-offs *del estudio*",
-      "pVisit": "Visitar"
+      "pVisit": "Visitar",
+      "pCatalogue": "El catálogo"
     }
   }
 }

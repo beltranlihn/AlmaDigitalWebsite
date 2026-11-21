@@ -27,7 +27,7 @@
 <meta name="twitter:image" content="https://almadigitalstudio.com/Asset/og/digital-sanctuaries.jpg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,200;0,300;0,400;0,500;1,200&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,200;0,300;0,400;0,500;1,200&family=Libre+Franklin:wght@300;400&family=IBM+Plex+Mono&display=swap" rel="stylesheet">
 <script>
 /* Tema: "aura" (claro, por defecto) o "night". ?theme=night lo cambia para comparar. */
 (function(){try{var p=new URLSearchParams(location.search).get('theme');if(p)sessionStorage.setItem('alma-theme',p);var t=p||sessionStorage.getItem('alma-theme');if(t==='night'||t==='aura')document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
@@ -35,13 +35,13 @@
 (function(){var T='ee88c2886dd4410694851f5bfea47a74';if(!T)return;var s=document.createElement('script');s.type='module';s.src='https://static.cloudflareinsights.com/beacon.min.js';s.setAttribute('data-cf-beacon',JSON.stringify({token:T}));document.head.appendChild(s);})();
 </script>
 <style>@media (prefers-reduced-motion: no-preference){@view-transition{navigation:auto}}</style>
-<link rel="stylesheet" href="../css/site.css?v=46812a8c">
+<link rel="stylesheet" href="../css/site.css?v=3b3ee8e2">
 <!-- En el tema claro las partículas del cursor se tiñen de tinta con un filtro del
      propio documento; va acá porque url(#id) desde un CSS externo no es confiable. -->
 <style>html[data-theme="aura"] .cursor-particle{filter:url(#cursor-ink)}</style>
 <script type="application/ld+json">{"@context":"https://schema.org","name":"Digital Sanctuaries","description":"Immersive wellbeing rooms in VR for hotels, offices and institutions. Guided breathing, rest and focus sessions, from 3 to 15 minutes, in a room that responds to the physiological state of whoever is inside.","url":"https://almadigitalstudio.com/work/digital-sanctuaries.html","image":"https://almadigitalstudio.com/Asset/og/digital-sanctuaries.jpg","inLanguage":"en","genre":"Immersive wellbeing in VR","creator":{"@type":"Organization","name":"Alma Digital Studio","url":"https://almadigitalstudio.com/"},"@type":"CreativeWork"}</script>
 </head>
-<body class="pg-project">
+<body class="pg-project pg-ds">
 <a class="skip" href="#main">Skip to content</a>
 <canvas id="fluid" aria-hidden="true"></canvas>
 <div class="veil" aria-hidden="true"></div>
@@ -61,16 +61,13 @@
   </nav>
 </header>
 <main class="page" id="main">
-<section class="phero phero--live" data-m="hero" data-particles="halo" data-colors="#f2f0ec,#8e8d88,#6b4fd1,#e8a33d,#f2f0ec" style="--stage:#0a0a09">
+<section class="phero" data-m="hero">
   <img class="phero__bg" src="../Asset/Studio%20Projects/Digital%20Sanctuaries/2%20Portada.webp" alt="" width="1920" height="1080" fetchpriority="high">
-  <div class="phero__stage" aria-hidden="true"></div>
   <div class="phero__txt">
     <p class="phero__eyebrow"><a href="../work/">Work</a> · Spin-off</p>
     <h1>Digital Sanctuaries</h1>
     <p class="phero__fmt">Immersive wellbeing in VR</p>
-    <p class="phero__hint" aria-hidden="true"><span class="phero__hint-m">Drag to turn · Click to scatter</span><span class="phero__hint-t">Swipe to turn · Tap to scatter</span></p>
   </div>
-  <div class="phero__slot" data-ameba-slot="project"></div>
 </section>
 
 <section class="pj-over" aria-labelledby="over-h">
@@ -91,17 +88,30 @@
     <figure class="shot" data-m="shot"><img loading="lazy" decoding="async" width="1920" height="1080" src="../Asset/Studio%20Projects/Digital%20Sanctuaries/4.webp" alt="Digital Sanctuaries, image 8"></figure>
   </div>
 
-  <section class="pj-m pj-m--phones" data-n="2" aria-label="Reel">
+  <section class="pj-m pj-m--phones" data-n="1" aria-label="Reel">
     <div class="pj-stage3d">
-      <div class="pj-phone" data-m="phone"><div class="pj-phone__body"><i style="--i:1"></i><i style="--i:2"></i><i style="--i:3"></i><i style="--i:4"></i><i style="--i:5"></i><i style="--i:6"></i><i style="--i:7"></i><i style="--i:8"></i><div class="pj-phone__screen preel"><video muted loop playsinline preload="none" poster="../Asset/Studio%20Projects/Digital%20Sanctuaries/2%20Portada.webp" data-src="../Asset/Studio%20Projects/Digital%20Sanctuaries/Digital%20Sanctuaries%20Reel.mp4"></video></div></div></div>
       <figure class="shot pj-card" data-m="card"><img loading="lazy" decoding="async" width="1920" height="1080" src="../Asset/Studio%20Projects/Digital%20Sanctuaries/1.webp" alt="Digital Sanctuaries, image 1"></figure>
     </div>
     <div class="pj-side">
       <h2 class="label">Concept</h2>
       <p>The room is installed once and the experiences are licensed, with new content every season. Each session is short by design: it fits between two meetings or around a check-in, and lets one room welcome many people in a day.</p>
-      <p>The content is made by an immersive art studio, and the catalogue descends from the studio's own work, beginning with Soul Charger. In Barcelona it has been shown at Barcelona Design Week and with Inner Canvas, 3D drawing in VR for company events.</p>
+      <p>The content is made by an immersive art studio: light, sound and rhythm composed as a single perceptual input. The catalogue descends from the studio's own work, beginning with Soul Charger.</p>
       <p>Fifteen minutes in which nothing asks anything of you.</p>
     </div>
+  </section>
+
+  <section class="pj-m pj-specs" data-n="1" aria-labelledby="specs-h">
+    <div class="pj-specs__head">
+      <h2 class="label" id="specs-h">The catalogue</h2>
+      <p class="pj-specs__lead">Five sessions, each with its code. A venue orders them by name.</p>
+    </div>
+    <ol class="pj-specs__list">
+      <li class="pj-specs__row"><span class="pj-specs__code">UMB–03</span><span class="pj-specs__name">Umbral</span><span class="pj-specs__what">Entry and exit</span><span class="pj-specs__dur">3 min</span><span class="pj-specs__cap">1–6</span></li>
+      <li class="pj-specs__row"><span class="pj-specs__code">FOC–10</span><span class="pj-specs__name">Foco</span><span class="pj-specs__what">Attention</span><span class="pj-specs__dur">10 min</span><span class="pj-specs__cap">1–4</span></li>
+      <li class="pj-specs__row"><span class="pj-specs__code">PRA–15</span><span class="pj-specs__name">Prana</span><span class="pj-specs__what">Guided breathing in VR</span><span class="pj-specs__dur">15 min</span><span class="pj-specs__cap">1–6</span></li>
+      <li class="pj-specs__row"><span class="pj-specs__code">RES–15</span><span class="pj-specs__name">Resonancia</span><span class="pj-specs__what">Sound</span><span class="pj-specs__dur">15 min</span><span class="pj-specs__cap">1–6</span></li>
+      <li class="pj-specs__row"><span class="pj-specs__code">REP–15</span><span class="pj-specs__name">Reposo</span><span class="pj-specs__what">Deep rest</span><span class="pj-specs__dur">15 min</span><span class="pj-specs__cap">1–2</span></li>
+    </ol>
   </section>
 
   <section class="pj-m pj-m--wall" data-n="6" aria-labelledby="wall-h">
@@ -135,14 +145,14 @@
     <div class="cols">
       <div>
         <h2 class="label">Credits</h2>
-        <ul class="plain"><li>Created by: Alma Digital Studio</li></ul>
+        <ul class="plain"><li>Created by: Alma Digital Studio</li><li>Imagery: visualisations by Alma Digital Studio</li></ul>
       </div>
     </div>
   </section>
 
   <section class="block enquire">
-    <p>Interested in this work?</p>
-    <button class="btn btn--solid" type="button" data-contact data-contact-subject="Digital Sanctuaries">Enquire about it</button>
+    <p>Want to see it in person?</p>
+    <button class="btn btn--solid" type="button" data-contact data-contact-subject="Digital Sanctuaries">Request a private demonstration</button>
   </section>
 
   <a class="next" href="../work/veation.html">

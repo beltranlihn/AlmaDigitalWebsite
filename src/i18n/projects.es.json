@@ -330,15 +330,60 @@
     "body": [
       "Digital Sanctuaries diseña e instala salas de bienestar en VR para hoteles, oficinas e instituciones. Sesiones guiadas de respiración, descanso y foco, de 3 a 15 minutos, en una sala que responde al estado fisiológico de quien está dentro. Un spin-off de Alma Digital Studio.",
       "La sala se instala una vez y las experiencias se licencian, con contenido nuevo cada temporada. Cada sesión es corta a propósito: cabe entre dos reuniones o alrededor de un check-in, y permite que una sala reciba a mucha gente en un día.",
-      "El contenido lo firma un estudio de arte inmersivo, y el catálogo desciende de su propia obra, empezando por Soul Charger. En Barcelona se ha mostrado en la Barcelona Design Week y con Inner Canvas, dibujo 3D en realidad virtual para eventos de empresa.",
+      "El contenido lo firma un estudio de arte inmersivo: luz, sonido y ritmo compuestos como una sola entrada perceptiva. El catálogo desciende de la obra del estudio, empezando por Soul Charger.",
       "Quince minutos en los que nada te pide nada."
     ],
     "credits": [
-      "Creación: Alma Digital Studio"
+      "Creación: Alma Digital Studio",
+      "Imágenes: visualizaciones de Alma Digital Studio"
     ],
     "presentedAt": [
       "Barcelona Design Week 2026",
       "Inner Canvas — Barcelona, noviembre de 2026"
-    ]
+    ],
+    "specs": {
+      "lead": "Cinco sesiones, cada una con su código. Una sala las pide por su nombre.",
+      "rows": [
+        [
+          "UMB–03",
+          "Umbral",
+          "Entrada y salida",
+          "3 min",
+          "1–6"
+        ],
+        [
+          "FOC–10",
+          "Foco",
+          "Atención",
+          "10 min",
+          "1–4"
+        ],
+        [
+          "PRA–15",
+          "Prana",
+          "Respiración guiada en VR",
+          "15 min",
+          "1–6"
+        ],
+        [
+          "RES–15",
+          "Resonancia",
+          "Sonido",
+          "15 min",
+          "1–6"
+        ],
+        [
+          "REP–15",
+          "Reposo",
+          "Descanso profundo",
+          "15 min",
+          "1–2"
+        ]
+      ]
+    },
+    "enquire": {
+      "text": "¿Quieres verlo en persona?",
+      "cta": "Solicitar una demostración privada"
+    }
   }
 }

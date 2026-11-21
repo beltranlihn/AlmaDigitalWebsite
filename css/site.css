@@ -1149,6 +1149,80 @@ html.is-under .ftr, .pg-project .ftr { background: rgba(13, 11, 34, .95); }
 .pg-project .page, .pg-project .ftr { color: var(--ink-body); font-weight: var(--w-body); }
 /* Si el fluido no arranca (sin WebGL), el fondo igual es oscuro. */
 body.pg-project { background: #1b1240; }
+
+/* ── Digital Sanctuaries: una ficha con la estética de su marca ───────────
+   projects.json → theme: "ds" le pone body.pg-ds. Sistema "Void & Bone" de
+   la marca (skill diseno-sanctuaries): vacío #0a0a09 y hueso #f2f0ec, todo
+   acromático salvo la luz de las imágenes; Libre Franklin 300/400 e IBM Plex
+   Mono; radios 0 (pill sólo en botones); sin sombras, sin vidrio, sin brillo;
+   movimiento sereno. El velo tapa el fluido: es otra sala. Sin ameba de Alma
+   (build.mjs no pone su lugar) ni partículas en la cabecera. */
+body.pg-ds { background: #0a0a09; }
+.pg-ds .veil { mix-blend-mode: normal; background: #0a0a09; }
+.pg-ds .page { background: none; }
+.pg-ds .page, .pg-ds .hdr, .pg-ds .ftr {
+  --ink: #f2f0ec; --ink-body: rgba(242, 240, 236, .80); --ink-muted: #8e8d88;
+  --line: rgba(242, 240, 236, .16); --glass: transparent; --glass-line: rgba(242, 240, 236, .16);
+  --hdr-bg: rgba(10, 10, 9, .86); --glow: none; --r-md: 0px; --r-lg: 0px;
+  --btn-line: rgba(242, 240, 236, .55); --btn-solid-bg: #f2f0ec; --btn-solid-fg: #0a0a09;
+  --em: #f2f0ec; --selection: rgba(242, 240, 236, .22);
+}
+.pg-ds .ftr { background: #0a0a09; }
+.pg-ds { --ds-sans: 'Libre Franklin', 'Helvetica Neue', Arial, sans-serif; --ds-mono: 'IBM Plex Mono', ui-monospace, Menlo, monospace; }
+.pg-ds .page { font-family: var(--ds-sans); font-weight: 300; }
+/* Etiquetas, datos y botones: mono en mayúsculas con tracking amplio. Un peso por familia. */
+.pg-ds .page .label, .pg-ds .phero__eyebrow, .pg-ds .phero__fmt, .pg-ds .pj-meta dt,
+.pg-ds .page .btn, .pg-ds .shot__credit, .pg-ds .pj-specs__code, .pg-ds .pj-specs__dur, .pg-ds .pj-specs__cap {
+  font-family: var(--ds-mono); font-weight: 400; letter-spacing: .18em; text-transform: uppercase;
+}
+.pg-ds .page .label { font-size: .7rem; color: var(--ink-muted); }
+.pg-ds .page .btn { font-size: .74rem; letter-spacing: .2em; }
+.pg-ds .page .btn:hover { background: rgba(242, 240, 236, .06); transform: none; }
+/* Títulos: Libre Franklin 400 en mayúsculas, tracking amplio. */
+.pg-ds .page h1, .pg-ds .page h2:not(.label), .pg-ds .next__n, .pg-ds .pj-specs__name {
+  font-family: var(--ds-sans); font-weight: 400; text-transform: uppercase; letter-spacing: .14em; line-height: 1.12;
+}
+.pg-ds .phero { background: #0a0a09; }
+.pg-ds .phero::after { background: linear-gradient(to top, rgba(10, 10, 9, .94) 0%, rgba(10, 10, 9, .35) 48%, rgba(10, 10, 9, .08) 100%); }
+.pg-ds .phero h1 { font-size: clamp(1.8rem, 4.4vw, 3.5rem); margin-bottom: 18px; }
+.pg-ds .phero__eyebrow { font-size: .68rem; color: rgba(242, 240, 236, .72); }
+.pg-ds .phero__fmt { font-size: .74rem; color: rgba(242, 240, 236, .82); }
+.pg-ds .pj-over__txt { font-weight: 300; letter-spacing: 0; line-height: 1.5; font-size: clamp(1.15rem, 1.9vw, 1.6rem); }
+.pg-ds .pj-meta dd { font-weight: 300; }
+.pg-ds .pj-side p { font-weight: 300; line-height: 1.75; }
+.pg-ds .next__n { font-size: clamp(1.2rem, 2.6vw, 1.9rem); }
+.pg-ds .enquire p { font-weight: 300; letter-spacing: 0; }
+/* Fotos: esquinas rectas, sin sombra. Entran con un fundido y un desplazamiento corto, sin doblarse. */
+.pg-ds .shot { border-radius: 0; box-shadow: none; background: #0a0a09; }
+.pg-ds .shot[data-m="shot"], .pg-ds .shot[data-m="tile"] {
+  transform: translateY(calc((1 - var(--in)) * 32px)); border-radius: 0; opacity: calc(.06 + .94 * var(--in));
+}
+.pg-ds .shot[data-m="bleed"] { transform: scale(calc(.96 + .04 * var(--in))); border-radius: 0; opacity: calc(.1 + .9 * var(--in)); }
+.pg-ds .shot[data-m] img { scale: 1.06; transition: scale 1.2s cubic-bezier(.37, 0, .63, 1); }
+.pg-ds .shot[data-m]:hover img { scale: 1.08; }
+.pg-ds .pj-card { --rest: 0deg; --turn: -5deg; --lean: 0deg; }
+.pg-ds .shot__credit { font-size: .6rem; color: rgba(242, 240, 236, .7); text-shadow: none; }
+/* El catálogo: una fila por unidad, como una ficha técnica. */
+.pj-specs { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2.2fr); gap: clamp(24px, 5vw, 80px); align-items: start; }
+.pj-specs__lead { margin-top: 10px; max-width: 30ch; font-size: 1rem; line-height: 1.6; color: var(--ink-body); }
+.pj-specs__list { list-style: none; margin: 0; padding: 0; border-bottom: 1px solid var(--line); }
+.pj-specs__row {
+  display: grid; grid-template-columns: 7.5em minmax(0, 1fr) minmax(0, 1.5fr) 5.5em 3.5em; gap: 16px; align-items: baseline;
+  padding: 20px 0; border-top: 1px solid var(--line); color: var(--ink-body);
+}
+.pj-specs__code, .pj-specs__dur, .pj-specs__cap { font-size: .72rem; color: var(--ink-muted); }
+.pj-specs__name { font-size: 1rem; color: var(--ink); }
+.pj-specs__what { font-size: .98rem; }
+.pj-specs__dur, .pj-specs__cap { text-align: right; }
+@media (max-width: 760px) {
+  .pj-specs { grid-template-columns: minmax(0, 1fr); }
+  .pj-specs__row { grid-template-columns: minmax(0, 1fr) auto; gap: 6px 16px; padding: 16px 0; }
+  .pj-specs__code { grid-column: 1 / -1; }
+  .pj-specs__what { grid-column: 1; }
+  .pj-specs__dur { grid-column: 2; grid-row: 2; }
+  .pj-specs__cap { grid-column: 2; grid-row: 3; }
+}
+@media (prefers-reduced-motion: reduce) { .pg-ds .shot[data-m] img { scale: 1; } }
 /* Adentro el menú no lleva fondo: nada corta el escenario. */
 html.is-under .hdr.is-stuck { background: transparent; -webkit-backdrop-filter: none; backdrop-filter: none; box-shadow: none; }
 

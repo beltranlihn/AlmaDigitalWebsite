@@ -92,6 +92,10 @@ por defecto en `ICON_BY_FORMAT`. El filtro del índice aparece solo.
 **Spin-offs** (hoy Digital Sanctuaries; Rito Digital lo fue hasta el 2026-11-21): son fichas como las demás, con `track:
 "spinoff"` (la línea "Spin-offs" del índice y "Spin-off" en la ficha). Para que salgan en la portada,
 su slug va en `site.json → world.spinoffs` (no en `featured`): tienen su propio paso después de las obras.
+**`theme`** (opcional, en `projects.json`): una ficha con estética propia. Hoy sólo `"ds"` (Digital
+Sanctuaries): `body.pg-ds`, ver "Temas". **`specs`** (opcional): el catálogo de la obra, una fila por unidad
+(`lead` y `rows: [código, nombre, práctica, duración, aforo]`), después del teléfono. **`enquire`**
+(opcional): el texto y el botón de consulta de esa ficha, si no le queda "¿Te interesa esta obra?".
 **`photoCredits`** (opcional, en `projects.json`): `{ "ruta de la foto": "@autor" }`. El crédito sale
 sobre la foto ("Photo @autor" / "Foto @autor"). Lo usa Rito Digital, cuyo press kit lo exige por foto.
 **`website`** (opcional, en `projects.json`): un sitio propio de la obra. Sale como botón ("Visit
@@ -431,6 +435,14 @@ Idea tomada de [unseen.co](https://unseen.co/): el sitio suena, y entrar a una o
 Aparte del tema, hay dos lugares que son siempre oscuros, "bajo el agua": el interior del mundo 3D de la
 portada y las fichas de obra. Usan los mismos valores que night sobre el fluido teñido de violeta.
 
+**Excepción: la ficha de Digital Sanctuaries** (`body.pg-ds`, bloque "Digital Sanctuaries" de
+`css/site.css`). Pedido de Vicente (2026-11-21): que se vea elegante y boutique, distinta del resto. Lleva
+el sistema de esa marca (skill `diseno-sanctuaries`): vacío `#0a0a09` y hueso `#f2f0ec`, el velo tapa el
+fluido (otra sala), Libre Franklin 300/400 e IBM Plex Mono (cargadas en el mismo pedido a Google Fonts
+que Raleway; los archivos sólo se bajan donde se usan), radios 0, sin sombras ni vidrio, fotos que entran
+sin doblarse, sin ameba de Alma y sin partículas en la cabecera. El menú y el pie siguen siendo los de
+Alma. Al navegar sin recarga la clase del `<body>` cambia sola.
+
 Para comparar: `?theme=night` o `?theme=aura` en cualquier URL. En localhost y en las vistas previas de
 Netlify aparece además una barra "Tema" abajo a la izquierda; en el dominio publicado no.
 El velo existe porque el texto directo sobre el fluido daba un contraste de 1,7:1.
@@ -571,6 +583,32 @@ desactiva. **No** cambiar nameservers a Cloudflare.
 El fluid sim sigue corriendo con auto-emitters en mobile. Los usuarios de Android no pueden tocar el fondo para emitir fluidos (correcto — el dedo es para el scroll).
 
 ## Historial de sesiones (última al tope)
+
+### 2026-11-21 — Digital Sanctuaries con su propia estética, y las fotos de Rhys Davies aprobadas (Vicente)
+
+- **Rhys Davies**: Vicente confirmó que sus fotos (CULTVR) se pueden usar. No volver a marcarlo.
+- **Digital Sanctuaries**: Vicente pasó el deck (`DS Marketing/Pitch DS/DS_Pitch_con_videos_ES.pptx`) y la
+  carpeta `DS Marketing/`, pidió evitar las fotos de las ferias ("demos muy low cost") y que la ficha se
+  vea "muy elegante y boutique", con una estética distinta del resto. Ver "Temas".
+  - **Imágenes**: nueve de `DS Marketing/DECK ASSETS` (las del deck, generadas por el estudio): aperturas
+    de luz en el vacío con figuras en reposo y un objeto del catálogo, todas en azul, cian o
+    acromáticas. Portada: el campo de luz azul (`DECK2_S08_FIELD_ONEHUE`). En los créditos: "Imagery:
+    visualisations by Alma Digital Studio". No se usaron `Refes Digital Sanctuaries` (referencias de
+    terceros) ni las fotos y el video de Barcelona Design Week e Inner Canvas (se sacaron de la ficha y de
+    la galaxia; siguen en el historial de exhibición).
+  - **Ficha**: sin teléfono; la foto vertical va sola al lado del texto. Nuevo bloque **El catálogo**
+    con las cinco unidades de la skill `voz-sanctuaries` (UMB–03 Umbral, FOC–10 Foco, PRA–15 Prana,
+    RES–15 Resonancia, REP–15 Reposo). Consulta: "Request a private demonstration" / "Solicitar una
+    demostración privada".
+  - **Dominio**: queda www.almadigitalsanctuaries.com. El deck dice www.digitalsanctuaries.com, pero ese
+    dominio está en venta (redirige a hugedomains.com).
+
+**Verificado en Chrome**: la ficha en inglés y en español de punta a punta (cabecera, resumen con el
+botón al sitio, foto y texto, catálogo, galería, imagen a sangre, créditos, consulta), con Libre Franklin
+y Plex Mono cargadas; la navegación sin recarga desde LPS hacia la ficha y de ahí a VEATION (la estética y
+la ameba cambian y vuelven); las demás fichas sin cambios; la galaxia de Digital Sanctuaries en la
+portada. Paquete: 51 páginas, 1.564 referencias, ninguna rota.
+**Sin ver**: teléfono, Safari y Firefox.
 
 ### 2026-11-21 — Rito Digital: enlace a ritodigital.com y ficha con el material de su web (Vicente)
 

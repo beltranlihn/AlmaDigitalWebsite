@@ -1061,7 +1061,6 @@
       "format": "Immersive wellbeing in VR",
       "track": "spinoff",
       "cover": "Asset/Studio Projects/Digital Sanctuaries/2 Portada.webp",
-      "video": "Asset/Studio Projects/Digital Sanctuaries/Digital Sanctuaries Reel.mp4",
       "photos": [
         "Asset/Studio Projects/Digital Sanctuaries/1.webp",
         "Asset/Studio Projects/Digital Sanctuaries/2 Portada.webp",
@@ -1080,7 +1079,8 @@
         "Inner Canvas — Barcelona, November 2026"
       ],
       "credits": [
-        "Created by: Alma Digital Studio"
+        "Created by: Alma Digital Studio",
+        "Imagery: visualisations by Alma Digital Studio"
       ],
       "palette": [
         "#0a0a09",
@@ -1097,7 +1097,7 @@
       "body": [
         "Digital Sanctuaries designs and installs VR wellbeing rooms for hotels, offices and institutions. Guided breathing, rest and focus sessions, from 3 to 15 minutes, in a room that responds to the physiological state of whoever is inside. A spin-off of Alma Digital Studio.",
         "The room is installed once and the experiences are licensed, with new content every season. Each session is short by design: it fits between two meetings or around a check-in, and lets one room welcome many people in a day.",
-        "The content is made by an immersive art studio, and the catalogue descends from the studio's own work, beginning with Soul Charger. In Barcelona it has been shown at Barcelona Design Week and with Inner Canvas, 3D drawing in VR for company events.",
+        "The content is made by an immersive art studio: light, sound and rhythm composed as a single perceptual input. The catalogue descends from the studio's own work, beginning with Soul Charger.",
         "Fifteen minutes in which nothing asks anything of you."
       ],
       "tech": [
@@ -1109,7 +1109,52 @@
       "year": "",
       "press": [],
       "formatKey": "vr",
-      "website": "https://www.almadigitalsanctuaries.com"
+      "website": "https://www.almadigitalsanctuaries.com",
+      "theme": "ds",
+      "specs": {
+        "lead": "Five sessions, each with its code. A venue orders them by name.",
+        "rows": [
+          [
+            "UMB–03",
+            "Umbral",
+            "Entry and exit",
+            "3 min",
+            "1–6"
+          ],
+          [
+            "FOC–10",
+            "Foco",
+            "Attention",
+            "10 min",
+            "1–4"
+          ],
+          [
+            "PRA–15",
+            "Prana",
+            "Guided breathing in VR",
+            "15 min",
+            "1–6"
+          ],
+          [
+            "RES–15",
+            "Resonancia",
+            "Sound",
+            "15 min",
+            "1–6"
+          ],
+          [
+            "REP–15",
+            "Reposo",
+            "Deep rest",
+            "15 min",
+            "1–2"
+          ]
+        ]
+      },
+      "enquire": {
+        "text": "Want to see it in person?",
+        "cta": "Request a private demonstration"
+      }
     }
   ]
 }

@@ -97,6 +97,8 @@ function loc(p, lang) {
     body: same(e.body, p.body) ? e.body : p.body,
     credits: same(e.credits, p.credits) ? e.credits : p.credits,
     presentedAt: same(e.presentedAt, p.presentedAt) ? e.presentedAt : (p.presentedAt || []),
+    specs: e.specs || p.specs,
+    enquire: e.enquire || p.enquire,
   };
 }
 /* El dominio de un sitio, para mostrarlo: "https://www.ritodigital.com/" → "ritodigital.com". */
@@ -140,7 +142,7 @@ ${alt}
 <meta name="twitter:image" content="${absAsset(ogImage)}">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,200;0,300;0,400;0,500;1,200&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,200;0,300;0,400;0,500;1,200&family=Libre+Franklin:wght@300;400&family=IBM+Plex+Mono&display=swap" rel="stylesheet">
 <script>
 /* Tema: "aura" (claro, por defecto) o "night". ?theme=night lo cambia para comparar. */
 (function(){try{var p=new URLSearchParams(location.search).get('theme');if(p)sessionStorage.setItem('alma-theme',p);var t=p||sessionStorage.getItem('alma-theme');if(t==='night'||t==='aura')document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
@@ -675,7 +677,8 @@ function buildProject(raw, rawNext, lang) {
     : `<img loading="lazy" decoding="async" src="${asset(c, v)}" alt="${esc(p.title)}, reel">`}</div></div></div>`;
   /* Con un solo video vertical va un teléfono y, al lado, una foto. */
   const objs = verticals.map(phone);
-  if (!verticals.length) objs.push(`      ${gap('pj-phone', 'Espacio para video vertical<br>9:16 · 406×720')}`);
+  /* Una ficha con estética propia (theme) no lleva teléfono si no tiene video: ni siquiera su lugar vacío. */
+  if (!verticals.length && !p.theme) objs.push(`      ${gap('pj-phone', 'Espacio para video vertical<br>9:16 · 406×720')}`);
   if (verticals.length < 2) objs.push(`      ${pick.side ? shot(pick.side, 'pj-card', 'card') : gap('pj-card', 'Espacio para foto<br>o material · vertical 4:5')}`);
   const rest = p.body.slice(1);
   const phonesMod = `  <section class="pj-m pj-m--phones${rest.length ? '' : ' pj-m--alone'}" data-n="${verticals.length + (pick.side ? 1 : 0)}" aria-label="${esc(t.pReel)}">
@@ -712,7 +715,18 @@ ${cols}
   const one = (type, ph) => `  <div class="pj-m pj-m--${type}" data-n="${ph ? 1 : 0}">
     ${ph ? shot(ph, '', type === 'bleed' ? 'bleed' : 'shot') : gap('', 'Espacio para imagen<br>horizontal · 1920×1080')}
   </div>`;
-  const flow = [one('wide', pick.wide), phonesMod, wallMod, one('bleed', pick.bleed)];
+  /* El catálogo (projects.json → specs, opcional): una fila por unidad, con su código. Hoy lo usa
+     Digital Sanctuaries. */
+  const specsMod = p.specs && p.specs.rows && p.specs.rows.length ? `  <section class="pj-m pj-specs" data-n="1" aria-labelledby="specs-h">
+    <div class="pj-specs__head">
+      <h2 class="label" id="specs-h">${esc(p.specs.title || t.pCatalogue)}</h2>${p.specs.lead ? `
+      <p class="pj-specs__lead">${esc(p.specs.lead)}</p>` : ''}
+    </div>
+    <ol class="pj-specs__list">
+${p.specs.rows.map(r => `      <li class="pj-specs__row"><span class="pj-specs__code">${esc(r[0])}</span><span class="pj-specs__name">${esc(r[1])}</span><span class="pj-specs__what">${esc(r[2])}</span><span class="pj-specs__dur">${esc(r[3])}</span><span class="pj-specs__cap">${esc(r[4])}</span></li>`).join('\n')}
+    </ol>
+  </section>` : '';
+  const flow = [one('wide', pick.wide), phonesMod, specsMod, wallMod, one('bleed', pick.bleed)].filter(Boolean);
   while (queue.length) {
     const pair = queue.splice(0, 2);
     flow.push(`  <div class="pj-m pj-m--duo" data-n="${pair.length}">\n${pair.map(x => `    ${shot(x)}`).join('\n')}\n  </div>`);
@@ -734,8 +748,8 @@ ${cols}
     <p class="phero__fmt">${esc(p.format)}</p>${live ? `
     <p class="phero__hint" aria-hidden="true"><span class="phero__hint-m">${esc(t.pParticlesHint)}</span><span class="phero__hint-t">${esc(t.pParticlesHintTouch)}</span></p>` : ''}
   </div>
-  <div class="phero__slot" data-ameba-slot="project"></div>
-</section>
+${p.theme ? '' : `  <div class="phero__slot" data-ameba-slot="project"></div>
+`}</section>
 
 <section class="pj-over" aria-labelledby="over-h">
   <div class="pj-over__lead">
@@ -769,8 +783,8 @@ ${flow.join('\n\n')}
   </section>
 
   <section class="block enquire">
-    <p>${esc(t.pEnquire)}</p>
-    <button class="btn btn--solid" type="button" data-contact data-contact-subject="${esc(p.title)}">${esc(t.pEnquireCta)}</button>
+    <p>${esc((p.enquire && p.enquire.text) || t.pEnquire)}</p>
+    <button class="btn btn--solid" type="button" data-contact data-contact-subject="${esc(p.title)}">${esc((p.enquire && p.enquire.cta) || t.pEnquireCta)}</button>
   </section>
 
   <a class="next" href="${link(c, `work/${next.slug}.html`)}">
@@ -781,7 +795,9 @@ ${flow.join('\n\n')}
 
   return [c.path, page(c, {
     title: `${p.title} — Alma Digital Studio`, desc: clip(p.desc, 165), ogImage: ogFor(p.slug),
-    current: 'work', body, bodyClass: 'pg-project',
+    /* theme (projects.json, opcional): una ficha con estética propia. Hoy "ds", Digital Sanctuaries
+       (css: .pg-ds), que además no lleva la ameba de Alma. */
+    current: 'work', body, bodyClass: `pg-project${p.theme ? ' pg-' + p.theme : ''}`,
     runtime: site.perProjectPalette ? { palette: p.palette, back: p.back } : null,
     /* Una obra es CreativeWork; un programa (formatKey software), SoftwareApplication. */
     jsonld: {
