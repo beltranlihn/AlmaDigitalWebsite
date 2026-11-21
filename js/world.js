@@ -757,7 +757,7 @@ export function mount(section, opts) {
   const hudCount = q('[data-w-count]'), hudTitle = q('[data-w-title]'), hudFmt = q('[data-w-fmt]'), hudOpen = q('a[data-w-open]');
   const n = links.length;
   const hudDesc = q('[data-w-desc]'), hudCta = q('[data-w-cta]');
-  const hudTags = q('[data-w-tags]'), hudWhere = q('[data-w-where]'), hudCredit = q('[data-w-credit]');
+  const hudTags = q('[data-w-tags]'), hudWhere = q('[data-w-where]'), hudCredit = q('[data-w-credit]'), hudKind = q('[data-w-kind]');
   /* Tramos del recorrido: uno entre cada par de paradas y uno más antes de la
      primera obra, que es el paso a "Obras seleccionadas". */
   const kinds = links.map((a) => a.getAttribute('data-kind') || 'work');
@@ -955,6 +955,7 @@ export function mount(section, opts) {
     w.desc = a.getAttribute('data-desc') || ''; w.cta = a.getAttribute('data-cta') || '';
     w.tags = (a.getAttribute('data-tags') || '').split('|').filter(Boolean);
     w.where = a.getAttribute('data-where') || ''; w.line = a.getAttribute('data-line') || '';
+    w.label = a.getAttribute('data-label') || '';           // su formato en la selección (site.json → world.labels)
     w.credit = a.getAttribute('data-credit') || '';        // un crédito que la obra exige mostrar (projects.json → creditLine)
     w.asked = false;
     return w;
@@ -1491,7 +1492,9 @@ export function mount(section, opts) {
       /* Las obras llevan su número; los spin-offs, sólo "Spin-off"; el estudio, su descripción;
          el reel, sólo el nombre y el botón. */
       const num = String(works.slice(0, i + 1).filter((x) => x.kind === 'work').length).padStart(2, '0') + ' / ' + String(NW).padStart(2, '0');
-      if (hudCount) hudCount.textContent = wk.kind === 'spin' ? wk.line : isWork ? num + (wk.line ? ' · ' + wk.line : '') : (wk.kind === 'reel' ? wk.title : wk.format);
+      /* Con etiqueta de formato, el número va solo: el formato ya dice lo que la línea diría. */
+      if (hudCount) hudCount.textContent = wk.kind === 'spin' ? wk.line : isWork ? num + (wk.line && !wk.label ? ' · ' + wk.line : '') : (wk.kind === 'reel' ? wk.title : wk.format);
+      if (hudKind) { hudKind.textContent = isWork ? wk.label : ''; hudKind.hidden = !(isWork && wk.label); }
       if (hudTitle) hudTitle.textContent = wk.title;
       if (hudFmt) { hudFmt.textContent = isWork ? wk.format : ''; hudFmt.hidden = !isWork; }
       if (hudDesc) { hudDesc.textContent = wk.desc; hudDesc.hidden = !wk.desc; }

@@ -1,31 +1,4 @@
 {
-  "neurocosm-xr": [
-    {
-      "src": "Asset/World/Neurocosm XR/1.webp",
-      "w": 768,
-      "h": 432
-    },
-    {
-      "src": "Asset/World/Neurocosm XR/2.webp",
-      "w": 768,
-      "h": 432
-    },
-    {
-      "src": "Asset/World/Neurocosm XR/3.webp",
-      "w": 768,
-      "h": 432
-    },
-    {
-      "src": "Asset/World/Neurocosm XR/4.webp",
-      "w": 768,
-      "h": 432
-    },
-    {
-      "src": "Asset/World/Neurocosm XR/5.webp",
-      "w": 768,
-      "h": 432
-    }
-  ],
   "soul-charger": [
     {
       "src": "Asset/World/Soul Charger/1.webp",
@@ -49,33 +22,6 @@
     },
     {
       "src": "Asset/World/Soul Charger/5.webp",
-      "w": 768,
-      "h": 432
-    }
-  ],
-  "veation": [
-    {
-      "src": "Asset/World/VEATION/1.webp",
-      "w": 768,
-      "h": 432
-    },
-    {
-      "src": "Asset/World/VEATION/2.webp",
-      "w": 768,
-      "h": 432
-    },
-    {
-      "src": "Asset/World/VEATION/3.webp",
-      "w": 768,
-      "h": 432
-    },
-    {
-      "src": "Asset/World/VEATION/4.webp",
-      "w": 768,
-      "h": 432
-    },
-    {
-      "src": "Asset/World/VEATION/5.webp",
       "w": 768,
       "h": 432
     }
@@ -134,6 +80,33 @@
       "h": 432
     }
   ],
+  "rito-digital": [
+    {
+      "src": "Asset/World/Rito Digital/1.webp",
+      "w": 768,
+      "h": 432
+    },
+    {
+      "src": "Asset/World/Rito Digital/2.webp",
+      "w": 768,
+      "h": 432
+    },
+    {
+      "src": "Asset/World/Rito Digital/3.webp",
+      "w": 768,
+      "h": 432
+    },
+    {
+      "src": "Asset/World/Rito Digital/4.webp",
+      "w": 768,
+      "h": 432
+    },
+    {
+      "src": "Asset/World/Rito Digital/5.webp",
+      "w": 768,
+      "h": 432
+    }
+  ],
   "pacha-ibiza": [
     {
       "src": "Asset/World/Pacha Ibiza/1.webp",
@@ -161,29 +134,29 @@
       "h": 640
     }
   ],
-  "rito-digital": [
+  "veation": [
     {
-      "src": "Asset/World/Rito Digital/1.webp",
+      "src": "Asset/World/VEATION/1.webp",
       "w": 768,
       "h": 432
     },
     {
-      "src": "Asset/World/Rito Digital/2.webp",
+      "src": "Asset/World/VEATION/2.webp",
       "w": 768,
       "h": 432
     },
     {
-      "src": "Asset/World/Rito Digital/3.webp",
+      "src": "Asset/World/VEATION/3.webp",
       "w": 768,
       "h": 432
     },
     {
-      "src": "Asset/World/Rito Digital/4.webp",
+      "src": "Asset/World/VEATION/4.webp",
       "w": 768,
       "h": 432
     },
     {
-      "src": "Asset/World/Rito Digital/5.webp",
+      "src": "Asset/World/VEATION/5.webp",
       "w": 768,
       "h": 432
     }

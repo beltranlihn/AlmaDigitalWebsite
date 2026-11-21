@@ -89,7 +89,7 @@ generador lo avisa. Si la obra entra a las seleccionadas (`site.json → feature
 **Un formato nuevo** (como `software`, que se sumó con VEATION): la etiqueta en `site.json → formats`,
 la frase en `formatsDesc`, el nombre en `projects.json → meta.formats` y, en `src/build.mjs`, el ícono
 por defecto en `ICON_BY_FORMAT`. El filtro del índice aparece solo.
-**Spin-offs** (hoy Rito Digital y Digital Sanctuaries): son fichas como las demás, con `track:
+**Spin-offs** (hoy Digital Sanctuaries; Rito Digital lo fue hasta el 2026-11-21): son fichas como las demás, con `track:
 "spinoff"` (la línea "Spin-offs" del índice y "Spin-off" en la ficha). Para que salgan en la portada,
 su slug va en `site.json → world.spinoffs` (no en `featured`): tienen su propio paso después de las obras.
 **`photoCredits`** (opcional, en `projects.json`): `{ "ruta de la foto": "@autor" }`. El crédito sale
@@ -212,8 +212,8 @@ vea y probarlo en teléfonos reales** (en la portada corren el fluido y el mundo
      parada. El título sólo cambia de opacidad: la tipografía no se mueve.
   5. **Las obras**, una galaxia cada una (ver "Paradas en galaxia"; antes, una ameba).
   6. **Los spin-offs** (desde el 2026-11-20): un segundo paso con anillos y el título "Studio
-     spin-offs" (`site.json → spinTitle`), y una galaxia para cada uno (`world.spinoffs`, hoy Rito
-     Digital y Digital Sanctuaries). Su ficha de vidrio dice "Spin-off" en vez del número de obra.
+     spin-offs" (`site.json → spinTitle`), y una galaxia para cada uno (`world.spinoffs`, hoy sólo
+     Digital Sanctuaries). Su ficha de vidrio dice "Spin-off" en vez del número de obra.
      Sin 3D van en la misma lista que las obras.
   7. **El cierre**: las obras seleccionadas, conocer el estudio y contacto. La ameba del final aparece
      recién al dejar la última parada.
@@ -283,7 +283,13 @@ vea y probarlo en teléfonos reales** (en la portada corren el fluido y el mundo
   recorrido. Es un shader a pantalla completa (`LIQ_FRAG` en `js/world.js`); **si cambia el alto o el
   degradado de `.phero` en el CSS, hay que cambiarlos también ahí** (`uHero` y el cálculo de `shade`).
 - **Volver a la portada** (el logo del menú) lleva siempre a la entrada, arriba de todo.
-- **Qué obras**: `site.json → world.works` (lista de slugs); vacío usa `featured`. Los spin-offs, en
+- **Qué obras**: `site.json → world.works` (lista de slugs); vacío usa `featured`. Desde el 2026-11-21,
+  una obra por formato, elegidas por Vicente: Soul Charger (VR), Collective Pulse (XR), Neurocosm Full
+  Dome (Fulldome), Rito Digital (performance audiovisual en vivo), Pacha Ibiza (encargo) y VEATION
+  (software). **El formato** de cada una va arriba del nombre en su ficha de vidrio, en el color de la
+  segunda voz (`site.json → world.labels`, por idioma; `.world__kind` en el CSS): al recorrer las
+  paradas se lee el abanico de lo que hace el estudio. Con etiqueta, el número va solo ("01 / 06"), sin
+  "Obra propia" ni "Encargo". Los spin-offs, en
   `world.spinoffs`. Los pasos de capítulo (`CHAPS` y `gates` en `js/world.js`) salen solos: uno antes
   de la primera obra y otro antes del primer spin-off.
 - **Cómo está hecho** (`js/world.js`): Three.js con WebGL, canvas transparente sobre el fluido. Cada ameba
@@ -562,6 +568,29 @@ desactiva. **No** cambiar nameservers a Cloudflare.
 El fluid sim sigue corriendo con auto-emitters en mobile. Los usuarios de Android no pueden tocar el fondo para emitir fluidos (correcto — el dedo es para el scroll).
 
 ## Historial de sesiones (última al tope)
+
+### 2026-11-21 — Selección nueva: una obra por formato, con el formato en cada parada (Vicente)
+
+Vicente preguntó si después de la descripción convenía mostrar cinco obras o cinco formatos (VR/AR,
+domo, XR con biofeedback, encargos, performance musical, software). Se le recomendó obras, no formatos
+(así lo hacen las referencias y los estudios de ese circuito; quien decide mira una obra concreta; un
+formato agrega un clic), pero elegidas para que cada una represente un formato distinto y con el formato
+escrito en la parada. Eligió las seis y el orden:
+
+- **Selección** (`featured`): Soul Charger (VR), Collective Pulse (XR), Neurocosm Full Dome (Fulldome),
+  Rito Digital (Live audiovisual performance / Performance audiovisual en vivo), Pacha Ibiza
+  (Commission / Encargo) y VEATION (Software). Sale Neurocosm XR (sigue en el índice; se borró su
+  `Asset/World/Neurocosm XR/`, que ya no se usaba).
+- **Rito Digital deja de ser spin-off** en el sitio: `track: "studio"` (obra propia), segundo en el
+  índice, entre las obras del recorrido. El paso "Studio spin-offs" queda con Digital Sanctuaries sola.
+  El bloque de spin-offs de Studio y el pie ("Also from the studio") siguen nombrando a Rito: es otra
+  fuente (`src/i18n/studio.json`) y no se tocó.
+- **Etiqueta de formato** en la ficha de vidrio de cada parada (`world.labels`, `data-w-kind`).
+
+**Verificado en Chrome**: las seis paradas con su etiqueta (capturas de Soul Charger, Rito Digital, Pacha
+Ibiza) y Digital Sanctuaries como único spin-off. En la consola sólo dos avisos de View Transitions por
+cambios de tamaño de la ventana de prueba. Paquete: 51 páginas, 1.568 referencias, ninguna rota.
+**Sin ver**: el teléfono (la etiqueta suma una línea a la ficha), Safari y Firefox.
 
 ### 2026-11-21 — Reel 2026 nítido (Vicente)
 

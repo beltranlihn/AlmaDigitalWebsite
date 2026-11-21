@@ -468,10 +468,13 @@ function buildWorld(lang) {
   };
   /* Los spin-offs (world.spinoffs) van después de las obras, con su propio paso. */
   const spins = (world.spinoffs || []).map(s => projects.find(p => p.slug === s)).filter(Boolean).map(p => loc(p, lang));
+  /* La etiqueta de formato de cada parada (world.labels): VR, XR, Fulldome… Va arriba del nombre en la
+     ficha de vidrio, para que al recorrer las paradas se lea el abanico de lo que hace el estudio. */
+  const labelOf = p => ((world.labels || {})[p.slug] || {})[lang] || '';
   const card = (p, kind) => {
     const f = formOf(p.slug);
     return `      <li><a class="wcard" data-w-item${kind ? ` data-kind="${kind}"` : ''} href="${link(c, `work/${p.slug}.html`)}" data-cover="${asset(c, p.cover)}" data-title="${esc(p.title)}" data-format="${esc(p.format)}" data-form="${esc(f.formation)}" data-colors="${esc((f.colors || []).join(','))}" data-stage="${esc(f.stage || '')}"
-        data-desc="${esc(firstSentence(p.desc))}" data-tags="${esc((p.tech || []).slice(0, 4).join('|'))}" data-where="${esc(venues(p.presentedAt || []))}" data-line="${esc(trackLabel(p, t))}" data-credit="${esc(p.creditLine || '')}"
+        data-desc="${esc(firstSentence(p.desc))}" data-tags="${esc((p.tech || []).slice(0, 4).join('|'))}" data-where="${esc(venues(p.presentedAt || []))}" data-line="${esc(trackLabel(p, t))}" data-label="${esc(labelOf(p))}" data-credit="${esc(p.creditLine || '')}"
         data-icon="${esc(iconOf(p))}" data-gallery="${esc(galleryOf(p))}">
         <img loading="lazy" decoding="async" width="1920" height="1080" src="${asset(c, p.cover)}" alt="">
         <span class="wcard__t"><b>${esc(p.title)}</b><span>${esc(p.format)}</span></span>
@@ -505,6 +508,7 @@ function buildWorld(lang) {
     </button>
     <div class="world__hud">
       <p class="label" data-w-count></p>
+      <p class="world__kind" data-w-kind hidden></p>
       <p class="world__name" data-w-title></p>
       <p class="world__fmt" data-w-fmt></p>
       <p class="world__desc" data-w-desc hidden></p>

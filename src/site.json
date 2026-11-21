@@ -19,12 +19,12 @@
     }
   ],
   "featured": [
-    "neurocosm-xr",
     "soul-charger",
-    "veation",
     "collective-pulse",
     "neurocosm-full-dome",
-    "pacha-ibiza"
+    "rito-digital",
+    "pacha-ibiza",
+    "veation"
   ],
   "perProjectPalette": false,
   "reelAutoplayOnView": false,
@@ -34,7 +34,6 @@
     "works": [],
     "stops": "galaxy",
     "icons": {
-      "neurocosm-xr": "eeg",
       "soul-charger": "headset",
       "veation": "editor",
       "collective-pulse": "pulse",
@@ -46,9 +45,34 @@
       "srcMobile": "Asset/Reel Portfolio/Reel Flotante Vertical.mp4"
     },
     "spinoffs": [
-      "rito-digital",
       "digital-sanctuaries"
-    ]
+    ],
+    "labels": {
+      "soul-charger": {
+        "en": "VR",
+        "es": "VR"
+      },
+      "collective-pulse": {
+        "en": "XR",
+        "es": "XR"
+      },
+      "neurocosm-full-dome": {
+        "en": "Fulldome",
+        "es": "Fulldome"
+      },
+      "rito-digital": {
+        "en": "Live audiovisual performance",
+        "es": "Performance audiovisual en vivo"
+      },
+      "pacha-ibiza": {
+        "en": "Commission",
+        "es": "Encargo"
+      },
+      "veation": {
+        "en": "Software",
+        "es": "Software"
+      }
+    }
   },
   "sound": {
     "enabled": true,
