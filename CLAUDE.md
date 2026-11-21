@@ -578,7 +578,10 @@ Dos pedidos de Vicente: cambiar el reel por el actualizado (`~/Desktop/2026 REEL
 - **Descripción**: se probó volver `heroLead` (la ficha del estudio en la portada y la página sin 3D) al
   texto del sitio anterior ("Alma Digital is an immersive wellness art studio that creates multimedia
   experiences…", el mismo del "about" de Studio). Vicente lo vio y pidió volver a la descripción que
-  estaba ("We create VR, fulldome, projection mapping and biofeedback experiences…"): quedó esa.
+  estaba, y después la cambió por una propia: **"We create interactive and immersive experiences that
+  merge art, science and technology to support well-being and inner exploration."** En español: "Creamos
+  experiencias interactivas e inmersivas que unen arte, ciencia y tecnología para acompañar el bienestar
+  y la exploración interior." (traducción a revisar). Es la que quedó.
 
 **Para tener en cuenta** (de `_PERMISOS.md`, que describe este mismo reel): trae tomas de Pacha Ibiza y
 Adidas Terrex, y una de Collective Pulse (hacia los 40 s) sin el crédito del BID que esa obra exige en toda
