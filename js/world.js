@@ -65,79 +65,120 @@ const C = {
 };
 
 /* ── La ameba ──────────────────────────────────────────────────────────
-   Una esfera que se deforma en el vértice con lóbulos lentos (sumas de senos:
-   baratas y sin saltos). La normal se saca desplazando dos vecinos. */
-const VERT = `
-  uniform float uTime, uSeed, uWobble;
-  varying vec3 vN; varying vec3 vP;
-  float lobes(vec3 p) {
-    float t = uTime;
-    float a = sin(p.x * 1.6 + t * 0.50 + uSeed) * sin(p.y * 1.8 - t * 0.42 + uSeed * 1.7) * sin(p.z * 1.5 + t * 0.36 + uSeed * 0.6);
-    float b = sin(p.x * 3.0 - t * 0.31 + uSeed * 2.3) * sin(p.y * 2.6 + t * 0.38 + uSeed) * sin(p.z * 3.2 - t * 0.27);
-    return a * 0.24 + b * 0.07;
-  }
-  vec3 shape(vec3 n) { return n * (1.0 + uWobble * lobes(n * 1.25)); }
+   La ameba de la marca: un racimo de doce esferas fundidas (metaballs) con la
+   superficie mate, como el blob del logo y del reel. Sale del prototipo WebGPU
+   que pasó Vicente (alma-ameba-webgpu, 2026-11-21), llevado a WebGL: cada
+   ameba es una esfera envolvente de pocos triángulos y el fragment shader
+   recorre el campo de distancias (raymarching) en el espacio del objeto.
+   Escribe su profundidad real: las imágenes de las galaxias pasan por detrás
+   de la ameba, no de la esfera envolvente.
+     · forma: una esfera al centro y once alrededor, sobre una esfera de
+       Fibonacci, que deambulan despacio (ballsFor(), en JS, por ameba y cuadro)
+     · superficie: ruido que la deforma apenas, sólo cerca del borde
+     · luz: difusa envolvente, oclusión en los pliegues, rampa de cuatro tonos
+       (sombra, medio, luz, brillo), el acento en los pliegues y un borde suave
+   Sin brillos especulares: es arcilla, no vidrio. */
+const BALLS = 12;                      // esferas por ameba
+const AMEBA_VERT = `
+  varying vec3 vPos; varying vec3 vCam;
   void main() {
-    vec3 n = normalize(position);
-    vec3 ref = abs(n.y) < 0.99 ? vec3(0.0, 1.0, 0.0) : vec3(1.0, 0.0, 0.0);
-    vec3 t1 = normalize(cross(ref, n)), t2 = cross(n, t1);
-    vec3 p0 = shape(n), p1 = shape(normalize(n + t1 * 0.03)), p2 = shape(normalize(n + t2 * 0.03));
-    vec4 mv = modelViewMatrix * vec4(p0, 1.0);
-    vN = normalize(normalMatrix * normalize(cross(p1 - p0, p2 - p0)));
-    vP = mv.xyz;
-    gl_Position = projectionMatrix * mv;
+    vPos = position;
+    vCam = (inverse(modelMatrix) * vec4(cameraPosition, 1.0)).xyz;
+    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
   }`;
-/* Vidrio: borde claro, un reflejo curvo arriba y algo de iridiscencia. Las
-   amebas del recorrido (uArt = 1) llevan adentro un arte con los colores de su
-   obra; las demás son luminosas, como la del logo. */
-const FRAG = `
-  uniform float uArt, uOpacity, uTime, uSeed, uFocus, uGlow, uSolid;
-  uniform vec3 uA, uB, uC, uP0, uP1, uP2, uP3, uStage;
+const AMEBA_FRAG = `
+  uniform mat4 modelMatrix; uniform mat4 projectionMatrix;
+  uniform float uTime, uWobble, uOpacity, uFocus, uGlow, uSolid, uArt;
+  uniform vec3 uR0, uR1, uR2, uR3, uAcc;
+  uniform vec4 uBalls[${BALLS}];
   uniform vec2 uLook;
-  varying vec3 vN; varying vec3 vP;
+  varying vec3 vPos; varying vec3 vCam;
+  float hash(vec3 p) { p = fract(p * 0.3183099 + 0.1); p *= 17.0; return fract(p.x * p.y * p.z * (p.x + p.y + p.z)); }
+  float vnoise(vec3 x) {
+    vec3 i = floor(x), f = fract(x); f = f * f * (3.0 - 2.0 * f);
+    return mix(mix(mix(hash(i), hash(i + vec3(1.0, 0.0, 0.0)), f.x), mix(hash(i + vec3(0.0, 1.0, 0.0)), hash(i + vec3(1.0, 1.0, 0.0)), f.x), f.y),
+               mix(mix(hash(i + vec3(0.0, 0.0, 1.0)), hash(i + vec3(1.0, 0.0, 1.0)), f.x), mix(hash(i + vec3(0.0, 1.0, 1.0)), hash(i + vec3(1.0, 1.0, 1.0)), f.x), f.y), f.z) * 2.0 - 1.0;
+  }
+  float smin(float a, float b, float k) { float h = max(k - abs(a - b), 0.0) / k; return min(a, b) - h * h * k * 0.25; }
+  float balls(vec3 p) {
+    float d = 1e5;
+    for (int i = 0; i < ${BALLS}; i++) d = smin(d, length(p - uBalls[i].xyz) - uBalls[i].w, 0.23);
+    return d;
+  }
+  float map(vec3 p) {
+    float d = balls(p);
+    if (d > 0.2) return d;               // lejos del borde no hace falta el ruido
+    float m = uTime * 0.11;
+    vec3 q = p * 1.6 + vec3(0.0, m, m * 0.45);
+    vec3 w = vec3(vnoise(q), vnoise(q + vec3(5.2, 1.3, 2.8)), vnoise(q + vec3(1.7, 9.2, 3.4)));
+    return d + vnoise(p * 1.6 + w * 0.8 - vec3(0.0, m * 0.6, 0.0)) * (0.04 + 0.02 * uWobble);
+  }
+  vec3 normalAt(vec3 p) {
+    vec2 e = vec2(1.0, -1.0) * 0.002;
+    return normalize(e.xyy * map(p + e.xyy) + e.yyx * map(p + e.yyx) + e.yxy * map(p + e.yxy) + e.xxx * map(p + e.xxx));
+  }
+  float aoAt(vec3 p, vec3 n) {
+    float occ = 0.0, sca = 1.0;
+    for (int i = 1; i <= 4; i++) { float h = 0.02 + 0.08 * float(i); occ += (h - balls(p + n * h)) * sca; sca *= 0.72; }
+    return clamp(1.0 - 2.2 * occ, 0.0, 1.0);
+  }
   void main() {
-    vec3 N = normalize(vN), V = normalize(-vP);
-    float ndv = clamp(dot(N, V), 0.0, 1.0);
-    float fres = pow(1.0 - ndv, 2.4);
-    vec2 d = N.xy; float r = length(d);
-
-    float g = 0.5 + 0.5 * N.y + 0.22 * sin(N.x * 3.0 + uTime * 0.4 + uSeed);
-    vec3 glow = mix(uA, uB, clamp(g, 0.0, 1.0));
-    glow = mix(glow, uC, smoothstep(0.25, 0.95, ndv) * 0.3);
-
-    /* El arte de adentro: los colores de la obra mezclándose despacio, como tinta
-       en agua. La normal hace de lente (el dibujo se curva con la gota) y todo se
-       corre un poco con el cursor, como al mirar dentro de una bola de cristal.
-       Hacia el borde se hunde en el color de fondo de la obra. */
-    vec2 uv = d * (0.74 + 0.26 * r * r) * 1.5 + uLook * 3.0 * (1.0 - r * r);
-    float t = uTime * 0.16 + uSeed * 3.0;
-    vec2 w = uv + 0.60 * vec2(sin(uv.y * 2.1 + t * 1.3 + uSeed), cos(uv.x * 1.9 - t * 1.1));
-    w += 0.32 * vec2(sin(w.y * 3.7 - t * 0.9 + uSeed * 2.0), cos(w.x * 3.3 + t * 0.7));
-    float f1 = 0.5 + 0.5 * sin(w.x * 2.1 + w.y * 1.3 + t);
-    float f2 = 0.5 + 0.5 * sin(w.y * 2.7 - w.x * 1.5 - t * 0.8 + 2.0);
-    float f3 = 0.5 + 0.5 * sin(length(w + vec2(0.3, -0.2)) * 4.2 - t * 1.4);
-    vec3 art = mix(uP0, uP1, smoothstep(0.2, 0.8, f1));
-    art = mix(art, uP2, smoothstep(0.35, 0.95, f2) * 0.85);
-    art = mix(art, uP3, smoothstep(0.72, 1.0, f3) * 0.6);
-    art = mix(art, uStage, smoothstep(0.3, 1.05, r) * 0.7);
-    art *= 0.8 + 0.2 * uFocus;
-    vec3 col = mix(glow, art, uArt);
-
-    /* Película líquida: bandas de color que se arrastran por la superficie, como en una pompa de jabón. */
-    float film = 0.5 + 0.5 * sin(d.x * 5.0 + sin(d.y * 6.0 + uTime * 0.45 + uSeed) * 1.6 + uTime * 0.3);
-    vec3 irid = 0.5 + 0.5 * cos(6.2832 * (fres * 0.9 + film * 0.35 + vec3(0.02, 0.36, 0.62)) + uSeed);
-    col = mix(col, vec3(0.93, 0.86, 1.0), fres * 0.55);
-    col += irid * (fres * 0.22 + film * smoothstep(0.35, 1.0, r) * 0.1);
-    vec3 L1 = normalize(vec3(-0.55, 0.75, 0.6)), L2 = normalize(vec3(0.7, -0.35, 0.5));
-    col += smoothstep(0.62, 0.97, dot(N, L1)) * mix(0.09, 0.16, uArt);
-    col += pow(max(dot(N, normalize(L1 + V)), 0.0), 260.0) * mix(0.3, 0.7, uArt);
-    col += pow(max(dot(N, normalize(L2 + V)), 0.0), 60.0) * mix(0.08, 0.2, uArt);
-    col += uGlow * vec3(0.55, 0.42, 1.0) * (0.12 + 0.5 * fres);
-
-    float soft = mix(0.34, 0.95, fres);
-    float a = mix(mix(soft, 0.94, uSolid), 0.98, uArt);
-    gl_FragColor = vec4(col, a * uOpacity);
+    vec3 ro = vCam, rd = normalize(vPos - vCam);
+    float b = dot(ro, rd), c = dot(ro, ro) - 1.69, h = b * b - c;      // la esfera envolvente: radio 1,3
+    if (h < 0.0) discard;
+    h = sqrt(h);
+    float t = max(-b - h, 0.0), tFar = -b + h, md = 1e5, tm = t;
+    bool hit = false;
+    for (int i = 0; i < STEPS; i++) {
+      float d = map(ro + rd * t);
+      if (d < md) { md = d; tm = t; }
+      if (d < 0.0006 * t + 0.0004) { hit = true; break; }
+      t += d * 0.8;
+      if (t > tFar) break;
+    }
+    float px = length(fwidth(vPos)) * 0.9;                            // un píxel, en el espacio de la ameba
+    float cov = hit ? 1.0 : 1.0 - smoothstep(0.0, px * 1.5, md);   // borde suavizado
+    if (cov <= 0.002) discard;
+    vec3 p = ro + rd * (hit ? t : tm);
+    vec3 n = normalAt(p), v = -rd;
+    float ao = aoAt(p, n);
+    vec3 key = normalize(vec3(-0.42 + uLook.x * 2.0, 0.78 + uLook.y * 2.0, 0.5));
+    float wrap = pow(clamp((dot(n, key) + 0.55) / 1.55, 0.0, 1.0), 1.15);
+    float fres = pow(1.0 - clamp(dot(n, v), 0.0, 1.0), 2.5);
+    float light = wrap * mix(0.35, 1.0, ao);
+    vec3 col = mix(uR0, uR1, smoothstep(0.0, 0.38, light));
+    col = mix(col, uR2, smoothstep(0.3, 0.72, light));
+    col = mix(col, uR3, smoothstep(0.6, 0.97, light));
+    float h1 = clamp(vnoise(p * 1.2 + vec3(0.0, 0.0, uTime * 0.06)) * 1.3 + 0.5, 0.0, 1.0);
+    float h2 = clamp(vnoise(p * 1.7 + vec3(7.1, uTime * 0.05, 2.3)) * 1.3 + 0.5, 0.0, 1.0);
+    col = mix(col, col * vec3(1.08, 0.8, 1.0), smoothstep(0.55, 0.9, h1) * 0.7);              // el tono deriva despacio
+    col = mix(col, col * vec3(0.8, 0.92, 1.1), smoothstep(0.5, 0.9, h2) * (1.0 - light) * 0.7);
+    float crease = (1.0 - ao) * 1.4 + fres * 0.4;
+    col = mix(col, uAcc, clamp(crease * smoothstep(0.4, 0.85, h2) * 0.75, 0.0, 0.7));       // el acento, en los pliegues
+    col += fres * uR2 * 0.1;
+    col = mix(vec3(dot(col, vec3(0.299, 0.587, 0.114))), col, 0.86 + 0.14 * max(uFocus, 1.0 - uArt));
+    col += uGlow * uR3 * (0.08 + 0.35 * fres);
+    float a = mix(0.82, 1.0, max(uSolid, uArt));
+    gl_FragColor = vec4(col, a * cov * uOpacity);
+    vec4 clip = projectionMatrix * viewMatrix * modelMatrix * vec4(p, 1.0);
+    gl_FragDepth = clamp(0.5 + 0.5 * clip.z / clip.w, 0.0, 1.0);
   }`;
+/* Las rampas de color de las amebas. La de Alma es la del blob de la marca. */
+const HEX = (h) => { h = h.replace('#', ''); return [0, 2, 4].map((k) => parseInt(h.substr(k, 2), 16) / 255); };
+const ALMA_RAMP = ['#5c1fc7', '#8f47ee', '#cba0fb', '#fcd6f8', '#4cc8f5'].map(HEX);
+const lum = (c) => 0.299 * c[0] + 0.587 * c[1] + 0.114 * c[2];
+const mixc = (a, b, t) => a.map((x, i) => x + (b[i] - x) * t);
+function rampOf(o) {
+  if (o.ramp) return o.ramp;
+  if (o.pal) {                         // los colores de la obra, del más oscuro al más claro; el más saturado de acento
+    const s = o.pal.slice(0, 4).sort((x, y) => lum(x) - lum(y));
+    while (s.length < 4) s.push(s[s.length - 1]);
+    const sat = (c) => Math.max(...c) - Math.min(...c);
+    const acc = o.pal.slice().sort((x, y) => sat(y) - sat(x))[0];
+    return [mixc(s[0], [0, 0, 0], 0.35), s[1], s[2], mixc(s[3], [1, 1, 1], 0.25), acc];
+  }
+  return [mixc(o.a, [0.16, 0.05, 0.42], 0.5), o.a, o.b, mixc(o.c, [1, 1, 1], 0.2), ALMA_RAMP[4]];
+}
 
 /* ── El reel: una pantalla que flota ───────────────────────────────────
    Un plano con el video (antes, su póster), de puntas redondas, con filo de
@@ -784,30 +825,51 @@ export function mount(section, opts) {
   const TAN = Math.tan(THREE.MathUtils.degToRad(22.5));
 
   /* ── Amebas ─────────────────────────────────────────────────────────── */
-  const geoBig = new THREE.IcosahedronGeometry(1, coarse ? 14 : 22);
-  const geoSmall = new THREE.IcosahedronGeometry(1, coarse ? 7 : 10);
+  /* La esfera envolvente de cada ameba: pocos triángulos, el detalle lo pone el shader.
+     Radio 1,38: la esfera del raymarching (1,3) más margen por las caras planas. */
+  const geoBig = new THREE.IcosahedronGeometry(1.38, 2), geoSmall = geoBig;
   const blank = new THREE.DataTexture(new Uint8Array([40, 30, 90, 255]), 1, 1);
   blank.needsUpdate = true;
-  const disposables = [geoBig, geoSmall, blank];
+  const disposables = [geoBig, blank];
+  /* Las doce esferas de una ameba, en este cuadro: una al centro y once sobre una esfera de
+     Fibonacci que deambulan alrededor de su lugar, así la masa sigue redonda. */
+  function ballsFor(a) {
+    const B = a.u.uBalls.value, t = a.u.uTime.value, s = a.seed, w = 0.1 + 0.05 * a.u.uWobble.value;
+    const ry = t * 0.08 + s, cy = Math.cos(ry), sy = Math.sin(ry);
+    for (let i = 0; i < BALLS; i++) {
+      let x = 0, y = 0, z = 0, r = 0.49;
+      if (i > 0) {
+        const k = i - 1, m = BALLS - 1, yy = 1 - 2 * (k + 0.5) / m, rr = Math.sqrt(1 - yy * yy), th = k * 2.39996 + s * 0.9;
+        x = 0.57 * rr * Math.cos(th) + w * Math.sin(t * (0.31 + 0.07 * (k % 5)) + k * 1.7 + s);
+        y = 0.57 * yy + w * Math.sin(t * (0.27 + 0.05 * (k % 4)) + k * 2.3 + s * 1.3);
+        z = 0.57 * rr * Math.sin(th) + w * Math.sin(t * (0.23 + 0.06 * (k % 3)) + k * 0.9 + s * 0.6);
+        r = 0.365 * (0.85 + 0.15 * ((k * 7 + Math.floor(s * 5)) % 5) / 4);
+      }
+      r += 0.035 * Math.sin(t * 0.6 + i * 2.1);
+      B[i].set(cy * x + sy * z, y, -sy * x + cy * z, r);
+    }
+  }
   function ameba(geo, o) {
-    /* Con paleta (o.pal) lleva el arte de la obra adentro; sin ella es una ameba luminosa. */
-    const pal = o.pal || [C.violet, C.lilac, C.pink, C.mist];
-    const P = (k) => ({ value: new THREE.Vector3(...pal[Math.min(k, pal.length - 1)]) });
+    /* o.pal: los colores de una obra (su ameba toma esa rampa); o.ramp: una rampa dada
+       (la de Alma); si no, una rampa armada con o.a, o.b, o.c. */
+    const R = rampOf(o), V = (c) => ({ value: new THREE.Vector3(...c) });
     const mat = new THREE.ShaderMaterial({
-      vertexShader: VERT, fragmentShader: FRAG, transparent: true,
+      vertexShader: AMEBA_VERT, fragmentShader: AMEBA_FRAG, transparent: true, defines: { STEPS: coarse ? 40 : 64 },
       uniforms: {
-        uTime: { value: 0 }, uSeed: { value: o.seed }, uWobble: { value: o.wobble },
+        uTime: { value: 0 }, uWobble: { value: o.wobble },
         uArt: { value: o.pal ? 1 : 0 }, uOpacity: { value: 0 }, uFocus: { value: 0 },
         uGlow: { value: 0 }, uSolid: { value: o.solid || 0 }, uLook: { value: new THREE.Vector2() },
-        uA: { value: new THREE.Vector3(...o.a) }, uB: { value: new THREE.Vector3(...o.b) }, uC: { value: new THREE.Vector3(...o.c) },
-        uP0: P(0), uP1: P(1), uP2: P(2), uP3: P(3), uStage: { value: new THREE.Vector3(...(o.stage || [0.10, 0.07, 0.24])) },
+        uR0: V(R[0]), uR1: V(R[1]), uR2: V(R[2]), uR3: V(R[3]), uAcc: V(R[4]),
+        uBalls: { value: Array.from({ length: BALLS }, () => new THREE.Vector4()) },
       },
     });
     disposables.push(mat);
     const mesh = new THREE.Mesh(geo, mat);
     mesh.frustumCulled = false;
     scene.add(mesh);
-    return { mesh, u: mat.uniforms, r: 1, base: new THREE.Vector3(), drift: o.drift || 0, seed: o.seed, far: o.far || 30, wob: o.wobble, hov: 0 };
+    const am = { mesh, u: mat.uniforms, r: 1, base: new THREE.Vector3(), drift: o.drift || 0, seed: o.seed, far: o.far || 30, wob: o.wobble, hov: 0 };
+    mesh.onBeforeRender = () => ballsFor(am);           // sólo las que se dibujan
+    return am;
   }
   /* El reel: un plano con el video. Se orienta y se mide en layout(). */
   const PAD = 0.2;                     // margen del plano alrededor del video, para el resplandor
@@ -939,8 +1001,8 @@ export function mount(section, opts) {
       far: 30, hov: 0, spin: 0, loaded: false,
     };
   }
-  const door = ameba(geoBig, { seed: 1.7, wobble: 1, solid: 1, a: C.violet, b: C.pink, c: C.mist });
-  const core = ameba(geoBig, { seed: 4.2, wobble: 1, solid: 1, a: C.purple, b: C.lilac, c: C.mist, far: 44 });
+  const door = ameba(geoBig, { seed: 1.7, wobble: 1, solid: 1, ramp: ALMA_RAMP });
+  const core = ameba(geoBig, { seed: 4.2, wobble: 1, solid: 1, ramp: ALMA_RAMP, far: 44 });
   /* Las paradas, en el orden del HTML: la ameba del estudio, el reel y una ameba por obra. */
   const works = links.map((a, i) => {
     const list = (a.getAttribute('data-colors') || '').split(',').filter(Boolean);
@@ -948,7 +1010,7 @@ export function mount(section, opts) {
     const stage = a.getAttribute('data-stage');
     const w = kinds[i] === 'reel' ? screen(a)
       : (GAL && WORKY(kinds[i])) ? galaxy(a, i, pal)
-      : ameba(geoBig, { seed: 2.3 + i * 1.9, wobble: 0.55, a: C.violet, b: C.blue, c: C.lilac, pal, stage: stage ? hex(stage) : null });
+      : ameba(geoBig, { seed: 2.3 + i * 1.9, wobble: 0.55, a: C.violet, b: C.blue, c: C.lilac, pal, ramp: kinds[i] === 'studio' ? ALMA_RAMP : null });
     w.kind = kinds[i];                                     // 'studio', 'reel', 'work' o 'spin'
     w.pal = pal; w.href = a.href; w.cover = a.getAttribute('data-cover') || '';
     w.title = a.getAttribute('data-title') || ''; w.format = a.getAttribute('data-format') || '';

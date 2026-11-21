@@ -9,7 +9,8 @@ estudio, sus proyectos y equipo con una estética audiovisual interactiva, en in
 - Las páginas se **generan** con `node src/build.mjs` (Node, sin dependencias) a partir de archivos
   de datos, y se commitean ya generadas. Netlify no corre el generador: publica el HTML tal cual.
 - WebGL Fluid Simulation (fork de PavelDoGreat) en `js/fluid.js`.
-- Ameba del hero: shader propio en `js/ameba.js` (WebGL 1, sin librerías, ~6 KB).
+- Ameba del hero: shader propio en `js/ameba.js` (WebGL 1, sin librerías, ~8 KB): doce esferas fundidas
+  (metaballs) con la superficie mate de la ameba de la marca. Ver "Las amebas".
 - **Three.js** (0.187.0, desde el CDN jsDelivr, 156 KB comprimido) lo usan dos módulos, que se cargan
   sólo en las páginas que los piden: `js/particles.js` (partículas de las obras principales) y
   `js/world.js` (el mundo interior, que es la portada).
@@ -224,11 +225,19 @@ vea y probarlo en teléfonos reales** (en la portada corren el fluido y el mundo
      Sin 3D van en la misma lista que las obras.
   7. **El cierre**: las obras seleccionadas, conocer el estudio y contacto. La ameba del final aparece
      recién al dejar la última parada.
-- **Las amebas no llevan fotos** (vale para el modo ameba, hoy en reserva; decisión de Vicente, 2026-11-18: deformadas por la gota se veían poco
-  profesionales). Adentro llevan un arte hecho con los colores de la obra, que se mezclan despacio como
-  tinta en agua (`FRAG` en `js/world.js`). Los colores son los de `site.json → particles` (o
-  `world.forms`): los cuatro primeros de `colors` y `stage` para el borde. La portada de la obra aparece
-  recién en la transición líquida.
+- **Las amebas** (todas: las del mundo 3D y la que flota en las otras páginas) son, desde el 2026-11-21,
+  la ameba de la marca: un racimo de doce esferas fundidas (metaballs) con la superficie mate, como el
+  blob del logo y del reel. Sale del prototipo WebGPU que pasó Vicente (`alma-ameba-webgpu`), llevado a
+  WebGL: cada ameba es una esfera envolvente de pocos triángulos y el shader recorre el campo de
+  distancias (`AMEBA_VERT`/`AMEBA_FRAG` y `ballsFor()` en `js/world.js`; `FS` y `ballsAt()` en
+  `js/ameba.js`). Luz difusa envolvente, oclusión en los pliegues, una rampa de cuatro tonos (sombra,
+  medio, luz, brillo), el acento en los pliegues y un borde suave; sin brillos especulares. La de Alma
+  (puerta, estudio, final y la flotante) usa la rampa de la marca: `#5c1fc7`, `#8f47ee`, `#cba0fb`,
+  `#fcd6f8` y el acento `#4cc8f5` (`ALMA_RAMP`). **Las de las obras** arman su rampa con los colores de
+  `site.json → particles` (o `world.forms`), del más oscuro al más claro, con el más saturado de acento
+  (`rampOf()`). Escriben su profundidad real, así las imágenes de las galaxias pasan por detrás. En
+  táctil el recorrido usa 40 pasos en vez de 64. **No llevan fotos** (decisión de Vicente, 2026-11-18):
+  la portada de la obra aparece recién en la transición líquida.
 - **Las amebas no van en fila**: cada parada tiene su propio encuadre (`COMP` y `HEIGHTS` en `layout()` de
   `js/world.js`): lado (derecha o izquierda, alternando), altura en pantalla, distancia (unas se ven
   grandes y otras más chicas), altura de la cámara y un giro leve hacia el lado de la ameba. Entre
@@ -242,8 +251,7 @@ vea y probarlo en teléfonos reales** (en la portada corren el fluido y el mundo
   profundidad, y siguen respondiendo al cursor. No se toca `js/fluid.js`. La capa la crea `js/world.js`
   al lado de `.veil`, fuera de `<main>`: adentro de `<main>` no podría mezclarse con el canvas del fluido.
 - **Detalle**: polvo en suspensión de tres colores que deriva y titila, tres corrientes de partículas en
-  hélice que giran alrededor del camino, treinta amebas chicas de fondo y una película iridiscente que se
-  arrastra por la superficie de cada ameba, como en una pompa de jabón.
+  hélice que giran alrededor del camino, treinta amebas chicas de fondo.
 - **Enjambre por ameba**: cada una tiene unas 560 partículas propias (220 en táctil), en sus colores.
   Mientras se pasa son una nube suelta; al detenerse frente a ella se ordenan, en espiral y a
   destiempo, en una forma que la representa, y se sueltan al seguir. Formas (`FORMS` en `js/world.js`):
@@ -300,7 +308,7 @@ vea y probarlo en teléfonos reales** (en la portada corren el fluido y el mundo
   `world.spinoffs`. Los pasos de capítulo (`CHAPS` y `gates` en `js/world.js`) salen solos: uno antes
   de la primera obra y otro antes del primer spin-off.
 - **Cómo está hecho** (`js/world.js`): Three.js con WebGL, canvas transparente sobre el fluido. Cada ameba
-  es una esfera deformada en el shader. La portada de cada obra se pide recién al detenerse frente a
+  es un racimo de esferas dibujado con raymarching (ver "Las amebas"). La portada de cada obra se pide recién al detenerse frente a
   ella, sólo para el derrame. Mirages usa WebGPU; acá se eligió WebGL para que corra en todos los teléfonos.
 - **Sin 3D sirve igual**, y es lo que leen los buscadores: el HTML trae el título, la descripción, el
   reel con su póster, "Obras seleccionadas" con las obras en tarjetas y los botones
@@ -320,7 +328,7 @@ estudio y la del final siguen igual. El 2026-11-20 pidió probar la ameba de cad
 ícono ("a ver cómo funciona ameba + fotos") y se quedó con ella: es lo que muestra ahora "Galaxia";
 los íconos quedan en reserva en "Íconos" (`world.stops: "icons"`).
 
-- **Al centro, la ameba de la obra** (`blob` en `galaxy()`): la misma del modo ameba, con el arte de
+- **Al centro, la ameba de la obra** (`blob` en `galaxy()`): la misma del modo ameba, con la rampa de
   los colores de la obra (`site.json → particles`), un poco más chica (`BLOB_R`) y apenas por encima del
   disco (`BLOB_Y`). Respira cada 6 s, se hincha bajo el cursor, se agita al avanzar rápido y su arte
   se enfoca al llegar. Tapa las imágenes que pasan por detrás. La transición líquida sale de ella.
@@ -583,6 +591,28 @@ desactiva. **No** cambiar nameservers a Cloudflare.
 El fluid sim sigue corriendo con auto-emitters en mobile. Los usuarios de Android no pueden tocar el fondo para emitir fluidos (correcto — el dedo es para el scroll).
 
 ## Historial de sesiones (última al tope)
+
+### 2026-11-21 — Amebas con metaballs, como la ameba de la marca (Vicente)
+
+Vicente pasó un prototipo WebGPU (`~/Downloads/alma-ameba-webgpu/`: un racimo de esferas fundidas con
+raymarching, superficie mate y una rampa de lilas) para que las amebas del sitio se parezcan más a la
+ameba de Alma Digital. Se llevó a WebGL (el sitio no usa WebGPU, para que corra en todos los teléfonos) y
+se aplicó a todas las amebas. Ver "Las amebas" en la sección del mundo interior.
+
+- **Mundo 3D** (`js/world.js`): cada ameba es una esfera envolvente de pocos triángulos y el shader
+  recorre doce esferas fundidas, con algo de ruido cerca del borde. Escribe su profundidad real, así que
+  las imágenes de las galaxias siguen pasando por detrás. La puerta, la ameba del estudio y la del final
+  llevan la rampa de la marca; las de las obras, una rampa con sus colores. Se fueron el brillo de
+  pompa de jabón y el arte de tinta de adentro.
+- **La ameba flotante** de las otras páginas (`js/ameba.js`): el mismo racimo y la misma rampa, con sus
+  interacciones de siempre (respira, sigue al puntero, se arrastra, se aplasta, muta con el clic).
+
+**Verificado en Chrome**: la puerta, la ameba del estudio, las galaxias de Soul Charger y Rito, el
+cierre, el modo "Ameba" (Neurocosm Full Dome) y la ameba flotante en Obras y Studio. Consola sin
+errores. Unos 35 cuadros por segundo en la entrada y en una galaxia, en la ventana de prueba (antes,
+31 en la misma clase de ventana).
+**Sin ver**: teléfonos reales (el raymarching pesa más que la esfera deformada; en táctil hace menos
+pasos), Safari y Firefox.
 
 ### 2026-11-21 — Digital Sanctuaries con su propia estética, y las fotos de Rhys Davies aprobadas (Vicente)
 

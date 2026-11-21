@@ -1,7 +1,8 @@
 /* ═══════════════════════════════════════════════════════════════════════════
    Alma Digital — la ameba viva
    Un fragment shader (WebGL 1, sin librerías) que dibuja la ameba como un
-   campo de distancias: un núcleo y seis lóbulos fundidos entre sí.
+   campo de distancias: doce esferas fundidas (metaballs), mate, con la rampa
+   de lilas del blob de la marca.
 
      · respira: una respiración cada 6 s, la unidad de tiempo de la marca
      · sigue al puntero y se puede arrastrar para girarla, con inercia
@@ -30,6 +31,10 @@
   var T = function (k) { var a = window.__ALMA__; return (a && a.t && a.t[k]) || ''; };
 
   var VS = 'attribute vec2 p;void main(){gl_Position=vec4(p,0.,1.);}';
+  /* La ameba de la marca: doce esferas fundidas (metaballs) con la superficie mate
+     y una rampa de cuatro lilas, como el blob del logo y del reel (prototipo WebGPU
+     alma-ameba-webgpu, 2026-11-21, llevado a WebGL 1). Las esferas las calcula
+     ballsAt() en JS en cada cuadro; el shader recorre el campo de distancias. */
   var FS = [
     '#ifdef GL_FRAGMENT_PRECISION_HIGH',
     'precision highp float;',
@@ -38,30 +43,31 @@
     '#endif',
     'uniform vec2 uRes;uniform float uTime;uniform vec2 uRot;uniform float uMorph;',
     'uniform float uBreath;uniform float uGuide;uniform float uPress;',
-    // unión suave de dos distancias (Inigo Quilez)
-    'float smin(float a,float b,float k){float h=clamp(.5+.5*(b-a)/k,0.,1.);return mix(b,a,h)-k*h*(1.-h);}',
+    'uniform vec4 uB[12];',
+    'float hash(vec3 p){p=fract(p*.3183099+.1);p*=17.;return fract(p.x*p.y*p.z*(p.x+p.y+p.z));}',
+    'float vnoise(vec3 x){vec3 i=floor(x),f=fract(x);f=f*f*(3.-2.*f);',
+    '  return mix(mix(mix(hash(i),hash(i+vec3(1.,0.,0.)),f.x),mix(hash(i+vec3(0.,1.,0.)),hash(i+vec3(1.,1.,0.)),f.x),f.y),',
+    '             mix(mix(hash(i+vec3(0.,0.,1.)),hash(i+vec3(1.,0.,1.)),f.x),mix(hash(i+vec3(0.,1.,1.)),hash(i+vec3(1.,1.,1.)),f.x),f.y),f.z)*2.-1.;}',
+    // unión suave de dos distancias
+    'float smin(float a,float b,float k){float h=max(k-abs(a-b),0.)/k;return min(a,b)-h*h*k*.25;}',
     'mat2 rot(float a){float c=cos(a),s=sin(a);return mat2(c,-s,s,c);}',
+    'float balls(vec3 p){float d=1e5;for(int i=0;i<12;i++){d=smin(d,length(p-uB[i].xyz)-uB[i].w,.18);}return d;}',
     'float map(vec3 p){',
     // respiración: sola cada 6 s, o la que marca el minuto guiado
     '  float breath=mix(.5-.5*cos(uTime*1.0471976),uBreath,uGuide);',
-    '  float s=1.+uGuide*.15*(uBreath-.4)-.05*uPress;',      // en el minuto guiado crece y se recoge entera
-    '  float sq=1.+.16*uPress;',                             // al presionarla se aplasta
+    '  float s=1.+uGuide*.15*(uBreath-.4)-.05*uPress+.03*breath;',   // crece y se recoge entera
+    '  float sq=1.+.16*uPress;',                                     // al presionarla se aplasta
     '  p/=s;p.y*=sq;',
     '  p.xz*=rot(uTime*.10+uRot.x+uMorph*.35);',
     '  p.yz*=rot(.35+uRot.y);',
-    '  float d=length(p)-(.50+.035*breath);',
-    '  for(int i=0;i<6;i++){',
-    '    float f=float(i);',
-    '    float a=f*1.0471976+uMorph*.9+sin(uTime*.13+f)*.25;',
-    '    float b=sin(f*2.4+uTime*.21+uMorph*1.7)*.85;',
-    '    float rad=.45+.14*sin(uTime*.29+f*1.9+uMorph*2.3);',
-    '    vec3 c=vec3(cos(a)*cos(b),sin(b),sin(a)*cos(b))*rad;',
-    '    float r=.28+.07*sin(f*3.1+uMorph*1.3+uTime*.17)+.02*breath;',
-    '    d=smin(d,length(p-c)-r,.30);',
-    '  }',
-    '  return d*s/sq;',                                      // corrige la distancia por las dos escalas
+    '  float d=balls(p);',
+    '  if(d<.15){float m=uTime*.11;vec3 q=p*2.1+vec3(0.,m,m*.45);',   // cerca del borde, una deformación apenas
+    '    vec3 w=vec3(vnoise(q),vnoise(q+vec3(5.2,1.3,2.8)),vnoise(q+vec3(1.7,9.2,3.4)));',
+    '    d+=vnoise(p*2.1+w*.8-vec3(0.,m*.6,0.))*.034;}',
+    '  return d*s/sq;',                                              // corrige la distancia por las dos escalas
     '}',
-    'vec3 nrm(vec3 p){vec2 e=vec2(.0025,0.);return normalize(vec3(map(p+e.xyy)-map(p-e.xyy),map(p+e.yxy)-map(p-e.yxy),map(p+e.yyx)-map(p-e.yyx)));}',
+    'vec3 nrm(vec3 p){vec2 e=vec2(1.,-1.)*.002;return normalize(e.xyy*map(p+e.xyy)+e.yyx*map(p+e.yyx)+e.yxy*map(p+e.yxy)+e.xxx*map(p+e.xxx));}',
+    'float occ(vec3 p,vec3 n){float o=0.,sc=1.;for(int i=1;i<=4;i++){float h=.02+.06*float(i);o+=(h-map(p+n*h))*sc;sc*=.72;}return clamp(1.-2.6*o,0.,1.);}',
     'void main(){',
     '  vec2 uv=(gl_FragCoord.xy*2.-uRes)/min(uRes.x,uRes.y);',
     '  vec3 ro=vec3(uv*1.2,2.2);vec3 rd=vec3(0.,0.,-1.);',
@@ -69,29 +75,31 @@
     '  vec3 halo=vec3(.478,.361,.949);',                     // #7a5cf2: el glow de la marca
     '  float ha=.30*exp(-max(sqrt(r2)-.72,0.)*6.5);',
     '  if(r2>1.25){gl_FragColor=vec4(halo*ha,ha);return;}',  // fuera de la esfera envolvente: sólo halo
-    '  float t=2.2-sqrt(1.25-r2);float md=10.;bool hit=false;',
-    '  for(int i=0;i<44;i++){',
-    '    float d=map(ro+rd*t);md=min(md,d);',
-    '    if(d<.0025){hit=true;break;}',
-    '    t+=d*.9;if(t>3.5)break;',
+    '  float t=2.2-sqrt(1.25-r2);float md=10.;float tm=t;bool hit=false;',
+    '  for(int i=0;i<48;i++){',
+    '    float d=map(ro+rd*t);if(d<md){md=d;tm=t;}',
+    '    if(d<.0015){hit=true;break;}',
+    '    t+=d*.85;if(t>3.5)break;',
     '  }',
-    '  float edge=1.-smoothstep(0.,.012,md);',
+    '  float px=2.4/min(uRes.x,uRes.y);',                    // un píxel, en unidades de la ameba
+    '  float edge=1.-smoothstep(0.,px*1.5,md);',
     '  vec3 col=halo;float a=ha;',
     '  if(hit||edge>0.){',
-    '    vec3 p=ro+rd*t;vec3 n=nrm(p);',
-    // espectro del blob del sistema de marca
-    '    vec3 violet=vec3(.478,.361,.949),orchid=vec3(.541,.306,.878),lilac=vec3(.788,.620,.976),',
-    '         glow=vec3(.937,.804,.996),pink=vec3(.949,.722,.867),aurora=vec3(.357,.553,.937),deep=vec3(.353,.251,.643);',
-    '    float fr=pow(1.-max(n.z,0.),2.2);',
-    '    vec3 c=mix(orchid,aurora,smoothstep(-.6,.7,n.x+.25*sin(uTime*.2+uMorph)));',
-    '    c=mix(c,violet,.28);',
-    '    c=mix(c,pink,smoothstep(.15,.95,n.y)*.85);',
-    '    c=mix(c,deep,smoothstep(.1,.95,-n.y)*.6);',
-    '    c=mix(c,lilac,smoothstep(.2,1.,n.z)*.3);',
-    '    c=mix(c,glow,fr*.85);',
-    '    c=mix(c,glow,uGuide*uBreath*.16);',                 // al inhalar se ilumina apenas
-    '    vec3 l=normalize(vec3(-.45,.7,.6));',
-    '    c+=pow(max(dot(reflect(rd,n),l),0.),26.)*.22;',
+    '    vec3 p=ro+rd*(hit?t:tm);vec3 n=nrm(p);float o=occ(p,n);',
+    // la rampa del blob de marca: sombra, medio, luz, brillo y el acento celeste en los pliegues
+    '    vec3 s0=vec3(.361,.122,.780),s1=vec3(.561,.278,.933),s2=vec3(.796,.627,.984),s3=vec3(.988,.839,.973),acc=vec3(.298,.784,.961);',
+    '    vec3 key=normalize(vec3(-.42,.78,.5));',
+    '    float wrap=pow(clamp((dot(n,key)+.55)/1.55,0.,1.),1.15);',
+    '    float fres=pow(1.-clamp(n.z,0.,1.),2.5);',
+    '    float l=wrap*mix(.35,1.,o);',
+    '    vec3 c=mix(s0,s1,smoothstep(0.,.38,l));c=mix(c,s2,smoothstep(.3,.72,l));c=mix(c,s3,smoothstep(.6,.97,l));',
+    '    float h1=clamp(vnoise(p*1.6+vec3(0.,0.,uTime*.06))*1.3+.5,0.,1.);',
+    '    float h2=clamp(vnoise(p*2.2+vec3(7.1,uTime*.05,2.3))*1.3+.5,0.,1.);',
+    '    c=mix(c,c*vec3(1.08,.8,1.),smoothstep(.55,.9,h1)*.7);',
+    '    c=mix(c,c*vec3(.8,.92,1.1),smoothstep(.5,.9,h2)*(1.-l)*.7);',
+    '    c=mix(c,acc,clamp(((1.-o)*1.4+fres*.4)*smoothstep(.4,.85,h2)*.75,0.,.7));',
+    '    c+=fres*s2*.1;',
+    '    c=mix(c,s3,uGuide*uBreath*.12);',                   // al inhalar se ilumina apenas
     '    float body=hit?1.:edge;',
     '    col=mix(halo,c,body);a=mix(ha,1.,body);',
     '  }',
@@ -130,7 +138,7 @@
     var buf = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, buf);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
     var loc = gl.getAttribLocation(prog, 'p'); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
-    ['uRes', 'uTime', 'uRot', 'uMorph', 'uBreath', 'uGuide', 'uPress'].forEach(function (n) { U[n] = gl.getUniformLocation(prog, n); });
+    ['uRes', 'uTime', 'uRot', 'uMorph', 'uBreath', 'uGuide', 'uPress', 'uB'].forEach(function (n) { U[n] = gl.getUniformLocation(prog, n); });
     return true;
   }
 
@@ -140,6 +148,25 @@
     if (canvas.width !== w || canvas.height !== h) { canvas.width = w; canvas.height = h; gl.viewport(0, 0, w, h); }
   }
   var ease = function (k) { return .5 - .5 * Math.cos(Math.PI * Math.min(1, Math.max(0, k))); };
+
+  /* Las doce esferas en este instante: una al centro y once sobre una esfera de Fibonacci
+     que deambulan alrededor de su lugar. "m" (la mutación del scroll y del clic) las reubica. */
+  var BALLS = new Float32Array(48);
+  function ballsAt(t, m) {
+    for (var i = 0; i < 12; i++) {
+      var x = 0, y = 0, z = 0, r = .38;
+      if (i > 0) {
+        var k = i - 1, yy = 1 - 2 * (k + .5) / 11, rr = Math.sqrt(1 - yy * yy), th = k * 2.39996 + m * .9, w = .09;
+        x = .44 * rr * Math.cos(th) + w * Math.sin(t * (.31 + .07 * (k % 5)) + k * 1.7 + m);
+        y = .44 * yy + w * Math.sin(t * (.27 + .05 * (k % 4)) + k * 2.3 + m * 1.3);
+        z = .44 * rr * Math.sin(th) + w * Math.sin(t * (.23 + .06 * (k % 3)) + k * .9 + m * .6);
+        r = .28 * (.85 + .15 * ((k * 7) % 5) / 4);
+      }
+      r += .025 * Math.sin(t * .6 + i * 2.1);
+      BALLS[i * 4] = x; BALLS[i * 4 + 1] = y; BALLS[i * 4 + 2] = z; BALLS[i * 4 + 3] = r;
+    }
+    return BALLS;
+  }
 
   function stepGuide(now) {
     if (!guiding) { guide += (0 - guide) * .06; return; }
@@ -167,6 +194,7 @@
     gl.uniform1f(U.uBreath, breath);
     gl.uniform1f(U.uGuide, guide);
     gl.uniform1f(U.uPress, press);
+    gl.uniform4fv(U.uB, ballsAt(frozen ? 3. : (now - t0) / 1000, frozen ? tm + click : morph));
     gl.drawArrays(gl.TRIANGLES, 0, 3);
   }
   function loop(now) {
