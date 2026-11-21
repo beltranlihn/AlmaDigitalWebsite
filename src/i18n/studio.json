@@ -83,20 +83,6 @@
   ],
   "spinoffs": [
     {
-      "id": "rito-digital",
-      "name": "Rito Digital",
-      "url": "https://www.ritodigital.com",
-      "image": "Asset/Spin OFF/Rito Digital.webp",
-      "kicker": {
-        "en": "Immersive Audiovisual Live Electronic Show",
-        "es": "Show electrónico audiovisual inmersivo en vivo"
-      },
-      "desc": {
-        "en": "Rito Digital is an evolving branch of Alma Digital, merging music, movement, storytelling, and new technologies into collective experiences.",
-        "es": "Rito Digital es una rama en evolución de Alma Digital que fusiona música, movimiento, narrativa y nuevas tecnologías en experiencias colectivas."
-      }
-    },
-    {
       "id": "digital-sanctuary",
       "name": "Digital Sanctuary",
       "url": "https://www.almadigitalsanctuaries.com",

@@ -583,8 +583,8 @@ escrito en la parada. Eligió las seis y el orden:
   `Asset/World/Neurocosm XR/`, que ya no se usaba).
 - **Rito Digital deja de ser spin-off** en el sitio: `track: "studio"` (obra propia), segundo en el
   índice, entre las obras del recorrido. El paso "Studio spin-offs" queda con Digital Sanctuaries sola.
-  El bloque de spin-offs de Studio y el pie ("Also from the studio") siguen nombrando a Rito: es otra
-  fuente (`src/i18n/studio.json`) y no se tocó.
+  A pedido de Vicente, Rito también salió del bloque de spin-offs de Studio y del pie ("Also from the
+  studio"), que salen de `src/i18n/studio.json → spinoffs`: ahí queda sólo Digital Sanctuary.
 - **Etiqueta de formato** en la ficha de vidrio de cada parada (`world.labels`, `data-w-kind`).
 
 **Verificado en Chrome**: las seis paradas con su etiqueta (capturas de Soul Charger, Rito Digital, Pacha
