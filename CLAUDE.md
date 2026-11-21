@@ -236,7 +236,9 @@ vea y probarlo en teléfonos reales** (en la portada corren el fluido y el mundo
   (puerta, estudio, final y la flotante) usa la rampa de la marca: `#5c1fc7`, `#8f47ee`, `#cba0fb`,
   `#fcd6f8` y el acento `#4cc8f5` (`ALMA_RAMP`). **Las de las obras** arman su rampa con los colores de
   `site.json → particles` (o `world.forms`), del más oscuro al más claro, con el más saturado de acento
-  (`rampOf()`). Escriben su profundidad real, así las imágenes de las galaxias pasan por detrás. En
+  (`rampOf()`). Para cambiar sólo el color de la ameba de una obra en la portada, sin tocar la cabecera
+  de su ficha: `site.json → world.forms` (hoy Neurocosm Full Dome, en azul oscuro y morado, a pedido de
+  Vicente). Escriben su profundidad real, así las imágenes de las galaxias pasan por detrás. En
   táctil el recorrido usa 40 pasos en vez de 64. **No llevan fotos** (decisión de Vicente, 2026-11-18):
   la portada de la obra aparece recién en la transición líquida.
 - **Las amebas no van en fila**: cada parada tiene su propio encuadre (`COMP` y `HEIGHTS` en `layout()` de
@@ -300,9 +302,9 @@ vea y probarlo en teléfonos reales** (en la portada corren el fluido y el mundo
   degradado de `.phero` en el CSS, hay que cambiarlos también ahí** (`uHero` y el cálculo de `shade`).
 - **Volver a la portada** (el logo del menú) lleva siempre a la entrada, arriba de todo.
 - **Qué obras**: `site.json → world.works` (lista de slugs); vacío usa `featured`. Desde el 2026-11-21,
-  una obra por formato, elegidas por Vicente: Soul Charger (VR), Collective Pulse (XR), Neurocosm Full
-  Dome (Fulldome), Rito Digital (performance audiovisual en vivo), Pacha Ibiza (encargo) y VEATION
-  (software). **El formato** de cada una va arriba del nombre en su ficha de vidrio, en el color de la
+  una obra por formato, elegidas por Vicente, en este orden: Soul Charger (VR), Collective Pulse (XR),
+  Neurocosm Full Dome (Fulldome), VEATION (software), Pacha Ibiza (encargo) y Rito Digital (performance
+  audiovisual en vivo); después, los spin-offs. **El formato** de cada una va arriba del nombre en su ficha de vidrio, en el color de la
   segunda voz (`site.json → world.labels`, por idioma; `.world__kind` en el CSS): al recorrer las
   paradas se lee el abanico de lo que hace el estudio. Con etiqueta, el número va solo ("01 / 06"), sin
   "Obra propia" ni "Encargo". Los spin-offs, en
@@ -609,6 +611,9 @@ se aplicó a todas las amebas. Ver "Las amebas" en la sección del mundo interio
   interacciones de siempre (respira, sigue al puntero, se arrastra, se aplasta, muta con el clic).
 - Después Vicente pidió dejarlas "un poco más matte, sin tantas reflexiones": se quitó el borde
   reflejado, el tono más claro quedó a la mitad y sólo en lo más iluminado, y la luz envuelve más.
+- También pidió la ameba de Neurocosm Full Dome "más azul oscuro y morada" (`world.forms`: su cabecera
+  sigue en rojos) y este orden de la selección: Soul Charger, Collective Pulse, Neurocosm Full Dome,
+  VEATION, Pacha Ibiza, Rito Digital y los spin-offs.
 
 **Verificado en Chrome**: la puerta, la ameba del estudio, las galaxias de Soul Charger y Rito, el
 cierre, el modo "Ameba" (Neurocosm Full Dome) y la ameba flotante en Obras y Studio. Consola sin

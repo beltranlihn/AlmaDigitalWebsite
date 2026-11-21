@@ -22,9 +22,9 @@
     "soul-charger",
     "collective-pulse",
     "neurocosm-full-dome",
-    "rito-digital",
+    "veation",
     "pacha-ibiza",
-    "veation"
+    "rito-digital"
   ],
   "perProjectPalette": false,
   "reelAutoplayOnView": false,
@@ -82,6 +82,17 @@
           "#8e8d88",
           "#3e7bd6",
           "#f2f0ec"
+        ]
+      },
+      "neurocosm-full-dome": {
+        "formation": "dome",
+        "stage": "#080a26",
+        "colors": [
+          "#101a5e",
+          "#1f3aa8",
+          "#5a2bb0",
+          "#8b5cf0",
+          "#3d6dff"
         ]
       }
     }
