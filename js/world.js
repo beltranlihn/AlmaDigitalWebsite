@@ -76,8 +76,9 @@ const C = {
        Fibonacci, que deambulan despacio (ballsFor(), en JS, por ameba y cuadro)
      · superficie: ruido que la deforma apenas, sólo cerca del borde
      · luz: difusa envolvente, oclusión en los pliegues, rampa de cuatro tonos
-       (sombra, medio, luz, brillo), el acento en los pliegues y un borde suave
-   Sin brillos especulares: es arcilla, no vidrio. */
+       (sombra, medio, luz, brillo) y el acento en los pliegues
+   Mate (pedido de Vicente, 2026-11-21): sin brillos especulares, sin borde
+   reflejado y con el tono más claro apenas. Es arcilla, no vidrio. */
 const BALLS = 12;                      // esferas por ameba
 const AMEBA_VERT = `
   varying vec3 vPos; varying vec3 vCam;
@@ -143,21 +144,20 @@ const AMEBA_FRAG = `
     vec3 n = normalAt(p), v = -rd;
     float ao = aoAt(p, n);
     vec3 key = normalize(vec3(-0.42 + uLook.x * 2.0, 0.78 + uLook.y * 2.0, 0.5));
-    float wrap = pow(clamp((dot(n, key) + 0.55) / 1.55, 0.0, 1.0), 1.15);
+    float wrap = pow(clamp((dot(n, key) + 0.6) / 1.6, 0.0, 1.0), 0.95);      // luz envolvente, sin terminador marcado
     float fres = pow(1.0 - clamp(dot(n, v), 0.0, 1.0), 2.5);
     float light = wrap * mix(0.35, 1.0, ao);
     vec3 col = mix(uR0, uR1, smoothstep(0.0, 0.38, light));
     col = mix(col, uR2, smoothstep(0.3, 0.72, light));
-    col = mix(col, uR3, smoothstep(0.6, 0.97, light));
+    col = mix(col, uR3, smoothstep(0.72, 1.05, light) * 0.55);                // el tono más claro, apenas: mate, sin brillos
     float h1 = clamp(vnoise(p * 1.2 + vec3(0.0, 0.0, uTime * 0.06)) * 1.3 + 0.5, 0.0, 1.0);
     float h2 = clamp(vnoise(p * 1.7 + vec3(7.1, uTime * 0.05, 2.3)) * 1.3 + 0.5, 0.0, 1.0);
     col = mix(col, col * vec3(1.08, 0.8, 1.0), smoothstep(0.55, 0.9, h1) * 0.7);              // el tono deriva despacio
     col = mix(col, col * vec3(0.8, 0.92, 1.1), smoothstep(0.5, 0.9, h2) * (1.0 - light) * 0.7);
-    float crease = (1.0 - ao) * 1.4 + fres * 0.4;
+    float crease = (1.0 - ao) * 1.4 + fres * 0.12;
     col = mix(col, uAcc, clamp(crease * smoothstep(0.4, 0.85, h2) * 0.75, 0.0, 0.7));       // el acento, en los pliegues
-    col += fres * uR2 * 0.1;
     col = mix(vec3(dot(col, vec3(0.299, 0.587, 0.114))), col, 0.86 + 0.14 * max(uFocus, 1.0 - uArt));
-    col += uGlow * uR3 * (0.08 + 0.35 * fres);
+    col += uGlow * uR2 * 0.12;                                                 // bajo el cursor se aclara, sin borde brillante
     float a = mix(0.82, 1.0, max(uSolid, uArt));
     gl_FragColor = vec4(col, a * cov * uOpacity);
     vec4 clip = projectionMatrix * viewMatrix * modelMatrix * vec4(p, 1.0);

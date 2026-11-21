@@ -231,7 +231,8 @@ vea y probarlo en teléfonos reales** (en la portada corren el fluido y el mundo
   WebGL: cada ameba es una esfera envolvente de pocos triángulos y el shader recorre el campo de
   distancias (`AMEBA_VERT`/`AMEBA_FRAG` y `ballsFor()` en `js/world.js`; `FS` y `ballsAt()` en
   `js/ameba.js`). Luz difusa envolvente, oclusión en los pliegues, una rampa de cuatro tonos (sombra,
-  medio, luz, brillo), el acento en los pliegues y un borde suave; sin brillos especulares. La de Alma
+  medio, luz, brillo) y el acento en los pliegues. **Mate** (pedido de Vicente el mismo día, "sin tantas
+  reflexiones"): sin brillos especulares, sin borde reflejado y con el tono más claro apenas. La de Alma
   (puerta, estudio, final y la flotante) usa la rampa de la marca: `#5c1fc7`, `#8f47ee`, `#cba0fb`,
   `#fcd6f8` y el acento `#4cc8f5` (`ALMA_RAMP`). **Las de las obras** arman su rampa con los colores de
   `site.json → particles` (o `world.forms`), del más oscuro al más claro, con el más saturado de acento
@@ -606,6 +607,8 @@ se aplicó a todas las amebas. Ver "Las amebas" en la sección del mundo interio
   pompa de jabón y el arte de tinta de adentro.
 - **La ameba flotante** de las otras páginas (`js/ameba.js`): el mismo racimo y la misma rampa, con sus
   interacciones de siempre (respira, sigue al puntero, se arrastra, se aplasta, muta con el clic).
+- Después Vicente pidió dejarlas "un poco más matte, sin tantas reflexiones": se quitó el borde
+  reflejado, el tono más claro quedó a la mitad y sólo en lo más iluminado, y la luz envuelve más.
 
 **Verificado en Chrome**: la puerta, la ameba del estudio, las galaxias de Soul Charger y Rito, el
 cierre, el modo "Ameba" (Neurocosm Full Dome) y la ameba flotante en Obras y Studio. Consola sin
