@@ -563,7 +563,7 @@ El fluid sim sigue corriendo con auto-emitters en mobile. Los usuarios de Androi
 
 ## Historial de sesiones (última al tope)
 
-### 2026-11-21 — Reel 2026 nítido y la descripción original de Alma Digital (Vicente)
+### 2026-11-21 — Reel 2026 nítido (Vicente)
 
 Dos pedidos de Vicente: cambiar el reel por el actualizado (`~/Desktop/2026 REEL PROJECTS HORIZONTAL.mp4`)
 "y que no se vea pixeleado", y volver a la descripción original de Alma Digital.
@@ -575,15 +575,16 @@ Dos pedidos de Vicente: cambiar el reel por el actualizado (`~/Desktop/2026 REEL
   (el logo) enteras sobre fondo desenfocado. Pósters nuevos, del logo de la entrada. Ver "El reel flotante".
   Filtro de las verticales (W×H: 540×960 o 720×1280):
   `[0:v]split=3[a][b][c];[a]crop=606:1080,scale=W:H[A];[b]scale=W:H:force_original_aspect_ratio=increase,crop=W:H,gblur=sigma=26,eq=brightness=-0.14:saturation=0.85[bg];[c]scale=W:-2[fg];[bg][fg]overlay=(W-w)/2:(H-h)/2[B];[A][B]overlay=0:0:enable='lt(t,2.4)+gte(t,46.33)'[v]`
-- **Descripción**: `heroLead` (la ficha del estudio en la portada y la página sin 3D) vuelve al texto del
-  sitio anterior, el mismo del "about" de Studio: "Alma Digital is an immersive wellness art studio that
-  creates multimedia experiences…" (y su versión en español).
+- **Descripción**: se probó volver `heroLead` (la ficha del estudio en la portada y la página sin 3D) al
+  texto del sitio anterior ("Alma Digital is an immersive wellness art studio that creates multimedia
+  experiences…", el mismo del "about" de Studio). Vicente lo vio y pidió volver a la descripción que
+  estaba ("We create VR, fulldome, projection mapping and biofeedback experiences…"): quedó esa.
 
 **Para tener en cuenta** (de `_PERMISOS.md`, que describe este mismo reel): trae tomas de Pacha Ibiza y
 Adidas Terrex, y una de Collective Pulse (hacia los 40 s) sin el crédito del BID que esa obra exige en toda
 pieza. El reel anterior del sitio no tenía la de Collective Pulse.
 
-**Verificado en Chrome**: la parada del estudio con la descripción original; el reel flotante
+**Verificado en Chrome**: la parada del estudio con cada una de las dos descripciones; el reel flotante
 reproduciéndose a 1280×720; "Watch with sound" abre el reel nuevo (0:50) y pausa el flotante. Cuadros de
 la versión vertical revisados (logo entero en la entrada y la salida). Consola sin errores.
 **Sin ver**: el reel en un teléfono (vertical flotante y con sonido), Safari y Firefox.
