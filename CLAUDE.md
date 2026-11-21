@@ -357,23 +357,31 @@ en reproducción automática, y de ahí a las obras.
 - Es un plano con el video dentro del mundo 3D (`screen()` y `REEL_FRAG` en `js/world.js`): puntas
   redondas, filo de vidrio y un resplandor violeta. Flota, se inclina hacia el cursor y se deshace
   cuando la cámara avanza hacia él.
-- **No es el reel completo.** Es una versión liviana y **sin audio**, hecha para esto:
-  `Asset/Reel Portfolio/Reel Flotante.mp4` (960×540, 3,6 MB) y `Reel Flotante Vertical.mp4` (480×854,
-  3,2 MB) para pantallas verticales (`site.json → world.reel`). El reel completo (21 MB) no arranca solo
-  nunca.
+- **No es el reel completo.** Es una versión **sin audio**, hecha para esto:
+  `Asset/Reel Portfolio/Reel Flotante.mp4` (1280×720, 8,3 MB) y `Reel Flotante Vertical.mp4` (540×960,
+  5 MB) para pantallas verticales (`site.json → world.reel`). El reel completo (26,5 MB) no arranca solo
+  nunca. Desde el 2026-11-21 es el reel 2026 (`2026 REEL PROJECTS HORIZONTAL`) y va a 1280×720 y crf 28:
+  la versión anterior, a 960×540 y crf 33 (0,57 Mbps), se veía pixelada.
 - **Se descarga recién al acercarse a su parada**, no al cargar la página, y se pausa al alejarse, con
   la pestaña oculta o fuera de pantalla. Antes del video se ve su póster. Con "reducir movimiento"
   queda el póster.
 - **"Ver con sonido"** (el botón, o un clic en la pantalla) abre el reel completo a pantalla completa:
   es el mismo botón del bloque de reel de la página sin 3D (`initReel` en `js/app.js`; `js/world.js`
   lo llama por `opts.reelFull`). En teléfono no se ofrece: la versión vertical no tiene audio.
-- **Costo**: cada visita que llega a esa parada baja unos 3,6 MB, es decir **0,07 créditos de Netlify**
-  (1.000 visitas ≈ 72 créditos). Es la excepción consciente a la regla de no poner `autoplay` en videos
+- **Costo**: cada visita que llega a esa parada y lo deja correr entero baja unos 8,3 MB, es decir
+  **0,17 créditos de Netlify** (1.000 visitas ≈ 166 créditos); el navegador lo va bajando mientras
+  suena, así que quien sigue de largo baja menos. Es la excepción consciente a la regla de no poner `autoplay` en videos
   de más de un par de MB. **Para apagarlo**: borrar `world.reel` de `site.json` y correr el build; la
   parada desaparece y el recorrido pasa del estudio a las obras.
-- **Para rehacer la versión liviana** desde el reel completo:
-  `ffmpeg -i "Reel Portfolio.mp4" -an -vf scale=960:540:flags=lanczos -c:v libx264 -crf 33 -preset slow -pix_fmt yuv420p -movflags +faststart "Reel Flotante.mp4"`
-  (vertical: desde `Reel Vertical Web.mp4`, `scale=480:854`, `-crf 32`).
+- **Para rehacer las versiones** desde el máster (`~/Desktop/2026 REEL PROJECTS HORIZONTAL.mp4`, 1080p,
+  121 MB; no está en `_masters/` porque pasa el límite de 100 MB de GitHub):
+  - flotante: `-an -vf scale=1280:720:flags=lanczos -c:v libx264 -crf 28 -preset slow -pix_fmt yuv420p -movflags +faststart`
+  - completo con sonido: `scale=1920:1080`, `-crf 24`, `-c:a aac -b:a 128k`
+  - **verticales** (no hay montaje vertical del reel 2026): recorte 9:16 al centro, salvo la entrada
+    (hasta 2,4 s) y la salida (desde 46,33 s), donde va el cuadro entero sobre su propio fondo
+    desenfocado para que el logo no quede cortado. Flotante a 540×960 y `-crf 27` sin audio; con
+    sonido (`Reel Vertical Web.mp4`) a 720×1280, `-crf 26` y AAC 128k. El filtro está en el historial
+    del 2026-11-21. Si el estudio arma un montaje vertical, reemplazarlo directamente.
 
 ## Sonido e inmersión
 Idea tomada de [unseen.co](https://unseen.co/): el sitio suena, y entrar a una obra es sumergirse.
@@ -446,7 +454,7 @@ El velo existe porque el texto directo sobre el fluido daba un contraste de 1,7:
 
 ## Reel y videos: cuidado con los créditos
 El ancho de banda es lo que agotó los créditos en octubre de 2026 (20 créditos por GB).
-- **Reel del estudio** (21 MB; 7,5 MB la versión vertical): en modo **clic** (`site.json →
+- **Reel del estudio** (26,5 MB; 9,6 MB la versión vertical): en modo **clic** (`site.json →
   reelAutoplayOnView: false`). Hoy vive en la portada: es lo que abre "Ver con sonido" en la parada del
   reel, y el bloque con póster de la página sin 3D. Se ve el póster y el video se descarga recién al reproducir. En escritorio
   abre a pantalla completa con sonido; en el teléfono se reproduce en su lugar y nunca pide la versión
@@ -457,7 +465,7 @@ El ancho de banda es lo que agotó los créditos en octubre de 2026 (20 crédito
 - **Vista previa del índice**: carga el reel de la obra al pasar el mouse (sólo escritorio).
 - `#sc-trailer` en soul-charger.html: carga diferida como antes.
 - **No poner `autoplay`** en videos de más de un par de MB. Única excepción, pedida por Vicente: el reel
-  flotante de la portada, con una versión liviana de 3,6 MB que se pide recién al llegar a su parada
+  flotante de la portada, con una versión de 8,3 MB que se pide recién al llegar a su parada
   (ver "El reel flotante").
 - Compresión de videos de sección: H.264 `-crf 27 -preset slow`, AAC 128k si tienen audio, `+faststart`.
 
@@ -554,6 +562,31 @@ desactiva. **No** cambiar nameservers a Cloudflare.
 El fluid sim sigue corriendo con auto-emitters en mobile. Los usuarios de Android no pueden tocar el fondo para emitir fluidos (correcto — el dedo es para el scroll).
 
 ## Historial de sesiones (última al tope)
+
+### 2026-11-21 — Reel 2026 nítido y la descripción original de Alma Digital (Vicente)
+
+Dos pedidos de Vicente: cambiar el reel por el actualizado (`~/Desktop/2026 REEL PROJECTS HORIZONTAL.mp4`)
+"y que no se vea pixeleado", y volver a la descripción original de Alma Digital.
+
+- **Reel**: las cuatro versiones de `Asset/Reel Portfolio/` se rehicieron desde ese máster (1080p, 19
+  Mbps), con los mismos nombres. El flotante pasó de 960×540 a 0,57 Mbps (lo que se veía pixelado) a
+  1280×720 con crf 28 (8,3 MB); el completo con sonido, 1080p con crf 24 (26,5 MB). Del reel 2026 no hay
+  montaje vertical: las versiones verticales son un recorte al centro, con la entrada y la salida
+  (el logo) enteras sobre fondo desenfocado. Pósters nuevos, del logo de la entrada. Ver "El reel flotante".
+  Filtro de las verticales (W×H: 540×960 o 720×1280):
+  `[0:v]split=3[a][b][c];[a]crop=606:1080,scale=W:H[A];[b]scale=W:H:force_original_aspect_ratio=increase,crop=W:H,gblur=sigma=26,eq=brightness=-0.14:saturation=0.85[bg];[c]scale=W:-2[fg];[bg][fg]overlay=(W-w)/2:(H-h)/2[B];[A][B]overlay=0:0:enable='lt(t,2.4)+gte(t,46.33)'[v]`
+- **Descripción**: `heroLead` (la ficha del estudio en la portada y la página sin 3D) vuelve al texto del
+  sitio anterior, el mismo del "about" de Studio: "Alma Digital is an immersive wellness art studio that
+  creates multimedia experiences…" (y su versión en español).
+
+**Para tener en cuenta** (de `_PERMISOS.md`, que describe este mismo reel): trae tomas de Pacha Ibiza y
+Adidas Terrex, y una de Collective Pulse (hacia los 40 s) sin el crédito del BID que esa obra exige en toda
+pieza. El reel anterior del sitio no tenía la de Collective Pulse.
+
+**Verificado en Chrome**: la parada del estudio con la descripción original; el reel flotante
+reproduciéndose a 1280×720; "Watch with sound" abre el reel nuevo (0:50) y pausa el flotante. Cuadros de
+la versión vertical revisados (logo entero en la entrada y la salida). Consola sin errores.
+**Sin ver**: el reel en un teléfono (vertical flotante y con sonido), Safari y Firefox.
 
 ### 2026-11-20 — Rito Digital y Digital Sanctuaries entran como spin-offs (Vicente)
 
