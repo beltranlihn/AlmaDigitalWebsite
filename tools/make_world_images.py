@@ -7,7 +7,8 @@ En la portada 3D, cada obra seleccionada puede ser una "galaxia": 4 o 5
 imágenes que orbitan alrededor de un ícono 3D. No se usan las fotos originales
 (1920×1080, 100–300 KB cada una) sino copias chicas hechas acá:
 
-  · las fotos de la obra (projects.json → photos, la portada primero), recortadas
+  · las fotos de la obra (projects.json → photos, la portada primero; sin las que exigen
+    crédito en photoCredits, porque en la galaxia no hay dónde ponerlo), recortadas
     a 16:9 y llevadas a 768×432;
   · si la obra tiene menos de 5 fotos, se completan con cuadros sacados de su
     reel vertical (projects.json → video), a 360×640. Hace falta ffmpeg.
@@ -88,7 +89,9 @@ def main():
         for f in os.listdir(folder):               # sólo lo que este script escribió antes
             if f.endswith('.webp'):
                 os.remove(os.path.join(folder, f))
-        photos = [p['cover']] + [x for x in p['photos'] if x != p['cover']]
+        # Las fotos que exigen crédito (photoCredits) no van: en la galaxia no hay dónde ponerlo.
+        credited = p.get('photoCredits') or {}
+        photos = [p['cover']] + [x for x in p['photos'] if x != p['cover'] and x not in credited]
         items = []
         for k, src in enumerate(photos[:WANT]):
             dst = os.path.join(folder, f'{k + 1}.webp')

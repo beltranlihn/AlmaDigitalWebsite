@@ -99,6 +99,8 @@ function loc(p, lang) {
     presentedAt: same(e.presentedAt, p.presentedAt) ? e.presentedAt : (p.presentedAt || []),
   };
 }
+/* El dominio de un sitio, para mostrarlo: "https://www.ritodigital.com/" → "ritodigital.com". */
+const domainOf = u => String(u || '').replace(/^https?:\/\/(www\.)?/i, '').replace(/\/$/, '');
 /* Cómo se nombra la línea de una obra: obra propia, encargo o spin-off. */
 const trackLabel = (p, t) => ({ studio: t.pStudio, commission: t.pCommission, spinoff: t.pSpinoff })[p.track] || t.pStudio;
 const ogFor = slug => {
@@ -474,7 +476,7 @@ function buildWorld(lang) {
   const card = (p, kind) => {
     const f = formOf(p.slug);
     return `      <li><a class="wcard" data-w-item${kind ? ` data-kind="${kind}"` : ''} href="${link(c, `work/${p.slug}.html`)}" data-cover="${asset(c, p.cover)}" data-title="${esc(p.title)}" data-format="${esc(p.format)}" data-form="${esc(f.formation)}" data-colors="${esc((f.colors || []).join(','))}" data-stage="${esc(f.stage || '')}"
-        data-desc="${esc(firstSentence(p.desc))}" data-tags="${esc((p.tech || []).slice(0, 4).join('|'))}" data-where="${esc(venues(p.presentedAt || []))}" data-line="${esc(trackLabel(p, t))}" data-label="${esc(labelOf(p))}" data-credit="${esc(p.creditLine || '')}"
+        data-desc="${esc(firstSentence(p.desc))}" data-tags="${esc((p.tech || []).slice(0, 4).join('|'))}" data-where="${esc(venues(p.presentedAt || []))}" data-line="${esc(trackLabel(p, t))}" data-label="${esc(labelOf(p))}" data-site="${esc(p.website || '')}" data-site-label="${esc(p.website ? `${t.pVisit} ${domainOf(p.website)}` : '')}" data-credit="${esc(p.creditLine || '')}"
         data-icon="${esc(iconOf(p))}" data-gallery="${esc(galleryOf(p))}">
         <img loading="lazy" decoding="async" width="1920" height="1080" src="${asset(c, p.cover)}" alt="">
         <span class="wcard__t"><b>${esc(p.title)}</b><span>${esc(p.format)}</span></span>
@@ -516,6 +518,7 @@ function buildWorld(lang) {
       <p class="world__where" data-w-where data-label="${esc(t.worldWhere)}" hidden></p>
       <p class="world__credit" data-w-credit hidden></p>
       <a class="btn" data-w-open href="${link(c, 'studio.html')}"><span data-w-cta data-default="${esc(t.worldOpen)}">${esc(t.worldOpen)}</span> <i aria-hidden="true">→</i></a>
+      <a class="world__site" data-w-site href="#" target="_blank" rel="noopener" hidden></a>
     </div>
     <nav class="world__dots" aria-label="${esc(t.worldListLabel)}"></nav>${reel ? `
     <!-- El reel con su póster: lo que se ve sin 3D, y lo que abre "Ver con sonido". -->
@@ -739,7 +742,7 @@ ${cols}
     <h2 class="label" id="over-h">${esc(t.pOverview)}</h2>
     <p class="pj-over__txt">${esc(p.body[0] || p.desc)}</p>${p.creditLine ? `
     <p class="pj-over__credit">${esc(p.creditLine)}</p>` : ''}${p.website ? `
-    <a class="more" href="${esc(p.website)}" target="_blank" rel="noopener">${esc(p.website.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, ''))} <i aria-hidden="true">↗</i></a>` : ''}${legacy ? `
+    <a class="btn pj-over__site" href="${esc(p.website)}" target="_blank" rel="noopener">${esc(t.pVisit)} ${esc(domainOf(p.website))} <i aria-hidden="true">↗</i></a>` : ''}${legacy ? `
     <a class="more" href="${c.up}${legacy}">${esc(t.pPage)} <i aria-hidden="true">→</i></a>` : ''}
   </div>
   <dl class="pj-meta" aria-label="${esc(t.pSheet)}">

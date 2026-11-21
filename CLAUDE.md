@@ -94,8 +94,11 @@ por defecto en `ICON_BY_FORMAT`. El filtro del índice aparece solo.
 su slug va en `site.json → world.spinoffs` (no en `featured`): tienen su propio paso después de las obras.
 **`photoCredits`** (opcional, en `projects.json`): `{ "ruta de la foto": "@autor" }`. El crédito sale
 sobre la foto ("Photo @autor" / "Foto @autor"). Lo usa Rito Digital, cuyo press kit lo exige por foto.
-**`website`** (opcional, en `projects.json`): un sitio propio de la obra. Sale como enlace bajo el
-resumen de la ficha (VEATION, Rito Digital y Digital Sanctuaries).
+**`website`** (opcional, en `projects.json`): un sitio propio de la obra. Sale como botón ("Visit
+ritodigital.com ↗", texto `pVisit`) bajo el resumen de la ficha, y como enlace al lado de "Entrar a la
+obra" en su parada de la portada (VEATION, Rito Digital y Digital Sanctuaries).
+Las fotos con `photoCredits` **no van a las galaxias** de la portada (`tools/make_world_images.py` las
+salta): ahí no hay dónde poner el crédito.
 
 ## Navegación continua (leer antes de tocar `js/app.js` o las plantillas)
 Cada página es un HTML completo: sirve sola, se indexa sola y funciona sin JavaScript. Pero al navegar
@@ -568,6 +571,30 @@ desactiva. **No** cambiar nameservers a Cloudflare.
 El fluid sim sigue corriendo con auto-emitters en mobile. Los usuarios de Android no pueden tocar el fondo para emitir fluidos (correcto — el dedo es para el scroll).
 
 ## Historial de sesiones (última al tope)
+
+### 2026-11-21 — Rito Digital: enlace a ritodigital.com y ficha con el material de su web (Vicente)
+
+Pedido de Vicente: enlazar ritodigital.com para que se pueda entrar desde la ficha, y usar lo que haga
+falta del proyecto `~/Desktop/RITO DIGITAL MASTER/Rito Digital Web/` (la web publicada está en su
+`deploy-netlify/`) para mejorar la ficha.
+
+- **Enlace**: el sitio propio de una obra (`website`) pasó de un enlace chico a un botón bajo el resumen,
+  y se suma como enlace en su parada de la portada. Vale para las tres obras con sitio.
+- **Texto** alineado con la web de Rito: "immersive live concert film", siempre en vivo, adaptado a tres
+  configuraciones (fulldome, sala 360°, proyección única); la música (techno ritual, pulso de latin
+  house, procesamiento vocal, handpan en vivo); los ocho pasos por su nombre (Creation … Dancing with
+  Myself, Creativity, como en la web); el estreno en el cierre de FOC ante 1.000 personas. No se usó la
+  sinopsis de la web (cuenta lo de la IA, que `voz-rito` reserva para entrevistas).
+- **Fotos**: tres del domo de CULTVR en Cardiff (© Rhys Davies / CULTVR, con el crédito sobre la foto y
+  en los créditos; la web de Rito ya las publica así) como imagen ancha, imagen a sangre y en la galería.
+  Sale la foto de las manos en el sintetizador (`8.webp`). 10 fotos en total.
+- Las galaxias ya no usan fotos con crédito obligatorio (la de Rito tenía una de FOC).
+
+**Verificado en Chrome**: la ficha con el botón (pestaña nueva, ritodigital.com), las fotos de CULTVR
+con su crédito, sin huecos ni imágenes rotas; la parada de Rito en la portada en español con
+"Visitar ritodigital.com ↗", y que no aparece en Soul Charger. En la consola, avisos de View
+Transitions ("Viewport size changed") al cargar páginas desde la barra de direcciones en la ventana de
+prueba, que aparecen desde antes de este cambio.
 
 ### 2026-11-21 — Selección nueva: una obra por formato, con el formato en cada parada (Vicente)
 

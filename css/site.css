@@ -627,6 +627,9 @@ h3.label { font-size: .74rem; font-weight: 500; letter-spacing: .18em; line-heig
 }
 .pj-over__txt { margin-top: 14px; font-size: clamp(1.28rem, 2.2vw, 1.95rem); font-weight: 300; line-height: 1.34; letter-spacing: -.02em; color: var(--ink); text-wrap: pretty; }
 .pj-over .more { margin-top: 24px; }
+/* El sitio propio de la obra (projects.json → website): un botón bajo el resumen. */
+.pj-over__site { margin-top: 26px; }
+.pj-over__site i { font-style: normal; }
 /* Un crédito que la obra exige mostrar tal cual (projects.json → creditLine). */
 .pj-over__credit { margin-top: 18px; font-size: 1.02rem; font-style: italic; font-weight: 400; color: var(--ink); letter-spacing: .01em; }
 .pj-meta { margin: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px 28px; }
@@ -1068,6 +1071,10 @@ html.w-snap { scroll-snap-type: y proximity; }
 /* El formato de la obra en la selección (VR, XR, Fulldome…): arriba del nombre, en el color de la segunda voz. */
 .world__kind { margin: 10px 0 0; font-size: clamp(.98rem, 1.3vw, 1.18rem); font-weight: 400; letter-spacing: .14em; text-transform: uppercase; color: var(--em); line-height: 1.3; }
 .world__kind[hidden] { display: none; }
+/* El sitio propio de la obra, al lado del botón "Entrar a la obra". */
+.world__site { display: inline-block; margin: 14px 0 0 16px; font-size: .84rem; letter-spacing: .05em; color: var(--ink-body); text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 1px; }
+.world__site:hover { color: var(--ink); }
+.world__site[hidden] { display: none; }
 .world__kind + .world__name { margin-top: 4px; }
 .world__fmt { margin: 0; }
 .world__hud .btn i { font-style: normal; }

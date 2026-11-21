@@ -303,21 +303,23 @@
     ]
   },
   "rito-digital": {
-    "format": "Concert-film",
-    "desc": "Un concert-film de 60 minutos de Alma Digital Studio: animación de stop-motion realista y techno ceremonial en ocho canciones. Se estrenó en FOC — The Festival of Consciousness, Barcelona, en 2026.",
+    "format": "Concert-film inmersivo en vivo",
+    "desc": "Un concert-film inmersivo en vivo de Alma Digital Studio: animación de stop-motion realista y techno ceremonial en ocho canciones, siempre interpretado en vivo. Se estrenó en FOC — The Festival of Consciousness, Barcelona, en 2026.",
     "body": [
-      "Rito Digital es un concert-film de 60 minutos —prólogo y ocho canciones— creado por Alma Digital Studio. Se estrenó en FOC — The Festival of Consciousness, CCIB Barcelona, en julio de 2026, y existe también en versión fulldome y en show en vivo.",
-      "Donzio atraviesa dos mundos, del Sistema al Rito, y en el camino se cruza con las familias de seres que lo habitan. Está animado en stop-motion realista: marionetas-criatura de silicona táctil en un mundo retrofuturista patinado, con profundidad de diorama, simetría ritual y grano de 35 mm, compuesto con imagen generativa dirigida cuadro a cuadro. La música es techno ceremonial con procesamiento vocal experimental.",
-      "La versión fulldome se estrenó en CULTVR Lab, Cardiff, en septiembre de 2026, y volvió a ese domo en octubre para FulldomeUK.",
+      "Rito Digital es un concert-film inmersivo en vivo creado por Alma Digital Studio: prólogo y ocho canciones, 60 minutos, siempre interpretado en vivo. El film se adapta a tres configuraciones de proyección: fulldome, sala 360° y proyección única.",
+      "Donzio atraviesa dos mundos, del Sistema al Rito, y en el camino se cruza con las familias de seres que lo habitan. Está animado en stop-motion realista: marionetas-criatura de silicona táctil en un mundo retrofuturista patinado, con profundidad de diorama, simetría ritual y grano de 35 mm, compuesto con imagen generativa dirigida cuadro a cuadro. La música original, interpretada en vivo, es techno ritual con electrónica hipnótica y pulso de latin house, procesamiento vocal experimental y handpan en vivo.",
+      "Los ocho pasos: Creation, Almagical, Vaina Wena, Care for Her, Guirotron, Free Spinning, Dancing with Myself y Creativity. Cada paso es una canción y un mundo.",
+      "Se estrenó en el show de cierre de FOC — The Festival of Consciousness, en Barcelona en julio de 2026, ante 1.000 personas. La versión fulldome se estrenó en CULTVR Lab, Cardiff, en septiembre de 2026, y volvió a ese domo en octubre para FulldomeUK.",
       "Ocho canciones y una procesión."
     ],
     "credits": [
       "Una obra de Alma Digital Studio",
       "Dirección, música y visuales: Vicente Manzano · Beltrán Lihn",
-      "Fotografía, FOC Barcelona 2026: @aliciaganesha · @thelighttrace"
+      "Fotografía, FOC Barcelona 2026: @aliciaganesha · @thelighttrace",
+      "Fotografía, CULTVR Cardiff 2026: Rhys Davies / CULTVR"
     ],
     "presentedAt": [
-      "The Festival of Consciousness (FOC), CCIB Barcelona, julio de 2026 — estreno",
+      "The Festival of Consciousness (FOC), CCIB Barcelona, julio de 2026 — estreno, show de cierre",
       "CULTVR Lab, Cardiff, Gales, septiembre de 2026 — estreno fulldome",
       "FulldomeUK 2026, CULTVR Lab, Cardiff, Gales"
     ]

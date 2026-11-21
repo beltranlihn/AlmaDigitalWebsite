@@ -757,7 +757,7 @@ export function mount(section, opts) {
   const hudCount = q('[data-w-count]'), hudTitle = q('[data-w-title]'), hudFmt = q('[data-w-fmt]'), hudOpen = q('a[data-w-open]');
   const n = links.length;
   const hudDesc = q('[data-w-desc]'), hudCta = q('[data-w-cta]');
-  const hudTags = q('[data-w-tags]'), hudWhere = q('[data-w-where]'), hudCredit = q('[data-w-credit]'), hudKind = q('[data-w-kind]');
+  const hudTags = q('[data-w-tags]'), hudWhere = q('[data-w-where]'), hudCredit = q('[data-w-credit]'), hudKind = q('[data-w-kind]'), hudSite = q('[data-w-site]');
   /* Tramos del recorrido: uno entre cada par de paradas y uno más antes de la
      primera obra, que es el paso a "Obras seleccionadas". */
   const kinds = links.map((a) => a.getAttribute('data-kind') || 'work');
@@ -956,6 +956,7 @@ export function mount(section, opts) {
     w.tags = (a.getAttribute('data-tags') || '').split('|').filter(Boolean);
     w.where = a.getAttribute('data-where') || ''; w.line = a.getAttribute('data-line') || '';
     w.label = a.getAttribute('data-label') || '';           // su formato en la selección (site.json → world.labels)
+    w.site = a.getAttribute('data-site') || ''; w.siteLabel = a.getAttribute('data-site-label') || '';   // su sitio propio, si tiene
     w.credit = a.getAttribute('data-credit') || '';        // un crédito que la obra exige mostrar (projects.json → creditLine)
     w.asked = false;
     return w;
@@ -1515,6 +1516,12 @@ export function mount(section, opts) {
       }
       if (hudCredit) { hudCredit.textContent = isWork ? wk.credit : ''; hudCredit.hidden = !(isWork && wk.credit); }
       if (hudCta) hudCta.textContent = wk.cta || hudCta.getAttribute('data-default') || '';
+      /* Las obras con sitio propio (Rito Digital, VEATION…) suman el enlace, al lado del botón. */
+      if (hudSite) {
+        const on = isWork && !!wk.site;
+        hudSite.hidden = !on;
+        if (on) { hudSite.href = wk.site; hudSite.textContent = wk.siteLabel + ' ↗'; }
+      }
       if (hudOpen) hudOpen.href = wk.href;
       if (hud) {
         hud.setAttribute('data-kind', wk.kind);

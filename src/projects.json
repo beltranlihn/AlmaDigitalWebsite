@@ -76,31 +76,34 @@
     {
       "slug": "rito-digital",
       "title": "Rito Digital",
-      "format": "Concert film",
+      "format": "Immersive live concert film",
       "track": "studio",
       "cover": "Asset/Studio Projects/Rito Digital/2 Portada.webp",
       "video": "Asset/Studio Projects/Rito Digital/Rito Digital Reel Fulldome.mp4",
       "photos": [
         "Asset/Studio Projects/Rito Digital/1.webp",
         "Asset/Studio Projects/Rito Digital/2 Portada.webp",
-        "Asset/Studio Projects/Rito Digital/3.webp",
+        "Asset/Studio Projects/Rito Digital/9.webp",
         "Asset/Studio Projects/Rito Digital/4.webp",
-        "Asset/Studio Projects/Rito Digital/5.webp",
+        "Asset/Studio Projects/Rito Digital/10.webp",
         "Asset/Studio Projects/Rito Digital/6.webp",
+        "Asset/Studio Projects/Rito Digital/11.webp",
         "Asset/Studio Projects/Rito Digital/7.webp",
-        "Asset/Studio Projects/Rito Digital/8.webp"
+        "Asset/Studio Projects/Rito Digital/3.webp",
+        "Asset/Studio Projects/Rito Digital/5.webp"
       ],
-      "desc": "A 60-minute concert film by Alma Digital Studio: realistic stop-motion animation and ceremonial techno across eight songs. It premiered at FOC — The Festival of Consciousness, Barcelona, in 2026.",
+      "desc": "An immersive live concert film by Alma Digital Studio: realistic stop-motion animation and ceremonial techno across eight songs, always performed live. It premiered at FOC — The Festival of Consciousness, Barcelona, in 2026.",
       "commissionedBy": "",
       "presentedAt": [
-        "The Festival of Consciousness (FOC), CCIB Barcelona, July 2026 — premiere",
+        "The Festival of Consciousness (FOC), CCIB Barcelona, July 2026 — premiere, closing show",
         "CULTVR Lab, Cardiff, Wales, September 2026 — fulldome premiere",
         "FulldomeUK 2026, CULTVR Lab, Cardiff, Wales"
       ],
       "credits": [
         "A work by Alma Digital Studio",
         "Direction, music and visuals: Vicente Manzano · Beltrán Lihn",
-        "Photography, FOC Barcelona 2026: @aliciaganesha · @thelighttrace"
+        "Photography, FOC Barcelona 2026: @aliciaganesha · @thelighttrace",
+        "Photography, CULTVR Cardiff 2026: Rhys Davies / CULTVR"
       ],
       "palette": [
         "#0b0505",
@@ -115,9 +118,10 @@
       ],
       "back": "#2a0d0b",
       "body": [
-        "Rito Digital is a 60-minute concert film —a prologue and eight songs— created by Alma Digital Studio. It premiered at FOC — The Festival of Consciousness, CCIB Barcelona, in July 2026, and also exists as a fulldome version and a live show.",
-        "Donzio crosses two worlds, from the System to the Rite, meeting the families of beings that inhabit them. It is animated in realistic stop-motion: tactile silicone creature-puppets in a weathered retrofuturist world, with diorama depth, ritual symmetry and 35mm grain, composed with generative imagery directed frame by frame. The score is ceremonial techno with experimental vocal processing.",
-        "The fulldome version premiered at CULTVR Lab in Cardiff in September 2026 and returned to the same dome for FulldomeUK in October.",
+        "Rito Digital is an immersive live concert film created by Alma Digital Studio: a prologue and eight songs, 60 minutes, always performed live. The film adapts to three projection setups: fulldome, 360° room and single projection.",
+        "Donzio crosses two worlds, from the System to the Rite, meeting the families of beings that inhabit them. It is animated in realistic stop-motion: tactile silicone creature-puppets in a weathered retrofuturist world, with diorama depth, ritual symmetry and 35mm grain, composed with generative imagery directed frame by frame. The original score, performed live, is ritual techno with hypnotic electronics and a latin house pulse, experimental vocal processing and live handpan.",
+        "The eight steps: Creation, Almagical, Vaina Wena, Care for Her, Guirotron, Free Spinning, Dancing with Myself and Creativity. Each step is a song and a world.",
+        "It premiered at the closing show of FOC — The Festival of Consciousness, in Barcelona in July 2026, before 1,000 people. The fulldome version premiered at CULTVR Lab in Cardiff in September 2026 and returned to the same dome for FulldomeUK in October.",
         "Eight songs and a procession."
       ],
       "tech": [
@@ -136,7 +140,9 @@
       "photoCredits": {
         "Asset/Studio Projects/Rito Digital/1.webp": "@aliciaganesha",
         "Asset/Studio Projects/Rito Digital/5.webp": "@thelighttrace",
-        "Asset/Studio Projects/Rito Digital/8.webp": "@thelighttrace"
+        "Asset/Studio Projects/Rito Digital/9.webp": "Rhys Davies / CULTVR",
+        "Asset/Studio Projects/Rito Digital/10.webp": "Rhys Davies / CULTVR",
+        "Asset/Studio Projects/Rito Digital/11.webp": "Rhys Davies / CULTVR"
       }
     },
     {

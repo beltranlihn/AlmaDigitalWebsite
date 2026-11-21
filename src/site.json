@@ -581,7 +581,8 @@
       "pParticlesHintTouch": "Swipe to turn · Tap to scatter",
       "pSpinoff": "Spin-off",
       "pPhoto": "Photo",
-      "spinTitle": "Studio *spin-offs*"
+      "spinTitle": "Studio *spin-offs*",
+      "pVisit": "Visit"
     },
     "es": {
       "langName": "Español",
@@ -712,7 +713,8 @@
       "pParticlesHintTouch": "Desliza para girar · Toca para dispersar",
       "pSpinoff": "Spin-off",
       "pPhoto": "Foto",
-      "spinTitle": "Spin-offs *del estudio*"
+      "spinTitle": "Spin-offs *del estudio*",
+      "pVisit": "Visitar"
     }
   }
 }
