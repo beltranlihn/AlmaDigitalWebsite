@@ -89,8 +89,7 @@
     {
       "src": "Asset/World/VEATION/2.webp",
       "w": 768,
-      "h": 432,
-      "credit": "4PI / FulldomeUK"
+      "h": 432
     },
     {
       "src": "Asset/World/VEATION/3.webp",
@@ -100,14 +99,12 @@
     {
       "src": "Asset/World/VEATION/4.webp",
       "w": 768,
-      "h": 432,
-      "credit": "4PI / FulldomeUK"
+      "h": 432
     },
     {
       "src": "Asset/World/VEATION/5.webp",
       "w": 768,
-      "h": 432,
-      "credit": "4PI / FulldomeUK"
+      "h": 432
     }
   ],
   "pacha-ibiza": [
@@ -146,20 +143,17 @@
     {
       "src": "Asset/World/Rito Digital/2.webp",
       "w": 360,
-      "h": 640,
-      "credit": "4PI / FulldomeUK"
+      "h": 640
     },
     {
       "src": "Asset/World/Rito Digital/3.webp",
       "w": 768,
-      "h": 432,
-      "credit": "Rhys Davies / CULTVR"
+      "h": 432
     },
     {
       "src": "Asset/World/Rito Digital/4.webp",
       "w": 360,
-      "h": 640,
-      "credit": "4PI / FulldomeUK"
+      "h": 640
     },
     {
       "src": "Asset/World/Rito Digital/5.webp",

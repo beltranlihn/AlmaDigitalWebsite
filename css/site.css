@@ -617,12 +617,6 @@ h3.label { font-size: .74rem; font-weight: 500; letter-spacing: .18em; line-heig
 .shot { cursor: zoom-in; }
 .shot img { display: block; width: 100%; height: 100%; object-fit: cover; aspect-ratio: 16 / 9; transition: scale .8s var(--ease); }
 .shot:hover img { scale: 1.035; }
-/* El crédito que exige una foto (projects.json → photoCredits), sobre la foto. */
-.shot__credit {
-  position: absolute; left: 12px; bottom: 9px; z-index: 1; pointer-events: none;
-  font-size: .7rem; letter-spacing: .04em; color: rgba(255, 255, 255, .88);
-  text-shadow: 0 1px 8px rgba(0, 0, 0, .7);
-}
 
 /* ── Ficha de obra: resumen y ficha técnica ──────────────────────────────
    Referencia: las páginas de proyecto de unseen.co. Arriba, lo que es la obra
@@ -1181,7 +1175,7 @@ body.pg-ds { background: #0a0a09; }
 .pg-ds .page { font-family: var(--ds-sans); font-weight: 300; }
 /* Etiquetas, datos y botones: mono en mayúsculas con tracking amplio. Un peso por familia. */
 .pg-ds .page .label, .pg-ds .phero__eyebrow, .pg-ds .phero__fmt, .pg-ds .pj-meta dt,
-.pg-ds .page .btn, .pg-ds .shot__credit, .pg-ds .pj-specs__code, .pg-ds .pj-specs__dur, .pg-ds .pj-specs__cap {
+.pg-ds .page .btn, .pg-ds .pj-specs__code, .pg-ds .pj-specs__dur, .pg-ds .pj-specs__cap {
   font-family: var(--ds-mono); font-weight: 400; letter-spacing: .18em; text-transform: uppercase;
 }
 .pg-ds .page .label { font-size: .7rem; color: var(--ink-muted); }
@@ -1210,7 +1204,6 @@ body.pg-ds { background: #0a0a09; }
 .pg-ds .shot[data-m] img { scale: 1.06; transition: scale 1.2s cubic-bezier(.37, 0, .63, 1); }
 .pg-ds .shot[data-m]:hover img { scale: 1.08; }
 .pg-ds .pj-card { --rest: 0deg; --turn: -5deg; --lean: 0deg; }
-.pg-ds .shot__credit { font-size: .6rem; color: rgba(242, 240, 236, .7); text-shadow: none; }
 /* El catálogo: una fila por unidad, como una ficha técnica. */
 .pj-specs { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2.2fr); gap: clamp(24px, 5vw, 80px); align-items: start; }
 .pj-specs__lead { margin-top: 10px; max-width: 30ch; font-size: 1rem; line-height: 1.6; color: var(--ink-body); }

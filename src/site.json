@@ -590,11 +590,9 @@
       "worldListLabel": "Works in this journey",
       "worldWhere": "Presented at",
       "worldTech": "Technology",
-      "worldPhotos": "Photos",
       "pParticlesHint": "Drag to turn · Click to scatter",
       "pParticlesHintTouch": "Swipe to turn · Tap to scatter",
       "pSpinoff": "Spin-off",
-      "pPhoto": "Photo",
       "spinTitle": "Studio *spin-offs*",
       "pVisit": "Visit",
       "pCatalogue": "The catalogue"
@@ -725,11 +723,9 @@
       "worldListLabel": "Obras del recorrido",
       "worldWhere": "Presentada en",
       "worldTech": "Tecnología",
-      "worldPhotos": "Fotos",
       "pParticlesHint": "Arrastra para girar · Clic para dispersar",
       "pParticlesHintTouch": "Desliza para girar · Toca para dispersar",
       "pSpinoff": "Spin-off",
-      "pPhoto": "Foto",
       "spinTitle": "Spin-offs *del estudio*",
       "pVisit": "Visitar",
       "pCatalogue": "El catálogo"

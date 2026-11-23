@@ -97,15 +97,15 @@ su slug va en `site.json → world.spinoffs` (no en `featured`): tienen su propi
 Sanctuaries): `body.pg-ds`, ver "Temas". **`specs`** (opcional): el catálogo de la obra, una fila por unidad
 (`lead` y `rows: [código, nombre, práctica, duración, aforo]`), después del teléfono. **`enquire`**
 (opcional): el texto y el botón de consulta de esa ficha, si no le queda "¿Te interesa esta obra?".
-**`photoCredits`** (opcional, en `projects.json`): `{ "ruta de la foto": "@autor" }`. El crédito sale
-sobre la foto ("Photo @autor" / "Foto @autor"). Lo usa Rito Digital, cuyo press kit lo exige por foto.
+**Sin créditos sobre las fotos** (decisión de Vicente, 2026-11-23: "olvídate de los créditos en las
+fotos, de toda la web"): se quitó `photoCredits` y todo lo que lo mostraba. Los fotógrafos de Rito siguen
+nombrados en sus créditos (`credits`), al pie de la ficha.
 **`website`** (opcional, en `projects.json`): un sitio propio de la obra. Sale como botón ("Visit
 ritodigital.com ↗", texto `pVisit`) bajo el resumen de la ficha, y como enlace al lado de "Entrar a la
 obra" en su parada de la portada (VEATION, Rito Digital y Digital Sanctuaries).
 **`galaxyPhotos`** (opcional, en `projects.json`): qué fotos van a la galaxia de la obra en la portada
-(hasta 5). Sin este campo van la portada y las siguientes **sin** `photoCredits`. Con él pueden ir fotos
-con crédito: `tools/make_world_images.py` lo anota en `src/world-images.json` y la ficha de vidrio de la
-parada suma una fila "Fotos" con los créditos. Las verticales van a 9:16. Hoy lo usan VEATION y Rito.
+(hasta 5). Sin este campo van la portada y las siguientes de `photos`. Las verticales van a 9:16. Hoy
+lo usan VEATION y Rito (fotos de FulldomeUK).
 
 ## Navegación continua (leer antes de tocar `js/app.js` o las plantillas)
 Cada página es un HTML completo: sirve sola, se indexa sola y funciona sin JavaScript. Pero al navegar
@@ -612,6 +612,18 @@ desactiva. **No** cambiar nameservers a Cloudflare.
 El fluid sim sigue corriendo con auto-emitters en mobile. Los usuarios de Android no pueden tocar el fondo para emitir fluidos (correcto — el dedo es para el scroll).
 
 ## Historial de sesiones (última al tope)
+
+### 2026-11-23 — Fuera los créditos sobre las fotos, en todo el sitio (Vicente)
+
+Pedido de Vicente: "olvídate de los créditos en las fotos, de toda la web". Se quitaron el crédito
+sobre cada foto de las fichas (Rito Digital y VEATION), la fila "Fotos" de la ficha de vidrio de la
+portada, el campo `photoCredits` y sus textos y estilos (`pPhoto`, `worldPhotos`, `.shot__credit`).
+`tools/make_world_images.py` ya no distingue fotos con crédito. Siguen los créditos al pie de la ficha de
+Rito ("Photography, …: @aliciaganesha · @thelighttrace", "Rhys Davies / CULTVR", "4PI"), que no van sobre
+las fotos, y las líneas de crédito obligatorias de las obras (`creditLine`: BID, Johns Hopkins).
+
+**Verificado en Chrome**: la ficha de Rito y su parada en la portada, sin créditos sobre las fotos.
+Consola sin errores.
 
 ### 2026-11-23 — Las fotos de FulldomeUK también en las galaxias de la portada (Vicente)
 
