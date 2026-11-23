@@ -89,18 +89,18 @@
     // la rampa del blob de marca: sombra, medio, luz, brillo y el acento celeste en los pliegues
     '    vec3 s0=vec3(.361,.122,.780),s1=vec3(.561,.278,.933),s2=vec3(.796,.627,.984),s3=vec3(.988,.839,.973),acc=vec3(.298,.784,.961);',
     '    vec3 key=normalize(vec3(-.42,.78,.5));',
-    '    float wrap=pow(clamp((dot(n,key)+.6)/1.6,0.,1.),.95);',
+    '    float wrap=pow(clamp((dot(n,key)+.85)/1.85,0.,1.),.9);',
     '    float fres=pow(1.-clamp(n.z,0.,1.),2.5);',
-    '    float l=wrap*mix(.35,1.,o);',
-    '    vec3 c=mix(s0,s1,smoothstep(0.,.38,l));c=mix(c,s2,smoothstep(.3,.72,l));c=mix(c,s3,smoothstep(.72,1.05,l)*.55);',
+    '    float l=wrap*mix(.62,1.,o);',
+    '    vec3 c=mix(s0,s1,smoothstep(0.,.5,l));c=mix(c,s2,smoothstep(.35,.88,l));c=mix(c,s3,smoothstep(.78,1.05,l)*.4);',
     '    float h1=clamp(vnoise(p*1.6+vec3(0.,0.,uTime*.06))*1.3+.5,0.,1.);',
     '    float h2=clamp(vnoise(p*2.2+vec3(7.1,uTime*.05,2.3))*1.3+.5,0.,1.);',
-    '    c=mix(c,c*vec3(1.08,.8,1.),smoothstep(.55,.9,h1)*.7);',
-    '    c=mix(c,c*vec3(.8,.92,1.1),smoothstep(.5,.9,h2)*(1.-l)*.7);',
-    '    c=mix(c,acc,clamp(((1.-o)*1.4+fres*.12)*smoothstep(.4,.85,h2)*.75,0.,.7));',
+    '    c=mix(c,c*vec3(1.05,.9,1.),smoothstep(.55,.9,h1)*.4);',
+    '    c=mix(c,c*vec3(.9,.95,1.06),smoothstep(.5,.9,h2)*(1.-l)*.4);',
+    '    c=mix(c,acc,clamp((1.-o)*smoothstep(.4,.85,h2)*.35,0.,.25));c=mix(c,s2,fres*.18);',
     '    c=mix(c,s3,uGuide*uBreath*.12);',                   // al inhalar se ilumina apenas
     '    float body=hit?1.:edge;',
-    '    col=mix(halo,c,body);a=mix(ha,1.,body);',
+    '    col=mix(halo,c,body);a=mix(ha,1.-fres*.3,body);',
     '  }',
     '  gl_FragColor=vec4(col*a,a);',                         // alfa premultiplicado
     '}'].join('\n');

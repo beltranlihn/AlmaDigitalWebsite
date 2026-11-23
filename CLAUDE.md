@@ -232,11 +232,14 @@ vea y probarlo en teléfonos reales** (en la portada corren el fluido y el mundo
   distancias (`AMEBA_VERT`/`AMEBA_FRAG` y `ballsFor()` en `js/world.js`; `FS` y `ballsAt()` en
   `js/ameba.js`). Luz difusa envolvente, oclusión en los pliegues, una rampa de cuatro tonos (sombra,
   medio, luz, brillo) y el acento en los pliegues. **Mate** (pedido de Vicente el mismo día, "sin tantas
-  reflexiones"): sin brillos especulares, sin borde reflejado y con el tono más claro apenas. La de Alma
+  reflexiones"): sin brillos especulares, sin borde reflejado y con el tono más claro apenas. **Suaves**
+  (pedido del 2026-11-23: "algunas muy saturadas y metálicas"): poco contraste entre la luz y los
+  pliegues, el acento apenas como un velo y el borde translúcido, que se funde con el fondo. La de Alma
   (puerta, estudio, final y la flotante) usa la rampa de la marca: `#5c1fc7`, `#8f47ee`, `#cba0fb`,
   `#fcd6f8` y el acento `#4cc8f5` (`ALMA_RAMP`). **Las de las obras** arman su rampa con los colores de
   `site.json → particles` (o `world.forms`), del más oscuro al más claro, con el más saturado de acento
-  (`rampOf()`). Para cambiar sólo el color de la ameba de una obra en la portada, sin tocar la cabecera
+  (`rampOf()`), pero antes les baja la saturación y los acerca al lila (`soft()`), y la sombra va
+  al violeta profundo y no al negro. Para cambiar sólo el color de la ameba de una obra en la portada, sin tocar la cabecera
   de su ficha: `site.json → world.forms` (hoy Neurocosm Full Dome, en azul oscuro y morado, a pedido de
   Vicente). Escriben su profundidad real, así las imágenes de las galaxias pasan por detrás. En
   táctil el recorrido usa 40 pasos en vez de 64. **No llevan fotos** (decisión de Vicente, 2026-11-18):
@@ -594,6 +597,24 @@ desactiva. **No** cambiar nameservers a Cloudflare.
 El fluid sim sigue corriendo con auto-emitters en mobile. Los usuarios de Android no pueden tocar el fondo para emitir fluidos (correcto — el dedo es para el scroll).
 
 ## Historial de sesiones (última al tope)
+
+### 2026-11-23 — Amebas más suaves (Vicente)
+
+Vicente vio que algunas amebas habían quedado "muy saturadas y metálicas" y pidió la suavidad de las de
+antes. Las que más se notaban eran Collective Pulse (arcoíris), Pacha, Rito, VEATION y Soul Charger. Las
+causas: las rampas salían de los colores de partículas (pensados como luz sobre negro), los pliegues
+quedaban oscuros con un acento de otro tono y el borde se cortaba en seco.
+
+- `js/world.js`: luz más envolvente y menos contraste con los pliegues, el acento como un velo (máximo
+  25 %), menos deriva de tono y el borde translúcido y teñido del tono medio, sin reflejo. `rampOf()`
+  pasa los colores de cada obra por `soft()` (30 % menos de saturación y un poco de lila) y lleva la
+  sombra al violeta profundo.
+- `js/ameba.js` (la flotante): los mismos ajustes de luz, acento y borde.
+
+**Verificado en Chrome**: la puerta, Soul Charger, Collective Pulse, Neurocosm Full Dome, VEATION, Pacha
+y Rito en la portada, y la ameba flotante en Studio. Cada obra conserva su color, en pastel. Consola sin
+errores.
+**Sin ver**: teléfonos reales, Safari y Firefox.
 
 ### 2026-11-21 — Amebas con metaballs, como la ameba de la marca (Vicente)
 

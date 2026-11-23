@@ -78,7 +78,9 @@ const C = {
      · luz: difusa envolvente, oclusión en los pliegues, rampa de cuatro tonos
        (sombra, medio, luz, brillo) y el acento en los pliegues
    Mate (pedido de Vicente, 2026-11-21): sin brillos especulares, sin borde
-   reflejado y con el tono más claro apenas. Es arcilla, no vidrio. */
+   reflejado y con el tono más claro apenas. Es arcilla, no vidrio.
+   Suave (2026-11-23): poco contraste entre luz y pliegue, el acento apenas y
+   el borde translúcido, que se funde con el fondo como las amebas de antes. */
 const BALLS = 12;                      // esferas por ameba
 const AMEBA_VERT = `
   varying vec3 vPos; varying vec3 vCam;
@@ -144,21 +146,21 @@ const AMEBA_FRAG = `
     vec3 n = normalAt(p), v = -rd;
     float ao = aoAt(p, n);
     vec3 key = normalize(vec3(-0.42 + uLook.x * 2.0, 0.78 + uLook.y * 2.0, 0.5));
-    float wrap = pow(clamp((dot(n, key) + 0.6) / 1.6, 0.0, 1.0), 0.95);      // luz envolvente, sin terminador marcado
-    float fres = pow(1.0 - clamp(dot(n, v), 0.0, 1.0), 2.5);
-    float light = wrap * mix(0.35, 1.0, ao);
-    vec3 col = mix(uR0, uR1, smoothstep(0.0, 0.38, light));
-    col = mix(col, uR2, smoothstep(0.3, 0.72, light));
-    col = mix(col, uR3, smoothstep(0.72, 1.05, light) * 0.55);                // el tono más claro, apenas: mate, sin brillos
+    float wrap = pow(clamp((dot(n, key) + 0.85) / 1.85, 0.0, 1.0), 0.9);     // luz muy envolvente: sin terminador
+    float fres = pow(1.0 - clamp(dot(n, v), 0.0, 1.0), 2.2);
+    float light = wrap * mix(0.62, 1.0, ao);                                  // los pliegues, apenas más oscuros
+    vec3 col = mix(uR0, uR1, smoothstep(0.0, 0.5, light));
+    col = mix(col, uR2, smoothstep(0.35, 0.88, light));
+    col = mix(col, uR3, smoothstep(0.78, 1.05, light) * 0.4);                 // el tono más claro, apenas: mate, sin brillos
     float h1 = clamp(vnoise(p * 1.2 + vec3(0.0, 0.0, uTime * 0.06)) * 1.3 + 0.5, 0.0, 1.0);
     float h2 = clamp(vnoise(p * 1.7 + vec3(7.1, uTime * 0.05, 2.3)) * 1.3 + 0.5, 0.0, 1.0);
-    col = mix(col, col * vec3(1.08, 0.8, 1.0), smoothstep(0.55, 0.9, h1) * 0.7);              // el tono deriva despacio
-    col = mix(col, col * vec3(0.8, 0.92, 1.1), smoothstep(0.5, 0.9, h2) * (1.0 - light) * 0.7);
-    float crease = (1.0 - ao) * 1.4 + fres * 0.12;
-    col = mix(col, uAcc, clamp(crease * smoothstep(0.4, 0.85, h2) * 0.75, 0.0, 0.7));       // el acento, en los pliegues
-    col = mix(vec3(dot(col, vec3(0.299, 0.587, 0.114))), col, 0.86 + 0.14 * max(uFocus, 1.0 - uArt));
+    col = mix(col, col * vec3(1.05, 0.9, 1.0), smoothstep(0.55, 0.9, h1) * 0.4);              // el tono deriva despacio
+    col = mix(col, col * vec3(0.9, 0.95, 1.06), smoothstep(0.5, 0.9, h2) * (1.0 - light) * 0.4);
+    col = mix(col, uAcc, clamp((1.0 - ao) * smoothstep(0.4, 0.85, h2) * 0.35, 0.0, 0.25));    // el acento, sólo un velo en los pliegues
+    col = mix(col, uR2, fres * 0.18);                                         // el borde se funde con el halo, sin reflejo
+    col = mix(vec3(dot(col, vec3(0.299, 0.587, 0.114))), col, 0.84 + 0.1 * max(uFocus, 1.0 - uArt));
     col += uGlow * uR2 * 0.12;                                                 // bajo el cursor se aclara, sin borde brillante
-    float a = mix(0.82, 1.0, max(uSolid, uArt));
+    float a = mix(0.82, 1.0, max(uSolid, uArt)) * (1.0 - fres * 0.32);       // el borde, translúcido: se ve el fondo
     gl_FragColor = vec4(col, a * cov * uOpacity);
     vec4 clip = projectionMatrix * viewMatrix * modelMatrix * vec4(p, 1.0);
     gl_FragDepth = clamp(0.5 + 0.5 * clip.z / clip.w, 0.0, 1.0);
@@ -171,14 +173,19 @@ const mixc = (a, b, t) => a.map((x, i) => x + (b[i] - x) * t);
 function rampOf(o) {
   if (o.ramp) return o.ramp;
   if (o.pal) {                         // los colores de la obra, del más oscuro al más claro; el más saturado de acento
-    const s = o.pal.slice(0, 4).sort((x, y) => lum(x) - lum(y));
+    const s = o.pal.slice(0, 4).map(soft).sort((x, y) => lum(x) - lum(y));
     while (s.length < 4) s.push(s[s.length - 1]);
     const sat = (c) => Math.max(...c) - Math.min(...c);
     const acc = o.pal.slice().sort((x, y) => sat(y) - sat(x))[0];
-    return [mixc(s[0], [0, 0, 0], 0.35), s[1], s[2], mixc(s[3], [1, 1, 1], 0.25), acc];
+    return [mixc(s[0], DEEP, 0.42), s[1], s[2], mixc(s[3], [0.97, 0.94, 1], 0.3), mixc(soft(acc), LILAC, 0.3)];
   }
   return [mixc(o.a, [0.16, 0.05, 0.42], 0.5), o.a, o.b, mixc(o.c, [1, 1, 1], 0.2), ALMA_RAMP[4]];
 }
+/* Los colores de las obras son de partículas (luz sobre negro) y en un cuerpo
+   mate se ven chillones o metálicos: se les quita algo de saturación y se los
+   acerca al lila del mundo, y las sombras van al violeta profundo y no al negro. */
+const LILAC = [0.79, 0.62, 0.98], DEEP = [0.16, 0.09, 0.36];
+function soft(c) { const l = lum(c); return mixc(mixc(c, [l, l, l], 0.3), LILAC, 0.14); }
 
 /* ── El reel: una pantalla que flota ───────────────────────────────────
    Un plano con el video (antes, su póster), de puntas redondas, con filo de
