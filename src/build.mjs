@@ -338,8 +338,8 @@ function buildLanding(lang) {
   const featured = site.featured.map(s => loc(projects.find(p => p.slug === s), lang));
 
   const cards = featured.map(p => `    <a class="wcard" href="${link(c, `work/${p.slug}.html`)}">
-      <img loading="lazy" decoding="async" width="1920" height="1080" src="${asset(c, p.cover)}" alt="">${p.video ? `
-      <video class="wcard__v" muted loop playsinline preload="none" data-src="${asset(c, p.video)}" aria-hidden="true" tabindex="-1"></video>` : ''}
+      <img loading="lazy" decoding="async" width="1920" height="1080" src="${asset(c, p.cover)}" alt="">${p.video || p.wideVideo ? `
+      <video class="wcard__v" muted loop playsinline preload="none" data-src="${asset(c, p.video || p.wideVideo)}" aria-hidden="true" tabindex="-1"></video>` : ''}
       <span class="wcard__t"><b>${esc(p.title)}</b><span>${esc(p.format)}</span></span>
     </a>`).join('\n');
 
@@ -595,7 +595,7 @@ function buildIndex(lang) {
   const rows = list.map(p => `      <a class="row" href="${link(c, `work/${p.slug}.html`)}"
         data-track="${p.track}" data-format-key="${p.formatKey}"
         data-title="${esc(p.title)}" data-format="${esc(p.format)}"
-        data-cover="${asset(c, p.cover)}" data-video="${p.video ? asset(c, p.video) : ''}"${site.perProjectPalette ? `
+        data-cover="${asset(c, p.cover)}" data-video="${p.video || p.wideVideo ? asset(c, p.video || p.wideVideo) : ''}"${site.perProjectPalette ? `
         data-palette='${JSON.stringify(p.palette || [])}' data-back="${p.back || ''}"` : ''}>
         <img class="row__thumb" loading="lazy" decoding="async" src="${asset(c, p.cover)}" alt="">
         <span class="row__name">${esc(p.title)}</span>
@@ -675,14 +675,15 @@ function buildProject(raw, rawNext, lang) {
   const queue = [...others.slice(0, 1), ...p.photos.filter(x => x === p.cover), ...others.slice(1)];
   let num = 0;
   const shot = (ph, cls, m) => `<figure class="shot${cls ? ' ' + cls : ''}" data-m="${m || 'shot'}"><img loading="lazy" decoding="async" width="1920" height="1080" src="${asset(c, ph)}" alt="${esc(p.title)}, ${esc(t.pImage)} ${++num}"></figure>`;
-  const gap = (cls, text) => `<div class="slot${cls ? ' ' + cls : ''}" aria-hidden="true"><span>${text}</span></div>`;
+  /* noSlots (projects.json): la obra no tiene más material; sin lugares vacíos, ni en revisión. */
+  const gap = (cls, text) => p.noSlots ? '' : `<div class="slot${cls ? ' ' + cls : ''}" aria-hidden="true"><span>${text}</span></div>`;
 
   /* Videos verticales: el reel de la obra y, si hay, "verticals" (projects.json: .mp4 o imagen 9:16). */
   const verticals = [p.video || p.reelImage, ...(p.verticals || [])].filter(Boolean).slice(0, 2);
   const pick = { side: null, wide: null, bleed: null, wall: [] };
   if (verticals.length < 2) pick.side = queue.shift() || null;
   pick.wall.push(...queue.splice(0, 2));
-  pick.wide = queue.shift() || null;
+  if (!p.wideVideo) pick.wide = queue.shift() || null;
   pick.wall.push(...queue.splice(0, 3));
   pick.bleed = queue.shift() || null;
   pick.wall.push(...queue.splice(0, 1));
@@ -696,8 +697,8 @@ function buildProject(raw, rawNext, lang) {
   /* Con un solo video vertical va un teléfono y, al lado, una foto. */
   const objs = verticals.map(phone);
   /* Una ficha con estética propia (theme) no lleva teléfono si no tiene video: ni siquiera su lugar vacío. */
-  if (!verticals.length && !p.theme) objs.push(`      ${gap('pj-phone', 'Espacio para video vertical<br>9:16 · 406×720')}`);
-  if (verticals.length < 2) objs.push(`      ${pick.side ? shot(pick.side, 'pj-card', 'card') : gap('pj-card', 'Espacio para foto<br>o material · vertical 4:5')}`);
+  if (!verticals.length && !p.theme && !p.noSlots) objs.push(`      ${gap('pj-phone', 'Espacio para video vertical<br>9:16 · 406×720')}`);
+  if (verticals.length < 2 && (pick.side || !p.noSlots)) objs.push(`      ${pick.side ? shot(pick.side, 'pj-card', 'card') : gap('pj-card', 'Espacio para foto<br>o material · vertical 4:5')}`);
   const rest = p.body.slice(1);
   const phonesMod = `  <section class="pj-m pj-m--phones${rest.length ? '' : ' pj-m--alone'}" data-n="${verticals.length + (pick.side ? 1 : 0)}" aria-label="${esc(t.pReel)}">
     <div class="pj-stage3d">
@@ -713,7 +714,7 @@ ${rest.map(x => `      <p>${esc(x)}</p>`).join('\n')}
      se mueven a distinta velocidad. Al lado, dónde se presentó la obra. Hace
      falta un mínimo de dos fotos para que salga en el sitio publicado. */
   const wallOn = pick.wall.length >= 2;
-  const tiles = Array.from({ length: Math.max(6, pick.wall.length) }, (_, i) => pick.wall[i]
+  const tiles = Array.from({ length: p.noSlots ? pick.wall.length : Math.max(6, pick.wall.length) }, (_, i) => pick.wall[i]
     ? shot(pick.wall[i], '', 'tile') : gap('', 'Espacio para imagen<br>1920×1080'));
   const cols = [0, 1, 2].map(k => `      <div class="pj-wall__col" data-m="col">
 ${tiles.filter((_, i) => i % 3 === k).map(x => `        ${x}`).join('\n')}
@@ -730,9 +731,14 @@ ${cols}
   </section>`;
   const historyBelow = !historyInWall && p.presentedAt.length > 0;
 
-  const one = (type, ph) => `  <div class="pj-m pj-m--${type}" data-n="${ph ? 1 : 0}">
+  const one = (type, ph) => !ph && p.noSlots ? '' : `  <div class="pj-m pj-m--${type}" data-n="${ph ? 1 : 0}">
     ${ph ? shot(ph, '', type === 'bleed' ? 'bleed' : 'shot') : gap('', 'Espacio para imagen<br>horizontal · 1920×1080')}
   </div>`;
+  /* wideVideo (projects.json): un video horizontal en el lugar de la imagen ancha, sin sonido, que
+     se pide recién cuando se ve (como los reels de los teléfonos). */
+  const wideMod = p.wideVideo ? `  <div class="pj-m pj-m--wide" data-n="1">
+    <figure class="shot shot--video preel" data-m="shot"><video muted loop playsinline preload="none" poster="${asset(c, p.cover)}" data-src="${asset(c, p.wideVideo)}" aria-label="${esc(p.title)}, video"></video></figure>
+  </div>` : one('wide', pick.wide);
   /* El catálogo (projects.json → specs, opcional): una fila por unidad, con su código. Hoy lo usa
      Digital Sanctuaries. */
   const specsMod = p.specs && p.specs.rows && p.specs.rows.length ? `  <section class="pj-m pj-specs" data-n="1" aria-labelledby="specs-h">
@@ -744,7 +750,7 @@ ${cols}
 ${p.specs.rows.map(r => `      <li class="pj-specs__row"><span class="pj-specs__code">${esc(r[0])}</span><span class="pj-specs__name">${esc(r[1])}</span><span class="pj-specs__what">${esc(r[2])}</span><span class="pj-specs__dur">${esc(r[3])}</span><span class="pj-specs__cap">${esc(r[4])}</span></li>`).join('\n')}
     </ol>
   </section>` : '';
-  const flow = [one('wide', pick.wide), phonesMod, specsMod, wallMod, one('bleed', pick.bleed)].filter(Boolean);
+  const flow = [wideMod, phonesMod, specsMod, wallMod, one('bleed', pick.bleed)].filter(Boolean);
   while (queue.length) {
     const pair = queue.splice(0, 2);
     flow.push(`  <div class="pj-m pj-m--duo" data-n="${pair.length}">\n${pair.map(x => `    ${shot(x)}`).join('\n')}\n  </div>`);

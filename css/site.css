@@ -615,6 +615,7 @@ h3.label { font-size: .74rem; font-weight: 500; letter-spacing: .18em; line-heig
 /* Una foto de la obra. Un clic la abre en el visor (js/app.js). */
 .shot { position: relative; margin: 0; border-radius: var(--r-md); overflow: hidden; background: #0c0a18; box-shadow: var(--glow); }
 .shot { cursor: zoom-in; }
+.shot video { display: block; width: 100%; aspect-ratio: 16 / 9; object-fit: cover; }
 .shot img { display: block; width: 100%; height: 100%; object-fit: cover; aspect-ratio: 16 / 9; transition: scale .8s var(--ease); }
 .shot:hover img { scale: 1.035; }
 

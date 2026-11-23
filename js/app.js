@@ -403,7 +403,7 @@
 
   /* ── Lightbox de la galería ───────────────────────────────────────────── */
   function initLightbox() {
-    var shots = $$('.shot');
+    var shots = $$('.shot').filter(function (s) { return $('img', s); });   // el video ancho no va al visor
     if (!shots.length) return;
     var srcs = shots.map(function (s) { return $('img', s).src; });
     var lb = document.createElement('div');

@@ -162,11 +162,13 @@
       "format": "Interactive VR Painting",
       "track": "studio",
       "cover": "Asset/Studio Projects/Neural Canvas/3 Portada.webp",
-      "video": "Asset/Studio Projects/Neural Canvas/Neural Canvas Reel.mp4",
       "photos": [
-        "Asset/Studio Projects/Neural Canvas/1.webp",
         "Asset/Studio Projects/Neural Canvas/2.webp",
-        "Asset/Studio Projects/Neural Canvas/3 Portada.webp"
+        "Asset/Studio Projects/Neural Canvas/3 Portada.webp",
+        "Asset/Studio Projects/Neural Canvas/1.webp",
+        "Asset/Studio Projects/Neural Canvas/euipo-2.webp",
+        "Asset/Studio Projects/Neural Canvas/euipo-3.webp",
+        "Asset/Studio Projects/Neural Canvas/euipo-1.webp"
       ],
       "desc": "An interactive VR painting experience where each participant paints freely for two minutes while an EEG sensor tracks their state of calm, folding brain activity into the creative gesture itself. The 200 individual sessions were assembled into a single collective artwork, unveiled live at the EUIPO headquarters in Alicante.",
       "commissionedBy": "",
@@ -203,7 +205,9 @@
       "year": "",
       "press": [],
       "formatKey": "vr",
-      "sidePhoto": "Asset/Studio Projects/Neural Canvas/2.webp"
+      "sidePhoto": "Asset/Studio Projects/Neural Canvas/2.webp",
+      "wideVideo": "Asset/Studio Projects/Neural Canvas/Neural Canvas Reel Horizontal.mp4",
+      "noSlots": true
     },
     {
       "slug": "collective-pulse",

@@ -103,6 +103,11 @@ los créditos de Rito.
 **`website`** (opcional, en `projects.json`): un sitio propio de la obra. Sale como botón ("Visit
 ritodigital.com ↗", texto `pVisit`) bajo el resumen de la ficha, y como enlace al lado de "Entrar a la
 obra" en su parada de la portada (VEATION, Rito Digital y Digital Sanctuaries).
+**`wideVideo`** (opcional, en `projects.json`): un video horizontal (16:9, sin audio, 1280×720) en el
+lugar de la imagen ancha de la ficha. Se pide recién cuando se ve y se pausa al salir, como los reels de
+los teléfonos. También es el que se ve al pasar por la obra en el índice si no hay `video`. Hoy, Neural
+Canvas. **`noSlots`** (opcional): la obra no tiene más material; la ficha no muestra lugares vacíos ni
+en revisión (sin teléfono vacío, sin huecos en la galería, sin imagen ancha o a sangre vacías).
 **`galaxyPhotos`** (opcional, en `projects.json`): qué fotos van a la galaxia de la obra en la portada
 (hasta 5). Sin este campo van la portada y las siguientes de `photos`. Las verticales van a 9:16. Hoy
 lo usan VEATION y Rito (fotos de FulldomeUK).
@@ -612,6 +617,28 @@ desactiva. **No** cambiar nameservers a Cloudflare.
 El fluid sim sigue corriendo con auto-emitters en mobile. Los usuarios de Android no pueden tocar el fondo para emitir fluidos (correcto — el dedo es para el scroll).
 
 ## Historial de sesiones (última al tope)
+
+### 2026-11-23 — Neural Canvas: el reel horizontal en grande y sin huecos (Vicente)
+
+Vicente empezó a corregir las fichas una por una. En Neural Canvas pidió el video horizontal en la
+sección grande vacía (la imagen ancha), sacarlo del teléfono de abajo y, si no hay más material, limpiar
+los espacios vacíos.
+
+- **Video**: `Neural Canvas Reel Horizontal.mp4`, del reel EIT original (`05_Biblioteca/neural-canvas/
+  video/neural-canvas-reel-eit-36s.mp4`, 1080p, 116 MB) a 1280×720, crf 29, sin audio: 3,9 MB. Campo
+  nuevo `wideVideo`. Sale el reel vertical (`video`) y con él el teléfono.
+- **Fotos nuevas**: tres del foro EIT en la EUIPO (`euipo-1..3.webp`, de `web-canva-2026-11/
+  neural-canvas/fotos-euipo-alicante`): las pantallas LED con las pinturas, la sala con las
+  proyecciones (público de espaldas) y el escenario. No se usaron la del escenario con la marca del
+  foro, la del público de frente ni `IMG_6205` (participante reconocible, consentimiento pendiente).
+- Campo nuevo `noSlots`: sin lugares vacíos.
+
+**Para tener en cuenta**: `2.webp` (la foto al lado del texto, que ya estaba) parece la misma
+participante de `IMG_6205`, cuyo consentimiento `_PERMISOS.md` marca pendiente. Y `_PERMISOS.md` sigue
+diciendo que el contrato con EIT cede la propiedad de los entregables.
+
+**Verificado en Chrome**: el video se carga al verlo y se reproduce (1280×720), la foto al lado del
+texto, la galería con cinco fotos, sin huecos. Consola sin errores.
 
 ### 2026-11-23 — Rito Digital sin fotógrafos en los créditos (Vicente)
 
