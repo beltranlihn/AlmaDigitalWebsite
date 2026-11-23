@@ -296,10 +296,19 @@ vea y probarlo en teléfonos reales** (en la portada corren el fluido y el mundo
   e `"icons"` (la galaxia con el ícono 3D al centro). Ver "Paradas en galaxia". Para comparar,
   `?paradas=ameba`, `?paradas=galaxia` o `?paradas=iconos` en la URL, o los botones "Paradas" de la
   barra de revisión (Ameba · Galaxia · Íconos): la elección dura la visita (`sessionStorage`).
-- **La ficha de cada obra** dice el número y si es obra propia o encargo, el nombre, el formato, la
-  primera oración de la descripción, hasta cuatro etiquetas de tecnología (`tech`) y dónde se presentó
-  (las dos primeras sedes de `presentedAt`, recortadas, y "+N" si hay más). En el teléfono la
-  descripción va en tres líneas, las etiquetas en una fila y no sale "presentada en".
+- **La ficha de cada obra** (rediseñada el 2026-11-23, pedido de Vicente: "muy cargadas de texto,
+  botones, mucha información… cuidar de no repetir"), de arriba abajo:
+  1. una línea chica con el número y el formato ("03 / 06 — Fulldome");
+  2. el nombre;
+  3. el subtítulo (`format` de la obra) **sólo si dice algo nuevo**: `subOf()` en `src/build.mjs` lo
+     quita si todas sus palabras ya están en la etiqueta o en la descripción (hoy quedan Collective
+     Pulse y VEATION);
+  4. la primera oración de la descripción;
+  5. bajo un filete, una lista chica "Tecnología" (hasta cuatro de `tech`, separadas por puntos, ya no
+     como píldoras) y "Presentada en" (las dos primeras sedes, sólo lugar y ciudad, y "+N");
+  6. el crédito obligatorio, si hay (`creditLine`);
+  7. "Entrar a la obra" y, en la misma fila, el sitio propio.
+  En el teléfono la descripción va en tres líneas, la tecnología en una y no sale "presentada en".
 - **Entrar a una obra**: clic en la ameba o en "Entrar a la obra". La ameba se derrama como un líquido
   desde donde está hasta cubrir la pantalla (borde ondulado, con brillo de vidrio). Arranca con los
   colores de la ameba; adentro va apareciendo la portada, y al final se acomoda en el encuadre y el
@@ -601,6 +610,22 @@ desactiva. **No** cambiar nameservers a Cloudflare.
 El fluid sim sigue corriendo con auto-emitters en mobile. Los usuarios de Android no pueden tocar el fondo para emitir fluidos (correcto — el dedo es para el scroll).
 
 ## Historial de sesiones (última al tope)
+
+### 2026-11-23 — Portada: fichas de vidrio más livianas (Vicente)
+
+Vicente: las fichas de las obras seleccionadas estaban "muy cargadas de texto, botones, mucha
+información"; pidió rediseñarlas para que sean más elegantes y fáciles de leer, sin sacar información
+necesariamente y sin repetir. Lo que se repetía: el formato salía tres veces (etiqueta, subtítulo y
+descripción: "Fulldome" · "Full Dome Experience" · "A 45-minute immersive full dome…").
+
+- Número y formato en una sola línea; el subtítulo sólo si no repite (`subOf()`); la tecnología y las
+  sedes en una lista chica de dos columnas, sin píldoras; sedes sin país ni fecha; el sitio propio al
+  lado del botón. Ver "La ficha de cada obra". Texto nuevo: `worldTech`.
+
+**Verificado en Chrome**: Collective Pulse (con subtítulo y el crédito del BID), Neurocosm Full Dome,
+VEATION, Rito Digital, la parada del estudio, y en español Soul Charger y Digital Sanctuaries. Consola
+sin errores.
+**Sin ver**: el teléfono (la ventana de Chrome no se deja achicar), Safari y Firefox.
 
 ### 2026-11-23 — Índice de obras: portadas en el cuadro de la vista previa (Vicente)
 

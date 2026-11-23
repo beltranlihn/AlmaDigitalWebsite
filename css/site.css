@@ -984,21 +984,25 @@ body.has-review .ftr { padding-bottom: 78px; }   /* que la barra no tape el pie 
 }
 /* El video del reel flotante: sólo alimenta la textura del 3D, no se ve como elemento. */
 .world__reelvid { position: absolute; left: 0; top: 0; width: 2px; height: 2px; opacity: 0; pointer-events: none; }
-/* La descripción, dentro de la ficha de vidrio. */
-.world__desc { margin: 12px 0 0; font-size: clamp(.98rem, 1.15vw, 1.06rem); line-height: 1.58; }
-/* La tecnología (etiquetas) y dónde se presentó la obra. */
-.world__tags { list-style: none; margin: 14px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px; }
-.world__tags[hidden], .world__where[hidden] { display: none; }
-.world__tags li {
-  padding: 4px 10px; border-radius: 999px; border: 1px solid rgba(255, 255, 255, .26);
-  font-size: .66rem; font-weight: 500; letter-spacing: .12em; text-transform: uppercase; color: var(--ink);
+/* La ficha de vidrio, de arriba abajo (2026-11-23: menos peso y sin repetir).
+   Número y formato en una sola línea chica; el nombre grande; el subtítulo sólo si dice algo
+   nuevo (data-sub en src/build.mjs); la descripción en el tono del cuerpo; la tecnología y las
+   sedes como una lista chica bajo un filete, sin píldoras; y las acciones en una fila. */
+.world__eyebrow {
+  display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 0; margin: 0;
+  font-size: .7rem; font-weight: 500; letter-spacing: .2em; text-transform: uppercase; line-height: 1.5; color: var(--ink-muted);
 }
-.world__where { margin-top: 12px; font-size: .9rem; line-height: 1.5; color: var(--ink-body); }
-.world__where .label { margin-right: 6px; }
+.world__eyebrow > span:first-child { font-variant-numeric: tabular-nums; }
+.world__desc { margin: 14px 0 0; font-size: clamp(.95rem, 1.1vw, 1.02rem); line-height: 1.62; color: var(--ink-body); }
+.world__meta { margin: 20px 0 0; padding-top: 14px; border-top: 1px solid rgba(255, 255, 255, .14); display: grid; gap: 7px; }
+.world__meta > div { display: grid; grid-template-columns: 7.4em minmax(0, 1fr); gap: 12px; align-items: baseline; }
+.world__meta[hidden], .world__meta > div[hidden] { display: none; }
+.world__meta dt { margin: 0; font-size: .62rem; font-weight: 500; letter-spacing: .16em; text-transform: uppercase; color: var(--ink-muted); }
+.world__meta dd { margin: 0; font-size: .84rem; line-height: 1.5; color: var(--ink-body); }
 /* Un crédito que la obra exige mostrar (projects.json → creditLine): también va en el teléfono. */
-.world__credit { margin-top: 10px; font-size: .84rem; line-height: 1.45; color: var(--ink); font-style: italic; }
+.world__credit { margin-top: 12px; font-size: .8rem; line-height: 1.45; color: var(--ink-muted); font-style: italic; }
 .world__credit[hidden] { display: none; }
-.world__hud .btn { margin-top: 20px; }
+.world__actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 22px; margin-top: 24px; }
 .world__end-txt { margin-top: 14px; font-size: clamp(1.06rem, 1.5vw, 1.28rem); line-height: 1.6; max-width: 30em; }
 .world__proof { margin-top: 26px; }
 /* "Entra al mundo interior": la invitación, sobre la ameba de entrada. */
@@ -1067,22 +1071,22 @@ html.w-snap { scroll-snap-type: y proximity; }
 .world:not(.world--flat) .world__end, .world:not(.world--flat) .world__hud { opacity: 0; visibility: hidden; }
 /* La ficha de cada obra: vidrio esmerilado. Lo que pasa por detrás se ve borroso. */
 .world:not(.world--flat) .world__hud {
-  width: min(420px, 40vw); padding: 24px 26px 26px; border-radius: var(--r-lg);
+  width: min(420px, 40vw); padding: 28px 30px 30px; border-radius: var(--r-lg);
   background: linear-gradient(140deg, rgba(255, 255, 255, .17), rgba(255, 255, 255, .05) 60%);
   border: 1px solid rgba(255, 255, 255, .2);
   -webkit-backdrop-filter: blur(20px) saturate(170%); backdrop-filter: blur(20px) saturate(170%);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, .38), inset 0 -18px 30px -22px rgba(201, 158, 249, .5), 0 24px 70px rgba(8, 6, 28, .4);
 }
-.world__name { font-size: clamp(1.7rem, 3vw, 2.6rem); font-weight: 200; letter-spacing: -.03em; line-height: 1.08; color: var(--ink); margin: 10px 0 6px; text-wrap: balance; }
-/* El formato de la obra en la selección (VR, XR, Fulldome…): arriba del nombre, en el color de la segunda voz. */
-.world__kind { margin: 10px 0 0; font-size: clamp(.98rem, 1.3vw, 1.18rem); font-weight: 400; letter-spacing: .14em; text-transform: uppercase; color: var(--em); line-height: 1.3; }
+.world__name { font-size: clamp(1.7rem, 3vw, 2.6rem); font-weight: 200; letter-spacing: -.03em; line-height: 1.08; color: var(--ink); margin: 12px 0 0; text-wrap: balance; }
+/* El formato de la obra en la selección (VR, XR, Fulldome…): en la línea del número, en el color de la segunda voz. */
+.world__kind { color: var(--em); }
+.world__kind::before { content: ""; display: inline-block; width: 22px; height: 1px; margin: 0 12px; background: currentColor; opacity: .55; vertical-align: .3em; }
 .world__kind[hidden] { display: none; }
 /* El sitio propio de la obra, al lado del botón "Entrar a la obra". */
-.world__site { display: inline-block; margin: 14px 0 0 16px; font-size: .84rem; letter-spacing: .05em; color: var(--ink-body); text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 1px; }
+.world__site { display: inline-block; font-size: .82rem; letter-spacing: .05em; color: var(--ink-body); text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 1px; }
 .world__site:hover { color: var(--ink); }
 .world__site[hidden] { display: none; }
-.world__kind + .world__name { margin-top: 4px; }
-.world__fmt { margin: 0; }
+.world__fmt { margin: 6px 0 0; font-size: .92rem; color: var(--ink-muted); }
 .world__hud .btn i { font-style: normal; }
 .world:not(.world--flat) .world__dots {
   position: absolute; right: clamp(8px, 1.8vw, 24px); top: 50%; transform: translateY(-50%); z-index: 1;
@@ -1104,14 +1108,14 @@ html.w-snap { scroll-snap-type: y proximity; }
   .world:not(.world--flat) .world__hud {
     top: auto; bottom: clamp(22px, 6vh, 64px); transform: none; right: var(--px); max-width: none; width: auto;
   }
-  .world__desc { margin: 8px 0 0; font-size: .94rem; line-height: 1.48; }
+  .world__desc { margin: 10px 0 0; font-size: .92rem; line-height: 1.5; }
   /* En el teléfono la ficha va abajo y no puede crecer mucho: la descripción, en tres líneas,
      las etiquetas en una sola fila y sin "presentada en". */
   .world__hud[data-kind="work"] .world__desc, .world__hud[data-kind="spin"] .world__desc { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
-  .world__tags { flex-wrap: nowrap; overflow: hidden; margin-top: 10px; -webkit-mask-image: linear-gradient(to right, #000 85%, transparent); mask-image: linear-gradient(to right, #000 85%, transparent); }
-  .world__tags li { flex: none; }
-  .world__where { display: none; }
-  .world__hud .btn { margin-top: 14px; }
+  .world__meta { margin-top: 12px; padding-top: 10px; }
+  .world__meta dd { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .world__meta > .world__where { display: none; }
+  .world__actions { margin-top: 14px; }
   .world__intro h1 { font-size: clamp(1.9rem, 8.4vw, 2.8rem); margin: 10px 0 12px; }
   .world__row { margin-top: 16px; gap: 8px; }
   .world__row .btn { padding-left: 16px; padding-right: 16px; }
@@ -1119,7 +1123,6 @@ html.w-snap { scroll-snap-type: y proximity; }
   .world:not(.world--flat) .world__invite { left: 50%; top: 74px; width: calc(100% - 2 * var(--px)); }
   .world__invite-t { font-size: 1.45rem; margin-bottom: 6px; }
   .world:not(.world--flat) .world__hud { padding: 18px 20px 20px; }
-  .world__fmt { margin: 0; }
   .world:not(.world--flat) .world__dots { top: 34%; right: 4px; }
   .world__logo { width: 132px; margin-top: 14px; }
 }

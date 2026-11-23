@@ -467,9 +467,21 @@ function buildWorld(lang) {
   /* Lo que dice la ficha de vidrio de cada obra: la primera oración de la
      descripción, la tecnología y dónde se presentó. */
   const firstSentence = s => (String(s || '').match(/^.*?[.!?](?=\s|$)/) || [s])[0];
+  /* Las sedes, cortas: lugar y ciudad (sin país ni fecha), las dos primeras y "+N". */
   const venues = list => {
-    const short = list.map(x => x.split(' — ')[0].split(' (')[0].trim());
+    const short = list.map(x => x.split(' — ')[0].split(' (')[0].split(',').slice(0, 2).join(',').trim());
     return short.slice(0, 2).join(' · ') + (short.length > 2 ? ` +${short.length - 2}` : '');
+  };
+  /* El subtítulo (el formato largo de la obra) sólo va en la ficha de vidrio si dice algo que la
+     etiqueta y la descripción no dicen ya: "Full Dome Experience" debajo de "Fulldome" y antes de
+     "A 45-minute immersive full dome…" sobra; "Immersive video editing software" debajo de
+     "Software", no. */
+  const FILLER = new Set('a an the of in on and for with by experience interactive immersive de del en la el los las y para con por experiencia interactiva interactivo inmersiva inmersivo'.split(' '));
+  const words = s => String(s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').split(/[^a-z0-9]+/).filter(w => w && !FILLER.has(w));
+  const subOf = (p, label) => {
+    const said = words(`${label} ${firstSentence(p.desc)}`).join(' ');
+    const ws = words(p.format);
+    return ws.length && ws.every(w => said.includes(w)) ? '' : p.format;
   };
   /* Los spin-offs (world.spinoffs) van después de las obras, con su propio paso. */
   const spins = (world.spinoffs || []).map(s => projects.find(p => p.slug === s)).filter(Boolean).map(p => loc(p, lang));
@@ -478,7 +490,7 @@ function buildWorld(lang) {
   const labelOf = p => ((world.labels || {})[p.slug] || {})[lang] || '';
   const card = (p, kind) => {
     const f = formOf(p.slug);
-    return `      <li><a class="wcard" data-w-item${kind ? ` data-kind="${kind}"` : ''} href="${link(c, `work/${p.slug}.html`)}" data-cover="${asset(c, p.cover)}" data-title="${esc(p.title)}" data-format="${esc(p.format)}" data-form="${esc(f.formation)}" data-colors="${esc((f.colors || []).join(','))}" data-stage="${esc(f.stage || '')}"
+    return `      <li><a class="wcard" data-w-item${kind ? ` data-kind="${kind}"` : ''} href="${link(c, `work/${p.slug}.html`)}" data-cover="${asset(c, p.cover)}" data-title="${esc(p.title)}" data-format="${esc(p.format)}" data-sub="${esc(subOf(p, labelOf(p)))}" data-form="${esc(f.formation)}" data-colors="${esc((f.colors || []).join(','))}" data-stage="${esc(f.stage || '')}"
         data-desc="${esc(firstSentence(p.desc))}" data-tags="${esc((p.tech || []).slice(0, 4).join('|'))}" data-where="${esc(venues(p.presentedAt || []))}" data-line="${esc(trackLabel(p, t))}" data-label="${esc(labelOf(p))}" data-site="${esc(p.website || '')}" data-site-label="${esc(p.website ? `${t.pVisit} ${domainOf(p.website)}` : '')}" data-credit="${esc(p.creditLine || '')}"
         data-icon="${esc(iconOf(p))}" data-gallery="${esc(galleryOf(p))}">
         <img loading="lazy" decoding="async" width="1920" height="1080" src="${asset(c, p.cover)}" alt="">
@@ -511,17 +523,22 @@ function buildWorld(lang) {
       <span class="world__invite-t">${em(t.worldTitle)}</span>
       <span class="label">${esc(t.worldHint)} <i aria-hidden="true">↓</i></span>
     </button>
+    <!-- La ficha de vidrio de cada parada: número y formato en una línea, nombre, subtítulo (si no
+         repite), descripción, los datos (tecnología y sedes) como una lista chica, y las acciones. -->
     <div class="world__hud">
-      <p class="label" data-w-count></p>
-      <p class="world__kind" data-w-kind hidden></p>
+      <p class="world__eyebrow"><span data-w-count></span><span class="world__kind" data-w-kind hidden></span></p>
       <p class="world__name" data-w-title></p>
-      <p class="world__fmt" data-w-fmt></p>
+      <p class="world__fmt" data-w-fmt hidden></p>
       <p class="world__desc" data-w-desc hidden></p>
-      <ul class="world__tags" data-w-tags hidden></ul>
-      <p class="world__where" data-w-where data-label="${esc(t.worldWhere)}" hidden></p>
+      <dl class="world__meta" data-w-meta hidden>
+        <div hidden><dt>${esc(t.worldTech)}</dt><dd data-w-tags></dd></div>
+        <div class="world__where" hidden><dt>${esc(t.worldWhere)}</dt><dd data-w-where></dd></div>
+      </dl>
       <p class="world__credit" data-w-credit hidden></p>
-      <a class="btn" data-w-open href="${link(c, 'studio.html')}"><span data-w-cta data-default="${esc(t.worldOpen)}">${esc(t.worldOpen)}</span> <i aria-hidden="true">→</i></a>
-      <a class="world__site" data-w-site href="#" target="_blank" rel="noopener" hidden></a>
+      <div class="world__actions">
+        <a class="btn" data-w-open href="${link(c, 'studio.html')}"><span data-w-cta data-default="${esc(t.worldOpen)}">${esc(t.worldOpen)}</span> <i aria-hidden="true">→</i></a>
+        <a class="world__site" data-w-site href="#" target="_blank" rel="noopener" hidden></a>
+      </div>
     </div>
     <nav class="world__dots" aria-label="${esc(t.worldListLabel)}"></nav>${reel ? `
     <!-- El reel con su póster: lo que se ve sin 3D, y lo que abre "Ver con sonido". -->

@@ -805,7 +805,7 @@ export function mount(section, opts) {
   const hudCount = q('[data-w-count]'), hudTitle = q('[data-w-title]'), hudFmt = q('[data-w-fmt]'), hudOpen = q('a[data-w-open]');
   const n = links.length;
   const hudDesc = q('[data-w-desc]'), hudCta = q('[data-w-cta]');
-  const hudTags = q('[data-w-tags]'), hudWhere = q('[data-w-where]'), hudCredit = q('[data-w-credit]'), hudKind = q('[data-w-kind]'), hudSite = q('[data-w-site]');
+  const hudMeta = q('[data-w-meta]'), hudTags = q('[data-w-tags]'), hudWhere = q('[data-w-where]'), hudCredit = q('[data-w-credit]'), hudKind = q('[data-w-kind]'), hudSite = q('[data-w-site]');
   /* Tramos del recorrido: uno entre cada par de paradas y uno más antes de la
      primera obra, que es el paso a "Obras seleccionadas". */
   const kinds = links.map((a) => a.getAttribute('data-kind') || 'work');
@@ -1021,6 +1021,7 @@ export function mount(section, opts) {
     w.kind = kinds[i];                                     // 'studio', 'reel', 'work' o 'spin'
     w.pal = pal; w.href = a.href; w.cover = a.getAttribute('data-cover') || '';
     w.title = a.getAttribute('data-title') || ''; w.format = a.getAttribute('data-format') || '';
+    w.sub = a.hasAttribute('data-sub') ? a.getAttribute('data-sub') : w.format;
     w.desc = a.getAttribute('data-desc') || ''; w.cta = a.getAttribute('data-cta') || '';
     w.tags = (a.getAttribute('data-tags') || '').split('|').filter(Boolean);
     w.where = a.getAttribute('data-where') || ''; w.line = a.getAttribute('data-line') || '';
@@ -1566,22 +1567,15 @@ export function mount(section, opts) {
       if (hudCount) hudCount.textContent = wk.kind === 'spin' ? wk.line : isWork ? num + (wk.line && !wk.label ? ' · ' + wk.line : '') : (wk.kind === 'reel' ? wk.title : wk.format);
       if (hudKind) { hudKind.textContent = isWork ? wk.label : ''; hudKind.hidden = !(isWork && wk.label); }
       if (hudTitle) hudTitle.textContent = wk.title;
-      if (hudFmt) { hudFmt.textContent = isWork ? wk.format : ''; hudFmt.hidden = !isWork; }
+      if (hudFmt) { const sub = isWork ? wk.sub : ''; hudFmt.textContent = sub; hudFmt.hidden = !sub; }   // sólo si no repite
       if (hudDesc) { hudDesc.textContent = wk.desc; hudDesc.hidden = !wk.desc; }
       /* Las obras suman la tecnología y dónde se presentaron. */
-      if (hudTags) {
-        hudTags.textContent = '';
-        (isWork ? wk.tags : []).forEach((tg) => { const li = document.createElement('li'); li.textContent = tg; hudTags.appendChild(li); });
-        hudTags.hidden = !hudTags.children.length;
-      }
-      if (hudWhere) {
-        hudWhere.textContent = '';
-        if (isWork && wk.where) {
-          const lb = document.createElement('span');
-          lb.className = 'label'; lb.textContent = hudWhere.getAttribute('data-label') || '';
-          hudWhere.append(lb, ' ', wk.where);
-        }
-        hudWhere.hidden = !(isWork && wk.where);
+      if (hudTags && hudWhere) {
+        hudTags.textContent = isWork ? wk.tags.join(' · ') : '';
+        hudWhere.textContent = isWork ? wk.where : '';
+        hudTags.parentNode.hidden = !hudTags.textContent;
+        hudWhere.parentNode.hidden = !hudWhere.textContent;
+        if (hudMeta) hudMeta.hidden = !hudTags.textContent && !hudWhere.textContent;
       }
       if (hudCredit) { hudCredit.textContent = isWork ? wk.credit : ''; hudCredit.hidden = !(isWork && wk.credit); }
       if (hudCta) hudCta.textContent = wk.cta || hudCta.getAttribute('data-default') || '';
