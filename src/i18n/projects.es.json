@@ -5,7 +5,7 @@
     "body": [
       "VEATION es el software de edición de video inmersivo de Alma Digital Studio. El fulldome, las salas 360 y las pantallas planas comparten una misma línea de tiempo, y la obra se edita en su formato final, en tiempo real.",
       "Cada show de domo que hicimos empezó igual: montarlo en plano, renderizarlo, entrar al domo y ver qué pasaba. Así que construimos el editor que queríamos. La vista del domo se reproduce mientras se edita, con 26 efectos por GPU, visuales audiorreactivas, movimiento en bucle sin keyframes y una exportación que sale exactamente como se vio.",
-      "Rito Digital, el concierto fulldome del estudio, se hizo en VEATION y se presentó en vivo en el domo de CULTVR en Cardiff; la segunda vez, en FulldomeUK 2026, donde también se presentó el software con una demostración en el domo. Hoy VEATION está en beta privada con estudios, artistas y salas de ocho países."
+      "Rito Digital, el concierto fulldome del estudio, se hizo en VEATION y se presentó en vivo en el domo de CULTVR en Cardiff. El propio VEATION se presentó con una demostración en ese domo en FulldomeUK 2026, y hoy está en beta privada con estudios, artistas y salas de ocho países."
     ],
     "credits": [
       "Creación: Alma Digital Studio"
@@ -164,10 +164,11 @@
     ]
   },
   "soul-charger": {
+    "creditLine": "En colaboración con iDeas Lab, del Berman Institute of Bioethics de Johns Hopkins University",
     "format": "VR interactiva con biofeedback",
-    "desc": "Una experiencia interactiva de VR de 15 minutos que integra biofeedback, neuroestética, IA y bioética aplicada en un viaje personal transformador. En colaboración con iDeas Lab, del Berman Institute of Bioethics de Johns Hopkins University.",
+    "desc": "Una experiencia interactiva de VR de 15 minutos que integra biofeedback, neuroestética, IA y bioética aplicada en un viaje personal transformador.",
     "body": [
-      "Una experiencia interactiva de VR de 15 minutos que integra biofeedback, neuroestética, IA y bioética aplicada en un viaje personal transformador. En colaboración con iDeas Lab, del Berman Institute of Bioethics de Johns Hopkins University."
+      "Una experiencia interactiva de VR de 15 minutos que integra biofeedback, neuroestética, IA y bioética aplicada en un viaje personal transformador."
     ],
     "credits": [
       "Creación y producción: Alma Digital Studio",
@@ -309,7 +310,7 @@
       "Rito Digital es un concert-film inmersivo en vivo creado por Alma Digital Studio: prólogo y ocho canciones, 60 minutos, siempre interpretado en vivo. El film se adapta a tres configuraciones de proyección: fulldome, sala 360° y proyección única.",
       "Donzio atraviesa dos mundos, del Sistema al Rito, y en el camino se cruza con las familias de seres que lo habitan. Está animado en stop-motion realista: marionetas-criatura de silicona táctil en un mundo retrofuturista patinado, con profundidad de diorama, simetría ritual y grano de 35 mm, compuesto con imagen generativa dirigida cuadro a cuadro. La música original, interpretada en vivo, es techno ritual con electrónica hipnótica y pulso de latin house, procesamiento vocal experimental y handpan en vivo.",
       "Los ocho pasos: Creation, Almagical, Vaina Wena, Care for Her, Guirotron, Free Spinning, Dancing with Myself y Creativity. Cada paso es una canción y un mundo.",
-      "Se estrenó en el show de cierre de FOC — The Festival of Consciousness, en Barcelona en julio de 2026, ante 1.000 personas. La versión fulldome se estrenó en CULTVR Lab, Cardiff, en septiembre de 2026, y volvió a ese domo en octubre para FulldomeUK.",
+      "Se estrenó en el show de cierre de FOC — The Festival of Consciousness, en Barcelona en julio de 2026, ante 1.000 personas. La versión fulldome se estrenó en CULTVR Lab, Cardiff, en septiembre de 2026, y volvió a ese domo en octubre.",
       "Ocho canciones y una procesión."
     ],
     "credits": [
@@ -321,7 +322,7 @@
     "presentedAt": [
       "The Festival of Consciousness (FOC), CCIB Barcelona, julio de 2026 — estreno, show de cierre",
       "CULTVR Lab, Cardiff, Gales, septiembre de 2026 — estreno fulldome",
-      "FulldomeUK 2026, CULTVR Lab, Cardiff, Gales"
+      "CULTVR Lab, Cardiff, Gales, octubre de 2026"
     ]
   },
   "digital-sanctuaries": {

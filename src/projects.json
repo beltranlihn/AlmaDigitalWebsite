@@ -56,7 +56,7 @@
       "body": [
         "VEATION is immersive video editing software by Alma Digital Studio. Fulldome, 360 rooms and flat screens share one timeline, and the work is edited in its final format, in real time.",
         "Every dome show we made started the same way: cut it flat, render it, walk into the dome and find out. So we built the editor we wanted. The dome view plays while you edit, with 26 GPU effects, audio-reactive visuals, looping motion without keyframes and an export that comes out exactly as you saw it.",
-        "Rito Digital, the studio's fulldome concert, was made in VEATION and performed live in the CULTVR dome in Cardiff, the second time at FulldomeUK 2026, where the software was also presented and demonstrated in the dome. VEATION is now in private beta with studios, artists and venues in eight countries."
+        "Rito Digital, the studio's fulldome concert, was made in VEATION and performed live in the CULTVR dome in Cardiff. VEATION itself was presented and demonstrated in that dome at FulldomeUK 2026, and is now in private beta with studios, artists and venues in eight countries."
       ],
       "tech": [
         "Tiempo real",
@@ -97,7 +97,7 @@
       "presentedAt": [
         "The Festival of Consciousness (FOC), CCIB Barcelona, July 2026 — premiere, closing show",
         "CULTVR Lab, Cardiff, Wales, September 2026 — fulldome premiere",
-        "FulldomeUK 2026, CULTVR Lab, Cardiff, Wales"
+        "CULTVR Lab, Cardiff, Wales, October 2026"
       ],
       "credits": [
         "A work by Alma Digital Studio",
@@ -121,7 +121,7 @@
         "Rito Digital is an immersive live concert film created by Alma Digital Studio: a prologue and eight songs, 60 minutes, always performed live. The film adapts to three projection setups: fulldome, 360° room and single projection.",
         "Donzio crosses two worlds, from the System to the Rite, meeting the families of beings that inhabit them. It is animated in realistic stop-motion: tactile silicone creature-puppets in a weathered retrofuturist world, with diorama depth, ritual symmetry and 35mm grain, composed with generative imagery directed frame by frame. The original score, performed live, is ritual techno with hypnotic electronics and a latin house pulse, experimental vocal processing and live handpan.",
         "The eight steps: Creation, Almagical, Vaina Wena, Care for Her, Guirotron, Free Spinning, Dancing with Myself and Creativity. Each step is a song and a world.",
-        "It premiered at the closing show of FOC — The Festival of Consciousness, in Barcelona in July 2026, before 1,000 people. The fulldome version premiered at CULTVR Lab in Cardiff in September 2026 and returned to the same dome for FulldomeUK in October.",
+        "It premiered at the closing show of FOC — The Festival of Consciousness, in Barcelona in July 2026, before 1,000 people. The fulldome version premiered at CULTVR Lab in Cardiff in September 2026 and returned to the same dome in October.",
         "Eight songs and a procession."
       ],
       "tech": [
@@ -607,6 +607,7 @@
     {
       "slug": "soul-charger",
       "title": "Soul Charger",
+      "creditLine": "In collaboration with iDeas Lab, Johns Hopkins University's Berman Institute of Bioethics",
       "format": "Interactive Biofeedback VR",
       "track": "studio",
       "cover": "Asset/Studio Projects/Soul Charger/1 Portada.webp",
@@ -624,7 +625,7 @@
         "Asset/Studio Projects/Soul Charger/6.webp",
         "Asset/Studio Projects/Soul Charger/web-5.webp"
       ],
-      "desc": "A 15-minute interactive VR experience merging biofeedback, neuroaesthetics, AI, and applied bioethics into a transformative personal journey. In Collaboration with iDeas Lab, Johns Hopkins University's Berman Institute of Bioethics.",
+      "desc": "A 15-minute interactive VR experience merging biofeedback, neuroaesthetics, AI, and applied bioethics into a transformative personal journey.",
       "commissionedBy": "",
       "presentedAt": [],
       "credits": [
@@ -652,7 +653,7 @@
         "IA"
       ],
       "body": [
-        "A 15-minute interactive VR experience merging biofeedback, neuroaesthetics, AI, and applied bioethics into a transformative personal journey. In Collaboration with iDeas Lab, Johns Hopkins University's Berman Institute of Bioethics."
+        "A 15-minute interactive VR experience merging biofeedback, neuroaesthetics, AI, and applied bioethics into a transformative personal journey."
       ],
       "year": "",
       "press": [],

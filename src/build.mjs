@@ -94,6 +94,7 @@ function loc(p, lang) {
     ...p,
     format: e.format || p.format,
     desc: e.desc || p.desc,
+    creditLine: e.creditLine || p.creditLine,
     body: same(e.body, p.body) ? e.body : p.body,
     credits: same(e.credits, p.credits) ? e.credits : p.credits,
     presentedAt: same(e.presentedAt, p.presentedAt) ? e.presentedAt : (p.presentedAt || []),

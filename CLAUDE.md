@@ -611,6 +611,23 @@ El fluid sim sigue corriendo con auto-emitters en mobile. Los usuarios de Androi
 
 ## Historial de sesiones (última al tope)
 
+### 2026-11-23 — Johns Hopkins en Soul Charger; Rito sin FulldomeUK (Vicente)
+
+- **Soul Charger**: la colaboración con iDeas Lab (Berman Institute of Bioethics, Johns Hopkins
+  University) pasó de la segunda oración de la descripción, que la ficha de vidrio no mostraba, a
+  `creditLine`: sale en la ficha de vidrio de la portada y bajo el resumen de su ficha, en los dos
+  idiomas, y ya no se repite en el texto. `creditLine` ahora admite traducción
+  (`projects.es.json → creditLine`; si falta, va la de inglés, como el crédito del BID).
+  Nota: `_PERMISOS.md` pide el visto bueno de JHU antes de insinuar respaldo; el texto es el mismo
+  "en colaboración con" que el sitio ya tenía.
+- **Rito Digital**: FulldomeUK sale de la obra; la tercera sede es "CULTVR Lab, Cardiff, Wales,
+  October 2026" y el texto dice que volvió a ese domo en octubre. En VEATION, Rito se presentó en el
+  domo de CULTVR y es el propio VEATION el que se presentó en FulldomeUK 2026.
+- El crédito de la ficha de vidrio, un poco más legible (color del cuerpo).
+
+**Verificado en Chrome**: la parada de Soul Charger con la línea de Johns Hopkins, su ficha con el
+crédito bajo el resumen, las sedes de Rito sin FulldomeUK. Consola sin errores.
+
 ### 2026-11-23 — Portada: fichas de vidrio más livianas (Vicente)
 
 Vicente: las fichas de las obras seleccionadas estaban "muy cargadas de texto, botones, mucha
