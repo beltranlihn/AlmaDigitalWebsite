@@ -611,6 +611,26 @@ El fluid sim sigue corriendo con auto-emitters en mobile. Los usuarios de Androi
 
 ## Historial de sesiones (última al tope)
 
+### 2026-11-23 — Digital Sanctuaries: las situaciones del deck maestro (Vicente)
+
+Vicente pasó el deck "Digital Sanctuaries Master Deck" de Canva (canva.link/digitalsanctuaries, 22
+páginas) y pidió usar sus imágenes, también las de situaciones reales, en la ficha y en la galaxia de la
+portada. Las del deck son visualizaciones del estudio (dicen "Visualisation"); se tomaron los
+originales en alta de `DIGITAL SANCTUARIES/DS Marketing/IA Realistas Refe` (2752×1536) y de
+`Prototipo Producto/DECK ASSETS/CTX_*` (2048×1143), recortados a 16:9 y a 1920×1080.
+
+- **Nueve situaciones nuevas** (`sensor`, `office`, `spa`, `transit`, `group`, `breath`, `painting`,
+  `bedroom`, `games` .webp): el sensor en la frente (al lado del texto), la oficina, el spa con
+  tumbonas (imagen ancha), el lobby con la cabina, la sala grupal con almohadones (imagen a sangre), la
+  respiración en grupo, la pintura en VR, el dormitorio y los juegos.
+- **Del look anterior quedan** la portada (campo azul), la puerta, el óculo con el grupo, el grupo de
+  rodillas y la figura recostada. Salen el óculo de la tapa del deck (`3.webp`), el objeto de sonido
+  (`6.webp`) y el túnel gris (`7.webp`); siguen en la carpeta.
+- La galaxia de la portada pasó a portada + sensor, oficina, spa y puerta.
+- El crédito sigue siendo "Imagery: visualisations by Alma Digital Studio": no se presentan como registro.
+
+**Verificado en Chrome**: la ficha (lado del texto, galería, ancha, a sangre) y la galaxia. Consola sin errores.
+
 ### 2026-11-23 — Fotos de FulldomeUK 2026 en VEATION y Rito Digital (Vicente)
 
 Pedido de Vicente: usar fotos de la presentación de VEATION en FulldomeUK y de Rito en vivo en el domo.
