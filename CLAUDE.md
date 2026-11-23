@@ -98,8 +98,8 @@ Sanctuaries): `body.pg-ds`, ver "Temas". **`specs`** (opcional): el catálogo de
 (`lead` y `rows: [código, nombre, práctica, duración, aforo]`), después del teléfono. **`enquire`**
 (opcional): el texto y el botón de consulta de esa ficha, si no le queda "¿Te interesa esta obra?".
 **Sin créditos sobre las fotos** (decisión de Vicente, 2026-11-23: "olvídate de los créditos en las
-fotos, de toda la web"): se quitó `photoCredits` y todo lo que lo mostraba. Los fotógrafos de Rito siguen
-nombrados en sus créditos (`credits`), al pie de la ficha.
+fotos, de toda la web"): se quitó `photoCredits` y todo lo que lo mostraba, y también los fotógrafos de
+los créditos de Rito.
 **`website`** (opcional, en `projects.json`): un sitio propio de la obra. Sale como botón ("Visit
 ritodigital.com ↗", texto `pVisit`) bajo el resumen de la ficha, y como enlace al lado de "Entrar a la
 obra" en su parada de la portada (VEATION, Rito Digital y Digital Sanctuaries).
@@ -612,6 +612,13 @@ desactiva. **No** cambiar nameservers a Cloudflare.
 El fluid sim sigue corriendo con auto-emitters en mobile. Los usuarios de Android no pueden tocar el fondo para emitir fluidos (correcto — el dedo es para el scroll).
 
 ## Historial de sesiones (última al tope)
+
+### 2026-11-23 — Rito Digital sin fotógrafos en los créditos (Vicente)
+
+Después de quitar los créditos sobre las fotos, Vicente pidió sacar también los fotógrafos del pie de la
+ficha de Rito (FOC, CULTVR y FulldomeUK). Quedan "A work by Alma Digital Studio" y "Direction, music and
+visuals: Vicente Manzano · Beltrán Lihn" (y su versión en español). Ojo: el `CREDITS.txt` del press kit
+de Rito dice que el crédito de las fotos es obligatorio.
 
 ### 2026-11-23 — Fuera los créditos sobre las fotos, en todo el sitio (Vicente)
 
