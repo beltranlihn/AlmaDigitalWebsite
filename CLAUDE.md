@@ -142,7 +142,11 @@ Consecuencias:
   Los slots son cajas vacías que sólo reservan el lugar.
 - **Índice de obras** (`work/`): lista filtrable por línea (obra propia / encargos / spin-offs) y formato, con
   vista previa al pasar el mouse. Sin filtros el contador dice "Obras seleccionadas" (decisión de
-  Vicente: no hablar de "19 obras"); con filtros, cuántas quedan.
+  Vicente: no hablar de "19 obras"); con filtros, cuántas quedan. **En reposo** (desde el 2026-11-23)
+  el cuadro de la vista previa no queda vacío: pasan las portadas de las obras a la vista, con su
+  nombre, cada 4 s, con fundido y un acercamiento leve (respeta los filtros; un clic abre la obra).
+  Pide una portada a la vez, al tocarle (unos 115 KB cada una), y se detiene fuera de pantalla, con la
+  pestaña oculta y mientras el cursor está en la lista. En teléfono no hay vista previa.
 - **Ficha de obra** (`work/<slug>.html`): portada, resumen con la ficha técnica al lado, un recorrido de
   imágenes y video, créditos, historial de exhibición, botón de consulta y obra siguiente. Ver "Ficha de
   obra: el recorrido de imágenes".
@@ -597,6 +601,17 @@ desactiva. **No** cambiar nameservers a Cloudflare.
 El fluid sim sigue corriendo con auto-emitters en mobile. Los usuarios de Android no pueden tocar el fondo para emitir fluidos (correcto — el dedo es para el scroll).
 
 ## Historial de sesiones (última al tope)
+
+### 2026-11-23 — Índice de obras: portadas en el cuadro de la vista previa (Vicente)
+
+Pedido de Vicente: que el cuadro de la derecha del índice no quede en blanco ("Hover a work") cuando no
+hay nada bajo el cursor. Ahora pasan las portadas (ver "Índice de obras"). Markup `.preview__loop` en
+`src/build.mjs` (índice y el bloque de formatos del landing en reserva), lógica en `initIndex()` de
+`js/app.js`, estilos junto a `.preview`.
+
+**Verificado en Chrome**: rota en reposo (VEATION → Rito Digital…), con el filtro Encargos pasan sólo
+los encargos, al pasar por una obra se ve esa con su video y al salir de la lista vuelve la rotación.
+Consola sin errores.
 
 ### 2026-11-23 — Amebas más suaves (Vicente)
 

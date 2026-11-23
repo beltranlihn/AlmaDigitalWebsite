@@ -304,6 +304,7 @@
       }
       if (d.palette) fluidReady(function (F) { if (current === row) F.setPalette(JSON.parse(d.palette), d.back, 0.119); });
       rows.forEach(function (r) { r.classList.toggle('is-active', r === row); });
+      clearTimeout(lTimer);
     }
     function clear() {
       var hadPalette = current && current.dataset.palette;
@@ -315,6 +316,8 @@
       if (pCap) pCap.classList.remove('on');
       if (pIdle) pIdle.classList.remove('off');
       list.classList.remove('has-hover');
+      loopCaption();
+      if (lSeen && !reduce) { clearTimeout(lTimer); lTimer = setTimeout(loopStep, 2600); }
       if (hadPalette) fluidReady(function (F) { if (!current) F.reset(); });
     }
     if (fine) {
@@ -323,6 +326,47 @@
         r.addEventListener('focus', function () { list.classList.add('has-hover'); show(r); });
       });
       list.addEventListener('pointerleave', clear);
+    }
+
+    /* En reposo la vista previa no queda vacía: pasan despacio las portadas de
+       las obras que están a la vista (respeta los filtros), con su nombre. Se
+       pide una imagen a la vez, recién cuando le toca, y se detiene fuera de
+       pantalla, con la pestaña oculta y mientras el cursor está en la lista.
+       Con "reducir movimiento" queda la primera, quieta. Un clic abre la obra. */
+    var preview = $('.preview'), loop = $('.preview__loop'), lImgs = loop ? $$('img', loop) : [];
+    var lRow = null, li = -1, lFront = 0, lTimer = 0, lSeen = false, lToken = 0;
+    function loopRows() { return rows.filter(function (r) { return !r.hidden && r.dataset.cover; }); }
+    function loopCaption() {
+      if (current || !lRow || !pCap) return;
+      pTitle.textContent = lRow.dataset.title; pFmt.textContent = lRow.dataset.format;
+      pCap.classList.add('on');
+      if (pIdle) pIdle.classList.add('off');
+    }
+    function loopStep() {
+      clearTimeout(lTimer);
+      if (!lImgs.length || !lSeen || document.hidden || current) return;
+      var rs = loopRows();
+      if (!rs.length) return;
+      li = (li + 1) % rs.length;
+      var r = rs[li], img = lImgs[lFront ^ 1], tok = ++lToken, done = false;
+      function swap() {
+        if (done || tok !== lToken) return;
+        done = true;
+        lImgs[lFront].classList.remove('on'); img.classList.add('on'); lFront ^= 1;
+        lRow = r; loopCaption();
+        if (!reduce && rs.length > 1) lTimer = setTimeout(loopStep, 4200);
+      }
+      img.onload = swap;
+      img.onerror = function () { if (tok === lToken) lTimer = setTimeout(loopStep, 600); };
+      img.src = r.dataset.cover;
+      if (img.complete && img.naturalWidth) swap();                  // ya estaba en caché
+    }
+    function loopRestart() { li = -1; if (lSeen) loopStep(); }
+    if (preview && lImgs.length) {
+      observe(preview, function (es) { lSeen = es[0].isIntersecting; if (lSeen) { if (!lRow || !reduce) loopStep(); } else clearTimeout(lTimer); });
+      on(document, 'visibilitychange', function () { if (!document.hidden && lSeen) loopStep(); else clearTimeout(lTimer); });
+      life.cleanups.push(function () { clearTimeout(lTimer); lToken++; });
+      preview.addEventListener('click', function () { var r = current || lRow; if (r) r.click(); });
     }
 
     var chips = $$('.chip');
@@ -341,6 +385,7 @@
       if (count) count.textContent = n === rows.length ? T('indexAll') : n === 1 ? T('indexCountOne') : T('indexCount').replace('{n}', n);
       chips.forEach(function (c) { c.setAttribute('aria-pressed', String(state[c.dataset.dim] === c.dataset.val)); });
       if (current && current.hidden) clear();
+      loopRestart();
     }
     chips.forEach(function (chip) {
       chip.addEventListener('click', function () { state[chip.dataset.dim] = chip.dataset.val; apply(); });

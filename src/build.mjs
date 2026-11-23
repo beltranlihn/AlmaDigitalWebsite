@@ -400,6 +400,7 @@ ${site.breathing ? `    <!-- Minuto de respiración guiada. js/ameba.js lo muest
 ${disc}
     </div>
     <div class="preview" aria-hidden="true">
+      <div class="preview__loop"><img alt=""><img alt=""></div>
       <div class="preview__media">
         <img class="preview__img" alt="">
         <video class="preview__vid" muted loop playsinline></video>
@@ -604,6 +605,7 @@ ${rows}
       <p class="empty" hidden>${esc(t.indexEmpty)}</p>
     </div>
     <div class="preview" aria-hidden="true">
+      <div class="preview__loop"><img alt=""><img alt=""></div>
       <div class="preview__media">
         <img class="preview__img" alt="">
         <video class="preview__vid" muted loop playsinline></video>
