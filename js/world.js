@@ -805,7 +805,7 @@ export function mount(section, opts) {
   const hudCount = q('[data-w-count]'), hudTitle = q('[data-w-title]'), hudFmt = q('[data-w-fmt]'), hudOpen = q('a[data-w-open]');
   const n = links.length;
   const hudDesc = q('[data-w-desc]'), hudCta = q('[data-w-cta]');
-  const hudMeta = q('[data-w-meta]'), hudTags = q('[data-w-tags]'), hudWhere = q('[data-w-where]'), hudCredit = q('[data-w-credit]'), hudKind = q('[data-w-kind]'), hudSite = q('[data-w-site]');
+  const hudMeta = q('[data-w-meta]'), hudPhotos = q('[data-w-photos]'), hudTags = q('[data-w-tags]'), hudWhere = q('[data-w-where]'), hudCredit = q('[data-w-credit]'), hudKind = q('[data-w-kind]'), hudSite = q('[data-w-site]');
   /* Tramos del recorrido: uno entre cada par de paradas y uno más antes de la
      primera obra, que es el paso a "Obras seleccionadas". */
   const kinds = links.map((a) => a.getAttribute('data-kind') || 'work');
@@ -1024,7 +1024,7 @@ export function mount(section, opts) {
     w.sub = a.hasAttribute('data-sub') ? a.getAttribute('data-sub') : w.format;
     w.desc = a.getAttribute('data-desc') || ''; w.cta = a.getAttribute('data-cta') || '';
     w.tags = (a.getAttribute('data-tags') || '').split('|').filter(Boolean);
-    w.where = a.getAttribute('data-where') || ''; w.line = a.getAttribute('data-line') || '';
+    w.where = a.getAttribute('data-where') || ''; w.photos = a.getAttribute('data-photos') || ''; w.line = a.getAttribute('data-line') || '';
     w.label = a.getAttribute('data-label') || '';           // su formato en la selección (site.json → world.labels)
     w.site = a.getAttribute('data-site') || ''; w.siteLabel = a.getAttribute('data-site-label') || '';   // su sitio propio, si tiene
     w.credit = a.getAttribute('data-credit') || '';        // un crédito que la obra exige mostrar (projects.json → creditLine)
@@ -1575,7 +1575,8 @@ export function mount(section, opts) {
         hudWhere.textContent = isWork ? wk.where : '';
         hudTags.parentNode.hidden = !hudTags.textContent;
         hudWhere.parentNode.hidden = !hudWhere.textContent;
-        if (hudMeta) hudMeta.hidden = !hudTags.textContent && !hudWhere.textContent;
+        if (hudPhotos) { hudPhotos.textContent = isWork ? wk.photos : ''; hudPhotos.parentNode.hidden = !hudPhotos.textContent; }
+        if (hudMeta) hudMeta.hidden = !hudTags.textContent && !hudWhere.textContent && !(hudPhotos && hudPhotos.textContent);
       }
       if (hudCredit) { hudCredit.textContent = isWork ? wk.credit : ''; hudCredit.hidden = !(isWork && wk.credit); }
       if (hudCta) hudCta.textContent = wk.cta || hudCta.getAttribute('data-default') || '';

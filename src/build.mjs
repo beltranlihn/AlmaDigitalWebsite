@@ -461,6 +461,8 @@ function buildWorld(lang) {
      (world.icons, o uno según el formato) y las 4–5 imágenes que orbitan alrededor. */
   const ICON_BY_FORMAT = { vr: 'headset', dome: 'dome', mapping: 'projector', installation: 'room', performance: 'speaker', design: 'prism', software: 'editor' };
   const iconOf = p => (world.icons && world.icons[p.slug]) || ICON_BY_FORMAT[p.formatKey] || 'prism';
+  /* Los créditos de las fotos de la galaxia (los que exige photoCredits), sin repetir. */
+  const photoCreditOf = p => [...new Set((worldImages[p.slug] || []).map(x => x.credit).filter(Boolean))].join(' · ');
   const galleryOf = p => (worldImages[p.slug] && worldImages[p.slug].length
     ? worldImages[p.slug].map(x => ({ src: x.src, ar: x.w / x.h }))
     : [p.cover, ...p.photos.filter(x => x !== p.cover)].slice(0, 5).map(src => ({ src, ar: 16 / 9 })))
@@ -492,7 +494,7 @@ function buildWorld(lang) {
   const card = (p, kind) => {
     const f = formOf(p.slug);
     return `      <li><a class="wcard" data-w-item${kind ? ` data-kind="${kind}"` : ''} href="${link(c, `work/${p.slug}.html`)}" data-cover="${asset(c, p.cover)}" data-title="${esc(p.title)}" data-format="${esc(p.format)}" data-sub="${esc(subOf(p, labelOf(p)))}" data-form="${esc(f.formation)}" data-colors="${esc((f.colors || []).join(','))}" data-stage="${esc(f.stage || '')}"
-        data-desc="${esc(firstSentence(p.desc))}" data-tags="${esc((p.tech || []).slice(0, 4).join('|'))}" data-where="${esc(venues(p.presentedAt || []))}" data-line="${esc(trackLabel(p, t))}" data-label="${esc(labelOf(p))}" data-site="${esc(p.website || '')}" data-site-label="${esc(p.website ? `${t.pVisit} ${domainOf(p.website)}` : '')}" data-credit="${esc(p.creditLine || '')}"
+        data-desc="${esc(firstSentence(p.desc))}" data-tags="${esc((p.tech || []).slice(0, 4).join('|'))}" data-where="${esc(venues(p.presentedAt || []))}" data-line="${esc(trackLabel(p, t))}" data-label="${esc(labelOf(p))}" data-site="${esc(p.website || '')}" data-site-label="${esc(p.website ? `${t.pVisit} ${domainOf(p.website)}` : '')}" data-credit="${esc(p.creditLine || '')}" data-photos="${esc(photoCreditOf(p))}"
         data-icon="${esc(iconOf(p))}" data-gallery="${esc(galleryOf(p))}">
         <img loading="lazy" decoding="async" width="1920" height="1080" src="${asset(c, p.cover)}" alt="">
         <span class="wcard__t"><b>${esc(p.title)}</b><span>${esc(p.format)}</span></span>
@@ -534,6 +536,7 @@ function buildWorld(lang) {
       <dl class="world__meta" data-w-meta hidden>
         <div hidden><dt>${esc(t.worldTech)}</dt><dd data-w-tags></dd></div>
         <div class="world__where" hidden><dt>${esc(t.worldWhere)}</dt><dd data-w-where></dd></div>
+        <div hidden><dt>${esc(t.worldPhotos)}</dt><dd data-w-photos></dd></div>
       </dl>
       <p class="world__credit" data-w-credit hidden></p>
       <div class="world__actions">

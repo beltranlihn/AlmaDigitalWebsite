@@ -7,9 +7,11 @@ En la portada 3D, cada obra seleccionada puede ser una "galaxia": 4 o 5
 imágenes que orbitan alrededor de un ícono 3D. No se usan las fotos originales
 (1920×1080, 100–300 KB cada una) sino copias chicas hechas acá:
 
-  · las fotos de la obra (projects.json → photos, la portada primero; sin las que exigen
-    crédito en photoCredits, porque en la galaxia no hay dónde ponerlo), recortadas
-    a 16:9 y llevadas a 768×432;
+  · las fotos de la obra: las que elige projects.json → galaxyPhotos, si está, o si no
+    la portada y las siguientes de photos sin las que exigen crédito (photoCredits).
+    Las apaisadas se recortan a 16:9 (768×432) y las verticales a 9:16 (360×640). Las
+    que tienen crédito lo llevan en src/world-images.json, y la ficha de vidrio de la
+    obra lo muestra ("Fotos");
   · si la obra tiene menos de 5 fotos, se completan con cuadros sacados de su
     reel vertical (projects.json → video), a 360×640. Hace falta ffmpeg.
 
@@ -89,14 +91,19 @@ def main():
         for f in os.listdir(folder):               # sólo lo que este script escribió antes
             if f.endswith('.webp'):
                 os.remove(os.path.join(folder, f))
-        # Las fotos que exigen crédito (photoCredits) no van: en la galaxia no hay dónde ponerlo.
+        # galaxyPhotos elige; si no, la portada y las fotos sin crédito obligatorio.
         credited = p.get('photoCredits') or {}
-        photos = [p['cover']] + [x for x in p['photos'] if x != p['cover'] and x not in credited]
+        photos = p.get('galaxyPhotos') or [p['cover']] + [x for x in p['photos'] if x != p['cover'] and x not in credited]
         items = []
         for k, src in enumerate(photos[:WANT]):
             dst = os.path.join(folder, f'{k + 1}.webp')
-            fit(Image.open(src).convert('RGB'), H_SIZE).save(dst, 'WEBP', quality=QUALITY, method=6)
-            items.append({'src': dst.replace(os.sep, '/'), 'w': H_SIZE[0], 'h': H_SIZE[1]})
+            im = Image.open(src).convert('RGB')
+            size = V_SIZE if im.height > im.width else H_SIZE
+            fit(im, size).save(dst, 'WEBP', quality=QUALITY, method=6)
+            item = {'src': dst.replace(os.sep, '/'), 'w': size[0], 'h': size[1]}
+            if src in credited:
+                item['credit'] = credited[src]
+            items.append(item)
         missing = WANT - len(items)
         if missing > 0 and p.get('video'):
             with tempfile.TemporaryDirectory() as tmp:

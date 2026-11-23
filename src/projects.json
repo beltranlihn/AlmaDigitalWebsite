@@ -81,7 +81,14 @@
         "Asset/Studio Projects/VEATION/fduk-2.webp": "4PI / FulldomeUK",
         "Asset/Studio Projects/VEATION/fduk-3.webp": "4PI / FulldomeUK",
         "Asset/Studio Projects/VEATION/fduk-4.webp": "4PI / FulldomeUK"
-      }
+      },
+      "galaxyPhotos": [
+        "Asset/Studio Projects/VEATION/2 Portada.webp",
+        "Asset/Studio Projects/VEATION/fduk-3.webp",
+        "Asset/Studio Projects/VEATION/1.webp",
+        "Asset/Studio Projects/VEATION/fduk-1.webp",
+        "Asset/Studio Projects/VEATION/fduk-4.webp"
+      ]
     },
     {
       "slug": "rito-digital",
@@ -158,7 +165,14 @@
         "Asset/Studio Projects/Rito Digital/11.webp": "Rhys Davies / CULTVR",
         "Asset/Studio Projects/Rito Digital/fduk-1.webp": "4PI / FulldomeUK",
         "Asset/Studio Projects/Rito Digital/fduk-2.webp": "4PI / FulldomeUK"
-      }
+      },
+      "galaxyPhotos": [
+        "Asset/Studio Projects/Rito Digital/2 Portada.webp",
+        "Asset/Studio Projects/Rito Digital/fduk-1.webp",
+        "Asset/Studio Projects/Rito Digital/9.webp",
+        "Asset/Studio Projects/Rito Digital/fduk-2.webp",
+        "Asset/Studio Projects/Rito Digital/6.webp"
+      ]
     },
     {
       "slug": "neural-canvas",

@@ -102,8 +102,10 @@ sobre la foto ("Photo @autor" / "Foto @autor"). Lo usa Rito Digital, cuyo press 
 **`website`** (opcional, en `projects.json`): un sitio propio de la obra. Sale como botón ("Visit
 ritodigital.com ↗", texto `pVisit`) bajo el resumen de la ficha, y como enlace al lado de "Entrar a la
 obra" en su parada de la portada (VEATION, Rito Digital y Digital Sanctuaries).
-Las fotos con `photoCredits` **no van a las galaxias** de la portada (`tools/make_world_images.py` las
-salta): ahí no hay dónde poner el crédito.
+**`galaxyPhotos`** (opcional, en `projects.json`): qué fotos van a la galaxia de la obra en la portada
+(hasta 5). Sin este campo van la portada y las siguientes **sin** `photoCredits`. Con él pueden ir fotos
+con crédito: `tools/make_world_images.py` lo anota en `src/world-images.json` y la ficha de vidrio de la
+parada suma una fila "Fotos" con los créditos. Las verticales van a 9:16. Hoy lo usan VEATION y Rito.
 
 ## Navegación continua (leer antes de tocar `js/app.js` o las plantillas)
 Cada página es un HTML completo: sirve sola, se indexa sola y funciona sin JavaScript. Pero al navegar
@@ -610,6 +612,18 @@ desactiva. **No** cambiar nameservers a Cloudflare.
 El fluid sim sigue corriendo con auto-emitters en mobile. Los usuarios de Android no pueden tocar el fondo para emitir fluidos (correcto — el dedo es para el scroll).
 
 ## Historial de sesiones (última al tope)
+
+### 2026-11-23 — Las fotos de FulldomeUK también en las galaxias de la portada (Vicente)
+
+Vicente quería las fotos de FulldomeUK también en las obras seleccionadas de la portada. Hasta ahora las
+fotos con crédito obligatorio no iban a las galaxias. Campo nuevo `galaxyPhotos` (ver arriba) y fila
+"Photos / Fotos" (`worldPhotos`) en la ficha de vidrio con el crédito de las fotos de esa galaxia.
+
+- **VEATION**: portada, la charla colorida en el domo, una captura y otras dos de la charla.
+- **Rito Digital**: portada, las dos verticales de ustedes tocando en FulldomeUK, una de CULTVR (Rhys
+  Davies) y un cuadro del film. Créditos: "4PI / FulldomeUK · Rhys Davies / CULTVR".
+
+**Verificado en Chrome**: las dos paradas con las fotos y la fila de créditos. Consola sin errores.
 
 ### 2026-11-23 — Digital Sanctuaries: las situaciones del deck maestro (Vicente)
 
