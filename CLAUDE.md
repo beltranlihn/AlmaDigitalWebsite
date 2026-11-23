@@ -611,6 +611,23 @@ El fluid sim sigue corriendo con auto-emitters en mobile. Los usuarios de Androi
 
 ## Historial de sesiones (última al tope)
 
+### 2026-11-23 — Fotos de FulldomeUK 2026 en VEATION y Rito Digital (Vicente)
+
+Pedido de Vicente: usar fotos de la presentación de VEATION en FulldomeUK y de Rito en vivo en el domo.
+Fuente: `~/Downloads/drive-download-20261016T1242*/261010_FDUK_PHOTOS_BY_4PI_WEBL_RES_*.jpg` (14 fotos
+del 10-10-2026, CULTVR Lab, Cardiff; 2250×1500). Crédito sobre cada foto: "4PI / FulldomeUK" (sale del
+nombre de los archivos; el `CREDITS.txt` de Rito todavía dice "[credit to confirm]" para FulldomeUK).
+
+- **VEATION** (8 → 12 fotos): cuatro de la charla con el editor proyectado en el domo
+  (`fduk-1..4.webp`, recorte 16:9): la imagen ancha, la imagen a sangre, una en la galería y una en dúo.
+- **Rito Digital** (10 → 12 fotos): dos verticales de ustedes tocando bajo el domo (`fduk-1..2.webp`,
+  1200×1800, sin recortar), en el lugar vertical (4:5) de cada dúo. Créditos: "Photography, FulldomeUK
+  2026: 4PI".
+- Por llevar crédito, no van a las galaxias de la portada. No se usó la foto de FulldomeUK del press kit
+  de Rito (iPhone, crédito sin confirmar).
+
+**Verificado en Chrome**: las dos fichas, con el crédito sobre cada foto y sin imágenes rotas.
+
 ### 2026-11-23 — Johns Hopkins en Soul Charger; Rito sin FulldomeUK (Vicente)
 
 - **Soul Charger**: la colaboración con iDeas Lab (Berman Institute of Bioethics, Johns Hopkins

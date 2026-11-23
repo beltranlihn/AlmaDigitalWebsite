@@ -26,9 +26,13 @@
       "photos": [
         "Asset/Studio Projects/VEATION/1.webp",
         "Asset/Studio Projects/VEATION/2 Portada.webp",
+        "Asset/Studio Projects/VEATION/fduk-1.webp",
         "Asset/Studio Projects/VEATION/3.webp",
+        "Asset/Studio Projects/VEATION/fduk-2.webp",
         "Asset/Studio Projects/VEATION/4.webp",
+        "Asset/Studio Projects/VEATION/fduk-3.webp",
         "Asset/Studio Projects/VEATION/5.webp",
+        "Asset/Studio Projects/VEATION/fduk-4.webp",
         "Asset/Studio Projects/VEATION/6.webp",
         "Asset/Studio Projects/VEATION/7.webp",
         "Asset/Studio Projects/VEATION/8.webp"
@@ -71,7 +75,13 @@
       "verticals": [
         "Asset/Studio Projects/VEATION/VEATION Reel Fulldome.mp4"
       ],
-      "website": "https://veation.com"
+      "website": "https://veation.com",
+      "photoCredits": {
+        "Asset/Studio Projects/VEATION/fduk-1.webp": "4PI / FulldomeUK",
+        "Asset/Studio Projects/VEATION/fduk-2.webp": "4PI / FulldomeUK",
+        "Asset/Studio Projects/VEATION/fduk-3.webp": "4PI / FulldomeUK",
+        "Asset/Studio Projects/VEATION/fduk-4.webp": "4PI / FulldomeUK"
+      }
     },
     {
       "slug": "rito-digital",
@@ -90,7 +100,9 @@
         "Asset/Studio Projects/Rito Digital/11.webp",
         "Asset/Studio Projects/Rito Digital/7.webp",
         "Asset/Studio Projects/Rito Digital/3.webp",
-        "Asset/Studio Projects/Rito Digital/5.webp"
+        "Asset/Studio Projects/Rito Digital/fduk-1.webp",
+        "Asset/Studio Projects/Rito Digital/5.webp",
+        "Asset/Studio Projects/Rito Digital/fduk-2.webp"
       ],
       "desc": "An immersive live concert film by Alma Digital Studio: realistic stop-motion animation and ceremonial techno across eight songs, always performed live. It premiered at FOC — The Festival of Consciousness, Barcelona, in 2026.",
       "commissionedBy": "",
@@ -103,7 +115,8 @@
         "A work by Alma Digital Studio",
         "Direction, music and visuals: Vicente Manzano · Beltrán Lihn",
         "Photography, FOC Barcelona 2026: @aliciaganesha · @thelighttrace",
-        "Photography, CULTVR Cardiff 2026: Rhys Davies / CULTVR"
+        "Photography, CULTVR Cardiff 2026: Rhys Davies / CULTVR",
+        "Photography, FulldomeUK 2026: 4PI"
       ],
       "palette": [
         "#0b0505",
@@ -142,7 +155,9 @@
         "Asset/Studio Projects/Rito Digital/5.webp": "@thelighttrace",
         "Asset/Studio Projects/Rito Digital/9.webp": "Rhys Davies / CULTVR",
         "Asset/Studio Projects/Rito Digital/10.webp": "Rhys Davies / CULTVR",
-        "Asset/Studio Projects/Rito Digital/11.webp": "Rhys Davies / CULTVR"
+        "Asset/Studio Projects/Rito Digital/11.webp": "Rhys Davies / CULTVR",
+        "Asset/Studio Projects/Rito Digital/fduk-1.webp": "4PI / FulldomeUK",
+        "Asset/Studio Projects/Rito Digital/fduk-2.webp": "4PI / FulldomeUK"
       }
     },
     {
