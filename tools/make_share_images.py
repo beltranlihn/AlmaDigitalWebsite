@@ -69,7 +69,7 @@ def home():
 
 
 def soul_charger():
-    src = Image.open('Asset/Studio Projects/Soul Charger/1 Portada.webp').convert('RGB')
+    src = Image.open('Asset/Studio Projects/Soul Charger/v2-alma-a Portada.webp').convert('RGB')
     # Recorte centrado a 1200:630 y escala.
     sw, sh = src.size
     target = W / H

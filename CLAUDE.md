@@ -627,6 +627,31 @@ El fluid sim sigue corriendo con auto-emitters en mobile. Los usuarios de Androi
 
 ## Historial de sesiones (última al tope)
 
+### 2026-11-24 — Soul Charger con la versión 2026 (Vicente)
+
+Vicente: las fotos de Soul Charger eran de la versión antigua. Pasó `~/Desktop/SOUL CHARGER 2026 VR/Soul
+Charger Material/` (35 capturas a 2560×1440 de las doce escenas, hojas de contacto con sus tiempos y el
+recorrido completo en video, 15 min) y el deck de Canva "Soul Charger - VR Interactive"
+(canva.link/soul-charger-vr-interactive), que usa esas mismas capturas.
+
+- **Fotos** (`v2-*.webp`, 13): portada, la sala dorada con el alma (`v2-alma-a Portada`); al lado del
+  teléfono, la respiración; imagen ancha, los resultados con el panel; a sangre, el bosque de "dibujo";
+  galería y dúos con protoamebas, latido, mente, attracting, las baldosas del anillo, la constelación.
+  Salen todas las anteriores (renders viejos y las cinco `web-*` de la versión de 2025); siguen en la
+  carpeta, sin publicarse. No se usaron el título con logos ni el timbre.
+- **Reel del teléfono**: `Soul Charger Reel 2026.mp4`, nueve tramos de 2,6 s del recorrido completo
+  (alma, protoamebas, respiración, latido, mente, attracting, dibujo, resultados, constelación), recorte
+  9:16 al centro, 540×960, sin audio, crf 28: 1 MB. El anterior era de la versión vieja.
+- **Cabecera**: las partículas pasan a dorado, lila y rosa (`particles`), como la versión nueva. La
+  ameba de la portada queda como estaba (sus colores anteriores van en `world.forms`).
+- Galaxia de la portada, imagen para compartir de la ficha y la de `soul-charger.html`, rehechas.
+
+**Sin cambiar**: `soul-charger.html` (la página hecha a mano) sigue con sus fotos de la versión antigua.
+
+**Verificado en Chrome**: la ficha (cabecera, imagen ancha, teléfono con el reel nuevo, galería, a
+sangre), sin imágenes rotas; la galaxia en la portada. En la consola, sólo los avisos de View
+Transitions de la ventana de prueba.
+
 ### 2026-11-24 — Presentar con el teclado (Vicente)
 
 Vicente quiere usar la portada para presentar: ya avanzaba con las flechas y pidió poder entrar y salir

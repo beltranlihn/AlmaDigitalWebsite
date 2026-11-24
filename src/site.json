@@ -94,6 +94,17 @@
           "#8b5cf0",
           "#3d6dff"
         ]
+      },
+      "soul-charger": {
+        "formation": "halo",
+        "stage": "#140609",
+        "colors": [
+          "#ff7a59",
+          "#ffb199",
+          "#ff4f6d",
+          "#ffd6c2",
+          "#ffffff"
+        ]
       }
     }
   },
@@ -140,13 +151,13 @@
     },
     "soul-charger": {
       "formation": "halo",
-      "stage": "#140609",
+      "stage": "#160e1c",
       "colors": [
-        "#ff7a59",
-        "#ffb199",
-        "#ff4f6d",
-        "#ffd6c2",
-        "#ffffff"
+        "#f3c27a",
+        "#cba0fb",
+        "#f6b2c4",
+        "#fff1d6",
+        "#9fb6ff"
       ]
     },
     "neural-canvas": {
