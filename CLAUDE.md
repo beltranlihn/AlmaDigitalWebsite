@@ -627,6 +627,13 @@ El fluid sim sigue corriendo con auto-emitters en mobile. Los usuarios de Androi
 
 ## Historial de sesiones (última al tope)
 
+### 2026-11-24 — Digital Sanctuaries: portada nueva (Vicente)
+
+Vicente pidió de portada la sala grupal con almohadones y la pantalla de anillos (`group.webp`,
+`CTX_GROUP_SESSION`, que era la imagen a sangre). El campo de luz azul (`2 Portada.webp`, la portada
+anterior) pasó a ser la imagen a sangre. También cambian la primera imagen de su galaxia y su imagen para
+compartir.
+
 ### 2026-11-24 — Soul Charger con la versión 2026 (Vicente)
 
 Vicente: las fotos de Soul Charger eran de la versión antigua. Pasó `~/Desktop/SOUL CHARGER 2026 VR/Soul
