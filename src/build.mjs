@@ -660,10 +660,11 @@ function buildProject(raw, rawNext, lang) {
        galería dispersa de 6 imágenes chicas · imagen a sangre
      Con pocas fotos se llenan primero los lugares que más rinden: la foto al
      lado del teléfono, dos de la galería, la ancha, tres más de la galería, la
-     imagen a sangre y la sexta de la galería. Los lugares que faltan: en el
-     sitio publicado no salen (un bloque sin fotos se oculta); en localhost y
-     en las vistas previas se ven marcados, para saber qué sumar. Más de 9
-     fotos siguen en dúos.
+     imagen a sangre y la sexta de la galería. Los lugares que faltan no salen,
+     tampoco en revisión (pedido de Vicente, 2026-11-24): cada ficha se arma con
+     el material que tiene. Con pocas fotos (tres o menos además de la del
+     teléfono) no hay galería: van la imagen ancha y la imagen a sangre, sin
+     repetir la portada, que ya está en la cabecera. Más de 9 fotos siguen en dúos.
      El movimiento (entrada curva, parallax, giro del teléfono) lo pone
      js/app.js (initMotion) en los elementos con data-m; el aspecto, css/site.css. */
   /* La primera de la fila es la que va al lado del teléfono, recortada en vertical.
@@ -675,18 +676,26 @@ function buildProject(raw, rawNext, lang) {
   const queue = [...others.slice(0, 1), ...p.photos.filter(x => x === p.cover), ...others.slice(1)];
   let num = 0;
   const shot = (ph, cls, m) => `<figure class="shot${cls ? ' ' + cls : ''}" data-m="${m || 'shot'}"><img loading="lazy" decoding="async" width="1920" height="1080" src="${asset(c, ph)}" alt="${esc(p.title)}, ${esc(t.pImage)} ${++num}"></figure>`;
-  /* noSlots (projects.json): la obra no tiene más material; sin lugares vacíos, ni en revisión. */
-  const gap = (cls, text) => p.noSlots ? '' : `<div class="slot${cls ? ' ' + cls : ''}" aria-hidden="true"><span>${text}</span></div>`;
 
   /* Videos verticales: el reel de la obra y, si hay, "verticals" (projects.json: .mp4 o imagen 9:16). */
   const verticals = [p.video || p.reelImage, ...(p.verticals || [])].filter(Boolean).slice(0, 2);
   const pick = { side: null, wide: null, bleed: null, wall: [] };
   if (verticals.length < 2) pick.side = queue.shift() || null;
-  pick.wall.push(...queue.splice(0, 2));
-  if (!p.wideVideo) pick.wide = queue.shift() || null;
-  pick.wall.push(...queue.splice(0, 3));
-  pick.bleed = queue.shift() || null;
-  pick.wall.push(...queue.splice(0, 1));
+  if (queue.length <= 3) {
+    /* Pocas fotos: una galería de dos o tres imágenes chicas queda pobre. La portada sale de
+       la fila (ya es la cabecera) y lo que queda va grande: la ancha y la imagen a sangre. */
+    const few = queue.filter(x => x !== p.cover);
+    queue.length = 0;
+    if (!p.wideVideo) pick.wide = few.shift() || null;
+    pick.bleed = few.shift() || null;
+    queue.push(...few);
+  } else {
+    pick.wall.push(...queue.splice(0, 2));
+    if (!p.wideVideo) pick.wide = queue.shift() || null;
+    pick.wall.push(...queue.splice(0, 3));
+    pick.bleed = queue.shift() || null;
+    pick.wall.push(...queue.splice(0, 1));
+  }
 
   /* El teléfono es un objeto 3D: una cara con la pantalla y ocho capas detrás
      que le dan canto. Gira con el scroll. */
@@ -696,11 +705,9 @@ function buildProject(raw, rawNext, lang) {
     : `<img loading="lazy" decoding="async" src="${asset(c, v)}" alt="${esc(p.title)}, reel">`}</div></div></div>`;
   /* Con un solo video vertical va un teléfono y, al lado, una foto. */
   const objs = verticals.map(phone);
-  /* Una ficha con estética propia (theme) no lleva teléfono si no tiene video: ni siquiera su lugar vacío. */
-  if (!verticals.length && !p.theme && !p.noSlots) objs.push(`      ${gap('pj-phone', 'Espacio para video vertical<br>9:16 · 406×720')}`);
-  if (verticals.length < 2 && (pick.side || !p.noSlots)) objs.push(`      ${pick.side ? shot(pick.side, 'pj-card', 'card') : gap('pj-card', 'Espacio para foto<br>o material · vertical 4:5')}`);
+  if (pick.side) objs.push(`      ${shot(pick.side, 'pj-card', 'card')}`);
   const rest = p.body.slice(1);
-  const phonesMod = `  <section class="pj-m pj-m--phones${rest.length ? '' : ' pj-m--alone'}" data-n="${verticals.length + (pick.side ? 1 : 0)}" aria-label="${esc(t.pReel)}">
+  const phonesMod = !objs.length && !rest.length ? '' : `  <section class="pj-m pj-m--phones${rest.length ? '' : ' pj-m--alone'}" data-n="${verticals.length + (pick.side ? 1 : 0)}" aria-label="${esc(t.pReel)}">
     <div class="pj-stage3d">
 ${objs.join('\n')}
     </div>${rest.length ? `
@@ -714,13 +721,12 @@ ${rest.map(x => `      <p>${esc(x)}</p>`).join('\n')}
      se mueven a distinta velocidad. Al lado, dónde se presentó la obra. Hace
      falta un mínimo de dos fotos para que salga en el sitio publicado. */
   const wallOn = pick.wall.length >= 2;
-  const tiles = Array.from({ length: p.noSlots ? pick.wall.length : Math.max(6, pick.wall.length) }, (_, i) => pick.wall[i]
-    ? shot(pick.wall[i], '', 'tile') : gap('', 'Espacio para imagen<br>1920×1080'));
+  const tiles = pick.wall.map(x => shot(x, '', 'tile'));
   const cols = [0, 1, 2].map(k => `      <div class="pj-wall__col" data-m="col">
 ${tiles.filter((_, i) => i % 3 === k).map(x => `        ${x}`).join('\n')}
       </div>`).join('\n');
   const historyInWall = wallOn && p.presentedAt.length > 0;
-  const wallMod = `  <section class="pj-m pj-m--wall${historyInWall ? '' : ' pj-m--wall-solo'}" data-n="${wallOn ? pick.wall.length : 0}" aria-labelledby="wall-h">
+  const wallMod = !wallOn ? '' : `  <section class="pj-m pj-m--wall${historyInWall ? '' : ' pj-m--wall-solo'}" data-n="${wallOn ? pick.wall.length : 0}" aria-labelledby="wall-h">
     <div class="pj-wall__txt">
       <h2 class="label" id="wall-h">${esc(historyInWall ? t.pHistory : t.pGallery)}</h2>${historyInWall ? `
       <ul class="plain">${p.presentedAt.map(x => `<li>${esc(x)}</li>`).join('')}</ul>` : ''}
@@ -730,9 +736,10 @@ ${cols}
     </div>
   </section>`;
   const historyBelow = !historyInWall && p.presentedAt.length > 0;
+  /* Sin galería, el historial va abajo (historyBelow), como siempre que la galería no lo lleva. */
 
-  const one = (type, ph) => !ph && p.noSlots ? '' : `  <div class="pj-m pj-m--${type}" data-n="${ph ? 1 : 0}">
-    ${ph ? shot(ph, '', type === 'bleed' ? 'bleed' : 'shot') : gap('', 'Espacio para imagen<br>horizontal · 1920×1080')}
+  const one = (type, ph) => !ph ? '' : `  <div class="pj-m pj-m--${type}" data-n="1">
+    ${shot(ph, '', type === 'bleed' ? 'bleed' : 'shot')}
   </div>`;
   /* wideVideo (projects.json): un video horizontal en el lugar de la imagen ancha, sin sonido, que
      se pide recién cuando se ve (como los reels de los teléfonos). */
@@ -753,6 +760,8 @@ ${p.specs.rows.map(r => `      <li class="pj-specs__row"><span class="pj-specs__
   const flow = [wideMod, phonesMod, specsMod, wallMod, one('bleed', pick.bleed)].filter(Boolean);
   while (queue.length) {
     const pair = queue.splice(0, 2);
+    /* Una foto que queda sola no va en un dúo a medias: va ancha. */
+    if (pair.length === 1) { flow.push(one('wide', pair[0])); break; }
     flow.push(`  <div class="pj-m pj-m--duo" data-n="${pair.length}">\n${pair.map(x => `    ${shot(x)}`).join('\n')}\n  </div>`);
   }
 

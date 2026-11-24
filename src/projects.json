@@ -206,8 +206,7 @@
       "press": [],
       "formatKey": "vr",
       "sidePhoto": "Asset/Studio Projects/Neural Canvas/2.webp",
-      "wideVideo": "Asset/Studio Projects/Neural Canvas/Neural Canvas Reel Horizontal.mp4",
-      "noSlots": true
+      "wideVideo": "Asset/Studio Projects/Neural Canvas/Neural Canvas Reel Horizontal.mp4"
     },
     {
       "slug": "collective-pulse",
@@ -435,9 +434,17 @@
       "cover": "Asset/Studio Projects/Alma Digital Fest/3 Portada.webp",
       "video": "Asset/Studio Projects/Alma Digital Fest/Alma Fest Reel.mp4",
       "photos": [
+        "Asset/Studio Projects/Alma Digital Fest/cyt-4177.webp",
+        "Asset/Studio Projects/Alma Digital Fest/3 Portada.webp",
         "Asset/Studio Projects/Alma Digital Fest/1.webp",
         "Asset/Studio Projects/Alma Digital Fest/2.webp",
-        "Asset/Studio Projects/Alma Digital Fest/3 Portada.webp"
+        "Asset/Studio Projects/Alma Digital Fest/cyt-4204.webp",
+        "Asset/Studio Projects/Alma Digital Fest/cyt-4207.webp",
+        "Asset/Studio Projects/Alma Digital Fest/cyt-4727.webp",
+        "Asset/Studio Projects/Alma Digital Fest/cyt-4147.webp",
+        "Asset/Studio Projects/Alma Digital Fest/cyt-4917.webp",
+        "Asset/Studio Projects/Alma Digital Fest/cyt-4775.webp",
+        "Asset/Studio Projects/Alma Digital Fest/cyt-4060.webp"
       ],
       "desc": "An 8-hour immersive art festival at Palacio Concha y Toro in Santiago, merging live performances, interactive installations, and generative environments.",
       "commissionedBy": "",
@@ -523,7 +530,7 @@
       ],
       "year": "",
       "press": [],
-      "formatKey": "vr"
+      "formatKey": "dome"
     },
     {
       "slug": "pixel-liquido",
@@ -581,8 +588,12 @@
       "video": "Asset/Studio Projects/Digital Prana/DigitalPranaReel.mp4",
       "photos": [
         "Asset/Studio Projects/Digital Prana/1.webp",
+        "Asset/Studio Projects/Digital Prana/3 Portada.webp",
         "Asset/Studio Projects/Digital Prana/2.webp",
-        "Asset/Studio Projects/Digital Prana/3 Portada.webp"
+        "Asset/Studio Projects/Digital Prana/etm-364.webp",
+        "Asset/Studio Projects/Digital Prana/etm-369.webp",
+        "Asset/Studio Projects/Digital Prana/etm-370.webp",
+        "Asset/Studio Projects/Digital Prana/etm-373.webp"
       ],
       "desc": "An AI-powered interactive breathwork experience that adapts generative visuals and soundscapes to the collective emotional state of the audience.",
       "commissionedBy": "",
@@ -684,9 +695,14 @@
       "cover": "Asset/Studio Projects/Alma Digital 360/2 Portada.webp",
       "video": "Asset/Studio Projects/Alma Digital 360/Reel Alma Digital 360.mp4",
       "photos": [
-        "Asset/Studio Projects/Alma Digital 360/1.webp",
+        "Asset/Studio Projects/Alma Digital 360/3.webp",
         "Asset/Studio Projects/Alma Digital 360/2 Portada.webp",
-        "Asset/Studio Projects/Alma Digital 360/3.webp"
+        "Asset/Studio Projects/Alma Digital 360/fixiona-1.webp",
+        "Asset/Studio Projects/Alma Digital 360/fixiona-2.webp",
+        "Asset/Studio Projects/Alma Digital 360/fixiona-3.webp",
+        "Asset/Studio Projects/Alma Digital 360/fixiona-4.webp",
+        "Asset/Studio Projects/Alma Digital 360/fixiona-5.webp",
+        "Asset/Studio Projects/Alma Digital 360/1.webp"
       ],
       "desc": "An immersive audiovisual performance designed as a transformative journey through generative landscapes and spatial sound.",
       "commissionedBy": "",
@@ -721,7 +737,8 @@
       ],
       "year": "",
       "press": [],
-      "formatKey": "performance"
+      "formatKey": "dome",
+      "wideVideo": "Asset/Studio Projects/Alma Digital 360/Alma Digital 360 Reel Horizontal.mp4"
     },
     {
       "slug": "my2drops",
@@ -948,7 +965,7 @@
       ],
       "year": "",
       "press": [],
-      "formatKey": "design"
+      "formatKey": "dome"
     },
     {
       "slug": "eit-culture-and-creativity",

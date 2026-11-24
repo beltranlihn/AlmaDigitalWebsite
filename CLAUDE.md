@@ -106,8 +106,9 @@ obra" en su parada de la portada (VEATION, Rito Digital y Digital Sanctuaries).
 **`wideVideo`** (opcional, en `projects.json`): un video horizontal (16:9, sin audio, 1280×720) en el
 lugar de la imagen ancha de la ficha. Se pide recién cuando se ve y se pausa al salir, como los reels de
 los teléfonos. También es el que se ve al pasar por la obra en el índice si no hay `video`. Hoy, Neural
-Canvas. **`noSlots`** (opcional): la obra no tiene más material; la ficha no muestra lugares vacíos ni
-en revisión (sin teléfono vacío, sin huecos en la galería, sin imagen ancha o a sangre vacías).
+Canvas y Alma Digital 360.
+**Sin lugares vacíos** (desde el 2026-11-24): ninguna ficha muestra huecos, tampoco en revisión; cada una
+se arma con lo que tiene (ver "Ficha de obra: el recorrido de imágenes"). El campo `noSlots` ya no existe.
 **`galaxyPhotos`** (opcional, en `projects.json`): qué fotos van a la galaxia de la obra en la portada
 (hasta 5). Sin este campo van la portada y las siguientes de `photos`. Las verticales van a 9:16. Hoy
 lo usan VEATION y Rito (fotos de FulldomeUK).
@@ -207,8 +208,10 @@ cada imagen. Segunda vuelta el 2026-11-18, a pedido de Vicente, después de volv
   todos los navegadores (antes era CSS atado al scroll y Firefox quedaba quieto). Con "reducir
   movimiento" nada se mueve y todo está a la vista. El texto no se anima nunca. Es una aproximación: la
   curvatura real de Unseen es WebGL.
-- **Lugares vacíos**: en el sitio publicado un bloque sin fotos no sale. En localhost y en las vistas
-  previas de Netlify (`body.has-review`) los huecos se ven con borde punteado y el formato que hay que sumar.
+- **Sin lugares vacíos** (pedido de Vicente, 2026-11-24): un bloque sin material no sale, tampoco en
+  localhost ni en las vistas previas. Con tres fotos o menos además de la del teléfono no hay galería
+  (dos o tres imágenes chicas quedaban pobres): van la imagen ancha y la imagen a sangre, y la portada no
+  se repite (ya es la cabecera). Una foto que sobra sola después de los dúos va ancha.
 - Un clic en cualquier foto la abre entera en el visor.
 
 ## El mundo interior (la portada)
@@ -626,6 +629,34 @@ desactiva. **No** cambiar nameservers a Cloudflare.
 El fluid sim sigue corriendo con auto-emitters en mobile. Los usuarios de Android no pueden tocar el fondo para emitir fluidos (correcto — el dedo es para el scroll).
 
 ## Historial de sesiones (última al tope)
+
+### 2026-11-24 — Alma Digital 360 con su video, Domo / 360 y fichas sin huecos (Vicente)
+
+- **Alma Digital 360**: video horizontal `Alma Digital 360 Reel Horizontal.mp4` (de
+  `AlmaDigital_4to_FullVideo_Resumen.mp4`, 45 s, a 1280×720, crf 32, sin audio: 5,8 MB) en la imagen
+  ancha (`wideVideo`); el reel vertical sigue en el teléfono. Cinco fotos de Fixiona
+  (`05_Biblioteca/web-canva-2026-11/alma-digital-360/fotos-fixiona`): la sala vacía con la grilla, la
+  pantalla violeta con una persona, el dúo con la pirámide de luz, gente bailando y gente recostada.
+  No se usaron la copia chica de la sala, la versión retocada sin persona ni la de los láseres (72 dpi).
+- **Formato Domo / 360°**: Neurocosm 360, Alma Digital 360 y Panta Rhei (`formatKey: "dome"`). El
+  filtro Domo / 360° del índice suma esas tres a Neurocosm Full Dome y LPS.
+- **Fichas sin huecos**: ver "Sin lugares vacíos" en "Ficha de obra". `noSlots` sale de Neural Canvas.
+- **Material que no se había subido**:
+  - **Alma Digital Fest**: ocho fotos del Palacio Concha y Toro (`05_Biblioteca/live-360/fotos-concha-y-toro`):
+    el círculo con la figura, el mandala, la espiral, el escenario, el vitral con el icono, el cantante,
+    el público y el público en rojo. Las verticales (1200×1600) no se usaron.
+  - **Digital Prana**: cuatro fotos de ETM (`05_Biblioteca/digital-prana/fotos-etm`), las de público
+    de espaldas o lejos; no las de caras de frente.
+- **Siguen afuera**: Pacha (`_PERMISOS.md`: "No, hasta revisar"), Adidas (sin permiso), las fotos de
+  Juano de Pixel Líquido (fotógrafo sin crédito confirmado), los conceptos con IA de EIT, LPS (los videos
+  `Ideal*` son simulaciones de la sala de IDEAL, no la obra) y el storyboard de my2DROPS.
+- **Para tener en cuenta**: `_PERMISOS.md` marca sin autor confirmado las fotos de Fixiona y las de Concha
+  y Toro, y no dice quién hizo las de ETM.
+
+**Verificado en Chrome**: Alma Digital 360 (video en la imagen ancha reproduciéndose a 1280×720,
+teléfono y foto, galería con el historial), Mapping (ficha corta: ancha y teléfono, sin huecos), Alma
+Digital Fest en español (galería, a sangre, sin imágenes rotas) y el índice filtrado por Domo / 360°.
+Paquete de publicación armado sin errores.
 
 ### 2026-11-24 — soul-charger.html con las fotos de la versión 2026 (Vicente)
 
