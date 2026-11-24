@@ -1262,3 +1262,9 @@ html.is-under .hdr.is-stuck { background: transparent; -webkit-backdrop-filter: 
   .sound-on .eq i:nth-child(2n) { transform: scaleY(.45); }
   .dive { display: none; }
 }
+
+/* Página 404 (404.html, la genera src/build.mjs). */
+.nf { padding-bottom: clamp(70px, 12vh, 140px); }
+.nf .about p[lang="es"] { font-size: .95rem; color: var(--ink-muted); }
+.nf .about a { color: inherit; text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 1px; }
+.nf__btns { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 28px; }

@@ -12,7 +12,7 @@
 
     <!-- ── Favicon ── -->
     <link rel="icon" type="image/x-icon" href="Asset/Web Icons/1-271c3808.ico">
-    <link rel="apple-touch-icon" href="Asset/Web Icons/PERFIL 3.png">
+    <link rel="apple-touch-icon" href="Asset/Web Icons/apple-touch-icon.png">
 
     <!-- ── Open Graph (WhatsApp, Twitter, LinkedIn previews) ──
          og:image: JPG 1200×630 armado con tools/make_share_images.py. -->
@@ -823,7 +823,7 @@
         }
         .sc-hero-inner { align-items: flex-start; }
         .sc-hero-logo { width: clamp(200px, 70vw, 340px); }
-        .sc-hero-title { font-size: clamp(3.745rem, 17.12vw, 6.42rem); }
+        .sc-hero-title { font-size: clamp(2.2rem, 13vw, 6.42rem); }   /* a 17vw "CHARGER" no entraba en 375 px */
 
         /* About */
         #sc-2 { flex-direction: column !important; align-items: flex-start !important; justify-content: center !important; padding: 40px 20px !important; }
@@ -878,6 +878,9 @@
         .sc6-logo-wrap { width: clamp(299px, 80vw, 483px); }
     }
     </style>
+<!-- Mismo permiso de View Transitions que las páginas generadas: sin él, Chrome cancela la
+     transición al llegar desde el sitio y deja una excepción en la consola. -->
+<style>@media (prefers-reduced-motion: no-preference){@view-transition{navigation:auto}}</style>
 </head>
 <body>
 
@@ -939,7 +942,7 @@
                 <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M10 3L5 8l5 5"/>
                 </svg>
-                Volver al Portfolio
+                Back to portfolio
             </a>
         </div>
         <!-- Right: logo (6 layers stacked with parallax breathing) -->

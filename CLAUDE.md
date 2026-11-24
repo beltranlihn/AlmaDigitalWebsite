@@ -41,6 +41,7 @@ estudio, sus proyectos y equipo con una estética audiovisual interactiva, en in
 ├── work/<obra>.html           # GENERADO: una ficha por obra o spin-off (22)
 ├── es/…                       # GENERADO: lo mismo en español
 ├── sitemap.xml                # GENERADO
+├── 404.html                   # GENERADO: la página de dirección inexistente (rutas absolutas)
 ├── soul-charger.html          # página dedicada a Soul Charger (a mano, ~3400 líneas, sólo inglés)
 ├── robots.txt                 # bots fuera de los videos + bloqueo de scrapers de IA/SEO
 ├── tools/deploy_copy.py       # arma dist/ con sólo lo que la web usa (lo corre Netlify)
@@ -629,6 +630,30 @@ desactiva. **No** cambiar nameservers a Cloudflare.
 El fluid sim sigue corriendo con auto-emitters en mobile. Los usuarios de Android no pueden tocar el fondo para emitir fluidos (correcto — el dedo es para el scroll).
 
 ## Historial de sesiones (última al tope)
+
+### 2026-11-24 — Repaso antes de publicar (Vicente)
+
+Vicente va a publicar mañana y pidió una última optimización, en compu y en teléfono.
+
+- **Página 404** (`404.html`, `build404()` en `src/build.mjs`): con el menú, el fluido y el pie del sitio,
+  en inglés con una línea en español. Netlify la sirve sola en cualquier dirección que no existe; por
+  eso todas sus rutas son absolutas. `noindex` y fuera del sitemap. Antes salía la página genérica de Netlify.
+- **Portada**: los dos módulos de Three.js que sólo usan los íconos 3D (en reserva) ya no se bajan en
+  cada visita; se piden recién con `?paradas=iconos` (`loadIcons()` en `js/world.js`). Los puntos de
+  paradas se apagan al bajar al pie (en teléfono subían y quedaban sobre el botón ES).
+- **Ícono para el iPhone** (`apple-touch-icon.png`, 180×180, 31 KB, sin transparencias): antes era
+  `PERFIL 3.png` de 2251 px y 601 KB, con las esquinas transparentes (iOS las pinta de negro).
+- **soul-charger.html en teléfono**: el título "Soul Charger" quedaba cortado ("CHARGE") y el botón de
+  volver decía "Volver al Portfolio" en una página en inglés: ahora "Back to portfolio".
+- "Digital Sanctuary" → **"Digital Sanctuaries"** en Studio y en el pie.
+- `soul-charger.html` lleva el permiso de View Transitions en su `<head>`: al llegar desde el sitio,
+  Chrome cancelaba la transición y dejaba una excepción en la consola.
+- `tools/serve.py` muestra `404.html` en una dirección que no existe, como Netlify.
+
+**Verificado**: las 51 páginas en 375 px (las principales) y en 1440 px, sin desbordes horizontales ni
+imágenes o videos rotos; la portada en teléfono de punta a punta; las fichas de Alma Digital 360 y
+otras en teléfono; el modo íconos sigue funcionando. Paquete de publicación armado sin errores.
+**Sin ver**: teléfonos reales, Safari y Firefox.
 
 ### 2026-11-24 — Alma Digital 360 con su video, Domo / 360 y fichas sin huecos (Vicente)
 

@@ -50,8 +50,16 @@
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.187.0/+esm';
 /* Dos piezas de los ejemplos oficiales de Three.js, del mismo CDN y la misma versión:
    el entorno de estudio que ilumina los íconos y las cajas de puntas redondas. */
-import { RoomEnvironment } from 'https://cdn.jsdelivr.net/npm/three@0.187.0/examples/jsm/environments/RoomEnvironment.js/+esm';
-import { RoundedBoxGeometry } from 'https://cdn.jsdelivr.net/npm/three@0.187.0/examples/jsm/geometries/RoundedBoxGeometry.js/+esm';
+/* Los íconos 3D (paradas "icons", en reserva) necesitan dos piezas más de los ejemplos de
+   Three.js. Se piden sólo en ese modo, antes de mount(): con las galaxias de siempre, no se bajan. */
+let RoomEnvironment = null, RoundedBoxGeometry = null;
+export function loadIcons() {
+  if (RoomEnvironment) return Promise.resolve();
+  return Promise.all([
+    import('https://cdn.jsdelivr.net/npm/three@0.187.0/examples/jsm/environments/RoomEnvironment.js/+esm'),
+    import('https://cdn.jsdelivr.net/npm/three@0.187.0/examples/jsm/geometries/RoundedBoxGeometry.js/+esm'),
+  ]).then(([a, b]) => { RoomEnvironment = a.RoomEnvironment; RoundedBoxGeometry = b.RoundedBoxGeometry; });
+}
 
 const clamp = (x, a, b) => Math.max(a, Math.min(b, x));
 const smooth = (a, b, x) => { const t = clamp((x - a) / (b - a), 0, 1); return t * t * (3 - 2 * t); };
@@ -1537,10 +1545,12 @@ export function mount(section, opts) {
   let dirS = 1;                        // hacia dónde se avanza: 1 adelante, -1 atrás (suavizado)
   let bank = 0, lastX = null;          // ladeo de la cámara al correrse de costado
 
+  let past = 0;
   function readScroll() {
     const r = section.getBoundingClientRect();
     const total = Math.max(1, r.height - stage.clientHeight);
     p = clamp(-r.top / total, 0, 1);
+    past = Math.max(0, -r.top - total);   // cuánto se sale el escenario por arriba al llegar al pie
   }
   function scrollToT(t) {
     const r = section.getBoundingClientRect();
@@ -1641,7 +1651,8 @@ export function mount(section, opts) {
     setOpacity(invite, 1 - smooth(0.1 / SCREENS, 0.49 / SCREENS, ps));
     setOpacity(hud, entering ? 0 : (index >= 0 ? 1 - smooth(HALF * 0.55, HALF, bestD) : 0));
     setOpacity(end, entering ? 0 : smooth(1 - 0.57 / SCREENS, 1 - 0.12 / SCREENS, ps));
-    setOpacity(dots, entering ? 0 : deep);
+    /* Los puntos se apagan al bajar al pie: si no, suben con el escenario y quedan sobre el menú. */
+    setOpacity(dots, entering ? 0 : deep * (1 - clamp(past / 90, 0, 1)));
     /* El paso a las obras: el título aparece en el medio del tramo, mientras se cruzan los anillos. */
     const S2 = HALF * 2;
     gates.forEach((gate) => {

@@ -619,10 +619,14 @@
     var mine = life;
     function flat() { if (document.contains(sec)) sec.classList.add('world--flat'); }
     sec.classList.remove('world--flat');
+    var stops = stopsMode(sec);
     import(scriptBase + 'world.js' + ver('world')).then(function (m) {
+      /* Los íconos 3D (en reserva) piden dos módulos más; las galaxias, no. */
+      return stops === 'icons' && m.loadIcons ? m.loadIcons().then(function () { return m; }) : m;
+    }).then(function (m) {
       if (life !== mine || !document.contains(sec)) return;     // ya se navegó a otra página
       var handle = m.mount(sec, {
-        stops: stopsMode(sec),
+        stops: stops,
         reduce: reduce,
         coarse: window.matchMedia('(pointer: coarse)').matches,
         sound: window.AlmaSound,

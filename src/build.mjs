@@ -127,7 +127,7 @@ function head(c, { title, desc, ogImage, jsonld, noindex }) {
 ${alt}
 <link rel="alternate" hreflang="x-default" href="${abs('en', c.rel)}">
 <link rel="icon" type="image/x-icon" href="${asset(c, 'Asset/Web Icons/1-271c3808.ico')}">
-<link rel="apple-touch-icon" href="${asset(c, 'Asset/Web Icons/PERFIL 3.png')}">
+<link rel="apple-touch-icon" href="${asset(c, 'Asset/Web Icons/apple-touch-icon.png')}">
 <meta property="og:site_name" content="Alma Digital Studio">
 <meta property="og:title" content="${esc(title)}">
 <meta property="og:description" content="${esc(desc)}">
@@ -914,12 +914,37 @@ ${contactBand(c)}`;
   })];
 }
 
+/* Página 404. Netlify la sirve en cualquier dirección que no existe (también
+   /work/algo/otra), así que todas sus rutas son absolutas (up = '/'). Una sola
+   página, en inglés con una línea en español. No va al sitemap. */
+function build404() {
+  const c = { ...ctx('en', '404.html'), up: '/' };
+  const t = c.t;
+  const body = `<div class="studio nf">
+  ${phead(`      <h1>Lost in the <em>fluid</em>.</h1>`)}
+  <section class="about">
+    <p>This page isn't here: it may have moved when the site changed. The works and the studio are one click away.</p>
+    <p lang="es">Esta página no existe o cambió de lugar. <a href="/es/">Volver al inicio</a> · <a href="/es/work/">Ver las obras</a></p>
+  </section>
+  <div class="nf__btns">
+    <a class="btn btn--solid" href="/">Back to the home page</a>
+    <a class="btn" href="/work/">See the works</a>
+  </div>
+</div>`;
+  const html = page(c, {
+    title: `Page not found — Alma Digital Studio`, desc: t.siteDesc, current: '', body, bodyClass: 'pg-404', noindex: true,
+  }).replace(/(class="hdr__lang" href=")[^"]*"/, '$1/es/"')
+    .replace(/\n<link rel="(canonical|alternate)"[^>]*>/g, '');           // una 404 no tiene dirección propia
+  return ['404.html', html];
+}
+
 /* ── Escritura ──────────────────────────────────────────────────────────── */
 const out = [];
 for (const lang of LANGS) {
   out.push(world ? buildWorld(lang) : buildLanding(lang), buildIndex(lang), buildStudio(lang));
   projects.forEach((p, i) => out.push(buildProject(p, projects[(i + 1) % projects.length], lang)));
 }
+out.push(build404());
 
 /* work/ y es/ son carpetas del generador: se rehacen enteras para no dejar
    fichas huérfanas si se saca una obra. */
