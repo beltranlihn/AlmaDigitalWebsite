@@ -810,8 +810,8 @@
       var useVT = !w && !!document.startViewTransition && !reduce;
       var run = function () {
         if (push) {
-          history.replaceState({ alma: true, y: window.scrollY }, '');
-          history.pushState({ alma: true, y: 0 }, '', url);   // antes de insertar: las rutas relativas del HTML nuevo se resuelven contra esta URL
+          history.replaceState({ alma: true, y: window.scrollY, i: hops() }, '');
+          history.pushState({ alma: true, y: 0, i: hops() + 1 }, '', url);   // antes de insertar: las rutas relativas del HTML nuevo se resuelven contra esta URL
         }
         teardown();
         swap(html);
@@ -840,7 +840,26 @@
   }
 
   if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
-  try { history.replaceState({ alma: true, y: window.scrollY }, ''); } catch (e) {}
+  try { history.replaceState({ alma: true, y: window.scrollY, i: hops() }, ''); } catch (e) {}
+
+  /* Teclado, para presentar: en cualquier página que no sea la portada, Esc o la flecha izquierda
+     vuelven atrás (a la portada, en la misma parada del recorrido, si se llegó desde ahí). Si la página
+     se abrió directamente, van a la portada. Enter y las flechas de la portada están en js/world.js.
+     hops(): cuántas páginas del sitio hay detrás de esta en el historial. */
+  function hops() { return (history.state && history.state.i) || 0; }
+  document.addEventListener('keydown', function (e) {
+    if (e.key !== 'Escape' && e.key !== 'ArrowLeft') return;
+    if (e.defaultPrevented || e.altKey || e.metaKey || e.ctrlKey || e.shiftKey) return;
+    var t = e.target;
+    if (t && (t.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName))) return;
+    if (document.querySelector('[data-world]')) return;                     // la portada usa sus flechas
+    var m = document.getElementById('contact-modal');
+    if ((m && !m.hidden) || document.querySelector('.lb.open, .rf.is-open')) return;   // primero se cierra eso
+    e.preventDefault();
+    if (hops() > 0) { history.back(); return; }
+    var home = $('.hdr__logo');
+    if (home) home.click();
+  });
 
   document.addEventListener('click', function (e) {
     if (e.defaultPrevented || e.button || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;

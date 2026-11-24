@@ -281,6 +281,15 @@ vea y probarlo en teléfonos reales** (en la portada corren el fluido y el mundo
 - **Luces que avanzan**: unos 50 hilos finos alrededor del camino que van al doble de la velocidad de la
   cámara y se estiran al avanzar (en reposo son chispas), y dos luces guía con cola que van por delante:
   siguen al scroll y no a la cámara, así que se adelantan y uno las alcanza. Sólo adentro.
+- **Presentar con el teclado** (pedido de Vicente, 2026-11-24, para mostrar el sitio en una charla):
+  - en la portada, **→ / ←** parada siguiente y anterior; **Enter** hace lo del botón de la ficha de
+    vidrio (entra a la obra con la transición líquida, abre Studio o el reel con sonido); en la entrada,
+    lleva a la primera parada (`keydown` en `js/world.js`);
+  - en cualquier otra página (una ficha, Studio, el índice), **Esc o ←** vuelven atrás: a la portada, en
+    la misma parada, si se llegó desde ahí; si la página se abrió directamente, a la portada
+    (`keydown` global en `js/app.js`; el historial anota cuántas páginas del sitio hay detrás, `hops()`).
+    Si están abiertos el visor de fotos, el reel a pantalla completa o el contacto, esas teclas los
+    manejan a ellos primero.
 - **Lo que responde**: el cursor mueve la cámara, corre el arte dentro de cada ameba, inclina la pantalla
   del reel y aparta las partículas; la ameba bajo el cursor se hincha; al avanzar rápido la cámara abre
   el ángulo y todo se agita; un clic en el vacío agita el mundo y suena una nota; las flechas izquierda
@@ -617,6 +626,17 @@ desactiva. **No** cambiar nameservers a Cloudflare.
 El fluid sim sigue corriendo con auto-emitters en mobile. Los usuarios de Android no pueden tocar el fondo para emitir fluidos (correcto — el dedo es para el scroll).
 
 ## Historial de sesiones (última al tope)
+
+### 2026-11-24 — Presentar con el teclado (Vicente)
+
+Vicente quiere usar la portada para presentar: ya avanzaba con las flechas y pidió poder entrar y salir
+de las obras seleccionadas con el teclado. Enter entra a la obra de la parada; Esc o ← vuelven al mismo
+punto del recorrido. Ver "Presentar con el teclado" en la sección del mundo interior.
+
+**Verificado en Chrome**, con teclas reales: tres → hasta Soul Charger, Enter abre su ficha, Esc vuelve a
+Soul Charger en el recorrido; → a Collective Pulse, Enter, ← vuelve a Collective Pulse. En una ficha con
+el visor de fotos abierto, ← cambia de foto y Esc lo cierra sin salir de la ficha. Una ficha abierta
+directamente: Esc lleva a la portada. Consola sin errores.
 
 ### 2026-11-23 — Neural Canvas: el reel horizontal en grande y sin huecos (Vicente)
 

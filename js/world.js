@@ -1896,12 +1896,23 @@ export function mount(section, opts) {
   }, sig);
   /* "Entra al mundo interior": lleva hasta la primera obra. */
   if (invite) invite.addEventListener('click', () => scrollToT(tWork(0)), sig);
-  /* Flechas izquierda y derecha: parada anterior y siguiente (arriba y abajo siguen siendo el scroll normal). */
+  /* Teclado, para presentar: flechas izquierda y derecha, parada anterior y siguiente (arriba y abajo
+     siguen siendo el scroll normal). Enter: lo mismo que el botón de la ficha de vidrio (entra a la obra,
+     abre el estudio o el reel con sonido); en la entrada, lleva a la primera parada. Salir de una ficha
+     con Esc o la flecha izquierda está en js/app.js. */
   window.addEventListener('keydown', (e) => {
-    if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
     if (e.altKey || e.metaKey || e.ctrlKey || !visible || entering) return;
     const t = e.target;
     if (t && (t.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName))) return;
+    if (e.key === 'Enter') {
+      if (t && t.closest && t.closest('a, button')) return;          // un enlace o botón enfocado hace lo suyo
+      if (document.querySelector('.rf.is-open, .lb.open')) return;
+      e.preventDefault();
+      if (shown >= 0 && Math.abs(ps - tWork(shown)) <= HALF * 0.7) enter(shown);
+      else if (p < tWork(0)) scrollToT(tWork(0));
+      return;
+    }
+    if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
     let k = 0;
     STOPS.forEach((v, i) => { if (Math.abs(v - p) < Math.abs(STOPS[k] - p)) k = i; });
     const next = clamp(k + (e.key === 'ArrowRight' ? 1 : -1), 0, STOPS.length - 1);
