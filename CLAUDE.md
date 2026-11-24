@@ -627,6 +627,20 @@ El fluid sim sigue corriendo con auto-emitters en mobile. Los usuarios de Androi
 
 ## Historial de sesiones (última al tope)
 
+### 2026-11-24 — soul-charger.html con las fotos de la versión 2026 (Vicente)
+
+La página hecha a mano seguía con 20 renders de la versión antigua (`Asset/Registro/`) en el carrusel
+"Registro" y su visor. Se reemplazaron por 20 capturas de 2026, en el orden del recorrido (alma,
+protoamebas, baldosas, respiración, latido, mente, attracting, dibujo, resultados, constelación y el
+título), en `Asset/Soul Charger/Registro 2026/` con los mismos nombres (`Portada.webp`, `1..19.webp`),
+1920×1080, 694 KB en total. `Asset/Registro/` ya no lo usa nada (no se publica; sigue en el repo).
+
+**Sin cambiar**: el tráiler de esa página (`Trailer Soul Charger VR_V1.mp4` y su póster) es de la
+versión antigua; hace falta un tráiler nuevo para reemplazarlo. Los gráficos de las fases (anillos de
+colores) no son capturas y quedan.
+
+**Verificado en Chrome**: el carrusel con las fotos nuevas, sin imágenes rotas, y el visor.
+
 ### 2026-11-24 — Digital Sanctuaries: portada nueva (Vicente)
 
 Vicente pidió de portada la sala grupal con almohadones y la pantalla de anillos (`group.webp`,
