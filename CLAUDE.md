@@ -98,8 +98,7 @@ su slug va en `site.json → world.spinoffs` (no en `featured`): tienen su propi
 Sanctuaries): `body.pg-ds`, ver "Temas". **`specs`** (opcional): el catálogo de la obra, una tarjeta por
 unidad con su imagen (`lead` y `rows: [{code, name, what, img}]`; en `projects.es.json` van sólo los textos
 y las imágenes salen del inglés), después del teléfono. **`trailer`** (opcional: `of`, `src`, `poster`):
-un video con sonido que arranca recién con un clic, después del catálogo (hoy el de Soul Charger en
-Digital Sanctuaries). **`enquire`**
+un video con sonido que arranca recién con un clic, después del catálogo (hoy no lo usa ninguna obra). **`enquire`**
 (opcional): el texto y el botón de consulta de esa ficha, si no le queda "¿Te interesa esta obra?".
 **Sin créditos sobre las fotos** (decisión de Vicente, 2026-11-23: "olvídate de los créditos en las
 fotos, de toda la web"): se quitó `photoCredits` y todo lo que lo mostraba, y también los fotógrafos de
@@ -647,7 +646,8 @@ El fluid sim sigue corriendo con auto-emitters en mobile. Los usuarios de Androi
   decisión de Vicente; antes se había dejado afuera porque la voz de la marca y `_PERMISOS.md` lo pedían.
 - **Tráiler de Soul Charger** en la ficha (`trailer`), después del catálogo: el mismo de
   `soul-charger.html` (74 s, 1080p, con sonido, 13,8 MB, de la versión antigua). Se pide sólo al darle
-  play; al sonar, la música del sitio se calla sola.
+  play; al sonar, la música del sitio se calla sola. **Quitado el mismo día** a pedido de Vicente ("con el catálogo
+  basta"); el campo queda disponible.
 - **Sin enlace a almadigitalsanctuaries.com**, a pedido de Vicente: sale `website` de la ficha y de la
   portada, y en Studio y en el pie el spin-off enlaza a su ficha (`studio.json → spinoffs[].work`, texto
   "See the project" / "Ver el proyecto").

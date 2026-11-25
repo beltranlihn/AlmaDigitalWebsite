@@ -1190,12 +1190,7 @@
         "text": "Want to see it in person?",
         "cta": "Request a private demonstration"
       },
-      "creditLine": "Built on Soul Charger, developed in collaboration with iDeas Lab, Johns Hopkins University's Berman Institute of Bioethics",
-      "trailer": {
-        "of": "Soul Charger",
-        "src": "Asset/Soul Charger/Trailer Soul Charger VR_V1.mp4",
-        "poster": "Asset/Soul Charger/Trailer Poster.webp"
-      }
+      "creditLine": "Built on Soul Charger, developed in collaboration with iDeas Lab, Johns Hopkins University's Berman Institute of Bioethics"
     }
   ]
 }
