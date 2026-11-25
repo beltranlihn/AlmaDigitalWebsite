@@ -517,6 +517,7 @@
       "studioJoinCta": "Write to us",
       "studioSpinoffs": "Spin-offs",
       "studioVisit": "Visit site",
+      "studioSeeWork": "See the project",
       "indexTitle": "Work",
       "indexDesc": "Studio projects and commissions by Alma Digital Studio: VR, fulldome, projection mapping, interactive installations and immersive design.",
       "indexCount": "{n} works",
@@ -606,7 +607,8 @@
       "pSpinoff": "Spin-off",
       "spinTitle": "Studio *spin-offs*",
       "pVisit": "Visit",
-      "pCatalogue": "The catalogue"
+      "pCatalogue": "The catalogue",
+      "pTrailer": "Trailer"
     },
     "es": {
       "langName": "Español",
@@ -650,6 +652,7 @@
       "studioJoinCta": "Escríbenos",
       "studioSpinoffs": "Spin-offs",
       "studioVisit": "Visitar sitio",
+      "studioSeeWork": "Ver el proyecto",
       "indexTitle": "Obras",
       "indexDesc": "Obra propia y encargos de Alma Digital Studio: VR, fulldome, mapping, instalaciones interactivas y diseño inmersivo.",
       "indexCount": "{n} obras",
@@ -739,7 +742,8 @@
       "pSpinoff": "Spin-off",
       "spinTitle": "Spin-offs *del estudio*",
       "pVisit": "Visitar",
-      "pCatalogue": "El catálogo"
+      "pCatalogue": "El catálogo",
+      "pTrailer": "Tráiler"
     }
   }
 }

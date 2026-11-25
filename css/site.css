@@ -1176,7 +1176,7 @@ body.pg-ds { background: #0a0a09; }
 .pg-ds .page { font-family: var(--ds-sans); font-weight: 300; }
 /* Etiquetas, datos y botones: mono en mayúsculas con tracking amplio. Un peso por familia. */
 .pg-ds .page .label, .pg-ds .phero__eyebrow, .pg-ds .phero__fmt, .pg-ds .pj-meta dt,
-.pg-ds .page .btn, .pg-ds .pj-specs__code, .pg-ds .pj-specs__dur, .pg-ds .pj-specs__cap {
+.pg-ds .page .btn, .pg-ds .pj-specs__code {
   font-family: var(--ds-mono); font-weight: 400; letter-spacing: .18em; text-transform: uppercase;
 }
 .pg-ds .page .label { font-size: .7rem; color: var(--ink-muted); }
@@ -1205,26 +1205,24 @@ body.pg-ds { background: #0a0a09; }
 .pg-ds .shot[data-m] img { scale: 1.06; transition: scale 1.2s cubic-bezier(.37, 0, .63, 1); }
 .pg-ds .shot[data-m]:hover img { scale: 1.08; }
 .pg-ds .pj-card { --rest: 0deg; --turn: -5deg; --lean: 0deg; }
-/* El catálogo: una fila por unidad, como una ficha técnica. */
-.pj-specs { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2.2fr); gap: clamp(24px, 5vw, 80px); align-items: start; }
-.pj-specs__lead { margin-top: 10px; max-width: 30ch; font-size: 1rem; line-height: 1.6; color: var(--ink-body); }
-.pj-specs__list { list-style: none; margin: 0; padding: 0; border-bottom: 1px solid var(--line); }
-.pj-specs__row {
-  display: grid; grid-template-columns: 7.5em minmax(0, 1fr) minmax(0, 1.5fr) 5.5em 3.5em; gap: 16px; align-items: baseline;
-  padding: 20px 0; border-top: 1px solid var(--line); color: var(--ink-body);
-}
-.pj-specs__code, .pj-specs__dur, .pj-specs__cap { font-size: .72rem; color: var(--ink-muted); }
-.pj-specs__name { font-size: 1rem; color: var(--ink); }
-.pj-specs__what { font-size: .98rem; }
-.pj-specs__dur, .pj-specs__cap { text-align: right; }
-@media (max-width: 760px) {
-  .pj-specs { grid-template-columns: minmax(0, 1fr); }
-  .pj-specs__row { grid-template-columns: minmax(0, 1fr) auto; gap: 6px 16px; padding: 16px 0; }
-  .pj-specs__code { grid-column: 1 / -1; }
-  .pj-specs__what { grid-column: 1; }
-  .pj-specs__dur { grid-column: 2; grid-row: 2; }
-  .pj-specs__cap { grid-column: 2; grid-row: 3; }
-}
+/* El catálogo: una tarjeta por unidad, con su imagen, su código, su nombre y una línea. */
+.pj-specs { display: grid; grid-template-columns: minmax(0, 1fr); gap: clamp(20px, 3vw, 36px); }
+.pj-specs__head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px 32px; }
+.pj-specs__lead { max-width: 40ch; font-size: 1rem; line-height: 1.6; color: var(--ink-body); }
+.pj-specs__list { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: clamp(14px, 1.6vw, 24px); }
+.pj-specs__row { display: flex; flex-direction: column; gap: 6px; padding-top: 14px; border-top: 1px solid var(--line); color: var(--ink-body); }
+.pj-specs__img { aspect-ratio: 16 / 9; margin: 0 0 8px; cursor: zoom-in; }
+.pj-specs__img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.pj-specs__code { font-size: .72rem; color: var(--ink-muted); }
+.pj-specs__name { font-size: .98rem; color: var(--ink); }
+.pj-specs__what { font-size: .92rem; line-height: 1.5; }
+.pg-ds .pj-specs__name { font-size: .86rem; letter-spacing: .12em; line-height: 1.4; }
+@media (max-width: 1100px) { .pj-specs__list { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 640px) { .pj-specs__list { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+/* El tráiler: video con sonido que arranca con un clic, a lo ancho. */
+.pj-trailer { display: grid; gap: 16px; }
+.pj-trailer__v { aspect-ratio: 16 / 9; margin: 0; }
+.pj-trailer__v video { width: 100%; height: 100%; display: block; object-fit: cover; background: #000; }
 @media (prefers-reduced-motion: reduce) { .pg-ds .shot[data-m] img { scale: 1; } }
 /* Adentro el menú no lleva fondo: nada corta el escenario. */
 html.is-under .hdr.is-stuck { background: transparent; -webkit-backdrop-filter: none; backdrop-filter: none; box-shadow: none; }

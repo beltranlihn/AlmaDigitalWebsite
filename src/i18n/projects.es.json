@@ -341,48 +341,34 @@
       "Inner Canvas — Barcelona, noviembre de 2026"
     ],
     "specs": {
-      "lead": "Cinco sesiones, cada una con su código. Una sala las pide por su nombre.",
+      "lead": "Cinco prácticas, tomadas de Soul Charger.",
       "rows": [
-        [
-          "UMB–03",
-          "Umbral",
-          "Entrada y salida",
-          "3 min",
-          "1–6"
-        ],
-        [
-          "FOC–10",
-          "Foco",
-          "Atención",
-          "10 min",
-          "1–4"
-        ],
-        [
-          "PRA–15",
-          "Prana",
-          "Respiración guiada en VR",
-          "15 min",
-          "1–6"
-        ],
-        [
-          "RES–15",
-          "Resonancia",
-          "Sonido",
-          "15 min",
-          "1–6"
-        ],
-        [
-          "REP–15",
-          "Reposo",
-          "Descanso profundo",
-          "15 min",
-          "1–2"
-        ]
+        {
+          "name": "Respiración guiada",
+          "what": "Respirar al ritmo de la luz y el sonido."
+        },
+        {
+          "name": "Meditación con el pulso",
+          "what": "La escena se mueve con tu ritmo cardíaco."
+        },
+        {
+          "name": "Mindfulness con neurofeedback",
+          "what": "Tu atención da forma al espacio que te rodea."
+        },
+        {
+          "name": "Dibujo en 3D",
+          "what": "Dibujar con luz, en el espacio."
+        },
+        {
+          "name": "Juegos de bienestar (tacto)",
+          "what": "Jugar estirando la mano y tocando."
+        }
       ]
     },
     "enquire": {
       "text": "¿Quieres verlo en persona?",
       "cta": "Solicitar una demostración privada"
-    }
+    },
+    "creditLine": "Sobre Soul Charger, desarrollado en colaboración con iDeas Lab, del Berman Institute of Bioethics de Johns Hopkins University"
   }
 }

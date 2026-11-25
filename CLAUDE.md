@@ -95,15 +95,17 @@ por defecto en `ICON_BY_FORMAT`. El filtro del índice aparece solo.
 "spinoff"` (la línea "Spin-offs" del índice y "Spin-off" en la ficha). Para que salgan en la portada,
 su slug va en `site.json → world.spinoffs` (no en `featured`): tienen su propio paso después de las obras.
 **`theme`** (opcional, en `projects.json`): una ficha con estética propia. Hoy sólo `"ds"` (Digital
-Sanctuaries): `body.pg-ds`, ver "Temas". **`specs`** (opcional): el catálogo de la obra, una fila por unidad
-(`lead` y `rows: [código, nombre, práctica, duración, aforo]`), después del teléfono. **`enquire`**
+Sanctuaries): `body.pg-ds`, ver "Temas". **`specs`** (opcional): el catálogo de la obra, una tarjeta por
+unidad con su imagen (`lead` y `rows: [{code, name, what, img}]`; en `projects.es.json` van sólo los textos
+y las imágenes salen del inglés), después del teléfono. **`trailer`** (opcional: `of`, `src`, `poster`):
+un video con sonido que arranca recién con un clic, después del catálogo (hoy no lo usa ninguna obra). **`enquire`**
 (opcional): el texto y el botón de consulta de esa ficha, si no le queda "¿Te interesa esta obra?".
 **Sin créditos sobre las fotos** (decisión de Vicente, 2026-11-23: "olvídate de los créditos en las
 fotos, de toda la web"): se quitó `photoCredits` y todo lo que lo mostraba, y también los fotógrafos de
 los créditos de Rito.
 **`website`** (opcional, en `projects.json`): un sitio propio de la obra. Sale como botón ("Visit
 ritodigital.com ↗", texto `pVisit`) bajo el resumen de la ficha, y como enlace al lado de "Entrar a la
-obra" en su parada de la portada (VEATION, Rito Digital y Digital Sanctuaries).
+obra" en su parada de la portada (VEATION y Rito Digital).
 **`wideVideo`** (opcional, en `projects.json`): un video horizontal (16:9, sin audio, 1280×720) en el
 lugar de la imagen ancha de la ficha. Se pide recién cuando se ve y se pausa al salir, como los reels de
 los teléfonos. También es el que se ve al pasar por la obra en el índice si no hay `video`. Hoy, Neural
@@ -630,6 +632,28 @@ desactiva. **No** cambiar nameservers a Cloudflare.
 El fluid sim sigue corriendo con auto-emitters en mobile. Los usuarios de Android no pueden tocar el fondo para emitir fluidos (correcto — el dedo es para el scroll).
 
 ## Historial de sesiones (última al tope)
+
+### 2026-11-25 — Digital Sanctuaries: el catálogo con las fases de Soul Charger (Vicente)
+
+- **Catálogo**: en vez de las cinco unidades con código (UMB, FOC, PRA, RES, REP), las cinco fases de Soul
+  Charger, cada una con un still de la versión 2026 (`fase-*.webp`, 1280×720, 83 KB en total): Breathwork
+  (`06_respiracion_f`), Heart Rate Meditation (`07_latido_b`), Mindfulness with neurofeedback
+  (`08_mind_c`), Drawing in 3D (`10_dibujo_b`) y Wellness Games (Touch) (`09_attracting_b`). Vicente:
+  "da lo mismo los nombres"; los de español son míos (Respiración guiada, Meditación con el pulso…).
+  Tarjetas en una fila de cinco (tres en pantallas medianas, dos en teléfono); un clic abre el still.
+- **Johns Hopkins**: `creditLine` de Digital Sanctuaries ("Built on Soul Charger, developed in
+  collaboration with iDeas Lab, …"): sale en su parada de la portada y bajo el resumen de la ficha. Es
+  decisión de Vicente; antes se había dejado afuera porque la voz de la marca y `_PERMISOS.md` lo pedían.
+- **Tráiler de Soul Charger** en la ficha (`trailer`), después del catálogo: el mismo de
+  `soul-charger.html` (74 s, 1080p, con sonido, 13,8 MB, de la versión antigua). Se pide sólo al darle
+  play; al sonar, la música del sitio se calla sola. **Quitado el mismo día** a pedido de Vicente ("con el catálogo
+  basta"); el campo queda disponible.
+- **Sin enlace a almadigitalsanctuaries.com**, a pedido de Vicente: sale `website` de la ficha y de la
+  portada, y en Studio y en el pie el spin-off enlaza a su ficha (`studio.json → spinoffs[].work`, texto
+  "See the project" / "Ver el proyecto").
+
+**Verificado en Chrome**: la ficha en inglés (catálogo, tráiler reproduciéndose a 1920×1080, crédito) y en
+español a 375 px, sin desbordes ni imágenes rotas; la parada en la portada con el crédito y sin enlace.
 
 ### 2026-11-24 — Repaso antes de publicar (Vicente)
 

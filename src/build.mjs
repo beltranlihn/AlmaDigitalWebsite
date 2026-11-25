@@ -98,7 +98,8 @@ function loc(p, lang) {
     body: same(e.body, p.body) ? e.body : p.body,
     credits: same(e.credits, p.credits) ? e.credits : p.credits,
     presentedAt: same(e.presentedAt, p.presentedAt) ? e.presentedAt : (p.presentedAt || []),
-    specs: e.specs || p.specs,
+    /* El catálogo en español trae sólo los textos: las imágenes de cada fila salen del inglés. */
+    specs: e.specs && p.specs ? { ...p.specs, ...e.specs, rows: p.specs.rows.map((r, i) => ({ ...r, ...((e.specs.rows || [])[i] || {}) })) } : p.specs,
     enquire: e.enquire || p.enquire,
   };
 }
@@ -206,7 +207,8 @@ function contactBand(c) {
 function footer(c) {
   const t = c.t;
   const socials = site.socials.map(s => `<a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.name)}</a>`).join('');
-  const spin = studio.spinoffs.map(s => `<a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.name)}</a>`).join(' · ');
+  /* Un spin-off con ficha propia (work) enlaza a ella; si no, a su sitio (url). */
+  const spin = studio.spinoffs.map(s => s.work ? `<a href="${link(c, `work/${s.work}.html`)}">${esc(s.name)}</a>` : `<a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.name)}</a>`).join(' · ');
   return `<footer class="ftr">
   <div class="ftr__row">
     <p>© ${site.year} Alma Digital Studio · ${esc(t.footerTagline)}</p>
@@ -746,18 +748,32 @@ ${cols}
   const wideMod = p.wideVideo ? `  <div class="pj-m pj-m--wide" data-n="1">
     <figure class="shot shot--video preel" data-m="shot"><video muted loop playsinline preload="none" poster="${asset(c, p.cover)}" data-src="${asset(c, p.wideVideo)}" aria-label="${esc(p.title)}, video"></video></figure>
   </div>` : one('wide', pick.wide);
-  /* El catálogo (projects.json → specs, opcional): una fila por unidad, con su código. Hoy lo usa
-     Digital Sanctuaries. */
-  const specsMod = p.specs && p.specs.rows && p.specs.rows.length ? `  <section class="pj-m pj-specs" data-n="1" aria-labelledby="specs-h">
+  /* El catálogo (projects.json → specs, opcional): una tarjeta por unidad, con su código, su
+     nombre, una línea y su imagen (img). Hoy lo usa Digital Sanctuaries, con las cinco fases de
+     Soul Charger. */
+  const specsMod = p.specs && p.specs.rows && p.specs.rows.length ? `  <section class="pj-m pj-specs" data-n="${p.specs.rows.length}" aria-labelledby="specs-h">
     <div class="pj-specs__head">
       <h2 class="label" id="specs-h">${esc(p.specs.title || t.pCatalogue)}</h2>${p.specs.lead ? `
       <p class="pj-specs__lead">${esc(p.specs.lead)}</p>` : ''}
     </div>
     <ol class="pj-specs__list">
-${p.specs.rows.map(r => `      <li class="pj-specs__row"><span class="pj-specs__code">${esc(r[0])}</span><span class="pj-specs__name">${esc(r[1])}</span><span class="pj-specs__what">${esc(r[2])}</span><span class="pj-specs__dur">${esc(r[3])}</span><span class="pj-specs__cap">${esc(r[4])}</span></li>`).join('\n')}
+${p.specs.rows.map(r => `      <li class="pj-specs__row">${r.img ? `
+        ${shot(r.img, 'pj-specs__img', 'tile').replace(/alt="[^"]*"/, `alt="${esc(r.name)}"`)}` : ''}
+        <span class="pj-specs__code">${esc(r.code || '')}</span>
+        <span class="pj-specs__name">${esc(r.name)}</span>${r.what ? `
+        <span class="pj-specs__what">${esc(r.what)}</span>` : ''}
+      </li>`).join('\n')}
     </ol>
   </section>` : '';
-  const flow = [wideMod, phonesMod, specsMod, wallMod, one('bleed', pick.bleed)].filter(Boolean);
+  /* trailer (projects.json, opcional): un video con sonido que se reproduce recién con un clic
+     (preload="none": no baja nada hasta entonces). Al sonar, js/sound.js calla la música. Hoy, el
+     tráiler de Soul Charger en la ficha de Digital Sanctuaries. */
+  const tr = p.trailer;
+  const trailerMod = tr ? `  <section class="pj-m pj-trailer" data-n="1" aria-labelledby="trailer-h">
+    <h2 class="label" id="trailer-h">${esc(t.pTrailer)}${tr.of ? ` · ${esc(tr.of)}` : ''}</h2>
+    <figure class="shot shot--video pj-trailer__v"><video controls playsinline preload="none" poster="${asset(c, tr.poster || p.cover)}" src="${asset(c, tr.src)}" aria-label="${esc(tr.of || p.title)}, ${esc(t.pTrailer)}"></video></figure>
+  </section>` : '';
+  const flow = [wideMod, phonesMod, specsMod, trailerMod, wallMod, one('bleed', pick.bleed)].filter(Boolean);
   while (queue.length) {
     const pair = queue.splice(0, 2);
     /* Una foto que queda sola no va en un dúo a medias: va ancha. */
@@ -865,13 +881,13 @@ function buildStudio(lang) {
       <p class="label">${esc(m.role[lang] || m.role.en)}</p>
       <h3>${esc(m.name)}</h3>
     </article>`;
-  const spin = s => `    <a class="spin" href="${esc(s.url)}" target="_blank" rel="noopener">
+  const spin = s => `    <a class="spin" href="${s.work ? link(c, `work/${s.work}.html`) : `${esc(s.url)}" target="_blank" rel="noopener`}">
       <img loading="lazy" decoding="async" src="${asset(c, s.image)}" alt="">
       <span class="spin__txt">
         <span class="label">${esc(s.kicker[lang] || s.kicker.en)}</span>
         <b>${esc(s.name)}</b>
         <span class="spin__desc">${esc(s.desc[lang] || s.desc.en)}</span>
-        <span class="more">${esc(t.studioVisit)} <i aria-hidden="true">→</i></span>
+        <span class="more">${esc(s.work ? t.studioSeeWork : t.studioVisit)} <i aria-hidden="true">→</i></span>
       </span>
     </a>`;
 

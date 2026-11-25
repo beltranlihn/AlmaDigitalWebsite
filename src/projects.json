@@ -1150,52 +1150,47 @@
       "year": "",
       "press": [],
       "formatKey": "vr",
-      "website": "https://www.almadigitalsanctuaries.com",
       "theme": "ds",
       "specs": {
-        "lead": "Five sessions, each with its code. A venue orders them by name.",
+        "lead": "Five practices, drawn from Soul Charger.",
         "rows": [
-          [
-            "UMB–03",
-            "Umbral",
-            "Entry and exit",
-            "3 min",
-            "1–6"
-          ],
-          [
-            "FOC–10",
-            "Foco",
-            "Attention",
-            "10 min",
-            "1–4"
-          ],
-          [
-            "PRA–15",
-            "Prana",
-            "Guided breathing in VR",
-            "15 min",
-            "1–6"
-          ],
-          [
-            "RES–15",
-            "Resonancia",
-            "Sound",
-            "15 min",
-            "1–6"
-          ],
-          [
-            "REP–15",
-            "Reposo",
-            "Deep rest",
-            "15 min",
-            "1–2"
-          ]
+          {
+            "code": "01",
+            "name": "Breathwork",
+            "what": "Breathing guided by light and sound.",
+            "img": "Asset/Studio Projects/Digital Sanctuaries/fase-breathwork.webp"
+          },
+          {
+            "code": "02",
+            "name": "Heart Rate Meditation",
+            "what": "The scene moves with your heart rate.",
+            "img": "Asset/Studio Projects/Digital Sanctuaries/fase-heart-rate.webp"
+          },
+          {
+            "code": "03",
+            "name": "Mindfulness with neurofeedback",
+            "what": "Your attention shapes the space around you.",
+            "img": "Asset/Studio Projects/Digital Sanctuaries/fase-mindfulness.webp"
+          },
+          {
+            "code": "04",
+            "name": "Drawing in 3D",
+            "what": "Drawing with light, in space.",
+            "img": "Asset/Studio Projects/Digital Sanctuaries/fase-drawing.webp"
+          },
+          {
+            "code": "05",
+            "name": "Wellness Games (Touch)",
+            "what": "Play by reaching out and touching.",
+            "img": "Asset/Studio Projects/Digital Sanctuaries/fase-games.webp"
+          }
         ]
       },
       "enquire": {
         "text": "Want to see it in person?",
         "cta": "Request a private demonstration"
-      }
+      },
+      "creditLine": "Built on Soul Charger, developed in collaboration with iDeas Lab, Johns Hopkins University's Berman Institute of Bioethics"
     }
   ]
 }
