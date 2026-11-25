@@ -1,0 +1,100 @@
+{
+  "about": {
+    "en": [
+      "Alma Digital is an immersive wellness art studio that creates multimedia experiences at the intersection of audiovisual art, live music, immersive storytelling, and XR.",
+      "We design new media environments that merge art, technology, science, and spirituality, supporting well-being and inner exploration."
+    ],
+    "es": [
+      "Alma Digital es un estudio de arte inmersivo dedicado al bienestar que crea experiencias multimedia en la intersección del arte audiovisual, la música en vivo, la narrativa inmersiva y la XR.",
+      "Diseñamos entornos de nuevos medios que fusionan arte, tecnología, ciencia y espiritualidad, y que favorecen el bienestar y la exploración interior."
+    ]
+  },
+  "team": [
+    {
+      "id": "vicente-manzano",
+      "name": "Vicente Manzano",
+      "photo": "Asset/Foto Equipo/1_Foto Vicente.webp",
+      "founder": true,
+      "role": {
+        "en": "Founder & Creative Director",
+        "es": "Fundador y director creativo"
+      },
+      "bio": {
+        "en": "Vicente Manzano is a multidisciplinary artist with a background in film direction and production. He earned his BFA in Filmmaking from NYFA in Los Angeles, California, and has developed in the fields of music production and digital art. His innovative approach, holistic vision, and passion for immersive storytelling led him to found Alma Digital, where he continues to explore and redefine the intersection of art and technology.",
+        "es": "Vicente Manzano es un artista multidisciplinario con formación en dirección y producción de cine. Obtuvo su BFA en Cine en NYFA, en Los Ángeles, California, y se ha desarrollado en los campos de la producción musical y el arte digital. Su enfoque innovador, su visión holística y su pasión por la narrativa inmersiva lo llevaron a fundar Alma Digital, donde continúa explorando y redefiniendo la intersección entre arte y tecnología."
+      }
+    },
+    {
+      "id": "beltran-lihn",
+      "name": "Beltran Lihn",
+      "photo": "Asset/Foto Equipo/2_Foto Beltran.webp",
+      "founder": true,
+      "role": {
+        "en": "Co-founder & Creative Technologist Director",
+        "es": "Cofundador y director de tecnología creativa"
+      },
+      "bio": {
+        "en": "With a background as an architect and a Master's degree from the Pontifical Catholic University of Chile, he brings a unique perspective to his projects, blending his skills as a music producer and 3D artist. His work is driven by a passion for interdisciplinary collaboration, sound design, and the integration of diverse tools to visualize compelling narratives.",
+        "es": "Arquitecto de formación y con un magíster de la Pontificia Universidad Católica de Chile, aporta una perspectiva única a sus proyectos al combinar sus habilidades como productor musical y artista 3D. Su trabajo nace de la pasión por la colaboración interdisciplinaria, el diseño sonoro y la integración de diversas herramientas para visualizar narrativas cautivadoras."
+      }
+    },
+    {
+      "id": "nico-pirelli",
+      "name": "Nico Pirelli",
+      "photo": "Asset/Foto Equipo/Foto Nico.webp",
+      "founder": false,
+      "role": {
+        "en": "Software Developer",
+        "es": "Desarrollador de software"
+      },
+      "bio": {
+        "en": "",
+        "es": ""
+      }
+    },
+    {
+      "id": "chris-alvarez",
+      "name": "Chris Alvarez",
+      "photo": "Asset/Foto Equipo/Foto Chris.webp",
+      "founder": false,
+      "role": {
+        "en": "Event Production Manager",
+        "es": "Responsable de producción de eventos"
+      },
+      "bio": {
+        "en": "",
+        "es": ""
+      }
+    },
+    {
+      "id": "patricio-cerda",
+      "name": "Patricio Cerda",
+      "photo": "Asset/Foto Equipo/Foto Pato.webp",
+      "founder": false,
+      "role": {
+        "en": "AI & Machine Learning Advisor",
+        "es": "Asesor en IA y machine learning"
+      },
+      "bio": {
+        "en": "",
+        "es": ""
+      }
+    }
+  ],
+  "spinoffs": [
+    {
+      "id": "digital-sanctuary",
+      "name": "Digital Sanctuaries",
+      "url": "https://www.almadigitalsanctuaries.com",
+      "image": "Asset/Spin OFF/Digital Sanctuary.webp",
+      "kicker": {
+        "en": "Immersive Wellness",
+        "es": "Bienestar inmersivo"
+      },
+      "desc": {
+        "en": "Digital Sanctuaries are immersive wellness environments where biofeedback technology and neuroaesthetic design work together to regulate your nervous system.",
+        "es": "Los Digital Sanctuaries son entornos inmersivos de bienestar donde la tecnología de biofeedback y el diseño neuroestético trabajan en conjunto para regular el sistema nervioso."
+      }
+    }
+  ]
+}

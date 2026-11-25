@@ -1,7 +1,9 @@
 # Alma Digital Studio — sitio web
 
-Código de [almadigitalstudio.com](https://almadigitalstudio.com). HTML, CSS y JS puros,
-sin framework ni build: `index.html` (home) y `soul-charger.html` (página de Soul Charger).
+Código de [almadigitalstudio.com](https://almadigitalstudio.com). HTML, CSS y JS puros, sin
+framework. Las páginas se generan desde archivos de datos con un script de Node y se guardan
+ya generadas en el repo: landing, índice de obras, una ficha por obra y Studio, en inglés y
+en español (`/es/`).
 
 Todo el contexto técnico —decisiones tomadas, módulos que no se tocan, convenciones de
 assets, cómo se publica— está en [`CLAUDE.md`](CLAUDE.md). Claude Code lo lee solo al
@@ -10,11 +12,30 @@ abrir el proyecto.
 ## Ver la web en tu computadora
 
 ```bash
-python -m http.server 5599
+python3 -m http.server 5599
 ```
 
-y abrir <http://localhost:5599>. Con Claude Code en la app de escritorio, el preview
-ya está configurado en `.claude/launch.json`.
+y abrir <http://localhost:5599>. En Windows el comando es `python` en vez de `python3`.
+
+## Cambiar un texto, una obra o el diseño
+
+Se edita la **fuente**, nunca los `.html` generados (se pisan):
+
+| Qué | Dónde |
+|---|---|
+| Titular del hero, textos de interfaz, clientes, obras destacadas | `src/site.json` |
+| Una obra (textos, créditos, sedes, fotos) | `src/projects.json` y `src/i18n/projects.es.json` |
+| Equipo, spin-offs, texto "about" | `src/i18n/studio.json` |
+| Cómo se arma cada página | `src/build.mjs` |
+| Colores, tipografía, layout | `css/site.css` |
+
+Después se regenera y se prueba:
+
+```bash
+node src/build.mjs
+```
+
+Se commitean juntos la fuente y el HTML generado.
 
 ## Cómo publicar un cambio
 
@@ -35,17 +56,18 @@ Juntá varios arreglos en un mismo pull request en vez de publicar uno por uno.
 git pull
 ```
 
-Casi todo el sitio vive en un solo archivo (`index.html`, ~4.800 líneas). Si los dos
-lo editan a la vez, avisense qué parte toca cada uno.
-
 ## Qué hay en el repo
 
 | | |
 |---|---|
-| `index.html`, `soul-charger.html` | Las dos páginas. |
+| `src/` | Fuente del sitio: generador y datos. No se publica. |
+| `index.html`, `studio.html`, `work/`, `es/`, `sitemap.xml` | Generados por `src/build.mjs`. No editar a mano. |
+| `soul-charger.html` | Página dedicada a Soul Charger, hecha a mano. |
+| `css/`, `js/` | Estilos y scripts. `js/fluid.js` y `js/cursor.js` son módulos cerrados. |
 | `Asset/` | Imágenes, videos y fuentes. También archivos de trabajo (`.docx`, `.ai`) que **no** se publican. |
 | `_masters/` | Originales sin comprimir de lo que se recomprimió. No se publica. |
-| `tools/deploy_copy.py` | Decide qué se publica: sólo lo que las páginas usan. |
-| `netlify.toml` | Le dice a Netlify que corra ese script. |
+| `tools/deploy_copy.py` | Decide qué se publica: sólo lo que las páginas usan. Lo corre Netlify. |
+| `tools/make_share_images.py` | Genera las imágenes 1200×630 que se ven al compartir un link. |
+| `netlify.toml` | Le dice a Netlify que corra `deploy_copy.py`. |
 | `robots.txt` | Bloquea bots y scrapers. |
-| `prototype/` | Prototipo de rediseño descartado. Su `projects.json` tiene los datos de los 19 proyectos ordenados. No se publica. |
+| `prototype/` | Prototipo del que salió la estructura actual. No se publica. |

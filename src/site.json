@@ -1,0 +1,745 @@
+{
+  "origin": "https://almadigitalstudio.com",
+  "email": "vicente@almadigitalstudio.com",
+  "formspree": "https://formspree.io/f/xkopqoyl",
+  "analyticsToken": "ee88c2886dd4410694851f5bfea47a74",
+  "year": 2026,
+  "socials": [
+    {
+      "name": "Instagram",
+      "url": "https://www.instagram.com/alma.digital.studio/"
+    },
+    {
+      "name": "LinkedIn",
+      "url": "https://www.linkedin.com/company/almadigitalstudio/"
+    },
+    {
+      "name": "Spotify",
+      "url": "https://open.spotify.com/intl-es/artist/2wHtuSMLUK3lt4ebGX9Kr5?si=sFQtnk_JTIuD7qp1kATiMg"
+    }
+  ],
+  "featured": [
+    "soul-charger",
+    "collective-pulse",
+    "neurocosm-full-dome",
+    "veation",
+    "pacha-ibiza",
+    "rito-digital"
+  ],
+  "perProjectPalette": false,
+  "reelAutoplayOnView": false,
+  "breathing": false,
+  "world": {
+    "enabled": true,
+    "works": [],
+    "stops": "galaxy",
+    "icons": {
+      "soul-charger": "headset",
+      "veation": "editor",
+      "collective-pulse": "pulse",
+      "neurocosm-full-dome": "dome",
+      "pacha-ibiza": "room"
+    },
+    "reel": {
+      "src": "Asset/Reel Portfolio/Reel Flotante.mp4",
+      "srcMobile": "Asset/Reel Portfolio/Reel Flotante Vertical.mp4"
+    },
+    "spinoffs": [
+      "digital-sanctuaries"
+    ],
+    "labels": {
+      "soul-charger": {
+        "en": "VR",
+        "es": "VR"
+      },
+      "collective-pulse": {
+        "en": "XR",
+        "es": "XR"
+      },
+      "neurocosm-full-dome": {
+        "en": "Fulldome",
+        "es": "Fulldome"
+      },
+      "rito-digital": {
+        "en": "Live audiovisual performance",
+        "es": "Performance audiovisual en vivo"
+      },
+      "pacha-ibiza": {
+        "en": "Commission",
+        "es": "Encargo"
+      },
+      "veation": {
+        "en": "Software",
+        "es": "Software"
+      }
+    },
+    "forms": {
+      "digital-sanctuaries": {
+        "formation": "halo",
+        "stage": "#0a0a09",
+        "colors": [
+          "#f2f0ec",
+          "#8e8d88",
+          "#3e7bd6",
+          "#f2f0ec"
+        ]
+      },
+      "neurocosm-full-dome": {
+        "formation": "dome",
+        "stage": "#080a26",
+        "colors": [
+          "#101a5e",
+          "#1f3aa8",
+          "#5a2bb0",
+          "#8b5cf0",
+          "#3d6dff"
+        ]
+      },
+      "soul-charger": {
+        "formation": "halo",
+        "stage": "#140609",
+        "colors": [
+          "#ff7a59",
+          "#ffb199",
+          "#ff4f6d",
+          "#ffd6c2",
+          "#ffffff"
+        ]
+      }
+    }
+  },
+  "sound": {
+    "enabled": true,
+    "src": "Asset/Audio/breath-loop.m4a",
+    "level": 0.55
+  },
+  "particles": {
+    "veation": {
+      "formation": "grid",
+      "stage": "#0e0e12",
+      "colors": [
+        "#e0e0e0",
+        "#e5b567",
+        "#7f8cff",
+        "#c77de6",
+        "#e0e0e0",
+        "#a9a9b8"
+      ]
+    },
+    "neurocosm-xr": {
+      "formation": "attractor",
+      "stage": "#05060f",
+      "colors": [
+        "#6ea8ff",
+        "#3d6bff",
+        "#b9d2ff",
+        "#ffffff",
+        "#7a5cf2"
+      ]
+    },
+    "collective-pulse": {
+      "formation": "pulse",
+      "stage": "#0b0a1c",
+      "colors": [
+        "#ff8fb1",
+        "#ffd166",
+        "#7ad7f0",
+        "#b48cff",
+        "#8ef0c2",
+        "#ffffff"
+      ]
+    },
+    "soul-charger": {
+      "formation": "halo",
+      "stage": "#160e1c",
+      "colors": [
+        "#f3c27a",
+        "#cba0fb",
+        "#f6b2c4",
+        "#fff1d6",
+        "#9fb6ff"
+      ]
+    },
+    "neural-canvas": {
+      "formation": "strokes",
+      "stage": "#04052b",
+      "colors": [
+        "#ff8a3d",
+        "#ffb469",
+        "#3f6bff",
+        "#8fb0ff",
+        "#ffffff"
+      ]
+    },
+    "neurocosm-full-dome": {
+      "formation": "dome",
+      "stage": "#1c0707",
+      "colors": [
+        "#ff5a3c",
+        "#ff9a6b",
+        "#ffd0b0",
+        "#ffffff"
+      ]
+    },
+    "pacha-ibiza": {
+      "formation": "wave",
+      "stage": "#1d0722",
+      "colors": [
+        "#ff4fa0",
+        "#ff8fc8",
+        "#b48cff",
+        "#ffffff"
+      ]
+    },
+    "neurocosm-360": {
+      "formation": "attractor",
+      "stage": "#170609",
+      "colors": [
+        "#db3653",
+        "#ff7a59",
+        "#ffbcc8",
+        "#ffffff",
+        "#7a5cf2"
+      ]
+    },
+    "mapping-mediamorfosis": {
+      "formation": "strokes",
+      "stage": "#0a0b1f",
+      "colors": [
+        "#49dbd5",
+        "#a144db",
+        "#71b2db",
+        "#c5fffc",
+        "#ffffff"
+      ]
+    },
+    "alma-digital-fest": {
+      "formation": "wave",
+      "stage": "#0e0c1c",
+      "colors": [
+        "#806cdb",
+        "#c99ef9",
+        "#f2b8dd",
+        "#d9d1ff",
+        "#ffffff"
+      ]
+    },
+    "pixel-liquido": {
+      "formation": "strokes",
+      "stage": "#060f1c",
+      "colors": [
+        "#2d8bdb",
+        "#446ddb",
+        "#ff7fee",
+        "#b8dfff",
+        "#ffffff"
+      ]
+    },
+    "digital-prana": {
+      "formation": "halo",
+      "stage": "#0b081c",
+      "colors": [
+        "#6a4be9",
+        "#9a7bff",
+        "#f2b8dd",
+        "#d0c4ff",
+        "#ffffff"
+      ]
+    },
+    "alma-digital-360": {
+      "formation": "wave",
+      "stage": "#170b10",
+      "colors": [
+        "#db5f6e",
+        "#ff9a6b",
+        "#b48cff",
+        "#ffcfd5",
+        "#ffffff"
+      ]
+    },
+    "my2drops": {
+      "formation": "wave",
+      "stage": "#080c1c",
+      "colors": [
+        "#4873db",
+        "#62b993",
+        "#7ad7f0",
+        "#c4d6ff",
+        "#ffffff"
+      ]
+    },
+    "fashion-show-micsur": {
+      "formation": "strokes",
+      "stage": "#0b1417",
+      "colors": [
+        "#84dbc0",
+        "#5b8def",
+        "#f2b8dd",
+        "#d1fff0",
+        "#ffffff"
+      ]
+    },
+    "adidas-terrex": {
+      "formation": "attractor",
+      "stage": "#14110a",
+      "colors": [
+        "#dbd3b1",
+        "#ffb469",
+        "#fff5d1",
+        "#ffffff",
+        "#8a7a55"
+      ]
+    },
+    "panta-rhei": {
+      "formation": "strokes",
+      "stage": "#080d1c",
+      "colors": [
+        "#5183db",
+        "#4065db",
+        "#7ad7f0",
+        "#c9dcff",
+        "#ffffff"
+      ]
+    },
+    "eit-culture-and-creativity": {
+      "formation": "pulse",
+      "stage": "#170610",
+      "colors": [
+        "#db1752",
+        "#ff8a3d",
+        "#5b8def",
+        "#ffaec7",
+        "#ffffff"
+      ]
+    },
+    "latam-airlines": {
+      "formation": "attractor",
+      "stage": "#060a1c",
+      "colors": [
+        "#2a53db",
+        "#db0ca6",
+        "#7943db",
+        "#b7c7ff",
+        "#ffffff"
+      ]
+    },
+    "lps": {
+      "formation": "dome",
+      "stage": "#06081c",
+      "colors": [
+        "#233ddb",
+        "#7a5cf2",
+        "#f0a070",
+        "#b4beff",
+        "#ffffff"
+      ]
+    },
+    "rito-digital": {
+      "formation": "pulse",
+      "stage": "#120607",
+      "colors": [
+        "#d4281f",
+        "#efe7dc",
+        "#b8642e",
+        "#ff6a3d",
+        "#7a1410"
+      ]
+    }
+  },
+  "legacyPages": {
+    "soul-charger": "soul-charger.html"
+  },
+  "formats": {
+    "vr": {
+      "en": "VR / XR",
+      "es": "VR / XR"
+    },
+    "installation": {
+      "en": "Installation",
+      "es": "Instalación"
+    },
+    "dome": {
+      "en": "Dome / 360°",
+      "es": "Domo / 360°"
+    },
+    "mapping": {
+      "en": "Mapping",
+      "es": "Mapping"
+    },
+    "performance": {
+      "en": "Performance",
+      "es": "Performance"
+    },
+    "design": {
+      "en": "Immersive design",
+      "es": "Diseño inmersivo"
+    },
+    "software": {
+      "en": "Software",
+      "es": "Software"
+    }
+  },
+  "tracks": {
+    "studio": {
+      "en": "Studio projects",
+      "es": "Obra propia"
+    },
+    "commission": {
+      "en": "Commissions",
+      "es": "Encargos"
+    },
+    "spinoff": {
+      "en": "Spin-offs",
+      "es": "Spin-offs"
+    }
+  },
+  "formatsDesc": {
+    "vr": {
+      "en": "Virtual reality pieces and 360° films, from interactive painting to guided biofeedback journeys.",
+      "es": "Piezas de realidad virtual y películas 360°, desde pintura interactiva hasta recorridos guiados con biofeedback."
+    },
+    "installation": {
+      "en": "Interactive installations that respond to the body: pulse, brain activity, breath and movement.",
+      "es": "Instalaciones interactivas que responden al cuerpo: pulso, actividad cerebral, respiración y movimiento."
+    },
+    "dome": {
+      "en": "Fulldome and 360° shows for domes and immersive rooms.",
+      "es": "Experiencias fulldome y 360° para domos y salas inmersivas."
+    },
+    "mapping": {
+      "en": "Large-scale projection mapping on architecture.",
+      "es": "Mapping de gran formato sobre arquitectura."
+    },
+    "performance": {
+      "en": "Live audiovisual performances and festivals with spatial sound.",
+      "es": "Performances audiovisuales en vivo y festivales con sonido espacial."
+    },
+    "design": {
+      "en": "Immersive design and visuals for events, brands and venues.",
+      "es": "Diseño y visuales inmersivos para eventos, marcas y espacios."
+    },
+    "software": {
+      "en": "Tools we build for immersive creation, born from our own work in domes and 360 rooms.",
+      "es": "Herramientas que creamos para la creación inmersiva, nacidas de nuestro propio trabajo en domos y salas 360."
+    }
+  },
+  "techEn": {
+    "Tiempo real": "Real-time",
+    "Sensor de pulso": "Pulse sensor",
+    "Visuales generativas": "Generative visuals",
+    "IA": "AI",
+    "Sonido inmersivo": "Immersive sound",
+    "Sensores de movimiento": "Motion sensors",
+    "Sala 360": "360 room",
+    "Efectos GPU": "GPU effects",
+    "Audiorreactivo": "Audio-reactive",
+    "Set en vivo": "Live set",
+    "Sonido espacial": "Spatial sound",
+    "Respiración guiada": "Guided breathing"
+  },
+  "proof": [
+    "IDB",
+    "EUIPO",
+    "Johns Hopkins",
+    "New Images Festival",
+    "Adidas",
+    "LATAM Airlines",
+    "Pacha Ibiza"
+  ],
+  "clients": {
+    "institutions": [
+      "IDB · ArtLac Gallery, Washington DC",
+      "EUIPO, Alicante",
+      "Johns Hopkins Berman Institute of Bioethics",
+      "New Images Festival, Paris",
+      "Museo de Arte Contemporáneo, Santiago",
+      "Full Dome Festival, Santiago & Montevideo",
+      "Festival Mediamorfosis, Viña del Mar",
+      "CRITIC Fest, Santiago",
+      "Cult VR, Cardiff",
+      "IDEAL Digital Center, Barcelona",
+      "Sabda Studio, Barcelona"
+    ],
+    "brands": [
+      "Adidas Terrex",
+      "LATAM Airlines",
+      "Pacha Ibiza",
+      "EIT Culture & Creativity",
+      "Ministry of Cultures, Arts & Heritage of Chile",
+      "my2DROPS",
+      "Lavinia Next"
+    ],
+    "award": {
+      "en": "Pitch XR Winner at Mediamorfosis Fest Chile",
+      "es": "Ganador del Pitch XR en Mediamorfosis Fest Chile"
+    }
+  },
+  "t": {
+    "en": {
+      "langName": "English",
+      "otherLang": "ES",
+      "otherLangLabel": "Ver en español",
+      "skip": "Skip to content",
+      "siteTitle": "Alma Digital Studio — Immersive Wellness Art Studio",
+      "siteDesc": "Alma Digital is an immersive wellness art studio that creates multimedia experiences at the intersection of audiovisual art, live music, immersive storytelling, and XR.",
+      "ogDesc": "Immersive Art Studio — Creating multimedia experiences at the intersection of audiovisual art, live music and immersive storytelling.",
+      "navWork": "Work",
+      "navStudio": "Studio",
+      "navContact": "Contact",
+      "homeLabel": "Alma Digital Studio, home",
+      "heroEyebrow": "Immersive wellness art studio",
+      "heroTitle": "We are an *immersive* art studio.",
+      "heroLead": "We create interactive and immersive experiences that merge art, science and technology to support well-being and inner exploration.",
+      "heroProof": "Presented at and commissioned by",
+      "heroCtaWork": "See the work",
+      "heroCtaContact": "Start a project",
+      "amebaLabel": "The Alma Digital amoeba: a soft violet form that breathes, turns with the pointer and changes shape as you scroll",
+      "reelTitle": "Reel",
+      "reelSound": "Watch with sound",
+      "reelMute": "Mute",
+      "reelUnmute": "Sound on",
+      "reelClose": "Close video",
+      "selectedTitle": "Selected *works*",
+      "selectedAll": "All {n} works",
+      "clientsTitle": "Who we have *worked with*",
+      "clientsInstitutions": "Institutions and festivals",
+      "clientsBrands": "Brands and commissioners",
+      "clientsAward": "Recognition",
+      "contactTitle": "Let's create *something*.",
+      "contactCta": "Get in touch",
+      "contactOr": "or write to",
+      "footerTagline": "Immersive wellness art studio",
+      "footerAlso": "Also from the studio",
+      "studioTitle": "Studio",
+      "studioDesc": "The people behind Alma Digital Studio, what we believe in and the projects born from the studio.",
+      "studioTeam": "The team",
+      "studioJoin": "This could be you.",
+      "studioJoinCta": "Write to us",
+      "studioSpinoffs": "Spin-offs",
+      "studioVisit": "Visit site",
+      "indexTitle": "Work",
+      "indexDesc": "Studio projects and commissions by Alma Digital Studio: VR, fulldome, projection mapping, interactive installations and immersive design.",
+      "indexCount": "{n} works",
+      "indexCountOne": "1 work",
+      "indexAll": "Selected works",
+      "filterLine": "Line",
+      "filterFormat": "Format",
+      "filterAll": "All",
+      "indexEmpty": "No works match those filters.",
+      "indexHover": "Hover a work",
+      "pStudio": "Studio project",
+      "pCommission": "Commission",
+      "pSheet": "Technical sheet",
+      "pOverview": "Overview",
+      "pFormat": "Format",
+      "pLine": "Line",
+      "pYear": "Year",
+      "pTech": "Technology",
+      "pCommissionedBy": "Commissioned by",
+      "pVenues": "Presented at",
+      "pConcept": "Concept",
+      "pGallery": "Gallery",
+      "pImage": "image",
+      "pReel": "Reel",
+      "pCredits": "Credits",
+      "pHistory": "Exhibition history",
+      "pNext": "Next",
+      "pEnquire": "Interested in this work?",
+      "pEnquireCta": "Enquire about it",
+      "pPage": "Visit the project page",
+      "pBack": "All works",
+      "modalTitle": "Get in touch",
+      "modalSub": "We'll get back to you as soon as possible. You can also write to",
+      "modalName": "Name",
+      "modalEmail": "Email",
+      "modalMessage": "Message",
+      "modalNamePh": "Your name",
+      "modalEmailPh": "your@email.com",
+      "modalMessagePh": "Tell us about your project…",
+      "modalSend": "Send message",
+      "modalSending": "Sending…",
+      "modalSent": "Sent",
+      "modalOk": "Thanks, your message was sent. We'll get back to you soon.",
+      "modalFail": "Your message couldn't be sent. Please try again, or write to",
+      "modalFill": "Please fill in all fields.",
+      "modalBadEmail": "Please enter a valid email address.",
+      "modalClose": "Close",
+      "modalAbout": "About",
+      "lbClose": "Close",
+      "lbPrev": "Previous",
+      "lbNext": "Next",
+      "lbZoom": "Zoom",
+      "lbZoomOut": "Zoom out",
+      "lbHint": "← → to navigate · Esc to close",
+      "lbLabel": "Enlarged gallery",
+      "reelPlay": "Play the reel",
+      "breathStart": "Breathe with it",
+      "breathStop": "Stop",
+      "breathIn": "Breathe in",
+      "breathOut": "Breathe out",
+      "breathEnd": "Thank you for breathing with us.",
+      "breathLabel": "One-minute guided breathing with the amoeba",
+      "manifestoLabel": "What moves us",
+      "manifestoMore": "Meet the studio",
+      "discTitle": "What we *do*",
+      "discHover": "Hover a format",
+      "credsPause": "Pause",
+      "credsPlay": "Play",
+      "contactCommission": "Commission a project",
+      "contactCommissionSubject": "Commission",
+      "contactFestival": "Festivals and press",
+      "contactFestivalSubject": "Festival or press",
+      "soundLabel": "Sound",
+      "worldTitle": "Enter the *inner* world.",
+      "worldHint": "Scroll to travel",
+      "worldOpen": "Enter the work",
+      "worldEndTitle": "There is *more* inside.",
+      "worldEndAll": "See the selected works",
+      "worldEndLead": "Selected works across VR, fulldome, projection mapping and biofeedback, and the studio behind them.",
+      "worldEndStudio": "About the studio",
+      "worldStoryLabel": "The studio",
+      "worldListLabel": "Works in this journey",
+      "worldWhere": "Presented at",
+      "worldTech": "Technology",
+      "pParticlesHint": "Drag to turn · Click to scatter",
+      "pParticlesHintTouch": "Swipe to turn · Tap to scatter",
+      "pSpinoff": "Spin-off",
+      "spinTitle": "Studio *spin-offs*",
+      "pVisit": "Visit",
+      "pCatalogue": "The catalogue"
+    },
+    "es": {
+      "langName": "Español",
+      "otherLang": "EN",
+      "otherLangLabel": "View in English",
+      "skip": "Saltar al contenido",
+      "siteTitle": "Alma Digital Studio — Estudio de arte inmersivo y bienestar",
+      "siteDesc": "Alma Digital es un estudio de arte inmersivo y bienestar que crea experiencias multimedia en el cruce entre arte audiovisual, música en vivo, narrativa inmersiva y XR.",
+      "ogDesc": "Estudio de arte inmersivo. Experiencias multimedia en el cruce entre arte audiovisual, música en vivo y narrativa inmersiva.",
+      "navWork": "Obras",
+      "navStudio": "Estudio",
+      "navContact": "Contacto",
+      "homeLabel": "Alma Digital Studio, inicio",
+      "heroEyebrow": "Estudio de arte inmersivo y bienestar",
+      "heroTitle": "Somos un estudio de arte *inmersivo*.",
+      "heroLead": "Creamos experiencias interactivas e inmersivas que unen arte, ciencia y tecnología para acompañar el bienestar y la exploración interior.",
+      "heroProof": "Presentado en y encargado por",
+      "heroCtaWork": "Ver las obras",
+      "heroCtaContact": "Comenzar un proyecto",
+      "amebaLabel": "La ameba de Alma Digital: una forma violeta y blanda que respira, gira con el puntero y cambia de forma con el scroll",
+      "reelTitle": "Reel",
+      "reelSound": "Ver con sonido",
+      "reelMute": "Silenciar",
+      "reelUnmute": "Activar sonido",
+      "reelClose": "Cerrar video",
+      "selectedTitle": "Obras *seleccionadas*",
+      "selectedAll": "Las {n} obras",
+      "clientsTitle": "Con quién hemos *trabajado*",
+      "clientsInstitutions": "Instituciones y festivales",
+      "clientsBrands": "Marcas y encargos",
+      "clientsAward": "Reconocimiento",
+      "contactTitle": "Creemos algo *juntos*.",
+      "contactCta": "Escríbenos",
+      "contactOr": "o escribe a",
+      "footerTagline": "Estudio de arte inmersivo y bienestar",
+      "footerAlso": "También del estudio",
+      "studioTitle": "Estudio",
+      "studioDesc": "Las personas detrás de Alma Digital Studio, lo que nos mueve y los proyectos que nacieron del estudio.",
+      "studioTeam": "El equipo",
+      "studioJoin": "Aquí podrías estar tú.",
+      "studioJoinCta": "Escríbenos",
+      "studioSpinoffs": "Spin-offs",
+      "studioVisit": "Visitar sitio",
+      "indexTitle": "Obras",
+      "indexDesc": "Obra propia y encargos de Alma Digital Studio: VR, fulldome, mapping, instalaciones interactivas y diseño inmersivo.",
+      "indexCount": "{n} obras",
+      "indexCountOne": "1 obra",
+      "indexAll": "Obras seleccionadas",
+      "filterLine": "Línea",
+      "filterFormat": "Formato",
+      "filterAll": "Todo",
+      "indexEmpty": "No hay obras con esos filtros.",
+      "indexHover": "Pasa por una obra",
+      "pStudio": "Obra propia",
+      "pCommission": "Encargo",
+      "pSheet": "Ficha técnica",
+      "pOverview": "La obra",
+      "pFormat": "Formato",
+      "pLine": "Línea",
+      "pYear": "Año",
+      "pTech": "Tecnología",
+      "pCommissionedBy": "Encargado por",
+      "pVenues": "Presentado en",
+      "pConcept": "Concepto",
+      "pGallery": "Registro",
+      "pImage": "imagen",
+      "pReel": "Reel",
+      "pCredits": "Créditos",
+      "pHistory": "Historial de exhibición",
+      "pNext": "Siguiente",
+      "pEnquire": "¿Te interesa esta obra?",
+      "pEnquireCta": "Consultar por ella",
+      "pPage": "Ver la página del proyecto",
+      "pBack": "Todas las obras",
+      "modalTitle": "Escríbenos",
+      "modalSub": "Te responderemos lo antes posible. También puedes escribir a",
+      "modalName": "Nombre",
+      "modalEmail": "Correo",
+      "modalMessage": "Mensaje",
+      "modalNamePh": "Tu nombre",
+      "modalEmailPh": "tu@correo.com",
+      "modalMessagePh": "Cuéntanos sobre tu proyecto…",
+      "modalSend": "Enviar mensaje",
+      "modalSending": "Enviando…",
+      "modalSent": "Enviado",
+      "modalOk": "Gracias, tu mensaje fue enviado. Te responderemos pronto.",
+      "modalFail": "No se pudo enviar tu mensaje. Inténtalo de nuevo o escribe a",
+      "modalFill": "Completa todos los campos.",
+      "modalBadEmail": "Ingresa un correo válido.",
+      "modalClose": "Cerrar",
+      "modalAbout": "Sobre",
+      "lbClose": "Cerrar",
+      "lbPrev": "Anterior",
+      "lbNext": "Siguiente",
+      "lbZoom": "Zoom",
+      "lbZoomOut": "Alejar",
+      "lbHint": "← → para navegar · Esc para salir",
+      "lbLabel": "Galería ampliada",
+      "reelPlay": "Ver el reel",
+      "breathStart": "Respira con ella",
+      "breathStop": "Detener",
+      "breathIn": "Inhala",
+      "breathOut": "Exhala",
+      "breathEnd": "Gracias por respirar con nosotros.",
+      "breathLabel": "Un minuto de respiración guiada con la ameba",
+      "manifestoLabel": "Lo que nos mueve",
+      "manifestoMore": "Conoce el estudio",
+      "discTitle": "Lo que *hacemos*",
+      "discHover": "Pasa por un formato",
+      "credsPause": "Pausar",
+      "credsPlay": "Reanudar",
+      "contactCommission": "Encargar un proyecto",
+      "contactCommissionSubject": "Encargo",
+      "contactFestival": "Festivales y prensa",
+      "contactFestivalSubject": "Festival o prensa",
+      "soundLabel": "Sonido",
+      "worldTitle": "Entra al mundo *interior*.",
+      "worldHint": "Haz scroll para avanzar",
+      "worldOpen": "Entrar a la obra",
+      "worldEndTitle": "Hay *más* adentro.",
+      "worldEndAll": "Ver las obras seleccionadas",
+      "worldEndLead": "Obras seleccionadas entre VR, fulldome, mapping y biofeedback, y el estudio detrás de ellas.",
+      "worldEndStudio": "Conocer el estudio",
+      "worldStoryLabel": "El estudio",
+      "worldListLabel": "Obras del recorrido",
+      "worldWhere": "Presentada en",
+      "worldTech": "Tecnología",
+      "pParticlesHint": "Arrastra para girar · Clic para dispersar",
+      "pParticlesHintTouch": "Desliza para girar · Toca para dispersar",
+      "pSpinoff": "Spin-off",
+      "spinTitle": "Spin-offs *del estudio*",
+      "pVisit": "Visitar",
+      "pCatalogue": "El catálogo"
+    }
+  }
+}

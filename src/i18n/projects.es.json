@@ -1,0 +1,388 @@
+{
+  "veation": {
+    "format": "Software de edición de video inmersivo",
+    "desc": "Fulldome, salas 360 y pantallas planas en una sola línea de tiempo, editados en su formato final y en tiempo real. VEATION es el editor que el estudio construyó para su propia obra inmersiva y hoy está en beta privada con estudios, artistas y salas de ocho países.",
+    "body": [
+      "VEATION es el software de edición de video inmersivo de Alma Digital Studio. El fulldome, las salas 360 y las pantallas planas comparten una misma línea de tiempo, y la obra se edita en su formato final, en tiempo real.",
+      "Cada show de domo que hicimos empezó igual: montarlo en plano, renderizarlo, entrar al domo y ver qué pasaba. Así que construimos el editor que queríamos. La vista del domo se reproduce mientras se edita, con 26 efectos por GPU, visuales audiorreactivas, movimiento en bucle sin keyframes y una exportación que sale exactamente como se vio.",
+      "Rito Digital, el concierto fulldome del estudio, se hizo en VEATION y se presentó en vivo en el domo de CULTVR en Cardiff. El propio VEATION se presentó con una demostración en ese domo en FulldomeUK 2026, y hoy está en beta privada con estudios, artistas y salas de ocho países."
+    ],
+    "credits": [
+      "Creación: Alma Digital Studio"
+    ],
+    "presentedAt": [
+      "FulldomeUK Festival 2026 — CULTVR, Cardiff, Gales"
+    ]
+  },
+  "neural-canvas": {
+    "format": "Pintura interactiva en VR",
+    "desc": "Una experiencia de pintura interactiva en VR en la que cada participante pinta libremente durante dos minutos mientras un sensor EEG registra su estado de calma e incorpora la actividad cerebral al propio gesto creativo. Las 200 sesiones individuales se reunieron en una sola obra colectiva, develada en vivo en la sede de la EUIPO en Alicante.",
+    "body": [
+      "Neural Canvas VR es una experiencia de pintura interactiva en VR creada por Alma Digital Studio para el EIT Culture & Creativity Innovation Forum.",
+      "Cada participante entra a un taller virtual y pinta libremente durante dos minutos mientras un sensor EEG registra su estado de calma e incorpora la actividad cerebral al propio gesto creativo.",
+      "Las 200 sesiones individuales se reúnen en una sola obra colectiva, develada en vivo en la sede de la EUIPO en Alicante. La pieza condensa la tesis del estudio: creatividad, biofeedback y bienestar en una experiencia medible y compartida."
+    ],
+    "credits": [
+      "Creación y producción: Alma Digital Studio",
+      "Visuales y música: Vicente Manzano & Beltrán Lihn",
+      "Desarrollo: Beltrán Lihn & Nicolas Pirelli"
+    ],
+    "presentedAt": [
+      "EUIPO, Alicante, España — EIT Culture & Creativity Innovation Forum"
+    ]
+  },
+  "collective-pulse": {
+    "format": "Instalación interactiva de biofeedback",
+    "desc": "Los visitantes apoyan un dedo en un sensor de pulso y su latido aparece en una proyección de gran escala como una forma orgánica viva que late a su propio ritmo. Cuando varias personas son leídas a la vez, sus formas comparten un mismo campo y se acercan unas a otras o se alejan. Nada está prerrenderizado: cada forma vive solo durante su sesión.",
+    "body": [
+      "Instalación biométrica en tiempo real para grupos. Los visitantes apoyan un dedo en un sensor de pulso y su latido aparece en una proyección de gran escala como una forma orgánica viva que late a su propio ritmo.",
+      "Cuando varias personas son leídas al mismo tiempo, sus formas comparten un mismo campo: se acercan unas a otras o se alejan. La pieza funciona con un motor de tiempo real hecho a medida y desarrollado por el propio estudio, que renderiza a 60 fps. Nada está prerrenderizado: cada forma existe solo durante la sesión que la produjo y desaparece con ella.",
+      "La obra no afirma que el público se sincronice. Lo que la sala muestra es comportamiento, atracción y dispersión, y lo que pregunta es más antiguo que el sensor: qué comparte, si es que comparte algo, un grupo de cuerpos cuando son leídos juntos."
+    ],
+    "credits": [
+      "Creación y producción: Alma Digital Studio",
+      "Visuales y música: Vicente Manzano & Beltrán Lihn"
+    ],
+    "presentedAt": [
+      "ArtLac Gallery, IDB Bank, Washington DC, EE. UU."
+    ]
+  },
+  "neurocosm-full-dome": {
+    "format": "Experiencia fulldome",
+    "desc": "Una performance audiovisual inmersiva en fulldome, de 45 minutos, que guía al público por un viaje meditativo. Integra visuales generativas con datos biométricos en tiempo real provenientes de cascos EEG.",
+    "body": [
+      "Una performance audiovisual inmersiva en fulldome, de 45 minutos, que guía al público por un viaje meditativo. Integra visuales generativas con datos biométricos en tiempo real provenientes de cascos EEG."
+    ],
+    "credits": [
+      "Creación y producción: Alma Digital Studio",
+      "Visuales: Vicente Manzano & Beltrán Lihn",
+      "Performance en vivo: Vicente Manzano & Beltrán Lihn",
+      "Mezcla Dolby Atmos: Christopher Manhey en Omni SoundLab"
+    ],
+    "presentedAt": [
+      "Cult VR, Cardiff, Gales",
+      "The Market Hall, Plymouth, Inglaterra",
+      "Full Dome Festival, Santiago, Chile",
+      "Full Dome Festival, Montevideo, Uruguay"
+    ]
+  },
+  "mapping-mediamorfosis": {
+    "format": "Mapping",
+    "desc": "Mapping de gran escala sobre el histórico Palacio Vergara, con un show audiovisual en vivo de 45 minutos en el Festival Internacional de Viña del Mar.",
+    "body": [
+      "Mapping de gran escala sobre el histórico Palacio Vergara, con un show audiovisual en vivo de 45 minutos en el Festival Internacional de Viña del Mar."
+    ],
+    "credits": [
+      "Creación y producción: Alma Digital Studio",
+      "Visuales y música originales: Alma Digital",
+      "Performance audiovisual en vivo: Alma Digital"
+    ],
+    "presentedAt": [
+      "Festival Mediamorfosis 2024, Viña del Mar, Chile"
+    ]
+  },
+  "neurocosm-xr": {
+    "format": "Instalación interactiva",
+    "desc": "Una instalación interactiva de biofeedback que, mediante cascos EEG, traduce la actividad neuronal en campos visuales generativos proyectados en tiempo real.",
+    "body": [
+      "Una instalación interactiva de biofeedback que, mediante cascos EEG, traduce la actividad neuronal en campos visuales generativos proyectados en tiempo real."
+    ],
+    "credits": [
+      "Creación y desarrollo: Alma Digital Studio",
+      "Dirección: Vicente Manzano",
+      "UX e interactividad: Beltrán Lihn & Marco Gajardo",
+      "Diseño sonoro: Vicente Manzano & Beltrán Lihn",
+      "Mezcla Dolby Atmos: Christopher Manhey en Omni SoundLab"
+    ],
+    "presentedAt": [
+      "ArtLac Gallery, Washington, DC — IDB Bank (marzo–julio de 2025)",
+      "CRITIC Fest, Santiago, Chile, 2024",
+      "Mediamorfosis Fest Chile — Ganador del Pitch XR",
+      "New Images Festival — XR Market, París, Francia"
+    ]
+  },
+  "alma-digital-fest": {
+    "format": "Festival de arte inmersivo",
+    "desc": "Un festival de arte inmersivo de 8 horas en el Palacio Concha y Toro de Santiago, que fusiona performances en vivo, instalaciones interactivas y entornos generativos.",
+    "body": [
+      "Un festival de arte inmersivo de 8 horas en el Palacio Concha y Toro de Santiago, que fusiona performances en vivo, instalaciones interactivas y entornos generativos."
+    ],
+    "credits": [
+      "Creación y producción: Alma Digital Studio",
+      "Sistema de audio inmersivo: Stecher Lab",
+      "Instalaciones interactivas: Alma Digital",
+      "Desarrollo interactivo: Marco Gajardo",
+      "Performances en vivo: Alma Digital y otros artistas"
+    ],
+    "presentedAt": [
+      "Palacio Concha y Toro, Santiago, Chile"
+    ]
+  },
+  "neurocosm-360": {
+    "format": "Cortometraje 360° y VR",
+    "desc": "Adapta la experiencia Neurocosm a salas inmersivas especializadas y entornos de VR, ampliando su alcance más allá de las instalaciones en domo fijo.",
+    "body": [
+      "Adapta la experiencia Neurocosm a salas inmersivas especializadas y entornos de VR, ampliando su alcance más allá de las instalaciones en domo fijo."
+    ],
+    "credits": [
+      "Creación y producción: Alma Digital Studio",
+      "Visuales: Vicente Manzano & Beltrán Lihn",
+      "Performance en vivo: Vicente Manzano & Beltrán Lihn",
+      "Mezcla Dolby Atmos: Christopher Manhey en Omni SoundLab"
+    ],
+    "presentedAt": [
+      "Sabda Studio, Barcelona, España",
+      "XR Lab, Barcelona, España"
+    ]
+  },
+  "pixel-liquido": {
+    "format": "Exposición interactiva",
+    "desc": "Una exposición interactiva que explora los límites fluidos entre la materia digital y la física a través de entornos generativos reactivos.",
+    "body": [
+      "Una exposición interactiva que explora los límites fluidos entre la materia digital y la física a través de entornos generativos reactivos."
+    ],
+    "credits": [
+      "Creación y producción: Alma Digital Studio",
+      "Visuales: Vicente Manzano & Beltrán Lihn"
+    ],
+    "presentedAt": []
+  },
+  "digital-prana": {
+    "format": "Breathwork interactivo con IA",
+    "desc": "Una experiencia interactiva de breathwork con IA que adapta las visuales generativas y los paisajes sonoros al estado emocional colectivo del público.",
+    "body": [
+      "Una experiencia interactiva de breathwork con IA que adapta las visuales generativas y los paisajes sonoros al estado emocional colectivo del público."
+    ],
+    "credits": [
+      "Creación y producción: Alma Digital Studio",
+      "Visuales: Vicente Manzano & Beltrán Lihn",
+      "Mezcla Dolby Atmos: Christopher Manhey en Omni SoundLab"
+    ],
+    "presentedAt": [
+      "ETM Entrepreneurs Festival",
+      "IDB Bank, marzo–julio de 2025"
+    ]
+  },
+  "soul-charger": {
+    "creditLine": "En colaboración con iDeas Lab, del Berman Institute of Bioethics de Johns Hopkins University",
+    "format": "VR interactiva con biofeedback",
+    "desc": "Una experiencia interactiva de VR de 15 minutos que integra biofeedback, neuroestética, IA y bioética aplicada en un viaje personal transformador.",
+    "body": [
+      "Una experiencia interactiva de VR de 15 minutos que integra biofeedback, neuroestética, IA y bioética aplicada en un viaje personal transformador."
+    ],
+    "credits": [
+      "Creación y producción: Alma Digital Studio",
+      "Visuales: Vicente Manzano & Beltrán Lihn",
+      "Performance en vivo: Vicente Manzano & Beltrán Lihn",
+      "Mezcla Dolby Atmos: Christopher Manhey en Omni SoundLab"
+    ],
+    "presentedAt": []
+  },
+  "alma-digital-360": {
+    "format": "Performance audiovisual inmersiva",
+    "desc": "Una performance audiovisual inmersiva concebida como un viaje transformador a través de paisajes generativos y sonido espacial.",
+    "body": [
+      "Una performance audiovisual inmersiva concebida como un viaje transformador a través de paisajes generativos y sonido espacial."
+    ],
+    "credits": [
+      "Creación y producción: Alma Digital Studio",
+      "Visuales y música: Vicente Manzano & Beltrán Lihn",
+      "Performance en vivo: Vicente Manzano & Beltrán Lihn",
+      "Mezcla Dolby Atmos: Christopher Manhey en Omni SoundLab"
+    ],
+    "presentedAt": [
+      "Fixiona Immersive Space, Santiago, Chile, 2024",
+      "Sabda Studio, Barcelona, España, 2024"
+    ]
+  },
+  "my2drops": {
+    "format": "Cortometraje en VR",
+    "desc": "Una experiencia audiovisual narrativa e inmersiva y un recorrido en realidad virtual que muestran el corazón de my2DROPS, una startup orientada al futuro. La pieza destaca los valores centrales y la visión de la marca mediante un relato inmersivo de alto nivel.",
+    "body": [
+      "Una experiencia audiovisual narrativa e inmersiva y un recorrido en realidad virtual que muestran el corazón de my2DROPS, una startup orientada al futuro. La pieza destaca los valores centrales y la visión de la marca mediante un relato inmersivo de alto nivel."
+    ],
+    "credits": [
+      "Creación y producción: Alma Digital",
+      "Música: Alma Digital"
+    ],
+    "presentedAt": []
+  },
+  "pacha-ibiza": {
+    "format": "Instalación interactiva",
+    "desc": "Una serie de instalaciones interactivas para la temporada de verano de Pacha Ibiza, que transformó un túnel LED de 10 metros en un entorno inmersivo y reactivo. Se crearon quince instalaciones interactivas a medida con tecnología de motion tracking y depth mapping, cada una pensada para complementar los eventos emblemáticos de Pacha.",
+    "body": [
+      "Una serie de instalaciones interactivas para la temporada de verano de Pacha Ibiza, que transformó un túnel LED de 10 metros en un entorno inmersivo y reactivo. Se crearon quince instalaciones interactivas a medida con tecnología de motion tracking y depth mapping, cada una pensada para complementar los eventos emblemáticos de Pacha."
+    ],
+    "credits": [
+      "Producción: Alma Digital Studio & Gola Studio",
+      "Visuales: Vicente Manzano & Beltrán Lihn",
+      "Interactividad: Vicente Manzano & Beltrán Lihn",
+      "Desarrollo de software: Beltrán Lihn"
+    ],
+    "presentedAt": []
+  },
+  "fashion-show-micsur": {
+    "format": "Diseño inmersivo — Performance en vivo",
+    "desc": "Desarrollado para MICSUR y presentado en el Museo de Arte Contemporáneo, este proyecto integró entornos visuales inmersivos con un desfile de moda en vivo, combinando música original interpretada en tiempo real con un sistema de sonido inmersivo mezclado en Dolby Atmos.",
+    "body": [
+      "Desarrollado para MICSUR y presentado en el Museo de Arte Contemporáneo, este proyecto integró entornos visuales inmersivos con un desfile de moda en vivo, combinando música original interpretada en tiempo real con un sistema de sonido inmersivo mezclado en Dolby Atmos."
+    ],
+    "credits": [
+      "Creación y producción: Alma Digital Studio",
+      "Instalación audiovisual inmersiva y performance AV en vivo: Vicente Manzano & Beltrán Lihn",
+      "Iluminación: Claudio Huichalaf",
+      "Sistema de sonido inmersivo: StecherLab"
+    ],
+    "presentedAt": [
+      "Museo de Arte Contemporáneo, Santiago, Chile"
+    ]
+  },
+  "adidas-terrex": {
+    "format": "Diseño inmersivo — Instalación interactiva",
+    "desc": "Un evento centrado en una instalación interactiva en forma de cubo, equipada con sensores de movimiento. Incluyó dirección creativa, diseño de realidad aumentada y paisajes sonoros inmersivos que respondían a la participación del público, combinando texturas terrosas con la estética Mountain de la marca.",
+    "body": [
+      "Un evento centrado en una instalación interactiva en forma de cubo, equipada con sensores de movimiento. Incluyó dirección creativa, diseño de realidad aumentada y paisajes sonoros inmersivos que respondían a la participación del público, combinando texturas terrosas con la estética Mountain de la marca."
+    ],
+    "credits": [
+      "Creación y producción: Alma Digital Studio",
+      "Producción: Alma Digital Studio & Francisco Fontaine",
+      "Visuales: Vicente Manzano & Beltrán Lihn",
+      "Interactividad: Beltrán Lihn",
+      "Diseño sonoro: Vicente Manzano & Beltrán Lihn"
+    ],
+    "presentedAt": []
+  },
+  "panta-rhei": {
+    "format": "Cortometraje inmersivo",
+    "desc": "Una experiencia inmersiva que explora cómo el cambio climático afecta a nuestros océanos, combinando datos científicos, visuales 360° y sonido envolvente para generar conciencia ambiental. Forma parte de una iniciativa educativa con el Gobierno de Cataluña e incluye transformaciones estacionales generadas a partir de datos oceánicos reales.",
+    "body": [
+      "Una experiencia inmersiva que explora cómo el cambio climático afecta a nuestros océanos, combinando datos científicos, visuales 360° y sonido envolvente para generar conciencia ambiental. Forma parte de una iniciativa educativa con el Gobierno de Cataluña e incluye transformaciones estacionales generadas a partir de datos oceánicos reales."
+    ],
+    "credits": [
+      "Creación: Alma Digital Studio",
+      "Visuales y música: Vicente Manzano & Beltrán Lihn"
+    ],
+    "presentedAt": []
+  },
+  "eit-culture-and-creativity": {
+    "format": "Diseño inmersivo",
+    "desc": "Diseño y producción de un evento privado en Oporto, Portugal. Incluyó la dirección creativa y el diseño del escenario y de la disposición de pantallas, visuales a medida, animaciones y un paisaje sonoro especializado, acorde a la identidad del evento.",
+    "body": [
+      "Diseño y producción de un evento privado en Oporto, Portugal. Incluyó la dirección creativa y el diseño del escenario y de la disposición de pantallas, visuales a medida, animaciones y un paisaje sonoro especializado, acorde a la identidad del evento."
+    ],
+    "credits": [
+      "Creación y producción: Alma Digital Studio",
+      "Visuales y sonido: Vicente Manzano & Beltrán Lihn",
+      "Gestión del evento: Chris Alvarez"
+    ],
+    "presentedAt": []
+  },
+  "latam-airlines": {
+    "format": "Visuales inmersivas",
+    "desc": "Creación de visuales inmersivas de alto impacto para un evento corporativo privado, con foco en un arte digital atmosférico y acorde a la marca.",
+    "body": [
+      "Creación de visuales inmersivas de alto impacto para un evento corporativo privado, con foco en un arte digital atmosférico y acorde a la marca."
+    ],
+    "credits": [
+      "Creación: Alma Digital Studio",
+      "Visuales: Vicente Manzano & Beltrán Lihn"
+    ],
+    "presentedAt": []
+  },
+  "lps": {
+    "format": "Visuales inmersivas — 360°",
+    "desc": "Contenido visual inmersivo en 360° diseñado para un evento privado presentado en el IDEAL Digital Center de Barcelona, que aprovecha las capacidades de proyección a gran escala del centro para crear un entorno digital completamente envolvente.",
+    "body": [
+      "Contenido visual inmersivo en 360° diseñado para un evento privado presentado en el IDEAL Digital Center de Barcelona, que aprovecha las capacidades de proyección a gran escala del centro para crear un entorno digital completamente envolvente."
+    ],
+    "credits": [
+      "Creación: Alma Digital Studio",
+      "Visuales: Vicente Manzano & Beltrán Lihn"
+    ],
+    "presentedAt": [
+      "IDEAL Digital Center, Barcelona, España"
+    ]
+  },
+  "rito-digital": {
+    "format": "Concert-film inmersivo en vivo",
+    "desc": "Un concert-film inmersivo en vivo de Alma Digital Studio: animación de stop-motion realista y techno ceremonial en ocho canciones, siempre interpretado en vivo. Se estrenó en FOC — The Festival of Consciousness, Barcelona, en 2026.",
+    "body": [
+      "Rito Digital es un concert-film inmersivo en vivo creado por Alma Digital Studio: prólogo y ocho canciones, 60 minutos, siempre interpretado en vivo. El film se adapta a tres configuraciones de proyección: fulldome, sala 360° y proyección única.",
+      "Donzio atraviesa dos mundos, del Sistema al Rito, y en el camino se cruza con las familias de seres que lo habitan. Está animado en stop-motion realista: marionetas-criatura de silicona táctil en un mundo retrofuturista patinado, con profundidad de diorama, simetría ritual y grano de 35 mm, compuesto con imagen generativa dirigida cuadro a cuadro. La música original, interpretada en vivo, es techno ritual con electrónica hipnótica y pulso de latin house, procesamiento vocal experimental y handpan en vivo.",
+      "Los ocho pasos: Creation, Almagical, Vaina Wena, Care for Her, Guirotron, Free Spinning, Dancing with Myself y Creativity. Cada paso es una canción y un mundo.",
+      "Se estrenó en el show de cierre de FOC — The Festival of Consciousness, en Barcelona en julio de 2026, ante 1.000 personas. La versión fulldome se estrenó en CULTVR Lab, Cardiff, en septiembre de 2026, y volvió a ese domo en octubre.",
+      "Ocho canciones y una procesión."
+    ],
+    "credits": [
+      "Una obra de Alma Digital Studio",
+      "Dirección, música y visuales: Vicente Manzano · Beltrán Lihn"
+    ],
+    "presentedAt": [
+      "The Festival of Consciousness (FOC), CCIB Barcelona, julio de 2026 — estreno, show de cierre",
+      "CULTVR Lab, Cardiff, Gales, septiembre de 2026 — estreno fulldome",
+      "CULTVR Lab, Cardiff, Gales, octubre de 2026"
+    ]
+  },
+  "digital-sanctuaries": {
+    "format": "Bienestar inmersivo en VR",
+    "desc": "Salas de bienestar inmersivo en VR para hoteles, oficinas e instituciones. Sesiones guiadas de respiración, descanso y foco, de 3 a 15 minutos, en una sala que responde al estado fisiológico de quien está dentro.",
+    "body": [
+      "Digital Sanctuaries diseña e instala salas de bienestar en VR para hoteles, oficinas e instituciones. Sesiones guiadas de respiración, descanso y foco, de 3 a 15 minutos, en una sala que responde al estado fisiológico de quien está dentro. Un spin-off de Alma Digital Studio.",
+      "La sala se instala una vez y las experiencias se licencian, con contenido nuevo cada temporada. Cada sesión es corta a propósito: cabe entre dos reuniones o alrededor de un check-in, y permite que una sala reciba a mucha gente en un día.",
+      "El contenido lo firma un estudio de arte inmersivo: luz, sonido y ritmo compuestos como una sola entrada perceptiva. El catálogo desciende de la obra del estudio, empezando por Soul Charger.",
+      "Quince minutos en los que nada te pide nada."
+    ],
+    "credits": [
+      "Creación: Alma Digital Studio",
+      "Imágenes: visualizaciones de Alma Digital Studio"
+    ],
+    "presentedAt": [
+      "Barcelona Design Week 2026",
+      "Inner Canvas — Barcelona, noviembre de 2026"
+    ],
+    "specs": {
+      "lead": "Cinco sesiones, cada una con su código. Una sala las pide por su nombre.",
+      "rows": [
+        [
+          "UMB–03",
+          "Umbral",
+          "Entrada y salida",
+          "3 min",
+          "1–6"
+        ],
+        [
+          "FOC–10",
+          "Foco",
+          "Atención",
+          "10 min",
+          "1–4"
+        ],
+        [
+          "PRA–15",
+          "Prana",
+          "Respiración guiada en VR",
+          "15 min",
+          "1–6"
+        ],
+        [
+          "RES–15",
+          "Resonancia",
+          "Sonido",
+          "15 min",
+          "1–6"
+        ],
+        [
+          "REP–15",
+          "Reposo",
+          "Descanso profundo",
+          "15 min",
+          "1–2"
+        ]
+      ]
+    },
+    "enquire": {
+      "text": "¿Quieres verlo en persona?",
+      "cta": "Solicitar una demostración privada"
+    }
+  }
+}

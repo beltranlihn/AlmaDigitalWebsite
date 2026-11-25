@@ -1,13 +1,17 @@
 """Arma la carpeta que se sube a Netlify.
 
-Publica sólo lo que la web usa: las páginas, gsap, robots.txt y los archivos de
-Asset/ que alguna página referencia. Todo lo demás —archivos de trabajo (.docx,
-.ai), originales en PNG, _masters/, prototype/, CLAUDE.md— queda fuera sin tener
-que acordarse de excluirlo.
+Publica sólo lo que la web usa: las páginas, css/, js/, robots.txt, sitemap.xml y
+los archivos de Asset/ que alguna página (o su CSS/JS) referencia. Todo lo demás
+—fuentes del generador (src/), archivos de trabajo (.docx, .ai), originales en
+PNG, _masters/, prototype/, CLAUDE.md— queda fuera sin tener que acordarse de
+excluirlo.
 
 Netlify lo corre solo en cada deploy (ver netlify.toml): arma dist/ y publica eso.
 A mano, desde la raíz del proyecto:
     python tools/deploy_copy.py dist
+
+Las páginas las genera src/build.mjs y se commitean ya generadas: este script no
+las arma, sólo las copia.
 
 Cada deploy de producción cuesta 15 créditos: juntar los cambios en uno solo.
 """
@@ -17,8 +21,44 @@ import stat
 import sys
 import urllib.parse
 
-PAGES = ['index.html', 'soul-charger.html']
-ROOT_FILES = PAGES + ['gsap.min.js', 'robots.txt']
+# Carpetas donde hay páginas (.html). '.' = raíz: index, studio, soul-charger.
+PAGE_DIRS = ['.', 'work', 'es', 'es/work']
+# Carpetas de código que se publican enteras.
+STATIC_DIRS = ['css', 'js']
+# Archivos sueltos de la raíz. gsap sólo se copia si alguna página lo usa.
+ROOT_FILES = ['robots.txt', 'sitemap.xml']
+ROOT_IF_USED = ['gsap.min.js']
+
+
+def find_pages():
+    pages = []
+    for d in PAGE_DIRS:
+        if not os.path.isdir(d):
+            continue
+        for name in sorted(os.listdir(d)):
+            if name.endswith('.html'):
+                pages.append(os.path.normpath(os.path.join(d, name)).replace(os.sep, '/'))
+    return pages
+
+
+def find_static():
+    files = []
+    for d in STATIC_DIRS:
+        for root, _, names in os.walk(d):
+            for name in sorted(names):
+                files.append(os.path.join(root, name).replace(os.sep, '/'))
+    return files
+
+
+def read(path):
+    with open(path, encoding='utf-8-sig') as f:
+        return f.read()
+
+
+def copy(path, dest):
+    out = os.path.join(dest, path)
+    os.makedirs(os.path.dirname(out) or dest, exist_ok=True)
+    shutil.copy2(path, out)
 
 
 def main():
@@ -32,11 +72,15 @@ def main():
     if inside and os.path.relpath(dest, proj) != 'dist':
         sys.exit('el destino tiene que ser dist/ o una carpeta fuera del proyecto')
 
-    html = ''
-    for p in PAGES:
-        with open(p, encoding='utf-8-sig') as f:
-            html += f.read()
-    html_dec = urllib.parse.unquote(html)
+    pages = find_pages()
+    static = find_static()
+    if 'index.html' not in pages:
+        sys.exit('falta index.html: correr primero  node src/build.mjs')
+
+    # Texto donde se buscan las referencias a Asset/: páginas + CSS + JS.
+    text = ''.join(read(p) for p in pages) + ''.join(
+        read(p) for p in static if p.endswith(('.css', '.js')))
+    text_dec = urllib.parse.unquote(text)
 
     if os.path.exists(dest):
         # Windows deja algunos archivos copiados como sólo lectura: quitarlo y reintentar.
@@ -49,8 +93,10 @@ def main():
             shutil.rmtree(dest, onerror=force)
     os.makedirs(dest)
 
-    for f in ROOT_FILES:
-        shutil.copy2(f, os.path.join(dest, f))
+    root_files = [f for f in ROOT_FILES if os.path.exists(f)]
+    root_files += [f for f in ROOT_IF_USED if os.path.exists(f) and f in text]
+    for f in pages + static + root_files:
+        copy(f, dest)
 
     used = skipped = 0
     used_bytes = skipped_bytes = 0
@@ -58,10 +104,8 @@ def main():
         for name in files:
             path = os.path.join(root, name).replace(os.sep, '/')
             size = os.path.getsize(path)
-            if path in html or path in html_dec:
-                out = os.path.join(dest, path)
-                os.makedirs(os.path.dirname(out), exist_ok=True)
-                shutil.copy2(path, out)
+            if path in text or path in text_dec:
+                copy(path, dest)
                 used += 1
                 used_bytes += size
             else:
@@ -70,7 +114,8 @@ def main():
 
     mb = 1024 * 1024
     print(f'copia en: {dest}')
-    print(f'  publicados:   {len(ROOT_FILES)} archivos raíz + {used} de Asset/ ({used_bytes / mb:.1f} MB)')
+    print(f'  publicados:   {len(pages)} páginas + {len(static)} de css/js + {len(root_files)} de raíz'
+          f' + {used} de Asset/ ({used_bytes / mb:.1f} MB)')
     print(f'  no publicados: {skipped} de Asset/ sin referencia ({skipped_bytes / mb:.1f} MB)')
 
 

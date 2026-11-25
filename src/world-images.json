@@ -1,0 +1,191 @@
+{
+  "soul-charger": [
+    {
+      "src": "Asset/World/Soul Charger/1.webp",
+      "w": 768,
+      "h": 432
+    },
+    {
+      "src": "Asset/World/Soul Charger/2.webp",
+      "w": 768,
+      "h": 432
+    },
+    {
+      "src": "Asset/World/Soul Charger/3.webp",
+      "w": 768,
+      "h": 432
+    },
+    {
+      "src": "Asset/World/Soul Charger/4.webp",
+      "w": 768,
+      "h": 432
+    },
+    {
+      "src": "Asset/World/Soul Charger/5.webp",
+      "w": 768,
+      "h": 432
+    }
+  ],
+  "collective-pulse": [
+    {
+      "src": "Asset/World/Collective Pulse/1.webp",
+      "w": 768,
+      "h": 432
+    },
+    {
+      "src": "Asset/World/Collective Pulse/2.webp",
+      "w": 768,
+      "h": 432
+    },
+    {
+      "src": "Asset/World/Collective Pulse/3.webp",
+      "w": 768,
+      "h": 432
+    },
+    {
+      "src": "Asset/World/Collective Pulse/4.webp",
+      "w": 768,
+      "h": 432
+    },
+    {
+      "src": "Asset/World/Collective Pulse/5.webp",
+      "w": 768,
+      "h": 432
+    }
+  ],
+  "neurocosm-full-dome": [
+    {
+      "src": "Asset/World/Neurocosm Full Dome/1.webp",
+      "w": 768,
+      "h": 432
+    },
+    {
+      "src": "Asset/World/Neurocosm Full Dome/2.webp",
+      "w": 768,
+      "h": 432
+    },
+    {
+      "src": "Asset/World/Neurocosm Full Dome/3.webp",
+      "w": 768,
+      "h": 432
+    },
+    {
+      "src": "Asset/World/Neurocosm Full Dome/4.webp",
+      "w": 768,
+      "h": 432
+    },
+    {
+      "src": "Asset/World/Neurocosm Full Dome/5.webp",
+      "w": 768,
+      "h": 432
+    }
+  ],
+  "veation": [
+    {
+      "src": "Asset/World/VEATION/1.webp",
+      "w": 768,
+      "h": 432
+    },
+    {
+      "src": "Asset/World/VEATION/2.webp",
+      "w": 768,
+      "h": 432
+    },
+    {
+      "src": "Asset/World/VEATION/3.webp",
+      "w": 768,
+      "h": 432
+    },
+    {
+      "src": "Asset/World/VEATION/4.webp",
+      "w": 768,
+      "h": 432
+    },
+    {
+      "src": "Asset/World/VEATION/5.webp",
+      "w": 768,
+      "h": 432
+    }
+  ],
+  "pacha-ibiza": [
+    {
+      "src": "Asset/World/Pacha Ibiza/1.webp",
+      "w": 768,
+      "h": 432
+    },
+    {
+      "src": "Asset/World/Pacha Ibiza/2.webp",
+      "w": 768,
+      "h": 432
+    },
+    {
+      "src": "Asset/World/Pacha Ibiza/3.webp",
+      "w": 768,
+      "h": 432
+    },
+    {
+      "src": "Asset/World/Pacha Ibiza/reel-1.webp",
+      "w": 360,
+      "h": 640
+    },
+    {
+      "src": "Asset/World/Pacha Ibiza/reel-2.webp",
+      "w": 360,
+      "h": 640
+    }
+  ],
+  "rito-digital": [
+    {
+      "src": "Asset/World/Rito Digital/1.webp",
+      "w": 768,
+      "h": 432
+    },
+    {
+      "src": "Asset/World/Rito Digital/2.webp",
+      "w": 360,
+      "h": 640
+    },
+    {
+      "src": "Asset/World/Rito Digital/3.webp",
+      "w": 768,
+      "h": 432
+    },
+    {
+      "src": "Asset/World/Rito Digital/4.webp",
+      "w": 360,
+      "h": 640
+    },
+    {
+      "src": "Asset/World/Rito Digital/5.webp",
+      "w": 768,
+      "h": 432
+    }
+  ],
+  "digital-sanctuaries": [
+    {
+      "src": "Asset/World/Digital Sanctuaries/1.webp",
+      "w": 768,
+      "h": 432
+    },
+    {
+      "src": "Asset/World/Digital Sanctuaries/2.webp",
+      "w": 768,
+      "h": 432
+    },
+    {
+      "src": "Asset/World/Digital Sanctuaries/3.webp",
+      "w": 768,
+      "h": 432
+    },
+    {
+      "src": "Asset/World/Digital Sanctuaries/4.webp",
+      "w": 768,
+      "h": 432
+    },
+    {
+      "src": "Asset/World/Digital Sanctuaries/5.webp",
+      "w": 768,
+      "h": 432
+    }
+  ]
+}
